@@ -305,6 +305,16 @@ class TestIntegridadeDoConjunto(unittest.TestCase):
         self.assertEqual(outro, self.base)
         self.assertEqual(outro["meta"]["integridade"], self.base["meta"]["integridade"])
 
+    def test_metadado_alterado_com_integridade_recalculada_recusado(self):
+        for campo, valor in (("proveniencia", "publicacao_historica_comprovada"), ("temporalidade", "posterior_ao_corte"),
+                             ("arquivo", "data/raw/outro.zip"), ("colunas_origem", ["QT_APTOS"]),
+                             ("contagem", {"aceitas": 1, "fora_do_filtro": 0, "recusadas": {}, "segregadas": {}})):
+            c = copy.deepcopy(self.base)
+            c["meta"][campo] = valor
+            m = dict(c["meta"]); m.pop("integridade")
+            c["meta"]["integridade"] = conjuntos._sha(conjuntos.canonico(m))
+            self.recusa(c, campo)
+
     def test_transformacao_e_versao_registradas(self):
         for campo, valor in (("transformacao", "inexistente"), ("transformacao_versao", 99)):
             c = copy.deepcopy(self.base)
@@ -314,8 +324,9 @@ class TestIntegridadeDoConjunto(unittest.TestCase):
 
 class TestInterfaceDeTeste(unittest.TestCase):
     def test_producao_nao_aceita_linhas_de_fora(self):
-        with self.assertRaises(TypeError):
-            fx.Selecao(REG["tse_detalhe_apuracao_2024"], "calibracao", linhas=[])
+        for nome in ("linhas", "_linhas"):
+            with self.assertRaises(TypeError, msg=nome):
+                fx.Selecao(REG["tse_detalhe_apuracao_2024"], "calibracao", **{nome: []})
 
     def test_sintetica_exige_id_proprio(self):
         with self.assertRaises(ValueError):
@@ -357,10 +368,11 @@ class TestParcelasD42D62(unittest.TestCase):
     def test_completude_e_quatro_situacoes(self):
         mun24 = {k.split("|")[0] for k in self.c24["dados"]["unidades"]}
         r24 = completude.avaliar(self.c24["dados"], "municipal")
-        self.assertEqual(r24["situacoes"], {"completa": 11138, "sem_eleicao_propria": 4})
+        self.assertEqual(r24["situacoes"], {"completa": 11189, "sem_eleicao_propria": 4})
+        self.assertEqual((r24["esperadas"], r24["inesperadas"], r24["lacunas"]), (11193, [], {}))
         r22 = completude.avaliar(self.c22["dados"], "geral", mun24)
-        self.assertEqual(r22["situacoes"]["ausencia_referencia_historica"], 5)
-        self.assertTrue(all(e["estimativa"] for e in r22["estimativas"].values()))
+        self.assertEqual(r22["situacoes"], {"ausencia_referencia_historica": 6, "completa": 36132})
+        self.assertEqual((r22["esperadas"], r22["inesperadas"], r22["lacunas"]), (36138, [], {}))
         dados = copy.deepcopy(self.c24["dados"])
         alvo = "01007|Prefeito|1"
         dados["unidades"][alvo]["status"] = "bloqueada_segregada"
@@ -368,9 +380,54 @@ class TestParcelasD42D62(unittest.TestCase):
         r = completude.avaliar(dados, "municipal")
         self.assertIn(alvo, r["bloqueadas"])
         self.assertIn("01015|Vereador|1", r["lacunas"])
-        self.assertNotIn(alvo, r["estimativas"])
-        self.assertNotIn("01015|Vereador|1", r["estimativas"])
+        self.assertEqual(r["estimativas"], {})
         self.assertEqual(r["situacoes"]["ausencia_dados_fonte"], 1)
+
+    def test_segundo_turno_e_exterior_cobertos(self):
+        u24 = self.c24["dados"]["unidades"]
+        u22 = self.c22["dados"]["unidades"]
+        self.assertEqual(sum(1 for k in u24 if k.endswith("|Prefeito|2")), 51)
+        self.assertIn("31054|Prefeito|2", u24, "Aracaju: 2º turno sem marcador na candidatura de 1º turno")
+        self.assertTrue({"EXTERIOR|Presidente|1", "EXTERIOR|Presidente|2"} <= set(u22))
+        mun24 = {k.split("|")[0] for k in u24}
+        for tipo, base, alvo, extra in (("municipal", u24, "31054|Prefeito|2", None),
+                                        ("geral", u22, "EXTERIOR|Presidente|2", mun24),
+                                        ("geral", u22, "35157|Governador|2", mun24)):
+            if alvo not in base:
+                alvo = next(k for k in base if k.endswith("|Governador|2"))
+            dados = {"unidades": {k: v for k, v in base.items() if k != alvo}}
+            r = completude.avaliar(dados, tipo, extra)
+            self.assertIn(alvo, r["lacunas"], alvo)
+            self.assertEqual(r["situacoes"]["ausencia_dados_fonte"], 1, alvo)
+        dados = {"unidades": dict(u24, **{"99999|Prefeito|2": dict(next(iter(u24.values())))})}
+        self.assertEqual(completude.avaliar(dados, "municipal")["inesperadas"], ["99999|Prefeito|2"])
+
+    def test_fallback_produz_taxas_da_uf(self):
+        mun24 = {k.split("|")[0] for k in self.c24["dados"]["unidades"]}
+        r22 = completude.avaliar(self.c22["dados"], "geral", mun24)
+        k = "73709|Governador|1"
+        e = r22["estimativas"][k]
+        self.assertTrue(e["estimativa"])
+        mt = [u for kk, u in self.c22["dados"]["unidades"].items() if kk.endswith("|Governador|1") and u["uf"] == "MT"]
+        self.assertGreater(len(mt), 100)
+        aptos = sum(u["aptos"] for u in mt)
+        den = sum(u["denominadorVotos"] for u in mt)
+        self.assertEqual(e["taxas"]["comparecimento"], {"numerador": sum(u["comparecimento"] for u in mt), "denominador": aptos})
+        self.assertEqual(e["taxas"]["brancos"], {"numerador": sum(u["brancos"] for u in mt), "denominador": den})
+        for nome, t in e["taxas"].items():
+            self.assertTrue(0 <= completude.valor(t) <= 1, nome)
+        soma_aptos = sum(completude.valor(e["taxas"][c]) for c in ("comparecimento", "abstencoes", "eleitoresSecoesNaoInstaladas"))
+        self.assertEqual(soma_aptos, 1)
+
+    def test_fallback_bloqueado_com_agregado_da_uf_incompleto(self):
+        mun24 = {k.split("|")[0] for k in self.c24["dados"]["unidades"]}
+        dados = copy.deepcopy(self.c22["dados"])
+        k_mt = next(k for k, u in dados["unidades"].items() if k.endswith("|Governador|1") and u["uf"] == "MT")
+        dados["unidades"][k_mt]["status"] = "bloqueada_segregada"
+        r = completude.avaliar(dados, "geral", mun24)
+        self.assertNotIn("73709|Governador|1", r["estimativas"])
+        self.assertIn("73709|Governador|1", r["lacunas"])
+        self.assertIn("73709|Senador|1", r["estimativas"], "outros cargos da UF seguem com estimativa")
 
     def test_unidade_com_linha_segregada_bloqueada(self):
         falsa = dict(REG["tse_detalhe_apuracao_2024"], id="sintetica_seg", parcelas=[

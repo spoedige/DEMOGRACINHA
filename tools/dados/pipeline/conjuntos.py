@@ -79,6 +79,11 @@ def verificar(conjunto, destino, raiz=fx.RAIZ, registro=fx.REGISTRO, reproduzir=
     t = TRANSFORMACOES.get(m.get("transformacao"))
     if t is None or t["versao"] != m.get("transformacao_versao"):
         raise adm.FonteInadmissivel("transformação ausente ou de outra versão")
+    esperado = {"arquivo": fonte["arquivo"], "temporalidade": fonte["temporalidade"], "proveniencia": fonte["proveniencia"],
+                "colunas_origem": list(t["colunas"]), "versao_conjunto": VERSAO_CONJUNTO}
+    divergentes = sorted(c for c, v in esperado.items() if m.get(c) != v)
+    if divergentes:
+        raise adm.FonteInadmissivel(f"{fonte['id']}: metadado diverge do registro da fonte ou da transformação: {divergentes}")
     fx.colunas_permitidas(fonte, m.get("colunas_origem", []))
     if reproduzir:
         dados, sel = _executar(fonte, destino, m["transformacao"], m.get("filtro"), raiz)

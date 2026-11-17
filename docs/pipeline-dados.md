@@ -162,14 +162,21 @@ Fallback da D62: unidade sem referência usa a taxa da UF no mesmo tipo de elei�
 2. `comparecimento × votosPorEleitor` repartido em brancos, nulos, três anulados e válidos por maiores restos; o peso dos válidos é o complemento das cinco taxas não válidas.
 3. Desempate pela chave (D49, D50). A identidade D59 vale por construção.
 
-### 7.4 Pontos metodológicos (aprovados em 17/11/2026, ver `decisoes.md`, complemento da D42)
+### 7.4 Regras metodológicas vigentes (complemento da D42, `decisoes.md`)
 
-Os itens abaixo foram aprovados como recomendado, com a regra de unidade incompleta definida pelo autor (item 5 do complemento). Texto original da proposta:
-1. **Seções não instaladas.** Recomendação: parâmetro próprio, como na tabela 7.1, porque o TSE as conta separadamente e somá-las à abstenção mudaria o significado da abstenção. A D42 não trata dessa parcela.
-2. **Denominador de brancos e nulos.** Recomendação: `comparecimento × votosPorEleitor`, o mesmo da D62, para que as seis parcelas da D59 tenham base comum. A D42 não define denominador.
-3. **Granularidade por cargo e turno.** Recomendação: por cargo e turno, porque brancos e nulos variam muito entre cargos na mesma unidade. A D42 diz só "por unidade".
-4. **Fallback da D42.** A D62 define fallback pela UF; a D42 não define. Recomendação: o mesmo fallback, marcado como estimativa.
-5. **Unidades com parcela incompleta.** Zonas com seções não instaladas no exterior (2022 e 2026) e municípios com zona segregada em outras fontes: regra de completude da unidade a definir.
+1. Seções não instaladas: parcela própria, não somada à abstenção.
+2. Brancos e nulos (com técnicos): denominador `comparecimento × votosPorEleitor`, o mesmo das três parcelas anuladas da D62.
+3. Granularidade: unidade eleitoral × cargo × turno; aptos e comparecimento nunca somados entre cargos.
+4. Fallback: só quando não há referência histórica para a unidade; taxas da UF no mesmo tipo de eleição, cargo e turno, guardadas como numerador e denominador inteiros e marcadas como estimativa; só quando o agregado da UF para aquele cargo e turno não tem unidade bloqueada nem lacuna.
+5. Unidade incompleta: fonte com registro incompleto, divergente ou segregado da unidade bloqueia a unidade para a parcela; sem agregar só as zonas restantes e sem fallback.
+
+Histórico: estes pontos foram apresentados como proposta em 17/11/2026 e aprovados no mesmo dia. A versão anterior desta seção descrevia lacunas da D42 que o complemento resolveu.
+
+### 7.5 Completude (`completude.py`)
+
+Unidades esperadas por eleição, cargo e turno, construídas sem usar o conjunto avaliado: municípios pela tabela oficial TSE x IBGE; 2º turno pelas candidaturas com linha de 2º turno (controle independente, lido só para conferência, com hash verificado); exterior como unidade própria para presidente nos dois turnos. Situações: `completa`, `sem_eleicao_propria`, `ausencia_referencia_historica` (o município não tem nenhuma unidade na eleição de referência e existe na municipal de 2024), `ausencia_dados_fonte`, `bloqueada_*` e `inesperada`.
+
+Achado: em Aracaju (SE), as candidaturas a prefeito de 1º turno estão sem situação final (`#NULO`), embora haja 2º turno; por isso o controle usa a presença de linhas de 2º turno, e não o marcador "2º TURNO".
 
 Implementação: `transformacoes.parcelas_d42_d62` (v1) e `completude.avaliar`. Conjuntos de teste na seção 9.
 
@@ -218,7 +225,7 @@ Gerados por `tools/dados/gerar_intermediarios_teste.py` em `data/intermediario/t
 
 | Conjunto | Fonte e filtro | Unidades | Status | Completude |
 |---|---|---|---|---|
-| `d42_d62_municipal_2024` | detalhe 2024, ordinária (619 e 620) | 11.189 (prefeito e vereador no 1º turno em 5.569 municípios; prefeito no 2º turno em 51) | todas `completa` | 11.138 completas; 4 `sem_eleicao_propria` (Brasília e Fernando de Noronha, 2 cargos) |
-| `d42_d62_geral_2022` | detalhe 2022, ordinária (544 a 547) | 36.132, inclusive o exterior como unidade própria | todas `completa` | 27.850 completas; 5 `ausencia_referencia_historica` (Boa Esperança do Norte, MT, criado depois de 2022), com estimativa pela UF |
+| `d42_d62_municipal_2024` | detalhe 2024, ordinária (619 e 620) | 11.189 (prefeito e vereador no 1º turno em 5.569 municípios; prefeito no 2º turno em 51) | todas `completa` | 11.193 esperadas: 11.189 completas e 4 `sem_eleicao_propria` (Brasília e Fernando de Noronha, 2 cargos); nenhuma lacuna nem inesperada |
+| `d42_d62_geral_2022` | detalhe 2022, ordinária (544 a 547) | 36.132: 1º turno dos cinco cargos, 2º turno de presidente e de governador em 12 UFs, exterior nos dois turnos de presidente | todas `completa` | 36.138 esperadas: 36.132 completas e 6 `ausencia_referencia_historica` (Boa Esperança do Norte, MT, criado depois de 2022: cinco cargos no 1º turno e presidente no 2º), com taxas da UF como estimativa; nenhuma lacuna nem inesperada |
 
-Numeradores e denominadores inteiros por unidade, sem taxa arredondada. Os dois conjuntos passaram pela entrada do mundo inicial, com reexecução da transformação. Hashes de integridade e dos dados: ver saída do gerador.
+Numeradores e denominadores inteiros por unidade, sem taxa arredondada. Os dois conjuntos passaram pela entrada do mundo inicial, com reexecução da transformação. Hashes de integridade e dos dados reproduzidos em duas gerações independentes (municipal: `fa1dc590...` e `edb24a0a...`; geral: `05977d80...` e `f02bcc6c...`).

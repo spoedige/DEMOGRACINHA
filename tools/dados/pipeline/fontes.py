@@ -115,14 +115,15 @@ class Selecao:
     recusada ficam em `unidades_segregadas` e `unidades_recusadas`.
     """
 
-    def __init__(self, fonte, destino, filtro=None, colunas=(), raiz=RAIZ, chave=None, membro_contem="BRASIL", _linhas=None):
+    def __init__(self, fonte, destino, filtro=None, colunas=(), raiz=RAIZ, chave=None, membro_contem="BRASIL"):
+        verificar_integridade(fonte, raiz)
+        self._preparar(fonte, destino, filtro, colunas, chave, linhas_csv(fonte, raiz, membro_contem))
+
+    def _preparar(self, fonte, destino, filtro, colunas, chave, linhas):
         if destino not in adm.DESTINOS:
             raise ValueError(f"destino desconhecido: {destino}")
         colunas_permitidas(fonte, colunas)
-        if _linhas is None:
-            verificar_integridade(fonte, raiz)
-            _linhas = linhas_csv(fonte, raiz, membro_contem)
-        self.fonte, self.destino, self.filtro, self.chave, self._linhas = fonte, destino, filtro, chave, _linhas
+        self.fonte, self.destino, self.filtro, self.chave, self._linhas = fonte, destino, filtro, chave, linhas
         self.sintetica_ = False
         self.aceitas = 0
         self.fora_do_filtro = 0
@@ -139,7 +140,8 @@ class Selecao:
             raise ValueError("fonte sintética precisa de id iniciado por 'sintetica_'")
         if fonte["id"] in carregar_registro():
             raise ValueError("id de fonte sintética coincide com fonte do registro")
-        sel = cls(fonte, destino, filtro, colunas, chave=chave, _linhas=iter(linhas))
+        sel = cls.__new__(cls)
+        sel._preparar(fonte, destino, filtro, colunas, chave, iter(linhas))
         sel.sintetica_ = True
         return sel
 

@@ -29,7 +29,8 @@ def main():
         status = Counter(u["status"] for u in c["dados"]["unidades"].values())
         resumo[nome] = {"unidades": len(c["dados"]["unidades"]), "status": dict(status), "contagem": c["meta"]["contagem"],
                         "integridade": c["meta"]["integridade"], "dados_sha256": c["meta"]["dados_sha256"],
-                        "completude": rel["situacoes"], "estimativas": sorted(rel["estimativas"]), "lacunas": rel["lacunas"],
+                        "esperadas": rel["esperadas"], "completude": rel["situacoes"], "estimativas": sorted(rel["estimativas"]),
+                        "lacunas": rel["lacunas"], "inesperadas": rel["inesperadas"],
                         "bytes": len(texto.encode("utf-8"))}
     print(json.dumps(resumo, ensure_ascii=False, indent=1))
 
