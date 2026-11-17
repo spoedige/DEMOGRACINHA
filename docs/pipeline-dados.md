@@ -191,7 +191,7 @@ Implementação: `transformacoes.parcelas_d42_d62` (v1) e `completude.avaliar`. 
 | Ordinária separada por `CD_ELEICAO` (D61); suplementares fora dos parâmetros | 2024: 5.569 unidades por cargo na ordinária, dezenas de suplementares | executado |
 | Prefeito e vice com 1 vaga; governador, presidente e vices com 1 | a confirmar com o teste completo | especificado |
 | Vagas iguais ao número de eleitos (candidaturas com situação final "ELEITO", "ELEITO POR QP" ou "ELEITO POR MÉDIA") | 2024: 16.581 de 16.818 unidades; diferenças em prefeito (106), vice-prefeito (106) e vereador (25). 2022: 111 de 193; diferenças em governador (13), vice-governador (13), presidente (1), vice-presidente (1) e suplentes de senador (54) | executado com divergências; resultado histórico, anterior a 8.4, e não constitui validação independente (as duas fontes estão pendentes) |
-| Vagas de vereador conforme a regra legal por faixa de população | pendente de L30 e da regra legal correspondente | especificado |
+| Vagas de vereador conforme a regra legal por faixa de população | pendente da regra legal (Constituição, art. 29, IV; item L a criar, ver 10, achado 2) | especificado |
 
 Leitura das divergências (hipóteses não verificadas): vices e suplentes não recebem situação final no arquivo de candidaturas (`#NULO`); eleitos em 2º turno não aparecem como eleitos no arquivo de candidaturas; as 25 de vereador não têm explicação. Os números desta tabela são históricos; o confronto posterior está em 8.4 e também não valida as vagas (validação circular, ver regra em 8.4).
 
@@ -332,3 +332,37 @@ Arquivo nacional x estaduais (`cobertura.conferir_nacional`): conferência por i
 Regra de validação (D64): concordância entre fontes pendentes não promove nenhuma delas; serve só como hipótese de consistência. Promoção exige confronto com referência de integridade já estabelecida e independente da fonte avaliada; sem essa referência, a fonte fica pendente.
 
 2º turno na completude: `segundo_turno_de` aplica D61 (só `CD_ELEICAO` ordinário), com teste sintético.
+
+## 10. Auditoria de dependências das fontes de vagas, candidaturas e eleitos (17/11/2026)
+
+Auditoria documental, sem coleta, sem código novo e sem parâmetro gerado. Inventário feito por busca de `QT_VAGA`, vagas, candidaturas, eleitos, situação final e cadeiras em GDD, docs, `data/fontes.json` e `tools/`. Grandezas tratadas separadamente: `QT_VAGA` (vagas), número de candidaturas, situação final e número de eleitos. Validar uma não valida a outra.
+
+Classes: **bloqueante** (não avança sem validar a fonte), **contornável** (avança com estimativa marcada ou referência legal), **independente** (não depende dessas fontes).
+
+| Elemento | Onde | Grandeza e fonte | Estado da fonte | Referência independente possível | Classe |
+|---|---|---|---|---|---|
+| Vagas de vereador por município (`municipios.json`) | roadmap 4; regras-e-mundo | `QT_VAGA`, `tse_vagas_2024` | pendente | Constituição, art. 29, IV, só dá faixa máxima por população; o número exato é fixado pela lei orgânica de cada município. Não valida o valor exato | bloqueante para valor oficial; contornável com estimativa pela faixa, marcada |
+| Vagas de deputado federal por UF | motor 5.4 | `QT_VAGA`, `tse_vagas_2022` | pendente | lei complementar e resolução do TSE de fixação das bancadas (a confirmar), total 513 | contornável por referência legal |
+| Vagas de deputado estadual e distrital | motor 5.4 | `QT_VAGA`, `tse_vagas_2022` | pendente | Constituição, art. 27 (função da bancada federal) e art. 32 (DF) | contornável por referência legal |
+| Vagas majoritárias (prefeito, governador, presidente) | motor 6 | `QT_VAGA` | pendente | Constituição: uma vaga | independente |
+| Senado: 2 vagas e 2 votos em 2026, 1 em 2030 | regras-e-mundo 1; motor 4.2.1 | regra jurídica | | Constituição, art. 46 | independente |
+| Quociente eleitoral e partidário | motor 5.4 | vagas da disputa | depende das linhas acima | as mesmas | segue a classe da vaga da disputa |
+| Candidatos sintéticos por lista | motor 5.3; L21 | número de candidaturas, `tse_candidatos_*` | pendente | limite legal por lista (L21) só dá teto | contornável: estimativa pelo limite legal, já prevista em 5.3 e marcada |
+| Eleitos e composição das câmaras municipais em 2024 (`world-2026.json`) | roadmap 4 | situação final, votação por candidato 2024 e candidaturas | pendentes; 34 unidades bloqueadas | nenhuma validada hoje | bloqueante |
+| Prefeitos eleitos em 2024 | roadmap 4 | situação final | pendente | majoritário: mais votado nos votos nominais, que conferem com o detalhe validado nas unidades não bloqueadas (com empate e suplementar à parte) | contornável, a decidir |
+| Deputados federais eleitos em 2022 por partido (base da TV, L8) | motor 7.3 | situação final 2022 | pendente (colunas_pendentes) | composição oficial publicada pela Câmara (a confirmar) ou cálculo próprio pela apuração após L1 e L2 | bloqueante para TV |
+| Bancadas da Câmara e do Senado no FEFC (48% e 15%) | motor 7.2 | bancada no 1º dia útil de junho, não eleitos | fonte não registrada | publicação oficial da Câmara, do Senado e do TSE (L4) | bloqueante para FEFC; não depende de vagas |
+| Votos para deputado federal no FEFC (35%) | motor 7.2 | votação por partido 2022 | validada | | independente |
+| Governabilidade (cadeiras, alinhamento, coesão) | motor 8; D11 | cadeiras iniciais por casa | depende das linhas de eleitos e bancadas | | estrutura independente; inicialização bloqueante |
+| Unidades esperadas de 2º turno na completude | `pipeline/completude.py` | candidaturas com turno 2 | pendente | ver achado 1 | ver achado 1 |
+| Identidade D59, anulados D62, comparecimento, abstenção, brancos, nulos | 7 e 9 | detalhe da apuração | validado | | independente |
+| Correspondência TSE x IBGE | 4 | tabela oficial | validada | | independente |
+| Identificação partidária 2022 e parcelas válidas de 2024 | 5 | votação por partido | validada, 38 exceções segregadas | | independente |
+
+Achados:
+1. **Completude usa fonte pendente para as unidades esperadas de 2º turno.** `unidades_esperadas` lê candidaturas (pendente) como controle. Pela D64, isso é só hipótese. Concorda com a votação por candidato (também pendente) em 51 disputas em 2024 e 13 em 2022. Referência independente parcial: L20 (2º turno só acima de 200 mil eleitores) dá o conjunto de municípios elegíveis a partir do eleitorado validado, mas não diz em quais houve 2º turno. Proposta, sem implementar: registrar no relatório de completude que o 2º turno esperado é hipótese, e cruzar com L20 como teste de sanidade. Decisão do autor.
+2. **Erro documental em 8.1:** "pendente de L30" na regra de vagas de vereador; L30 trata de idades mínimas. Não existe item L para a regra do art. 29, IV. Proposta: novo item L (vagas de vereador por faixa de população), a criar com aprovação.
+3. **A fonte das bancadas de junho (FEFC) não está registrada.** Não depende de vagas, mas é pendência própria (L4).
+4. Vagas de 2022 dos cargos proporcionais e majoritários podem ser confrontadas com a legislação (arts. 27, 32, 45 e 46 da Constituição e a fixação das bancadas), referência independente pela D64. Seria caminho de promoção parcial de `tse_vagas_2022`; não executado nem proposto como promoção agora.
+
+O que pode avançar sem vagas: parcelas D42 e D62, correspondência municipal, identificação partidária, regras jurídicas do Senado, estrutura do motor e da governabilidade. O que espera: vagas exatas de vereador, composição inicial das câmaras, base da TV e bancadas do FEFC.
