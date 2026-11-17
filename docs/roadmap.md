@@ -141,7 +141,7 @@ Rede: antes de coletar, testar IBGE e TSE com `curl -sI`. Em 403, parar, registr
 87. Conjunto da base: no máximo 10 municípios, inclui o inicial, aceita qualquer UF e não altera o conjunto de agentes.
 88. Eleição municipal usa a máquina do próprio município; disputa estadual não conta duas vezes municípios com base detalhada.
 89. A oferta de nomeação não usa capital político.
-90. Suplência mínima: afastamento ou licença de legislador põe um suplente sintético em exercício e preserva o mandato do titular conforme a regra do cargo.
+90. Suplência mínima: afastamento ou licença de legislador que, pela regra aplicável ao cargo, determine convocação põe um suplente sintético em exercício e preserva o mandato do titular conforme essa regra.
 91. Eleição municipal fora do conjunto da base: `baseTerritorial = 0` e o agregado regional não é usado; em disputa estadual ou nacional, o agregado regional exclui os municípios do conjunto da base.
 92. Afastamento ou licença sem convocação pela regra do cargo não gera suplente.
 
