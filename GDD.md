@@ -27,12 +27,12 @@ Simulador de carreira política brasileira, só modo carreira, tom sério e sem 
 
 ## 1. Visão
 
-O jogador vive uma carreira de 01/01/2026 até a aposentadoria, a saída voluntária ou o fim por saúde. Cada janela pergunta o que ele aceita perder agora para chegar aonde quer depois. Não há trilha obrigatória. A Presidência é possível para qualquer personagem e nunca é desbloqueada por nível, pontuação, flag ou sequência de cargos.
+O jogador vive uma carreira de 01/01/2026 até a aposentadoria ou o fim por saúde. A aposentadoria é sempre voluntária (D38): não há idade máxima nem aposentadoria compulsória. A idade afeta saúde, disposição, oportunidades e desenvolvimento, sem encerrar a carreira. Todos começam sem mandato eletivo (D36). Cada janela pergunta o que ele aceita perder agora para chegar aonde quer depois. Não há trilha obrigatória. A Presidência é possível para qualquer personagem e nunca é desbloqueada por nível, pontuação, flag ou sequência de cargos.
 
 Pilares:
 1. **Tensão em toda escolha.** Toda carta, exceto a segura, ganha em um eixo e paga em outro.
 2. **Trajetória vence lance isolado.** Efeitos limitados e decrescentes no tempo.
-3. **Talento oculto, nunca destino.** O potencial molda a velocidade de desenvolvimento, nunca a urna. O teto real da carreira vem do espaço político: partido, território, alianças e conjuntura.
+3. **Talento oculto, nunca destino.** O potencial molda o desenvolvimento das aptidões e não tem efeito eleitoral direto. O teto real da carreira vem do espaço político: partido, território, alianças e conjuntura.
 4. **Objetivos em conflito.** O jogo não pode virar maximização de pontos.
 5. **Lei como terreno.** Calendário, idades, quociente, cláusula, fundo e TV seguem as regras reais.
 6. **Celular primeiro.** Uma coluna, poucos números, decisões em cartas.
@@ -47,7 +47,7 @@ Pilares:
 3. **Eleição:** motor proporcional ou majoritário, 2º turno quando a regra exige.
 4. **Mandato ou fase sem cargo.** Posse na primeira janela do ano seguinte.
 5. **Balanço de carreira** a cada 4 anos.
-6. **Fim:** resumo, títulos, grau em cinco dimensões, cartão de conquista, linha de potencial estimado vs alcançado.
+6. **Fim:** resumo, títulos, grau em cinco dimensões, cartão de conquista, quadro de desenvolvimento (potencial inicial, aptidões atuais, evolução).
 
 ## 3. Tempo e ritmo
 

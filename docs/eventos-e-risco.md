@@ -65,11 +65,16 @@ Outras candidatas (Fase 2 ou expansão): ruptura de coalizão, vacância.
 
 ## 5. Corrupção
 
-Separação clara: negociação legítima (apoio por cargo, emenda por voto) usa Capital de Entrega dentro da regra. Prática ilícita converte recurso político em ganho pessoal ou frauda a eleição.
+Separação clara, pelo tipo de contrapartida:
+| Contrapartida | Natureza | Exemplo |
+|---|---|---|
+| Apoio legislativo ou político público | legítima | emenda ou indicação em troca de voto em proposta ou adesão à base |
+| Apoio eleitoral obtido com recurso institucional | ilícita | emenda condicionada a pedido de votos ou a uso da máquina pública na campanha (enquadramento legal a confirmar) |
+| Vantagem pessoal | ilícita | emenda ou cargo em troca de pagamento ou benefício privado |
 
 | Nível | Exemplo | Ganho | Risco |
 |---|---|---|---|
-| 1. Favor | emenda dirigida a aliado em troca de apoio pessoal | pequeno | baixo, Arquivo Vermelho +1 |
+| 1. Favor | emenda ou indicação em troca de benefício privado de pequeno valor ou de apoio eleitoral com uso de recurso institucional | pequeno | baixo, Arquivo Vermelho +1 |
 | 2. Desvio | converter Capital de Entrega em Caixa Pessoal | médio | médio, agenda investigação |
 | 3. Esquema | estrutura recorrente com operadores | alto | alto, cadeia de escândalo |
 
@@ -83,15 +88,15 @@ Separação clara: negociação legítima (apoio por cargo, emenda por voto) usa
 
 ## 6. Situação jurídica
 
-Status: Regular, Investigado, Condenado, InelegibilidadeReconhecida. Risco jurídico é probabilidade separada. Risco alto sozinho nunca gera inelegibilidade; só a escada processual. Condenado não concorre.
+Status: Regular, Investigado, Condenado, InelegibilidadeReconhecida. Risco jurídico é probabilidade separada. Risco alto sozinho nunca gera inelegibilidade; só a escada processual. Condenação e inelegibilidade não são equivalentes automáticos: `InelegibilidadeReconhecida` só ocorre quando a condenação se enquadra em hipótese legal de inelegibilidade (tipo de crime ou ato, órgão colegiado ou trânsito em julgado, prazos; a confirmar na 1B). Condenado sem esse enquadramento pode concorrer.
 
 ## 6.1 Estados temporários (P10, MVP simplificado)
 | Estado | Origem | Duração | Efeitos |
 |---|---|---|---|
 | Investigado | evento da escada de consequências (seção 5) | até arquivamento, denúncia ou prazo máximo de janelas (calibrar) | risco jurídico sobe; Cúpula e credibilidade sob pressão; cartas de defesa no pool; pode concorrer |
-| Afastamento cautelar | decisão judicial em evento | prazo do evento (calibrar dentro de faixa a confirmar) | perde exercício do cargo, mantém mandato; sem Capital de Entrega; suplente ou vice assume |
-| Licença de saúde | saúde abaixo de limiar ou evento | 1 a 3 janelas (calibrar) | sem cartas de ação, só opção segura; notoriedade decai; vice ou suplente assume se longa (regra a confirmar) |
-| Licença para nomeação | aceitar cargo de nomeação sendo legislador | duração da nomeação | suplente assume; mandato preservado (a confirmar); pode voltar |
+| Afastamento cautelar | decisão judicial em evento | prazo do evento (calibrar dentro de faixa a confirmar) | perde exercício do cargo, mantém mandato; sem Capital de Entrega; no Executivo assume o vice, no Legislativo assume o suplente (regras a confirmar por cargo) |
+| Licença de saúde | saúde abaixo de limiar ou evento | 1 a 3 janelas (calibrar) | sem cartas de ação, só opção segura; notoriedade decai; se longa, no Executivo assume o vice e no Legislativo assume o suplente (prazos legais distintos por cargo, a confirmar) |
+| Licença para nomeação | legislador que aceita cargo de nomeação governamental | duração da nomeação | suplente assume; mandato preservado (a confirmar por cargo); pode voltar. Não se aplica a chefe do Executivo |
 Cada estado tem id estável, origem registrada no histórico e fim definido. Nenhum gera game over.
 
 ## 7. Saúde

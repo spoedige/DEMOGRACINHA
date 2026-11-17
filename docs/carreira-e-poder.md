@@ -2,18 +2,24 @@
 
 ## 1. Personagem
 
-### Origens (magnitudes a calibrar)
-| Origem | Mais | Menos | Extra |
+### Origens (decisão D36)
+
+Origem é o que o personagem era antes de entrar na carreira política, não o que já conquistou politicamente. Regra geral: **todos começam sem mandato eletivo**; nenhuma origem concede mandato, eleição, nomeação ou Capital de Entrega. Partida com mandato, se um dia existir, será um cenário inicial separado.
+
+Cada origem define principalmente **caminhos**: rede inicial, cartas próprias no pool e tipos de oportunidade que tendem a surgir. Diferenças numéricas iniciais são pequenas (calibrar) e servem ao caminho, não o substituem.
+
+| Origem | Rede inicial | Cartas e oportunidades próprias | Limitação de partida |
 |---|---|---|---|
-| Influenciador/Coach | notoriedade por ação de mídia | Cúpula inicial | cartas de redes sociais |
-| Pastor/Líder Comunitário | popularidade local | notoriedade nacional | bônus com eleitorado evangélico |
-| Empresário do Agro/Construtora | Caixa Pessoal, risco jurídico | popularidade entre trabalhadores | |
-| Herdeiro de Clã | Cúpula, Bancada | reputação | tag Nepotismo permanente |
-| Sindicalista/Militante | Bancada | Executivo | bônus com eleitorado sindicalizado |
-| Servidor | Gestão | carisma (Comunicação) | bônus em cargos técnicos |
-| Assessor | Articulação | popularidade | bônus em bastidores |
-| Vereador em exercício | popularidade local | notoriedade nacional | começa com mandato |
-| Secretário | Gestão, Executivo | Bancada | |
+| Influenciador/Coach | audiência digital | cartas de redes sociais; convites de partidos que buscam exposição | Cúpula inicial baixa; pouca base territorial |
+| Pastor | comunidade religiosa | cartas de mobilização da congregação; diálogo com eleitorado evangélico | notoriedade fora da comunidade baixa |
+| Líder Comunitário | associações de bairro, movimentos locais | cartas de demandas locais e mutirões; base territorial inicial em um município | notoriedade estadual e nacional baixa |
+| Empresário | entidades empresariais, fornecedores | doações próprias a campanha dentro da lei; cartas de gestão e investimento local | rejeição inicial maior entre trabalhadores organizados (calibrar); risco jurídico só por ações, nunca pela origem |
+| Rede Familiar Política | relações preexistentes com políticos da família | acesso facilitado à Cúpula e a convites; cartas de herança de base | expectativa de lealdade à família (compromissos herdados); nenhuma tag de nepotismo ou corrupção pela origem |
+| Liderança Sindical ou Associativa | sindicato, associação profissional ou de classe | cartas de mobilização organizada; diálogo com eleitorado sindicalizado ou associado | relação inicial com Executivo dependente do alinhamento do governo |
+| Servidor | carreira pública, colegas de órgão | cartas técnicas; oportunidades em funções de gestão | sem penalidade automática |
+| Assessor | gabinetes, bastidores | cartas de articulação; acesso a lideranças | baixa exposição pública inicial (notoriedade baixa), sem penalidade de popularidade |
+| Gestor Público | ex-gestor de órgão ou programa, fora do cargo | cartas de gestão e entrega; oportunidades de nomeação futura | Bancada inicial baixa |
+| Professor/Educador | escola, universidade, comunidade escolar | cartas de educação, serviços públicos e articulação comunitária | recurso financeiro inicial baixo |
 
 ### Indicadores
 Popularidade, notoriedade e rejeição em 3 escopos (local, estadual, nacional). Reputação é indicador derivado, não atributo.
@@ -21,7 +27,7 @@ Popularidade, notoriedade e rejeição em 3 escopos (local, estadual, nacional).
 ### Três bolsos
 - **Caixa Pessoal:** dinheiro do personagem.
 - **Fundo de Campanha:** partidário, eleitoral (FEFC) e doações. Só para campanha.
-- **Capital de Entrega:** emendas e cargos, obtido pelo exercício de funções. É recurso político, não dinheiro. Converter em Caixa Pessoal é corrupção.
+- **Capital de Entrega:** representação abstrata da capacidade institucional de produzir entregas, articular recursos orçamentários e negociar espaços políticos. Obtido só pelo exercício de função pública (mandato ou nomeação governamental). Não é dinheiro público à disposição do personagem. Os usos (emenda, indicação, prioridade de projeto) são tipos distintos de entrega e não se convertem entre si nem em unidade econômica. Desviar a capacidade institucional para ganho pessoal é corrupção.
 
 Caixa do partido pertence aos agentes do partido, não ao jogador.
 
@@ -46,7 +52,8 @@ Cúpula (direção partidária), Bancada (pares no Legislativo), Executivo (vín
   Um mesmo fato só altera mais de uma dimensão quando atinge públicos diferentes por meios diferentes (exemplo: escândalo publicado atinge rejeição; o rompimento de acordo que o causou atinge credibilidade).
 - **Governabilidade**: ver `motor-eleitoral.md` seção 8.
 - **Capital político** não é estado guardado. É calculado quando necessário:
-  `capitalPolitico = f(relações, influência do grupo, credibilidade, reputação, base territorial)` (pesos a calibrar). Usado para definir convites e força em negociação.
+  `capitalPolitico = f(relações, influência do grupo, credibilidade, reputação, base territorial)` (pesos a calibrar).
+  Regra de não duplicação: onde capital político é usado (oferta de convites e nomeações, força em negociação), seus componentes não entram de novo como termos separados. Uma regra usa ou o capital político ou componentes específicos, nunca os dois.
 
 ### Estado adicional
 Tags, Arquivo Vermelho, eventos atrasados, `mandatosConsecutivos`, saúde gradual (sem game over automático), status jurídico (ver `eventos-e-risco.md`).
@@ -65,11 +72,12 @@ Tags, Arquivo Vermelho, eventos atrasados, `mandatosConsecutivos`, saúde gradua
 ## 3. Potencial Político (oculto, 0 a 100)
 
 - Sorteado pela semente, distribuição concentrada no meio (hipótese: normal truncada, média 50, desvio 15; calibrar). Origem e dificuldade deslocam a média.
-- É capacidade de desenvolvimento, não teto de carreira. O alcance real depende do espaço político (partido, território, grupo, conjuntura).
-- Efeitos (decisão D1): velocidade de aprendizado e de ganho de experiência; evolução das aptidões; recuperação e adaptação após derrotas e crises; disponibilidade de oportunidades de desenvolvimento e formação (cursos, mentorias, funções técnicas, relatorias de aprendizado).
-- Proibido: o potencial não modifica urna, não aumenta quantidade ou qualidade de oportunidades eleitorais, candidaturas competitivas, alianças ou recursos de campanha.
+- É capacidade de desenvolvimento, não teto de carreira.
+- Regra (D34): o potencial não possui efeito direto sobre resultados eleitorais, candidaturas, elegibilidade, alianças ou recursos de campanha. Pode influenciar o desenvolvimento das aptidões, que, uma vez adquiridas, afetam normalmente as ações e seus resultados.
+- Efeitos: velocidade e teto de crescimento das aptidões por oportunidade de aprendizado; recuperação e adaptação após derrotas e crises; disponibilidade de oportunidades de formação (cursos, mentorias, funções técnicas).
+- Não gera oportunidades eleitorais, candidaturas, alianças nem recursos de campanha.
 - Mutável: feitos e fracassos extremos movem 1 a 5 pontos, com teto acumulado na carreira (calibrar, hipótese ±10).
-- Descoberta: número nunca exibido. Após 2 a 3 eleições aparecem faixas qualitativas. Balanço a cada 4 anos compara a posição com a faixa inferida.
+- Descoberta: número nunca exibido. Após 2 a 3 eleições aparecem faixas qualitativas. O balanço a cada 4 anos mostra a evolução das aptidões, não um teto.
 
 ## 4. Aptidão e capacidade efetiva
 
@@ -87,13 +95,13 @@ Tags, Arquivo Vermelho, eventos atrasados, `mandatosConsecutivos`, saúde gradua
 
 - Peso de saída por cargo: quanto mais tempo, maior o custo político e menor o retorno de continuar. Após 2 mandatos surgem cartas de "ciclo cumprido".
 - Cada degrau é mais caro e arriscado. O jogador típico circula entre vereador, deputado e cargos próximos.
-- Senado é escolha de identidade: 8 anos, estabilidade, menos exposição executiva, menos influência no dia a dia legislativo.
+- Senado é escolha de identidade: 8 anos, estabilidade e menos exposição executiva, com influência legislativa alta (revisão, aprovação de autoridades, papel federativo).
 
 ## 7. Caminho à Presidência
 
 - Sem gate. A candidatura emerge de notoriedade nacional, indicação partidária, coligação competitiva, recursos, rejeição administrável, apoio territorial e relações.
 - Trajetórias: carreira legislativa, executivo (prefeito, governador), articulador de bastidor (liderança, vice), fenômeno eleitoral, ascensão improvável.
-- Pode chegar e perder. Meta (hipótese): Presidência em 1 a 3% das carreiras. Como o potencial não age na urna, a diferença entre faixas de potencial deve emergir só do desenvolvimento mais rápido; é medida na calibração, não imposta.
+- Pode chegar e perder. Meta (hipótese): Presidência em 1 a 3% das carreiras. A diferença entre faixas de potencial emerge só pelo desenvolvimento das aptidões; é medida na calibração, não imposta.
 - Outros grandes finais: senador influente, governador popular, líder partidário.
 
 ## 8. Ambição, oportunidades e identidade
@@ -101,15 +109,15 @@ Tags, Arquivo Vermelho, eventos atrasados, `mandatosConsecutivos`, saúde gradua
 - Objetivos declarados e emergentes, mutáveis, nunca obrigatórios. Orientam eventos, janelas automáticas e o veredito final.
 - Oportunidades têm prazo, dependem de talento, experiência, relações, notoriedade, histórico e posição. Podem ser aceitas, recusadas ou perdidas. Algumas nascem de decisões de anos antes.
 - Capital político (oculto, derivado): ver seção 1. Define convites e negociações.
-- Oportunidades eleitorais e de aliança dependem de posição, relações, grupo, base e conjuntura, nunca do potencial.
+- Oportunidades eleitorais e de aliança dependem de posição, relações, grupo, base e conjuntura, nunca diretamente do potencial.
 - Reputação histórica: articulador, gestor, populista, reformista, oportunista, conciliador. Tag que influencia relações.
 
 ## 9. Vice
 
 - Convite chega como carta quando uma chapa majoritária precisa de companheiro.
-- Ganhos: notoriedade nacional, rede do titular, experiência executiva, crédito na Cúpula.
+- Ganhos: notoriedade no escopo da chapa (municipal, estadual ou nacional), rede do titular, experiência executiva, crédito na Cúpula.
 - Custos: menos autonomia, popularidade avaliada junto com o titular, Bancada menos favorável.
-- Risco: se o titular cai, o vice sucede com legitimidade reduzida (calibrar; regras a confirmar).
+- Risco: se o titular cai, o vice sucede com legitimidade reduzida (calibrar; regras a confirmar). Vice substitui e sucede titular do Executivo; suplente substitui ou sucede legislador (senador, deputado, vereador). As regras são distintas por cargo (a confirmar na 1B).
 - Armadilha do vice: exposição sem descolamento. Cartas de posicionamento próprio custam Cúpula e liberam candidatura própria.
 - Pool próprio de bastidor. Substituição (temporária) é diferente de sucessão (definitiva).
 
@@ -117,7 +125,7 @@ Tags, Arquivo Vermelho, eventos atrasados, `mandatosConsecutivos`, saúde gradua
 
 Áreas: partido por dentro, Legislativo, emendas, Executivo, federalismo, instituições externas, eleitorado, crises, conformidade eleitoral.
 
-- Capital de Entrega é a moeda de governar e legislar: emendas, cargos, apoio a projetos.
+- Capital de Entrega (definição na seção 1) é a capacidade de governar e legislar; não é dinheiro.
 - Legislador: votações, relatorias, comissões, liderança, emendas. Pode integrar a base ou a oposição do governo correspondente.
 - Executivo: entregas, nomeações, formação e manutenção da base parlamentar (governabilidade).
 - Conformidade no MVP: candidatura laranja, desincompatibilização, registro e impugnação. Prestação de contas e limite de gastos ficam para a Fase 2.
@@ -191,9 +199,10 @@ Posições relevantes que dão influência sem mandato eletivo. Lista fechada no
 | Estadual | secretário estadual |
 | Federal | ministro, secretário executivo de ministério |
 | Partidária | presidente de diretório municipal, estadual ou nacional |
-| Partidária, secundária | secretário-geral, tesoureiro, coordenador de campanha do partido |
 
-Nomeações governamentais (municipal, estadual, federal) dependem de relação com Executivo e composição do governo e exigem desincompatibilização para disputar. Posições partidárias dependem da Cúpula, não exigem desincompatibilização (a confirmar) e não recebem Capital de Entrega (decisão D25). Seus efeitos são de influência partidária e organizacional: peso na escolha de candidaturas, na distribuição interna de fundos e tempo de TV, e na capilaridade da legenda.
+Fase 2 (decisão D37): secretário-geral, tesoureiro, coordenador de campanha do partido.
+
+Nomeações governamentais (municipal, estadual, federal) dependem de relação com Executivo e composição do governo e exigem desincompatibilização para disputar. Posições partidárias dependem da Cúpula, não exigem desincompatibilização (a confirmar) e não recebem Capital de Entrega (decisão D25). Seus efeitos são de influência partidária e organizacional: peso na escolha de candidaturas, na distribuição interna de fundos, na distribuição interna da exposição dentro do tempo de TV que a lei dá à legenda (o tempo legal não muda) e na capilaridade da legenda.
 
 - Não há simulação de todas as nomeações do país. Só existem as vagas que podem ser oferecidas ao personagem, criadas quando ele tem relação suficiente com o governo ou o partido.
 - Oferta depende de: relação com Executivo (ou Cúpula, para cargo partidário), composição do governo (partido do personagem na coalizão), capital político derivado, compromissos firmados (tipo "cargo ou espaço") e conjuntura.
@@ -232,7 +241,7 @@ Grau qualitativo (faixas a definir, fórmula oculta) em cinco dimensões:
 | Influência política | influência (P8, abaixo); exclui cargos ocupados |
 | Realizações | entregas dos mandatos, propostas aprovadas |
 | Reputação | credibilidade, reputação histórica, Arquivo Vermelho, escândalos |
-| Legado | influência do grupo ao fim da carreira, base territorial remanescente, aliados em posição |
+| Legado | o que persiste sem o personagem: simulação de um ciclo após a saída, medindo influência residual do grupo, base remanescente e aliados em posição |
 
 ### Influência (P8, MVP)
 Dimensão própria, separada do poder institucional. Poder institucional é o que o cargo dá (Capital de Entrega, competências legais) e já entra em alcance institucional. Influência é a capacidade de mover decisões de outros, com ou sem cargo:
@@ -242,8 +251,9 @@ influencia = f( grupo.influencia, influenciaPartidaria, compromissosAReceber, ba
 - `influenciaPartidaria`: posições partidárias e relação com a Cúpula.
 - `compromissosAReceber`: compromissos ativos em que outro ator deve ao personagem.
 - Cargo não entra. Um mesmo fato não conta nas duas dimensões: eleger-se soma a alcance; eleger aliados soma ao grupo e, por ele, à influência.
+- Influência é medida ao longo da carreira (ponderada pelo tempo); legado é medido só depois da saída. As fontes são as mesmas, mas os períodos não se sobrepõem.
 - Função `f` (calibrar). Não é exibida como número: aparece em faixa na tela de consulta.
 
 O cargo mais alto pesa, mas não é multiplicador dominante. Pesos a calibrar para que presidente isolado, senador articulador e governador bem avaliado possam ter graus comparáveis. A avaliação considera o contexto: oportunidades que a conjuntura ofereceu.
 
-Linha de potencial estimado vs alcançado: abaixo, no teto, acima (tag Fenômeno). Sucessores individuais: Fase 2.
+Quadro de desenvolvimento (D39), em texto qualitativo: potencial inicial (faixa), aptidões atuais (até 3 etiquetas) e evolução desde o início da carreira. Substitui a linha potencial versus alcançado. Sucessores individuais: Fase 2.

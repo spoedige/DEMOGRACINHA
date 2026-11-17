@@ -6,7 +6,7 @@ Títulos são conquistas de carreira em tom sério. Cada um tem condição verif
 
 | Título | Condição |
 |---|---|
-| O Fenômeno | Alcançado acima do potencial estimado |
+| O Fenômeno | Trajetória excepcional: ascensão rápida entre escopos, resultados eleitorais acima do esperado para a posição de partida e conquista de espaço institucional (critérios a calibrar; não depende do potencial) |
 | O Incombustível | Sobreviveu a 3 ou mais escândalos do Arquivo Vermelho |
 | O Puxador | Elegeu 5 ou mais aliados de carona |
 | O Reformador | Aprovou 3 reformas estruturais |
@@ -88,4 +88,4 @@ O grau combina cinco dimensões: alcance institucional, influência política, r
 
 ## 5. Cartão de conquista
 
-Nome, período, cargo mais alto, grau, dimensão mais forte, até 3 títulos, linha "potencial estimado vs alcançado" (abaixo, no teto, acima) e semente da carreira. Renderizado em canvas pixel, exportável como imagem e como texto.
+Nome, período, cargo mais alto, grau, dimensão mais forte, até 3 títulos, quadro de desenvolvimento (potencial inicial, aptidões atuais, evolução) e semente da carreira. Renderizado em canvas pixel, exportável como imagem e como texto.

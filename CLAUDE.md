@@ -31,7 +31,7 @@ Guia para quem trabalha neste repositório. Leia antes de qualquer alteração.
 | Etapas, dados, calibração, testes, pendências | `docs/roadmap.md` |
 | Títulos e resumo | `titulos.md` |
 
-Para economizar contexto: leia só o documento da área da tarefa. Os docs não repetem conteúdo entre si; o GDD é o índice.
+Para economizar contexto: leia só o documento da área da tarefa. Fonte única por regra: calendário e ritmos no `GDD.md`; regras legais em `docs/regras-e-mundo.md`; fórmulas em `docs/motor-eleitoral.md`. Outros documentos citam e não redefinem. O GDD é o índice.
 
 ## Arquitetura técnica (etapa 2)
 

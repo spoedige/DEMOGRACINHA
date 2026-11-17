@@ -152,3 +152,34 @@ Correção registrada: o teste de dupla contagem é o 32, não o 37. A versão d
 | D31 | Eleitores que conhecem sem opinião formada (`semOpiniao`) | `motor-eleitoral.md` 4.6 |
 | D32 | Gasto em alocações distintas com reserva | `motor-eleitoral.md` 4.4 |
 | D33 | Quatro canais de aliança sem duplicação | `motor-eleitoral.md` 4.5 e 6.1 |
+
+## Revisão pós-auditoria, 17/11/2026
+
+| Id | Decisão | Onde |
+|---|---|---|
+| D34 | Potencial sem efeito eleitoral direto; aptidões adquiridas agem normalmente. D1 atualizada | `motor-eleitoral.md` 0 e 1.2; `carreira-e-poder.md` 3; testes 26 e 60 |
+| D35 | Proporcional por competição única com segmentos fiéis e livre, voto de legenda e candidatos sintéticos prévios | `motor-eleitoral.md` 5 |
+| D36 | Novas origens, todos sem mandato, origem como caminho | `carreira-e-poder.md` 1 |
+| D37 | Só presidente de diretório no MVP; demais posições partidárias na Fase 2 | `carreira-e-poder.md` 10.4 |
+| D38 | Aposentadoria voluntária, sem idade máxima | `GDD.md` 1 |
+| D39 | O Fenômeno por trajetória; quadro de desenvolvimento no lugar de potencial versus alcançado | `titulos.md`; `carreira-e-poder.md` 12 |
+
+Correções técnicas da auditoria, aplicadas sem decisão nova por não alterarem escopo:
+- Ruído e transferência com multiplicador de média 1 (`exp(σZ - σ²/2)`).
+- Pontuação descrita como positiva sem teto.
+- Mobilização alocada por município.
+- Transferência generalizada para lideranças individuais.
+- Grupo político retirado da máquina (fica em influência).
+- Senado por matriz condicional de pares distintos.
+- `identChapa` inclui o próprio partido ou federação.
+- Eleitorado, comparecimento, brancos, nulos e válidos separados; 2º turno sobre o eleitorado.
+- Simulação própria de cada um dos 5.570 municípios, sem agentes.
+- Condenação distinta de inelegibilidade.
+- Capital de Entrega definido como capacidade institucional abstrata.
+- Capital político sem uso conjunto com seus componentes.
+- Influência ao longo da carreira e legado só após a saída.
+- Senado com influência legislativa alta; vice com notoriedade no escopo da chapa; vice e suplente separados.
+- Tempo legal de TV separado da distribuição interna de exposição.
+- Contrapartida legítima e ilícita de emenda definida pelo tipo de apoio.
+- Teste 19 dividido em determinístico e estatístico.
+- Fonte única por regra declarada em `CLAUDE.md`.

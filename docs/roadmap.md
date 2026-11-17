@@ -23,7 +23,7 @@ Também: credibilidade sem duplicação (P5), influência como dimensão própri
 
 ## 3. Fase 2
 
-Suplentes de senador; sucessão e apadrinhamento; desenvolvimento detalhado das 6 dimensões e reputação por atividade; ambição dinâmica e oportunidades que cruzam mandatos; poder entre eleições completo; legado dinâmico; conformidade eleitoral ampliada (prestação de contas, limites de gasto); facções partidárias (P2); coalizão de governo completa (P13); hipótese H1 de palanque presidencial, se aprovada; membros individuais, disputa interna e sucessão do grupo político; parlamentares individuais. Ranking global fora do MVP.
+Suplentes de senador; sucessão e apadrinhamento; desenvolvimento detalhado das 6 dimensões e reputação por atividade; ambição dinâmica e oportunidades que cruzam mandatos; poder entre eleições completo; legado dinâmico; conformidade eleitoral ampliada (prestação de contas, limites de gasto); facções partidárias (P2); posições partidárias secundárias (secretário-geral, tesoureiro, coordenador de campanha, D37); modelo de comparecimento sensível à conjuntura; coalizão de governo completa (P13); hipótese H1 de palanque presidencial, se aprovada; membros individuais, disputa interna e sucessão do grupo político; parlamentares individuais. Ranking global fora do MVP.
 
 ## 4. Dados da etapa 1B
 
@@ -62,20 +62,20 @@ Rede: antes de coletar, testar IBGE e TSE com `curl -sI`. Em 403, parar, registr
 10. Cláusula e arredondamento de 1,45%.
 11. Barreira de 10% e 20% só em proporcional.
 12. Migração de estado.
-13. Condenado não concorre.
+13. Condenado só fica impedido de concorrer quando há inelegibilidade reconhecida por hipótese legal; condenação sem enquadramento não impede.
 14. Saúde sem game over automático.
 15. Talento nunca bloqueia carta.
 16. Presidência sem gate.
 17. Momento decai.
 18. Modificadores de carta decaem.
-19. Intenso, Normal e Express produzem a mesma distribuição com a mesma semente de mundo (teste estatístico).
+19. Ritmos: (a) determinístico: com a mesma semente, o fluxo de RNG de mundo e a conjuntura são idênticos em Intenso, Normal e Express; (b) estatístico: a distribuição dos resultados de carreira é equivalente entre ritmos.
 20. Janela pulada resolve com a opção segura.
 21. Nenhuma carta sem tensão, fora a segura.
 22. No máximo 6 números na tela de decisão.
 23. Export e import restauram a mesma carreira.
 24. Resumo inclui derrotas.
 25. Nenhum travessão em textos do jogo (varredura automática).
-26. Potencial fora da urna: personagens com potenciais diferentes, nas mesmas condições e com as mesmas ações, obtêm a mesma votação, a mesma elegibilidade, as mesmas ofertas de candidatura e aliança, o mesmo recurso de campanha e a mesma transferência.
+26. Potencial sem efeito eleitoral direto (D34): com aptidões e capacidades efetivas congeladas, mesmos demais fatores e mesma semente, personagens com potenciais diferentes obtêm a mesma votação, elegibilidade, ofertas de candidatura e aliança, recurso de campanha e transferência.
 27. Governabilidade difere com mesma fração de cadeiras e coesão diferente.
 28. Conjuntura evolui igual com e sem ações do jogador fora do escopo dele.
 29. Compromisso rompido reduz credibilidade; cumprido aumenta.
@@ -98,9 +98,9 @@ Rede: antes de coletar, testar IBGE e TSE com `curl -sI`. Em 403, parar, registr
 46. Simulação agregada da UF desconta municípios individualizados; soma de votos igual aos válidos.
 47. Candidato não recebe automaticamente parcela do FEFC proporcional ao desempenho do partido.
 48. Soma exata: em toda disputa, votos distribuídos (legenda, nominais, genérico, dispersão) somam exatamente os válidos após arredondamento.
-49. Sem concentração artificial: com τ = 1, concorrentes de pontuação igual recebem votos iguais e a razão de votos é a razão das pontuações (sem ruído).
-50. Lista sem candidatos individualizados recebe votos e tem eleitos pelo candidato genérico.
-51. Identificação partidária não aparece no nível nominal.
+49. Proporcionalidade: com τ = 1 e sem ruído, concorrentes de pontuação igual recebem votos iguais e a razão de votos é a razão das pontuações.
+50. Lista sem candidatos individualizados recebe votos e tem eleitos entre seus candidatos sintéticos.
+51. Identificação partidária só define o tamanho dos segmentos fiéis; nenhuma pontuação de candidato ou legenda a contém.
 52. `semOpiniao` nunca é somado a popularidade nem a rejeição; a partição soma 1.
 53. Nenhum real é alocado a exposição e mobilização ao mesmo tempo; soma das alocações e reserva igual ao fundo disponível.
 54. Cada aliado contribui no máximo uma vez por canal; partido não gera transferência; pessoa não gera identificação; apoio sem coligação não gera identificação.
@@ -109,6 +109,23 @@ Rede: antes de coletar, testar IBGE e TSE com `curl -sI`. Em 403, parar, registr
 57. Posição partidária nunca gera Capital de Entrega.
 58. Estados temporários têm origem, duração e fim; nenhum gera game over.
 59. Atributos da ficha de oportunidade não alteram efeitos do cargo.
+60. Desenvolvimento: sob as mesmas oportunidades de aprendizado e a mesma semente, potenciais diferentes podem gerar trajetórias de aptidões diferentes.
+61. Concentração: sem ruído, a distribuição de participações tem o mesmo índice de concentração (HHI) que a distribuição normalizada das pontuações; com ruído, a média do HHI sobre sementes não cresce com σ além do esperado pela variância.
+62. Ruído com média 1: para qualquer σ, a média do multiplicador sobre muitas sementes é 1 dentro da tolerância; aumentar `alcanceRedes` não aumenta a votação esperada.
+63. Puxador: elevar a opinião de um candidato aumenta `votosLista` da sua lista apenas pela soma dos seus votos nominais adicionais.
+64. Número de candidatos: adicionar um candidato sintético de pontuação mínima a uma lista não altera o segmento fiel `I_L`.
+65. Candidatos sintéticos existem antes da apuração; barreira de 10% e sobras são verificadas para eles; recriação pela semente dá os mesmos candidatos.
+66. Soma exata no proporcional: legenda mais nominais de todas as listas igual a `validos`.
+67. Senado: cada eleitor representado dá dois votos a candidatos distintos; soma dos segundos votos igual aos primeiros votos válidos; diagonal da matriz nula.
+68. `identChapa` de candidatura isolada é igual à do próprio partido ou federação.
+69. 2º turno: eleitorado constante; contingentes de origem distribuídos sem sobra entre A, B, branco/nulo e abstenção; nenhuma origem transfere integralmente.
+70. Cada um dos 5.570 municípios produz prefeito e câmara próprios em 2028 e 2032; agregados da UF são somas.
+71. Nenhuma origem inicia com mandato, nomeação ou Capital de Entrega.
+72. Rede Familiar Política não gera tag de nepotismo nem risco jurídico pela origem.
+73. Aposentadoria nunca ocorre sem decisão do jogador, em qualquer idade.
+74. Posições partidárias da Fase 2 não aparecem no pool do MVP.
+75. Uma mesma regra nunca usa capital político e seus componentes ao mesmo tempo.
+76. Influência e legado não somam o mesmo período: legado só mede o ciclo posterior à saída.
 
 ## 7. Itens a confirmar
 
