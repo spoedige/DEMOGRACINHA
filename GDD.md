@@ -55,20 +55,38 @@ Pilares:
 
 | Janela | Período | Foco |
 |---|---|---|
-| J1 | janeiro a 04/04 | Janela partidária (05/03 a 03/04), filiação, domicílio, desincompatibilização |
-| J2 | 05/04 a 19/07 | Pré-campanha. Rádio e TV fora dos programas de pré-candidatos a partir de 30/06. Restrições a inaugurações e agentes públicos a partir de 04/07 |
-| J3 | 20/07 a 15/08 | Convenções (20/07 a 05/08), registro até 15/08, vice, coligação, TV |
+| J1 | janeiro a 04/04 | Janela partidária, filiação, domicílio, desincompatibilização |
+| J2 | 05/04 a 19/07 | Pré-campanha, com as restrições de 30/06 e 04/07 |
+| J3 | 20/07 a 15/08 | Convenções, registro, vice, coligação, TV |
 | J4 | a partir de 16/08 | Campanha de rua |
-| J5 | 28/08 a 04/10 | Horário gratuito (28/08 a 01/10), debates, reta final, urna em 04/10 |
-| J6 | após 04/10 | Entre turnos (2º turno em 25/10) ou pós-urna |
+| J5 | 28/08 a 04/10 | Horário gratuito, debates, reta final, 1º turno |
+| J6 | após 04/10 | Entre turnos ou pós-urna |
 
-Limites de J2 e J6 são convenção do jogo. Datas do calendário 2026 (a confirmar no TSE).
+Limites de J2 e J6 são convenção do jogo.
+
+**Calendário oficial do jogo (fonte única).** Os demais documentos referenciam esta seção.
+| Marco 2026 | Data | Regra associada (detalhe em `docs/regras-e-mundo.md`) |
+|---|---|---|
+| Janela partidária | 05/03 a 03/04 | troca sem perda de mandato, só proporcionais |
+| Prazo de filiação e domicílio | 04/04 | condição de candidatura |
+| Desincompatibilização de chefes do Executivo | 04/04 | renúncia 6 meses antes para disputar outro cargo |
+| Rádio e TV fora dos programas de pré-candidatos | a partir de 30/06 | restrição de propaganda |
+| Restrições a inaugurações e agentes públicos | a partir de 04/07 | condutas vedadas |
+| Convenções | 20/07 a 05/08 | escolha de candidatos e coligações |
+| Registro de candidaturas | até 15/08 | data de referência da idade mínima de vereador |
+| Campanha | a partir de 16/08 | propaganda de rua |
+| Horário gratuito | 28/08 a 01/10 | TV e rádio |
+| 1º turno | 04/10 | |
+| 2º turno | 25/10 | |
+| Posse 2027 | presidente 05/01; governadores 06/01; Câmara e Senado 01/02 | início dos mandatos; senadores eleitos em 2026 exercem até 31/01/2035 |
+
+Todas as datas (a confirmar no calendário eleitoral do TSE e na Constituição).
 
 ### Ano calmo: 2 janelas (ritmo Normal)
 
 O ano calmo tem função própria: manter e expandir a base territorial, cumprir ou renegociar compromissos, sustentar ou disputar a base parlamentar (quem governa), fortalecer o grupo político e preparar o próximo passo. Anos de eleição municipal (2028, 2032) são eleitorais para vereador e prefeito e afetam a base de todos os outros cargos.
 
-Posse 2027: presidente 05/01, governadores 06/01, Câmara e Senado 01/02. A posse cai na primeira janela do ano seguinte.
+A posse cai na primeira janela do ano seguinte (datas no calendário acima).
 
 ### Ritmos
 

@@ -52,7 +52,7 @@ Rede: antes de coletar, testar IBGE e TSE com `curl -sI`. Em 403, parar, registr
 
 1. Idade mínima por cargo.
 2. Reeleição única para executivos.
-3. Renúncia antes de 04/04 para disputar outro cargo.
+3. Renúncia antes do prazo de desincompatibilização (`GDD.md` 3) para disputar outro cargo.
 4. 2º turno correto por cargo e porte.
 5. Senado com 2 vagas em 2026 e 1 em 2030.
 6. Vice assumindo.
@@ -126,32 +126,54 @@ Rede: antes de coletar, testar IBGE e TSE com `curl -sI`. Em 403, parar, registr
 74. Posições partidárias da Fase 2 não aparecem no pool do MVP.
 75. Uma mesma regra nunca usa capital político e seus componentes ao mesmo tempo.
 76. Influência e legado não somam o mesmo período: legado só mede o ciclo posterior à saída.
+77. Segmentos: em toda unidade, `Σ_L I_L ≤ validos` e `F ≥ 0`, inclusive após atualizações extremas de conjuntura.
+78. Normalização: identificação bruta com soma acima de 1 é reescalada antes da eleição; a soma resultante é no máximo 1 e as proporções entre listas são preservadas.
+79. Sem sobreposição: partido federado não tem identificação própria fora da federação na mesma unidade; identificação da federação é a soma das dos membros.
+80. Base única: `identPartidaria` e segmentos usam a mesma base (válidos); nenhuma etapa aplica fração do eleitorado sobre válidos.
+81. Dupla contagem no proporcional: zerar `identPartidaria` de uma lista elimina só o segmento fiel e a legenda dela, sem mudar pontuações; zerar a opinião de um candidato muda só os votos dele nos dois segmentos e, por soma, o total da lista; legenda não muda com opinião ou máquina.
+82. Parâmetros de comparecimento, abstenção, brancos e nulos permanecem iguais com e sem mudanças de conjuntura no MVP.
+83. O Improvável não depende do potencial e exige ao menos duas condições desfavoráveis registradas no histórico.
 
 ## 7. Itens a confirmar
 
 ### 7.1 Regras legais para validação na etapa 1B
-| # | Regra | Onde é usada |
-|---|---|---|
-| L1 | Mínimo individual de 10% do QE e requisitos de 80% e 20% nas sobras (Código Eleitoral, arts. 108 e 109) | `motor-eleitoral.md` 5.2 |
-| L2 | Regra final de distribuição das sobras | 5.2 |
-| L3 | Tratamento eleitoral das federações (lista única, duração mínima, efeitos em fundo e TV) | 5.1, 7.2, 7.3; `regras-e-mundo.md` 3 |
-| L4 | Total do FEFC 2026 e valores por partido (hoje fonte secundária) | 7.2 |
-| L5 | Distribuição do FEFC entre partidos federados | 7.2 |
-| L6 | Distribuição do Fundo Partidário entre partidos e vínculo com a cláusula | 7.2 |
-| L7 | Cotas legais na distribuição interna do FEFC aos candidatos | 7.1 |
-| L8 | Tempo de TV: regra 90% e 10%, base 2022, partidos sem TV em 2026 | 7.3 |
-| L9 | Tempo de TV em eleições municipais | 7.3 |
-| L10 | Cláusula de desempenho 2026 e 2030 (EC 97/2017), arredondamento de 1,45%, data de efeito | `regras-e-mundo.md` 1; 8 |
-| L11 | Quóruns de aprovação por tipo de proposta e por casa | 10 |
-| L12 | Prazos de desincompatibilização para cargos de nomeação | `carreira-e-poder.md` 10.4 |
-| L13 | Desincompatibilização em posições partidárias | 10.4 |
-| L14 | ADI 5081 e troca de partido por majoritários | `regras-e-mundo.md` 1 |
-| L15 | Domicílio eleitoral com mandato em curso | idem |
-| L16 | Regras do vice que assume (substituição e sucessão) | `carreira-e-poder.md` 9 |
-| L17 | Propaganda antecipada e restrições de 30/06 e 04/07 | `GDD.md` 3 |
-| L18 | Calendário eleitoral 2026 completo | `GDD.md` 3 |
-| L19 | Senado: dois votos por eleitor em 2026 e um em 2030 | 6.1 |
-| L20 | Segundo turno de prefeito acima de 200 mil eleitores | `regras-e-mundo.md` 1 |
+
+Nenhuma está resolvida. Uma pendência só sai desta lista com fonte oficial citada e evidência documental registrada em `data/` na 1B. Os diplomas citados indicam onde procurar, não confirmam o conteúdo.
+
+| # | Objeto da verificação | Tipo de fonte oficial necessária | Onde é usada |
+|---|---|---|---|
+| L1 | Votação nominal mínima de 10% do QE e requisitos de 80% e 20% nas sobras | Código Eleitoral (texto vigente, arts. 108 e 109); resolução do TSE para 2026 | `motor-eleitoral.md` 5.4 |
+| L2 | Regra final de distribuição das sobras | Código Eleitoral; resolução do TSE; decisões do STF sobre sobras | 5.4 |
+| L3 | Tratamento eleitoral das federações: lista única, duração mínima, efeitos em fundo, TV e cláusula | Lei dos Partidos Políticos; resolução do TSE sobre federações; registro das federações no TSE | 5.2, 7.2, 7.3; `regras-e-mundo.md` 3 |
+| L4 | Total do FEFC 2026 e valores por partido | Lei orçamentária anual; publicação do TSE da distribuição | 7.2 |
+| L5 | Distribuição do FEFC entre partidos federados | Resolução do TSE; publicação da distribuição | 7.2 |
+| L6 | Distribuição do Fundo Partidário e vínculo com a cláusula | Lei dos Partidos Políticos; Constituição (EC 97/2017); publicação do TSE | 7.2 |
+| L7 | Cotas legais na distribuição interna do FEFC aos candidatos | Lei das Eleições; resolução do TSE; decisões do TSE e STF sobre cotas | 7.1 |
+| L8 | Tempo de TV: 90% e 10%, base de deputados eleitos em 2022, partidos sem TV em 2026 | Lei das Eleições; resolução do TSE; plano de mídia do TSE para 2026 | 7.3 |
+| L9 | Tempo de TV em eleições municipais | Lei das Eleições; resolução do TSE do ciclo municipal | 7.3 |
+| L10 | Cláusula de desempenho 2026 e 2030, arredondamento de 1,45%, data de efeito | Constituição (EC 97/2017); resolução ou decisão do TSE sobre arredondamento | `regras-e-mundo.md` 1; `motor-eleitoral.md` 8 |
+| L11 | Quóruns de aprovação por tipo de proposta e por casa | Constituição; constituições estaduais; leis orgânicas; regimentos internos | `motor-eleitoral.md` 10 |
+| L12 | Prazos de desincompatibilização para cargos de nomeação | Lei Complementar de inelegibilidades; resoluções e consultas do TSE | `carreira-e-poder.md` 10.4 |
+| L13 | Desincompatibilização em posições partidárias | Lei Complementar de inelegibilidades; jurisprudência do TSE | 10.4 |
+| L14 | Troca de partido por majoritários sem perda de mandato | Acórdão da ADI 5081 (STF); resolução do TSE sobre fidelidade | `regras-e-mundo.md` 1 |
+| L15 | Domicílio eleitoral com mandato em curso | Lei das Eleições; jurisprudência do TSE | idem |
+| L16 | Regras de vice por cargo: substituição, sucessão, dupla vacância, legitimidade | Constituição (presidente); constituições estaduais (governador); leis orgânicas (prefeito) | `carreira-e-poder.md` 9; `eventos-e-risco.md` 6.1 |
+| L17 | Propaganda antecipada e restrições de 30/06 e 04/07 | Lei das Eleições (condutas vedadas e propaganda); resolução de propaganda do TSE | `GDD.md` 3 |
+| L18 | Calendário eleitoral 2026 completo | Resolução do calendário eleitoral do TSE; Constituição (datas de posse) | `GDD.md` 3 |
+| L19 | Senado: dois votos em 2026 e um em 2030; voto em branco ou nulo em cada voto | Constituição; Código Eleitoral; resolução de votação do TSE | `motor-eleitoral.md` 6.2 |
+| L20 | Segundo turno de prefeito acima de 200 mil eleitores | Constituição | `regras-e-mundo.md` 1 |
+| L21 | Limite legal de candidatos por lista em cada cargo proporcional | Lei das Eleições; resolução de registro do TSE | `motor-eleitoral.md` 5.3 |
+| L22 | Hipóteses legais de inelegibilidade: tipos de condenação, órgão colegiado ou trânsito em julgado, prazos | Lei Complementar de inelegibilidades e alterações (Ficha Limpa); jurisprudência do TSE e STF | `eventos-e-risco.md` 6 |
+| L23 | Regras de suplência por cargo: ordem, convocação, licenças que a geram, posse | Constituição; Código Eleitoral; regimentos da Câmara, do Senado, das assembleias e câmaras | `eventos-e-risco.md` 6.1; `carreira-e-poder.md` 9 |
+| L24 | Enquadramento jurídico de emendas usadas em negociação de apoio eleitoral | Lei das Eleições (condutas vedadas, abuso de poder); Código Penal; Lei de Improbidade; jurisprudência do TSE | `eventos-e-risco.md` 5 |
+| L25 | Licença de legislador para assumir cargo de nomeação e manutenção do mandato | Constituição (federal e estaduais); leis orgânicas; regimentos | `eventos-e-risco.md` 6.1 |
+| L26 | Afastamento cautelar de mandatário: hipóteses e prazos | Código de Processo Penal; jurisprudência do STF | `eventos-e-risco.md` 6.1 |
+| L27 | Prazos de licença de saúde e convocação de suplente ou vice | Regimentos internos; constituições estaduais; leis orgânicas | `eventos-e-risco.md` 6.1 |
+| L28 | Doações de pessoa física e autofinanciamento: limites | Lei das Eleições; resolução de arrecadação do TSE | `carreira-e-poder.md` 1 (Empresário) |
+| L29 | Destino de recurso de campanha não gasto | Lei das Eleições; resolução de prestação de contas do TSE | `motor-eleitoral.md` 4.4 |
+| L30 | Idades mínimas e data de referência por cargo | Constituição; Lei das Eleições | `regras-e-mundo.md` 1 |
+| L31 | Reeleição única para chefes do Executivo | Constituição | `regras-e-mundo.md` 1 |
+| L32 | Regra de candidatura laranja e cassação da chapa | Lei das Eleições (cota de gênero); jurisprudência do TSE | `eventos-e-risco.md` 5 |
 
 ### 7.2 Outros itens a confirmar
 - Fator de migração de estado.

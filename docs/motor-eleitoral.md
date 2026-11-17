@@ -63,7 +63,7 @@ Escalas são definições de projeto, não calibração. Faixas de valores dentr
 | `rejeicao[e]` | fração com opinião desfavorável a ponto de não votar | 0 a `notoriedade[e] - popularidade[e]` | idem | estado |
 | `semOpiniao[e]` | fração que conhece o candidato sem avaliação formada: `notoriedade - popularidade - rejeicao` | 0 a `notoriedade[e]` | idem | derivado, nunca reclassificado |
 | `desconhecimento[e]` | `1 - notoriedade[e]` | 0 a 1 | idem | derivado |
-| `identPartidaria[p,u]` | fração do eleitorado da unidade disposta a votar na legenda ou federação p | 0 a 1, soma entre partidos até 1 | UF; município individualizado | estado |
+| `identPartidaria[p,u]` | fração dos votantes válidos da unidade identificados com a lista p (partido isolado ou federação); cada votante identificado pertence a uma única lista | 0 a 1; `Σ_p identPartidaria[p,u] ≤ 1` garantido por normalização (5.2) | UF; município | estado |
 | `baseTerritorial[m]` | força da organização própria do candidato no município | 0 a 1 | até 10 municípios mais agregado regional | estoque |
 | `grupo.influencia` | peso agregado do grupo político | 0 a 1 | personagem | estoque |
 | `credibilidade` | confiança dos atores no cumprimento de acordos | 0 a 1, exibida em faixa | personagem | estado |
@@ -127,7 +127,7 @@ votos_c        = participacao_c × votosValidos
 eleitorado = comparecimento + abstencao
 comparecimento = validos + brancos + nulos
 ```
-Grandezas distintas. No 1º turno do MVP, as taxas de comparecimento, brancos e nulos de cada unidade são dados de base da 1B (a confirmar fonte), sem modelo próprio. A repartição 4.2 opera só sobre `validos`. Modelo de comparecimento sensível à conjuntura: Fase 2.
+Grandezas distintas. No MVP, comparecimento, abstenção, brancos e nulos são parâmetros fixos por unidade, vindos dos dados de base da 1B (a confirmar fonte). **Não respondem dinamicamente à conjuntura, às campanhas nem a eventos nesta fase.** A repartição 4.2 opera só sobre `validos`. Modelo dinâmico de comparecimento e votos inválidos: Fase 2. No 2º turno (6.3), a matriz de destinos usa fatores fixos pelo mesmo motivo.
 
 ### 4.3 Arredondamento e soma exata
 Votos são inteiros. Usa-se o método do maior resto: piso de cada `votos_c`, e as unidades restantes vão aos maiores restos, com desempate por id. A soma distribuída é sempre igual a `votosValidos`.
@@ -201,7 +201,10 @@ I_L = validos × identPartidaria[L] × (1 - δ)           segmento fiel à lista
 F   = validos - Σ_L I_L                                segmento livre
 ```
 - `δ` (calibrar): fração dos identificados que escolhe fora da própria lista.
-- `Σ_L identPartidaria[L]` não passa de 1 (seção 2), então `F` nunca é negativo.
+- Normalização: se a soma bruta das identificações de uma unidade passar de 1 (por atualizações de conjuntura), todas são reescaladas pelo mesmo fator para que `Σ_L identPartidaria[L] ≤ 1`. Feita antes de cada eleição e registrada no histórico.
+- Sem sobreposição: cada votante identificado pertence a uma única lista. A identificação de uma federação é a soma das identificações dos seus partidos, que são conjuntos disjuntos; um partido federado não tem identificação própria fora da federação na mesma unidade.
+- Consequências: `Σ_L I_L = validos × Σ_L identPartidaria[L] × (1 - δ) ≤ validos` e `F = validos - Σ_L I_L ≥ 0`, com `0 ≤ δ ≤ 1`.
+- A base é a mesma em todo o cálculo: `identPartidaria` é fração dos válidos, e os segmentos são calculados sobre os válidos.
 - Federação: uma lista; sua identificação é a dos partidos membros somada (a confirmar tratamento legal).
 
 Repartição (forma 4.2, com τ = 1 e D = 0 em cada segmento):
@@ -216,6 +219,8 @@ votosLista_L = legenda_L + Σ_{i em L} votos_i
 
 Garantias:
 - **Identificação sem dupla contagem:** aparece só no tamanho de `I_L`; nenhuma pontuação a contém.
+- **Opinião e máquina em dois segmentos:** a pontuação do candidato é usada no segmento fiel e no livre, mas cada segmento é um conjunto diferente de votantes e cada votante vota uma vez. Não há soma do mesmo eleitor.
+- **Legenda:** existe só no segmento fiel e só depende de `λ_L`; não usa opinião nem máquina, e candidatos não usam identificação.
 - **Puxador:** um candidato de opinião e máquina altas capta grande parte de `F`; esses votos somam ao total da lista e ajudam a eleger outros. Não há termo extra.
 - **Sem inflação por número de candidatos no segmento fiel:** `I_L` é fixo; mais candidatos só dividem o mesmo segmento. No segmento livre, cada candidato adicional só ganha votos se tiver pontuação; candidatos sintéticos têm pontuação baixa por construção (5.3).
 - **Soma exata:** os segmentos particionam `validos`; cada segmento usa maior resto (4.3); a soma de legendas e nominais é igual a `validos`.
@@ -232,7 +237,7 @@ maquinaEfetiva_g = capilaridade[L] × r_g
 - Participam de toda a disputa e da apuração: barreira individual, sobras e ordem de eleitos valem para eles como para qualquer candidato. Eleitos sintéticos recebem nome fictício gerado no momento.
 - Lista sem candidatos individualizados: todos os seus candidatos são sintéticos.
 
-### 5.3 Apuração (hipótese documental, a confirmar)
+### 5.4 Apuração (hipótese documental, a confirmar)
 1. Quociente eleitoral: válidos ÷ vagas.
 2. Quociente partidário por lista sobre `votosLista_L` (legenda e nominais somados).
 3. Eleitos pelo quociente exigem votação nominal mínima de 10% do QE.
@@ -276,7 +281,7 @@ votos_d  = v1_d + Σ_{c ≠ d} v2[c→d]
 - Cada eleitor representado em `v1_c` dá o segundo voto a um candidato diferente de c: a matriz exclui a diagonal.
 - `Σ_d Σ_c v2[c→d] = validos1`: a soma das segundas escolhas corresponde exatamente ao eleitorado que deu o primeiro voto válido.
 - Segundo voto branco ou nulo: parcela de `validos1` retirada antes da matriz, por taxa de base da 1B (a confirmar existência do dado separado por voto).
-- `S_d` no segundo voto é a mesma pontuação do primeiro (a afinidade entre pares de mesma chapa ou coligação é hipótese de calibração, não implementada no MVP).
+- `S_d` no segundo voto é a mesma pontuação do primeiro. Afinidade entre pares (mesma coligação, mesmo campo político) é hipótese de calibração futura, sem fórmula aprovada e sem implementação no MVP.
 - As duas maiores votações vencem. 2030: uma vaga e um voto.
 - Arredondamento: maior resto em `v1` e em cada linha da matriz.
 
@@ -376,7 +381,7 @@ Cada município tem eleição própria, simulada estatisticamente sem agentes gu
 - **Prefeito:** um candidato sintético por partido ou chapa que concorra (presença definida por capilaridade do partido no município e resultado de 2024), pontuação 6 com `opiniao` sintética, `identChapa` municipal e máquina do agregado municipal. 2º turno só acima de 200 mil eleitores (a confirmar).
 - **Câmara:** competição única 5 com candidatos sintéticos por lista e apuração completa (quociente, barreira individual, sobras).
 - `identPartidaria` municipal: valor da UF ajustado pelo desvio do município observado em 2024 (definição a fechar na 1B).
-- Custo: o volume de candidatos sintéticos em 5.570 câmaras é alto; o número por lista pode ser reduzido a uma amostra representativa com votos reescalados, desde que a barreira individual continue verificável (método a validar na etapa 2).
+- Custo: o volume de candidatos sintéticos em 5.570 câmaras é alto. A proposta de amostragem com votos reescalados **não está validada nem escolhida**; a questão fica para a etapa 2. A validação deverá comparar amostragem e simulação integral nos mesmos municípios e sementes, verificando distribuição de cadeiras por lista, quocientes eleitoral e partidário, cumprimento da barreira individual e distribuição das sobras. Nenhum método ou parâmetro é definido agora.
 
 ### 9.2 Coerência
 - Totais respeitam eleitorado, comparecimento e válidos de cada unidade.

@@ -15,7 +15,7 @@ Títulos são conquistas de carreira em tom sério. Cada um tem condição verif
 | O Municipalista | Venceu em 10 ou mais municípios pequenos |
 | O Cassado | Perdeu mandato por decisão da Justiça |
 | O Vitalício | 40 anos de vida pública |
-| O Improvável | Chegou à Presidência com potencial abaixo de 50 |
+| O Improvável | Venceu eleição para governador, senador ou presidente acumulando ao menos duas condições políticas desfavoráveis observáveis na trajetória: partido marcado "modo difícil" na eleição vencida; notoriedade no escopo abaixo da média dos rivais no início da campanha; origem sem rede política prévia (todas exceto Rede Familiar Política); derrota na eleição imediatamente anterior; rejeição no escopo acima da média dos rivais no início da campanha (limiares a calibrar; não depende do potencial) |
 
 ## 2. Títulos ampliados
 

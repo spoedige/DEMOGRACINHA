@@ -7,7 +7,7 @@ Vereador, prefeito, vice-prefeito, deputado estadual (distrital no DF), deputado
 ### Idade mínima
 | Cargo | Idade | Referência da data |
 |---|---|---|
-| Vereador | 18 | em 15/08 (data do registro) |
+| Vereador | 18 | na data do registro de candidatura (`GDD.md` 3) |
 | Deputado, prefeito, vice-prefeito | 21 | na posse |
 | Governador e vice | 30 | na posse |
 | Senador, presidente e vice | 35 | na posse |
@@ -16,12 +16,12 @@ Vereador, prefeito, vice-prefeito, deputado estadual (distrital no DF), deputado
 - 81 cadeiras, mandato de 8 anos.
 - 2026: 2 vagas por UF (54), 2 votos por eleitor, majoritária, sem quociente.
 - 2030: 1 vaga por UF (27).
-- Eleitos em 2026 exercem de 01/02/2027 a 31/01/2035.
+- Início e fim do mandato dos eleitos em 2026: `GDD.md` 3.
 - Cada senador tem 2 suplentes (Fase 2).
 
 ### Executivos e desincompatibilização
 - Uma reeleição consecutiva para o mesmo cargo executivo.
-- Para disputar outro cargo, chefe do Executivo renuncia 6 meses antes (04/04/2026).
+- Para disputar outro cargo, chefe do Executivo renuncia 6 meses antes da eleição (data em `GDD.md` 3).
 - Legisladores concorrem sem renunciar.
 
 ### 2º turno
@@ -30,9 +30,9 @@ Vereador, prefeito, vice-prefeito, deputado estadual (distrital no DF), deputado
 - Senador: nunca.
 
 ### Janela partidária e filiação
-- 05/03 a 03/04/2026, só para detentores de cargos proporcionais.
+- Período: `GDD.md` 3. Vale só para detentores de cargos proporcionais.
 - Majoritários podem trocar sem perder o mandato (ADI 5081, a confirmar).
-- Filiação e domicílio eleitoral até 04/04.
+- Filiação e domicílio eleitoral até o prazo de `GDD.md` 3.
 - Domicílio com mandato em curso (a confirmar).
 
 ### Barreira individual (só proporcional)

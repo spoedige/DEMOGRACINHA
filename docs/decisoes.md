@@ -183,3 +183,15 @@ Correções técnicas da auditoria, aplicadas sem decisão nova por não alterar
 - Contrapartida legítima e ilícita de emenda definida pelo tipo de apoio.
 - Teste 19 dividido em determinístico e estatístico.
 - Fonte única por regra declarada em `CLAUDE.md`.
+
+## Ajustes finais da revisão documental, 17/11/2026
+
+| Id | Mudança | Onde |
+|---|---|---|
+| D40 | O Improvável por condições políticas desfavoráveis observáveis, sem potencial | `titulos.md` |
+| D41 | Amostragem das câmaras municipais não validada; critério de validação registrado; decisão na etapa 2 | `motor-eleitoral.md` 9.1 |
+| D42 | Comparecimento, abstenção, brancos e nulos fixos e não dinâmicos no MVP | `motor-eleitoral.md` 4.2.1 |
+| D43 | Afinidade no Senado como hipótese futura sem fórmula | `motor-eleitoral.md` 6.2 |
+| D44 | Calendário oficial único no `GDD.md` 3; demais docs referenciam | `GDD.md`, `regras-e-mundo.md`, `roadmap.md` |
+| D45 | Pendências legais L1 a L32 com objeto e tipo de fonte | `roadmap.md` 7.1 |
+| D46 | Correção de definição: `identPartidaria` como fração dos válidos, normalizada, sem sobreposição. A arquitetura D35 não muda | `motor-eleitoral.md` 2 e 5.2 |
