@@ -85,6 +85,15 @@ Separação clara: negociação legítima (apoio por cargo, emenda por voto) usa
 
 Status: Regular, Investigado, Condenado, InelegibilidadeReconhecida. Risco jurídico é probabilidade separada. Risco alto sozinho nunca gera inelegibilidade; só a escada processual. Condenado não concorre.
 
+## 6.1 Estados temporários (P10, MVP simplificado)
+| Estado | Origem | Duração | Efeitos |
+|---|---|---|---|
+| Investigado | evento da escada de consequências (seção 5) | até arquivamento, denúncia ou prazo máximo de janelas (calibrar) | risco jurídico sobe; Cúpula e credibilidade sob pressão; cartas de defesa no pool; pode concorrer |
+| Afastamento cautelar | decisão judicial em evento | prazo do evento (calibrar dentro de faixa a confirmar) | perde exercício do cargo, mantém mandato; sem Capital de Entrega; suplente ou vice assume |
+| Licença de saúde | saúde abaixo de limiar ou evento | 1 a 3 janelas (calibrar) | sem cartas de ação, só opção segura; notoriedade decai; vice ou suplente assume se longa (regra a confirmar) |
+| Licença para nomeação | aceitar cargo de nomeação sendo legislador | duração da nomeação | suplente assume; mandato preservado (a confirmar); pode voltar |
+Cada estado tem id estável, origem registrada no histórico e fim definido. Nenhum gera game over.
+
 ## 7. Saúde
 
 Gradual, afetada por idade, desgaste de campanha e crises. Saúde baixa reduz energia e janelas disponíveis e pode gerar evento de afastamento. Fim de carreira por saúde é evento com escolha, nunca game over automático.

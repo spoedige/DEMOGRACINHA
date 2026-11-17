@@ -19,11 +19,11 @@ Incluídos após a análise de referência (versões simplificadas, ver `decisoe
 
 Também: cargos de nomeação (P7), conjuntura com alcance nacional, estadual e local simplificado.
 
-Sem classificação: P5, P8, P10, P12, P13 (P5 e P8 já estão parcialmente cobertas por credibilidade e pela dimensão influência do grau).
+Também: credibilidade sem duplicação (P5), influência como dimensão própria (P8), estados temporários (P10), valor do cargo por contexto (P12). Todas as propostas P1 a P13 estão classificadas.
 
 ## 3. Fase 2
 
-Suplentes de senador; sucessão e apadrinhamento; desenvolvimento detalhado das 6 dimensões e reputação por atividade; ambição dinâmica e oportunidades que cruzam mandatos; poder entre eleições completo; legado dinâmico; conformidade eleitoral ampliada (prestação de contas, limites de gasto); facções partidárias (P2); membros individuais, disputa interna e sucessão do grupo político; parlamentares individuais. Ranking global fora do MVP.
+Suplentes de senador; sucessão e apadrinhamento; desenvolvimento detalhado das 6 dimensões e reputação por atividade; ambição dinâmica e oportunidades que cruzam mandatos; poder entre eleições completo; legado dinâmico; conformidade eleitoral ampliada (prestação de contas, limites de gasto); facções partidárias (P2); coalizão de governo completa (P13); hipótese H1 de palanque presidencial, se aprovada; membros individuais, disputa interna e sucessão do grupo político; parlamentares individuais. Ranking global fora do MVP.
 
 ## 4. Dados da etapa 1B
 
@@ -97,6 +97,18 @@ Rede: antes de coletar, testar IBGE e TSE com `curl -sI`. Em 403, parar, registr
 45. Fechamento do ciclo: oportunidades e Capital de Entrega são distribuídos só após matrizes, fundos, TV e cláusula atualizados.
 46. Simulação agregada da UF desconta municípios individualizados; soma de votos igual aos válidos.
 47. Candidato não recebe automaticamente parcela do FEFC proporcional ao desempenho do partido.
+48. Soma exata: em toda disputa, votos distribuídos (legenda, nominais, genérico, dispersão) somam exatamente os válidos após arredondamento.
+49. Sem concentração artificial: com τ = 1, concorrentes de pontuação igual recebem votos iguais e a razão de votos é a razão das pontuações (sem ruído).
+50. Lista sem candidatos individualizados recebe votos e tem eleitos pelo candidato genérico.
+51. Identificação partidária não aparece no nível nominal.
+52. `semOpiniao` nunca é somado a popularidade nem a rejeição; a partição soma 1.
+53. Nenhum real é alocado a exposição e mobilização ao mesmo tempo; soma das alocações e reserva igual ao fundo disponível.
+54. Cada aliado contribui no máximo uma vez por canal; partido não gera transferência; pessoa não gera identificação; apoio sem coligação não gera identificação.
+55. Credibilidade não altera votação com os demais estados fixos.
+56. Influência não muda ao ganhar ou perder cargo com grupo, partido, compromissos e base fixos.
+57. Posição partidária nunca gera Capital de Entrega.
+58. Estados temporários têm origem, duração e fim; nenhum gera game over.
+59. Atributos da ficha de oportunidade não alteram efeitos do cargo.
 
 ## 7. Itens a confirmar
 

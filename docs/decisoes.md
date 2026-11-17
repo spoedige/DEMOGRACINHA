@@ -136,3 +136,19 @@ Correção registrada: o teste de dupla contagem é o 32, não o 37. A versão d
 | P10 estados temporários | MVP simplificado: investigação, afastamento cautelar, licença de saúde, licença para nomeação | já exigidos por status jurídico, saúde e D8; sem eles essas regras ficam sem forma |
 | P12 valor do cargo por contexto | MVP simplificado na ficha de oportunidade, derivado de escopo, governabilidade e posição na coalizão; orçamento real na Fase 2 | orçamento exige dados não previstos na 1B |
 | P13 coalizão de governo | Fase 2 para formação completa da coalizão federal com distribuição de ministérios; MVP já cobre base parlamentar (D11) e nomeações (D8) | evita o item mais caro sem perder o essencial |
+
+## Decisões finais de pendências, 17/11/2026
+
+| Id | Decisão | Onde |
+|---|---|---|
+| D23 | P5 credibilidade MVP, só sobre atores políticos, quadro de não duplicação | `carreira-e-poder.md` 1 |
+| D24 | H1 fora do MVP, hipótese futura sem implementação | `motor-eleitoral.md` 1.3 |
+| D25 | Posições partidárias sem Capital de Entrega; efeitos de influência partidária e organizacional | `carreira-e-poder.md` 10.4 |
+| D26 | P8 influência MVP, dimensão própria sem cargo | `carreira-e-poder.md` 12 |
+| D27 | P10 estados temporários MVP simplificado com origem, duração e efeitos | `eventos-e-risco.md` 6.1 |
+| D28 | P12 valor do cargo MVP simplificado, descritivo, sem bônus | `carreira-e-poder.md` 10.5 |
+| D29 | P13 coalizão completa na Fase 2 | `carreira-e-poder.md` 10.6 |
+| D30 | Repartição detalhada: pontuação normalizada, τ = 1 estrutural, maior resto, legenda, candidato genérico | `motor-eleitoral.md` 4 e 5 |
+| D31 | Eleitores que conhecem sem opinião formada (`semOpiniao`) | `motor-eleitoral.md` 4.6 |
+| D32 | Gasto em alocações distintas com reserva | `motor-eleitoral.md` 4.4 |
+| D33 | Quatro canais de aliança sem duplicação | `motor-eleitoral.md` 4.5 e 6.1 |

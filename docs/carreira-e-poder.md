@@ -36,7 +36,14 @@ Cúpula (direção partidária), Bancada (pares no Legislativo), Executivo (vín
 | Credibilidade | reputacional (confiança dos atores políticos) | faixa | todos |
 | Capital político | derivado | oculto | todos |
 
-- **Credibilidade** sobe com compromissos cumpridos e cai com rompidos. É distinta de popularidade (eleitor) e de reputação histórica (identidade).
+- **Credibilidade (P5, MVP)** sobe com compromissos cumpridos e cai com rompidos. Atua só sobre atores políticos: aceitação de compromissos, ofertas de nomeação, negociação da governabilidade, coesão de blocos aliados. Não atua sobre o eleitor. Sem duplicação:
+  | Dimensão | Público | Muda com | Atua em |
+  |---|---|---|---|
+  | Popularidade e rejeição | eleitor | exposição, entregas, escândalos públicos | voto |
+  | Credibilidade | atores políticos | cumprimento de compromissos | negociação, convites, coesão |
+  | Reputação histórica | ambos, como tag | padrão de escolhas ao longo da carreira | relações (modificador de partida), grau |
+  | Arquivo Vermelho | justiça e imprensa | atos ilícitos | risco jurídico, escândalos |
+  Um mesmo fato só altera mais de uma dimensão quando atinge públicos diferentes por meios diferentes (exemplo: escândalo publicado atinge rejeição; o rompimento de acordo que o causou atinge credibilidade).
 - **Governabilidade**: ver `motor-eleitoral.md` seção 8.
 - **Capital político** não é estado guardado. É calculado quando necessário:
   `capitalPolitico = f(relações, influência do grupo, credibilidade, reputação, base territorial)` (pesos a calibrar). Usado para definir convites e força em negociação.
@@ -184,8 +191,9 @@ Posições relevantes que dão influência sem mandato eletivo. Lista fechada no
 | Estadual | secretário estadual |
 | Federal | ministro, secretário executivo de ministério |
 | Partidária | presidente de diretório municipal, estadual ou nacional |
+| Partidária, secundária | secretário-geral, tesoureiro, coordenador de campanha do partido |
 
-Nomeações governamentais (municipal, estadual, federal) dependem de relação com Executivo e composição do governo e exigem desincompatibilização para disputar. Posições partidárias dependem da Cúpula, não exigem desincompatibilização (a confirmar) e não dão Capital de Entrega, só influência sobre legenda e fundos.
+Nomeações governamentais (municipal, estadual, federal) dependem de relação com Executivo e composição do governo e exigem desincompatibilização para disputar. Posições partidárias dependem da Cúpula, não exigem desincompatibilização (a confirmar) e não recebem Capital de Entrega (decisão D25). Seus efeitos são de influência partidária e organizacional: peso na escolha de candidaturas, na distribuição interna de fundos e tempo de TV, e na capilaridade da legenda.
 
 - Não há simulação de todas as nomeações do país. Só existem as vagas que podem ser oferecidas ao personagem, criadas quando ele tem relação suficiente com o governo ou o partido.
 - Oferta depende de: relação com Executivo (ou Cúpula, para cargo partidário), composição do governo (partido do personagem na coalizão), capital político derivado, compromissos firmados (tipo "cargo ou espaço") e conjuntura.
@@ -193,6 +201,20 @@ Nomeações governamentais (municipal, estadual, federal) dependem de relação 
 - Efeitos das posições partidárias: influência sobre legenda, distribuição interna de fundos e presença institucional; sem Capital de Entrega.
 - Saída: demissão por mudança de coalizão, crise ou queda de governabilidade; ou saída voluntária para disputar.
 - Sem Ponto de Inflexão próprio além de "Ministério em crise", já previsto.
+
+### 10.5 Valor do cargo por contexto (P12, MVP simplificado)
+A ficha de oportunidade substitui "nível do cargo" e "prestígio" fixos por atributos calculados de dados já existentes, sem bônus:
+| Atributo | Cálculo |
+|---|---|
+| Eleitorado alcançado | eleitorado do escopo do cargo |
+| Exposição esperada | variação esperada de notoriedade no escopo, pelas regras de exposição do cargo |
+| Recurso político | Capital de Entrega esperado por ciclo, pela regra do cargo |
+| Posição na coalizão | aliado, independente ou oposição ao governo correspondente; para executivo, faixa de governabilidade inicial |
+| Papel esperado | protagonista ou coadjuvante, já previsto |
+Nenhum atributo altera o efeito do cargo; só descreve. Orçamento real de secretarias e ministérios: Fase 2.
+
+### 10.6 Coalizão de governo completa (P13): Fase 2
+Formação da coalizão federal com distribuição de ministérios por partido fica para a Fase 2. No MVP, base parlamentar (D11) e nomeações (D8) cobrem o essencial.
 
 ## 11. Fase sem cargo
 
@@ -207,10 +229,20 @@ Grau qualitativo (faixas a definir, fórmula oculta) em cinco dimensões:
 | Dimensão | Fontes no MVP |
 |---|---|
 | Alcance institucional | cargos e posições ocupadas, tempo em cada um |
-| Influência política | pico e duração da influência do grupo, presença institucional, liderança |
+| Influência política | influência (P8, abaixo); exclui cargos ocupados |
 | Realizações | entregas dos mandatos, propostas aprovadas |
 | Reputação | credibilidade, reputação histórica, Arquivo Vermelho, escândalos |
 | Legado | influência do grupo ao fim da carreira, base territorial remanescente, aliados em posição |
+
+### Influência (P8, MVP)
+Dimensão própria, separada do poder institucional. Poder institucional é o que o cargo dá (Capital de Entrega, competências legais) e já entra em alcance institucional. Influência é a capacidade de mover decisões de outros, com ou sem cargo:
+```
+influencia = f( grupo.influencia, influenciaPartidaria, compromissosAReceber, baseTerritorial agregada )
+```
+- `influenciaPartidaria`: posições partidárias e relação com a Cúpula.
+- `compromissosAReceber`: compromissos ativos em que outro ator deve ao personagem.
+- Cargo não entra. Um mesmo fato não conta nas duas dimensões: eleger-se soma a alcance; eleger aliados soma ao grupo e, por ele, à influência.
+- Função `f` (calibrar). Não é exibida como número: aparece em faixa na tela de consulta.
 
 O cargo mais alto pesa, mas não é multiplicador dominante. Pesos a calibrar para que presidente isolado, senador articulador e governador bem avaliado possam ter graus comparáveis. A avaliação considera o contexto: oportunidades que a conjuntura ofereceu.
 
