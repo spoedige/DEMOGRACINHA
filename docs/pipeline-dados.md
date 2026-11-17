@@ -19,11 +19,13 @@ Fonte única das regras de admissibilidade: D60 e D63 (`decisoes.md`). Registro 
 
 ## 2. Separação entre calibração e mundo inicial
 
-Verificável por código, não só por convenção:
-- Cada fonte tem `temporalidade` e `proveniencia` no registro; `carregar_registro` rejeita estados fora da lista.
-- `intermediario(fonte, destino, ...)` recusa criar conjunto para destino inadmissível (`FonteInadmissivel`).
-- `entrada_mundo_inicial(conjunto)` recusa conjunto preparado para calibração e reverifica a classificação, mesmo que o campo `destino` tenha sido alterado à mão.
-- Linhas de uma fonte podem ter classificação própria (`parcelas`): por data do fenômeno na linha (`DT_ELEICAO`) ou por exclusão explícita.
+Verificável por código, não só por convenção. Classificação por parcela efetiva (revisão de 17/11/2026):
+- `carregar_registro` rejeita estados fora da lista, identificadores duplicados e proveniência inválida nas regras de parcela.
+- `Selecao(fonte, destino, filtro, colunas)` confere o hash do bruto antes de ler (arquivo ausente: `FonteAusente`; hash divergente: `FonteInadmissivel`), recusa colunas pendentes e classifica cada linha. Só linhas admissíveis no destino são entregues. Linhas `integridade_pendente` ou `proveniencia_nao_comprovada` são segregadas; linhas inadmissíveis no destino (por exemplo `posterior_ao_corte` no mundo inicial, ou `temporalidade_nao_comprovada`) são recusadas. Cada caso é contado com o motivo.
+- `intermediario(fonte_id, destino, transformar, filtro, colunas)` só passa ao `transformar` as linhas da `Selecao`, consome a seleção inteira e grava no metadado a contagem de aceitas, recusadas, segregadas e fora do filtro, com o hash do registro.
+- `entrada_mundo_inicial(conjunto)` não confia só no metadado: busca a fonte no registro, compara o hash do conjunto com o registro, reconfere o hash do arquivo, exige destino `mundo_inicial`, rejeita fonte não admissível pelo registro, colunas pendentes e conjunto sem registro de seleção por linha.
+- A eleição ordinária (D61) é um filtro separado (`eleicoes.filtro_ordinaria`, por `CD_ELEICAO`), independente da classificação temporal (D63).
+- Classificação por coluna: `colunas_pendentes` no registro impede o uso dessas colunas em qualquer destino.
 
 Regra:
 | Destino | Temporalidade aceita | Proveniência aceita |
@@ -58,6 +60,137 @@ Regras comuns: leitura direta do zip, sem extrair; CSV latin-1, separador `;`; u
 | `tools/dados/pipeline/fontes.py` | registro, hash, leitura do zip sem extrair, classificação por parcela, intermediário com metadados, porta única do mundo inicial |
 | `tools/dados/pipeline/arredondamento.py` | maiores restos determinístico com frações exatas |
 | `tools/dados/pipeline/votos.py` | seis parcelas da D59 separadas, `votosPorEleitor`, erro em ausência |
-| `data/fontes.json` | registro das 12 fontes com hash, referência, data do fenômeno, eixos, evidência e parcelas |
+| `tools/dados/pipeline/eleicoes.py` | filtro da eleição ordinária por `CD_ELEICAO` (D61) |
+| `tools/dados/auditar_partido_2024.py` | confronto votação por partido x detalhe da apuração, 2024 |
+| `data/fontes.json` | registro das 12 fontes com hash, referência, data do fenômeno, eixos, evidência e parcelas |; classificação por coluna (`colunas_pendentes`) |
 
 Sem dependências externas: só a biblioteca padrão do Python.
+
+## 5. Divergências de 2024: votação por partido x detalhe da apuração
+
+Script: `tools/dados/auditar_partido_2024.py` (código do município normalizado para 5 dígitos). Resultado: 12.455 chaves iguais e 38 divergentes, todas da eleição ordinária (`CD_ELEICAO = 619`), 1º turno, em 37 zonas de 7 UFs (GO 11, MA 10, SE 7, PA 6, SP 2, PI 1, MT 1).
+
+Padrões demonstrados nos dados (a causa no TSE não está demonstrada):
+- Tipo A (11 chaves, todas de prefeito): o arquivo por partido não tem nenhuma linha para a zona; o detalhe tem válidos.
+- Tipo B (24 chaves, vereador): o arquivo por partido tem as linhas, com votos nominais iguais a zero e legenda igual à do detalhe; a diferença é exatamente o total de nominais do detalhe.
+- Tipo C (3 chaves): nominais e legenda diferentes do detalhe (Carapicuíba, SP, duas zonas, diferenças de 2,19% e 3,73%; Gameleira de Goiás, GO, nominais zerados e legenda 58 contra 92).
+
+| Município TSE | UF | Município | Zona | Cargo | Turno | Partido: nominais | Partido: legenda total | Detalhe: nominais | Detalhe: legenda | Detalhe: válidos | Diferença | Diferença % | Tipo |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 04154 | PA | ANANINDEUA | 107 | Vereador | 1 | 0 | 2282 | 88127 | 2282 | 90409 | -88127 | -97.48% | B |
+| 04154 | PA | ANANINDEUA | 43 | Vereador | 1 | 0 | 2535 | 90823 | 2535 | 93358 | -90823 | -97.28% | B |
+| 04154 | PA | ANANINDEUA | 72 | Vereador | 1 | 0 | 2473 | 88903 | 2473 | 91376 | -88903 | -97.29% | B |
+| 04448 | PA | BREU BRANCO | 103 | Vereador | 1 | 0 | 793 | 23762 | 793 | 24555 | -23762 | -96.77% | B |
+| 04626 | PA | PLACAS | 68 | Vereador | 1 | 0 | 361 | 12311 | 361 | 12672 | -12311 | -97.15% | B |
+| 05894 | PA | RURÓPOLIS | 68 | Vereador | 1 | 0 | 490 | 16376 | 490 | 16866 | -16376 | -97.09% | B |
+| 07137 | MA | ANAJATUBA | 109 | Prefeito | 1 | 0 | 0 | 16880 | 0 | 16880 | -16880 | -100.0% | A |
+| 07420 | MA | CENTRAL DO MARANHÃO | 30 | Vereador | 1 | 0 | 188 | 6003 | 188 | 6191 | -6003 | -96.96% | B |
+| 07951 | MA | GUIMARÃES | 30 | Prefeito | 1 | 0 | 0 | 5315 | 0 | 5315 | -5315 | -100.0% | A |
+| 08001 | MA | NOVA OLINDA DO MARANHÃO | 80 | Vereador | 1 | 0 | 342 | 10885 | 342 | 11227 | -10885 | -96.95% | B |
+| 08052 | MA | SÃO LUÍS GONZAGA DO MARANHÃO | 35 | Vereador | 1 | 0 | 562 | 13523 | 562 | 14085 | -13523 | -96.01% | B |
+| 08079 | MA | ITAPECURU MIRIM | 16 | Vereador | 1 | 0 | 1284 | 35806 | 1284 | 37090 | -35806 | -96.54% | B |
+| 08222 | MA | SANTANA DO MARANHÃO | 51 | Prefeito | 1 | 0 | 0 | 5177 | 0 | 5177 | -5177 | -100.0% | A |
+| 08567 | MA | TRIZIDELA DO VALE | 9 | Vereador | 1 | 0 | 353 | 13414 | 353 | 13767 | -13414 | -97.44% | B |
+| 09059 | MA | SÃO BENEDITO DO RIO PRETO | 73 | Vereador | 1 | 0 | 336 | 10847 | 336 | 11183 | -10847 | -97.0% | B |
+| 09539 | MA | VITORINO FREIRE | 49 | Vereador | 1 | 0 | 664 | 17588 | 664 | 18252 | -17588 | -96.36% | B |
+| 12670 | PI | CARAÚBAS DO PIAUÍ | 33 | Vereador | 1 | 0 | 173 | 4105 | 173 | 4278 | -4105 | -95.96% | B |
+| 31054 | SE | ARACAJU | 1 | Prefeito | 1 | 0 | 0 | 102794 | 0 | 102794 | -102794 | -100.0% | A |
+| 31054 | SE | ARACAJU | 2 | Prefeito | 1 | 0 | 0 | 102524 | 0 | 102524 | -102524 | -100.0% | A |
+| 31054 | SE | ARACAJU | 27 | Prefeito | 1 | 0 | 0 | 98201 | 0 | 98201 | -98201 | -100.0% | A |
+| 31119 | SE | BARRA DOS COQUEIROS | 2 | Prefeito | 1 | 0 | 0 | 23188 | 0 | 23188 | -23188 | -100.0% | A |
+| 31313 | SE | CEDRO DE SÃO JOÃO | 3 | Prefeito | 1 | 0 | 0 | 3258 | 0 | 3258 | -3258 | -100.0% | A |
+| 31917 | SE | NOSSA SENHORA DAS DORES | 16 | Vereador | 1 | 0 | 507 | 16502 | 507 | 17009 | -16502 | -97.02% | B |
+| 31950 | SE | NOSSA SENHORA DO SOCORRO | 34 | Prefeito | 1 | 0 | 0 | 68412 | 0 | 68412 | -68412 | -100.0% | A |
+| 63134 | SP | CARAPICUÍBA | 303 | Vereador | 1 | 74252 | 5153 | 75964 | 5219 | 81183 | -1778 | -2.19% | C |
+| 63134 | SP | CARAPICUÍBA | 388 | Vereador | 1 | 89563 | 5492 | 93189 | 5548 | 98737 | -3682 | -3.73% | C |
+| 90468 | MT | BRASNORTE | 56 | Vereador | 1 | 0 | 296 | 8080 | 296 | 8376 | -8080 | -96.47% | B |
+| 92770 | GO | BURITI ALEGRE | 5 | Vereador | 1 | 0 | 209 | 6287 | 209 | 6496 | -6287 | -96.78% | B |
+| 93050 | GO | CAVALCANTE | 99 | Vereador | 1 | 0 | 225 | 6063 | 225 | 6288 | -6063 | -96.42% | B |
+| 93300 | GO | VALPARAÍSO DE GOIÁS | 33 | Vereador | 1 | 0 | 2087 | 63753 | 2087 | 65840 | -63753 | -96.83% | B |
+| 93343 | GO | ÁGUAS LINDAS DE GOIÁS | 28 | Vereador | 1 | 0 | 2420 | 87510 | 2420 | 89930 | -87510 | -97.31% | B |
+| 93564 | GO | GAMELEIRA DE GOIÁS | 31 | Vereador | 1 | 0 | 58 | 3126 | 92 | 3218 | -3160 | -98.2% | C |
+| 93998 | GO | IPORÁ | 53 | Prefeito | 1 | 0 | 0 | 16383 | 0 | 16383 | -16383 | -100.0% | A |
+| 93998 | GO | IPORÁ | 53 | Vereador | 1 | 0 | 654 | 19387 | 654 | 20041 | -19387 | -96.74% | B |
+| 94331 | GO | JATAÍ | 18 | Vereador | 1 | 0 | 1934 | 46844 | 1934 | 48778 | -46844 | -96.04% | B |
+| 95915 | GO | SÃO DOMINGOS | 47 | Vereador | 1 | 0 | 285 | 5490 | 285 | 5775 | -5490 | -95.06% | B |
+| 96610 | GO | AMERICANO DO BRASIL | 34 | Prefeito | 1 | 0 | 0 | 4888 | 0 | 4888 | -4888 | -100.0% | A |
+| 96776 | GO | SANTO ANTÔNIO DO DESCOBERTO | 24 | Vereador | 1 | 0 | 990 | 33757 | 990 | 34747 | -33757 | -97.15% | B |
+
+Impacto:
+- As 38 chaves estão registradas como parcelas `integridade_pendente` em `data/fontes.json` e são segregadas pela `Selecao`; o teste `TestExcecoes2024` confere que as regras são exatamente estas 38, sem duplicidade, e falha se a quantidade ou a identidade mudar.
+- Agregação por município: a exclusão é por zona. Um município com zona segregada fica com votação por partido incompleta naquele cargo e turno. Qualquer agregação municipal da votação por partido precisa tratar esses municípios como unidade incompleta (não somar só as zonas restantes). Regra a implementar na transformação; até lá, esses municípios não podem gerar parâmetro de identificação partidária.
+- O detalhe da apuração dessas zonas é íntegro (D59) e continua utilizável.
+
+## 6. Perfil do eleitorado 2024: controles por dimensão
+
+| Controle | Resultado |
+|---|---|
+| Total por município (`QT_ELEITORES`) igual aos aptos de vereador, 1º turno, ordinária 2024 | 5.569 de 5.569 (155.912.680) |
+| Gênero fecha com o total | 5.569 de 5.569; categorias: feminino, masculino, não informado (28.769) |
+| Faixa etária fecha com o total | 5.569 de 5.569; 23 categorias, inclusive "Inválida" (1.488) e faixas de 16 e 17 anos |
+| Escolaridade fecha com o total | 5.569 de 5.569; 9 categorias, inclusive não informado (25.808) |
+| Valores negativos | nenhum |
+
+Leitura: o fechamento das dimensões decorre da construção do arquivo (cada linha cruza todas as dimensões), então não é confronto independente. Classificação por coluna no registro: total validado; colunas demográficas em `colunas_pendentes`, bloqueadas pela `Selecao` e pela entrada do mundo inicial. Para promovê-las, falta um confronto com outra fonte (por exemplo, o perfil por seção ou o comparecimento por perfil).
+
+## 7. Especificação D42 e D62 (parâmetros fixos de comparecimento e votos não válidos)
+
+Unidade de agregação comum: unidade estatística eleitoral (D58) × cargo × turno, só eleição ordinária (D61), soma das zonas. Referência: última eleição ordinária anterior ao corte do mesmo tipo (municipal: 2024; geral: 2022). Fonte: detalhe da apuração. Os conjuntos intermediários guardam numerador e denominador inteiros (não a taxa arredondada), para que a taxa seja exata.
+
+### 7.1 D42: comparecimento e votos brancos e nulos
+| Parcela | Numerador | Denominador | Observação |
+|---|---|---|---|
+| Comparecimento | `QT_COMPARECIMENTO` | `QT_APTOS` | |
+| Abstenção | `QT_ABSTENCOES` | `QT_APTOS` | |
+| Eleitores de seções não instaladas | `QT_ELEITORES_SECOES_NAO_INSTALADAS` | `QT_APTOS` | parcela própria; não somada à abstenção |
+| Brancos | `QT_VOTOS_BRANCOS` | `QT_COMPARECIMENTO × votosPorEleitor` | |
+| Nulos (com técnicos) | `QT_TOTAL_VOTOS_NULOS` | `QT_COMPARECIMENTO × votosPorEleitor` | |
+
+Identidades: `aptos = comparecimento + abstenção + seções não instaladas`; D59 para os votos.
+
+### 7.2 D62: votos anulados
+| Parcela | Numerador | Denominador |
+|---|---|---|
+| Anulados | `QT_TOTAL_VOTOS_ANULADOS` | `QT_COMPARECIMENTO × votosPorEleitor` |
+| Anulados sub judice | `QT_TOTAL_VOTOS_ANUL_SUBJUD` | idem |
+| Anulados em apuração separada | `QT_VOTOS_ANULADOS_APU_SEP` | idem |
+
+Fallback da D62: unidade sem referência usa a taxa da UF no mesmo tipo de eleição, marcada como estimativa; sem isso, lacuna registrada. Nunca zero.
+
+### 7.3 Arredondamento ao aplicar no mundo simulado
+1. Aptos da unidade repartidos em comparecimento, abstenção e seções não instaladas por maiores restos, com os pesos históricos.
+2. `comparecimento × votosPorEleitor` repartido em brancos, nulos, três anulados e válidos por maiores restos; o peso dos válidos é o complemento das cinco taxas não válidas.
+3. Desempate pela chave (D49, D50). A identidade D59 vale por construção.
+
+### 7.4 Pontos bloqueados (escolha metodológica, aguardam aprovação)
+1. **Seções não instaladas.** Recomendação: parâmetro próprio, como na tabela 7.1, porque o TSE as conta separadamente e somá-las à abstenção mudaria o significado da abstenção. A D42 não trata dessa parcela.
+2. **Denominador de brancos e nulos.** Recomendação: `comparecimento × votosPorEleitor`, o mesmo da D62, para que as seis parcelas da D59 tenham base comum. A D42 não define denominador.
+3. **Granularidade por cargo e turno.** Recomendação: por cargo e turno, porque brancos e nulos variam muito entre cargos na mesma unidade. A D42 diz só "por unidade".
+4. **Fallback da D42.** A D62 define fallback pela UF; a D42 não define. Recomendação: o mesmo fallback, marcado como estimativa.
+5. **Unidades com parcela incompleta.** Zonas com seções não instaladas no exterior (2022 e 2026) e municípios com zona segregada em outras fontes: regra de completude da unidade a definir.
+
+Até a aprovação, a transformação D42 e D62 não é implementada.
+
+## 8. Controles de vagas e candidaturas
+
+### 8.1 Vagas (`tse_vagas_2022`, `tse_vagas_2024`)
+| Controle | Resultado executado | Situação |
+|---|---|---|
+| Uma linha por eleição, unidade e cargo | não verificado | especificado |
+| Ordinária separada por `CD_ELEICAO` (D61); suplementares fora dos parâmetros | 2024: 5.569 unidades por cargo na ordinária, dezenas de suplementares | executado |
+| Prefeito e vice com 1 vaga; governador, presidente e vices com 1 | a confirmar com o teste completo | especificado |
+| Vagas iguais ao número de eleitos (candidaturas com situação final "ELEITO", "ELEITO POR QP" ou "ELEITO POR MÉDIA") | 2024: 16.581 de 16.818 unidades; diferenças em prefeito (106), vice-prefeito (106) e vereador (25). 2022: 111 de 193; diferenças em governador (13), vice-governador (13), presidente (1), vice-presidente (1) e suplentes de senador (54) | executado com divergências |
+| Vagas de vereador conforme a regra legal por faixa de população | pendente de L30 e da regra legal correspondente | especificado |
+
+Leitura das divergências (hipóteses não verificadas): vices e suplentes não recebem situação final no arquivo de candidaturas (`#NULO`); eleitos em 2º turno não aparecem como eleitos no arquivo de candidaturas; as 25 de vereador não têm explicação. Confronto seguinte: resultados por candidato (`votacao_candidato_munzona`), ainda não coletado.
+
+### 8.2 Candidaturas (`tse_candidatos_2022`, `tse_candidatos_2024`)
+| Controle | Campos | Situação |
+|---|---|---|
+| Identificação única | `SQ_CANDIDATO` por turno e eleição | executado: sem duplicidade |
+| Cargo, eleição e unidade | `CD_ELEICAO`, `SG_UE`, `CD_CARGO`, `DS_CARGO` | especificado |
+| Partido ou federação | `SG_PARTIDO`, `NR_FEDERACAO` contra a lista de partidos e federações do jogo | especificado |
+| Situação da candidatura e resultado | `DS_SITUACAO_CANDIDATURA`, `DS_SIT_TOT_TURNO` | especificado; `#NULO` em 1.662 (2022) e 16.290 (2024) |
+| Contagem por lista para o motor (5.3) | candidaturas aptas por lista, unidade e cargo, contra o limite legal (L21) | especificado; depende de L21 |
+
+Classificação das quatro fontes: continua `integridade_pendente`.

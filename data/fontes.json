@@ -42,8 +42,29 @@
    "data_fenomeno": "2024-10-06",
    "temporalidade": "historico_compativel",
    "proveniencia": "versao_posterior_validada",
-   "evidencia": "Versão de 12/09/2025 (Last-Modified, data interna dos CSVs e DT_GERACAO concordantes); publicação até o corte não comprovada. Eleitorado por município igual aos aptos de vereador da eleição ordinária de 2024 nos 5.569 municípios.",
-   "observacoes": "Arquivo fora do git. O zip contém o arquivo nacional e 26 estaduais com as mesmas linhas: usar só um dos dois."
+   "evidencia": "Versão de 12/09/2025 (Last-Modified, data interna dos CSVs e DT_GERACAO concordantes); publicação até o corte não comprovada. Eleitorado por município igual aos aptos de vereador da eleição ordinária de 2024 nos 5.569 municípios. Validado só o total por município (QT_ELEITORES agregado); as demais colunas ficam pendentes (colunas_pendentes).",
+   "observacoes": "Arquivo fora do git. O zip contém o arquivo nacional e 26 estaduais com as mesmas linhas: usar só um dos dois.",
+   "colunas_pendentes": {
+    "DS_GENERO": "fecha com o total municipal (inclusive categorias não informadas), mas o fechamento decorre da construção do arquivo (cada linha cruza todas as dimensões); sem confronto independente",
+    "CD_GENERO": "fecha com o total municipal (inclusive categorias não informadas), mas o fechamento decorre da construção do arquivo (cada linha cruza todas as dimensões); sem confronto independente",
+    "DS_FAIXA_ETARIA": "fecha com o total municipal (inclusive categorias não informadas), mas o fechamento decorre da construção do arquivo (cada linha cruza todas as dimensões); sem confronto independente",
+    "CD_FAIXA_ETARIA": "fecha com o total municipal (inclusive categorias não informadas), mas o fechamento decorre da construção do arquivo (cada linha cruza todas as dimensões); sem confronto independente",
+    "DS_GRAU_ESCOLARIDADE": "fecha com o total municipal (inclusive categorias não informadas), mas o fechamento decorre da construção do arquivo (cada linha cruza todas as dimensões); sem confronto independente",
+    "CD_GRAU_ESCOLARIDADE": "fecha com o total municipal (inclusive categorias não informadas), mas o fechamento decorre da construção do arquivo (cada linha cruza todas as dimensões); sem confronto independente",
+    "DS_ESTADO_CIVIL": "fecha com o total municipal (inclusive categorias não informadas), mas o fechamento decorre da construção do arquivo (cada linha cruza todas as dimensões); sem confronto independente",
+    "CD_ESTADO_CIVIL": "fecha com o total municipal (inclusive categorias não informadas), mas o fechamento decorre da construção do arquivo (cada linha cruza todas as dimensões); sem confronto independente",
+    "DS_RACA_COR": "fecha com o total municipal (inclusive categorias não informadas), mas o fechamento decorre da construção do arquivo (cada linha cruza todas as dimensões); sem confronto independente",
+    "CD_RACA_COR": "fecha com o total municipal (inclusive categorias não informadas), mas o fechamento decorre da construção do arquivo (cada linha cruza todas as dimensões); sem confronto independente",
+    "DS_IDENTIDADE_GENERO": "fecha com o total municipal (inclusive categorias não informadas), mas o fechamento decorre da construção do arquivo (cada linha cruza todas as dimensões); sem confronto independente",
+    "CD_IDENTIDADE_GENERO": "fecha com o total municipal (inclusive categorias não informadas), mas o fechamento decorre da construção do arquivo (cada linha cruza todas as dimensões); sem confronto independente",
+    "DS_QUILOMBOLA": "fecha com o total municipal (inclusive categorias não informadas), mas o fechamento decorre da construção do arquivo (cada linha cruza todas as dimensões); sem confronto independente",
+    "CD_QUILOMBOLA": "fecha com o total municipal (inclusive categorias não informadas), mas o fechamento decorre da construção do arquivo (cada linha cruza todas as dimensões); sem confronto independente",
+    "DS_INTERPRETE_LIBRAS": "fecha com o total municipal (inclusive categorias não informadas), mas o fechamento decorre da construção do arquivo (cada linha cruza todas as dimensões); sem confronto independente",
+    "CD_INTERPRETE_LIBRAS": "fecha com o total municipal (inclusive categorias não informadas), mas o fechamento decorre da construção do arquivo (cada linha cruza todas as dimensões); sem confronto independente",
+    "QT_ELEITORES_BIOMETRIA": "fecha com o total municipal (inclusive categorias não informadas), mas o fechamento decorre da construção do arquivo (cada linha cruza todas as dimensões); sem confronto independente",
+    "QT_ELEITORES_DEFICIENCIA": "fecha com o total municipal (inclusive categorias não informadas), mas o fechamento decorre da construção do arquivo (cada linha cruza todas as dimensões); sem confronto independente",
+    "QT_ELEITORES_NOME_SOCIAL": "fecha com o total municipal (inclusive categorias não informadas), mas o fechamento decorre da construção do arquivo (cada linha cruza todas as dimensões); sem confronto independente"
+   }
   },
   {
    "id": "tse_detalhe_apuracao_2022",
@@ -112,7 +133,7 @@
    "data_fenomeno": "2024-10-27",
    "temporalidade": "historico_compativel",
    "proveniencia": "versao_posterior_validada",
-   "evidencia": "Nominais mais total de legenda iguais aos válidos do detalhe da apuração em 12455 de 12.493 chaves; as 38 restantes ficam como parcela com integridade pendente; versão regenerada após o corte.",
+   "evidencia": "Nominais mais total de legenda iguais aos válidos do detalhe da apuração em 12455 de 12493 chaves; as 38 restantes são parcelas com integridade pendente (relatório em docs/pipeline-dados.md 5); versão regenerada após o corte.",
    "observacoes": "CD_MUNICIPIO sem zeros à esquerda: normalizar para 5 dígitos.",
    "parcelas": [
     {
@@ -122,67 +143,67 @@
      "excluir": {
       "CD_ELEICAO": "619",
       "NR_TURNO": "1",
-      "CD_MUNICIPIO": "4154",
+      "CD_MUNICIPIO": "04154",
       "NR_ZONA": "107",
       "DS_CARGO": "Vereador"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
       "CD_ELEICAO": "619",
       "NR_TURNO": "1",
-      "CD_MUNICIPIO": "4154",
+      "CD_MUNICIPIO": "04154",
       "NR_ZONA": "43",
       "DS_CARGO": "Vereador"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
       "CD_ELEICAO": "619",
       "NR_TURNO": "1",
-      "CD_MUNICIPIO": "4154",
+      "CD_MUNICIPIO": "04154",
       "NR_ZONA": "72",
       "DS_CARGO": "Vereador"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
       "CD_ELEICAO": "619",
       "NR_TURNO": "1",
-      "CD_MUNICIPIO": "4448",
+      "CD_MUNICIPIO": "04448",
       "NR_ZONA": "103",
       "DS_CARGO": "Vereador"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
       "CD_ELEICAO": "619",
       "NR_TURNO": "1",
-      "CD_MUNICIPIO": "4626",
+      "CD_MUNICIPIO": "04626",
       "NR_ZONA": "68",
       "DS_CARGO": "Vereador"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
       "CD_ELEICAO": "619",
       "NR_TURNO": "1",
-      "CD_MUNICIPIO": "5894",
+      "CD_MUNICIPIO": "05894",
       "NR_ZONA": "68",
       "DS_CARGO": "Vereador"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
@@ -193,18 +214,18 @@
       "DS_CARGO": "Prefeito"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
       "CD_ELEICAO": "619",
       "NR_TURNO": "1",
-      "CD_MUNICIPIO": "7420",
+      "CD_MUNICIPIO": "07420",
       "NR_ZONA": "30",
       "DS_CARGO": "Vereador"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
@@ -215,40 +236,40 @@
       "DS_CARGO": "Prefeito"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
       "CD_ELEICAO": "619",
       "NR_TURNO": "1",
-      "CD_MUNICIPIO": "8001",
+      "CD_MUNICIPIO": "08001",
       "NR_ZONA": "80",
       "DS_CARGO": "Vereador"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
       "CD_ELEICAO": "619",
       "NR_TURNO": "1",
-      "CD_MUNICIPIO": "8052",
+      "CD_MUNICIPIO": "08052",
       "NR_ZONA": "35",
       "DS_CARGO": "Vereador"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
       "CD_ELEICAO": "619",
       "NR_TURNO": "1",
-      "CD_MUNICIPIO": "8079",
+      "CD_MUNICIPIO": "08079",
       "NR_ZONA": "16",
       "DS_CARGO": "Vereador"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
@@ -259,40 +280,40 @@
       "DS_CARGO": "Prefeito"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
       "CD_ELEICAO": "619",
       "NR_TURNO": "1",
-      "CD_MUNICIPIO": "8567",
+      "CD_MUNICIPIO": "08567",
       "NR_ZONA": "9",
       "DS_CARGO": "Vereador"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
       "CD_ELEICAO": "619",
       "NR_TURNO": "1",
-      "CD_MUNICIPIO": "9059",
+      "CD_MUNICIPIO": "09059",
       "NR_ZONA": "73",
       "DS_CARGO": "Vereador"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
       "CD_ELEICAO": "619",
       "NR_TURNO": "1",
-      "CD_MUNICIPIO": "9539",
+      "CD_MUNICIPIO": "09539",
       "NR_ZONA": "49",
       "DS_CARGO": "Vereador"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
@@ -303,7 +324,7 @@
       "DS_CARGO": "Vereador"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
@@ -314,7 +335,7 @@
       "DS_CARGO": "Prefeito"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
@@ -325,7 +346,7 @@
       "DS_CARGO": "Prefeito"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
@@ -336,7 +357,7 @@
       "DS_CARGO": "Prefeito"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
@@ -347,7 +368,7 @@
       "DS_CARGO": "Prefeito"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
@@ -358,7 +379,7 @@
       "DS_CARGO": "Prefeito"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
@@ -369,7 +390,7 @@
       "DS_CARGO": "Vereador"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
@@ -380,7 +401,7 @@
       "DS_CARGO": "Prefeito"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
@@ -391,7 +412,7 @@
       "DS_CARGO": "Vereador"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
@@ -402,7 +423,7 @@
       "DS_CARGO": "Vereador"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
@@ -413,7 +434,7 @@
       "DS_CARGO": "Vereador"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
@@ -424,7 +445,7 @@
       "DS_CARGO": "Vereador"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
@@ -435,7 +456,7 @@
       "DS_CARGO": "Vereador"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
@@ -446,7 +467,7 @@
       "DS_CARGO": "Vereador"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
@@ -457,7 +478,7 @@
       "DS_CARGO": "Vereador"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
@@ -468,7 +489,7 @@
       "DS_CARGO": "Vereador"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
@@ -479,7 +500,7 @@
       "DS_CARGO": "Prefeito"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
@@ -490,7 +511,7 @@
       "DS_CARGO": "Vereador"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
@@ -501,7 +522,7 @@
       "DS_CARGO": "Vereador"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
@@ -512,7 +533,7 @@
       "DS_CARGO": "Vereador"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
@@ -523,7 +544,7 @@
       "DS_CARGO": "Prefeito"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     },
     {
      "excluir": {
@@ -534,7 +555,7 @@
       "DS_CARGO": "Vereador"
      },
      "proveniencia": "integridade_pendente",
-     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração (tools/dados/auditar_partido_2024.py)"
     }
    ]
   },
@@ -548,7 +569,7 @@
    "data_fenomeno": "2022-10-02",
    "temporalidade": "historico_compativel",
    "proveniencia": "integridade_pendente",
-   "evidencia": "Controles de conteúdo ainda não definidos para vagas (confronto com eleitos e com a legislação, L30 e afins).",
+   "evidencia": "Controles especificados em docs/pipeline-dados.md 7; execução parcial com divergências não explicadas; não validado.",
    "observacoes": ""
   },
   {
@@ -561,7 +582,7 @@
    "data_fenomeno": "2024-10-06",
    "temporalidade": "historico_compativel",
    "proveniencia": "integridade_pendente",
-   "evidencia": "Controles de conteúdo ainda não definidos para vagas.",
+   "evidencia": "Controles especificados em docs/pipeline-dados.md 7; execução parcial com divergências não explicadas; não validado.",
    "observacoes": "Inclui suplementares realizadas em 2025 e 2026; a regra por parcela marca as posteriores ao corte.",
    "parcelas": [
     {
@@ -579,7 +600,7 @@
    "data_fenomeno": "2022-10-02",
    "temporalidade": "historico_compativel",
    "proveniencia": "integridade_pendente",
-   "evidencia": "Sem validação de conteúdo nesta etapa.",
+   "evidencia": "Controles especificados em docs/pipeline-dados.md 7; execução parcial com divergências não explicadas; não validado.",
    "observacoes": ""
   },
   {
@@ -592,7 +613,7 @@
    "data_fenomeno": "2024-10-06",
    "temporalidade": "historico_compativel",
    "proveniencia": "integridade_pendente",
-   "evidencia": "Sem validação de conteúdo nesta etapa.",
+   "evidencia": "Controles especificados em docs/pipeline-dados.md 7; execução parcial com divergências não explicadas; não validado.",
    "observacoes": "Arquivo fora do git."
   }
  ]
