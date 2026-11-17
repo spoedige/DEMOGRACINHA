@@ -2,11 +2,46 @@
 
 Todas as fórmulas aqui são estrutura. Pesos e expoentes são (calibrar).
 
+## 0. Mapa de causalidade
+
+Regra central: **cada fenômeno chega à urna por um único caminho.** Causas atualizam estados ao longo das janelas; a urna lê só estados e fatores de campanha. Nenhuma causa entra ao mesmo tempo num estado e na fórmula de voto.
+
+### Camadas
+| Camada | Variáveis | Atualizada quando |
+|---|---|---|
+| Causas externas | conjuntura (aprovação do governo, polarização, clima econômico, tensão institucional), ruído | a cada janela, fluxo de RNG de mundo |
+| Causas do jogador | cartas, entregas do mandato (realizações), compromissos, gasto de campanha | ao resolver cartas e eventos |
+| Estados acumulados do candidato | popularidade, notoriedade, rejeição (por escopo), base territorial, grupo político, credibilidade | a cada janela, com decaimento |
+| Estados acumulados do partido | baseUF (identificação partidária na UF), Fundo, tempo de TV | a cada janela (baseUF) e por ciclo (Fundo, TV) |
+| Fatores de campanha | gasto, coligação, tempo de TV, redes, máquina | só no ano eleitoral |
+| Resultado | votos, eleitos, 2º turno | na urna |
+
+### Caminhos permitidos
+```
+clima econômico ----------> aprovação do governo
+aprovação do governo -----> baseUF dos partidos do governo e da oposição   (único caminho)
+entregas do mandato ------> popularidade e rejeição do candidato           (único caminho)
+associação ao governo ----> popularidade do candidato, só por evento explícito (vice, secretário, apoio declarado)
+polarização --------------> pesos: k da rejeição, peso das redes, bônus de partido pequeno (muda pesos, não níveis)
+tensão institucional -----> gatilhos de eventos e bônus de partido pequeno
+base territorial + grupo -> máquina
+estados + campanha -------> votos
+```
+
+### Proibições
+- Aprovação do governo não entra direto na fórmula de voto: já está em baseUF.
+- Desempenho do mandato não entra direto na fórmula de voto: já está em popularidade e rejeição. O termo `desempenho` da versão anterior foi removido.
+- A "carona nacional" é efeito do candidato nacional do partido sobre baseUF no ano eleitoral, não um fator separado da aprovação do governo. Se o candidato nacional é o próprio governo, a carona já está em baseUF.
+- Potencial não entra em nenhum ponto da urna (D1).
+
+### Teste de dupla contagem
+Para cada causa, a calibração mede o efeito total na votação por dois caminhos alternativos desligados; se o efeito dobrar ao religar, há dupla contagem.
+
 ## 1. Estoques
 
-- **Voto:** intenção acumulada (popularidade, notoriedade e rejeição no escopo da disputa).
-- **Máquina:** organização territorial: lideranças locais, estrutura, mobilização, conhecimento do território. No MVP é derivada da base territorial agregada (ver `carreira-e-poder.md` seção 10.2) e do grupo político.
-- **Dinheiro:** Fundo de Campanha disponível (FEFC repassado, fundo partidário, doações).
+- **Voto:** intenção acumulada (popularidade, notoriedade e rejeição no escopo da disputa). Estado, não causa.
+- **Máquina:** organização territorial. Derivada da base territorial agregada e do grupo político (`carreira-e-poder.md` 10.1 e 10.2).
+- **Dinheiro:** Fundo de Campanha disponível (FEFC repassado, fundo partidário, doações). Nunca se mistura com recurso público ou patrimônio pessoal.
 
 ## 2. Máquina e transferência
 
@@ -16,22 +51,20 @@ Prefeito aliado não transfere voto automaticamente. A transferência é probabi
 transferencia = forcaPrefeito × aderencia × N(1, sigma)   (sigma alto, calibrar)
 ```
 
-Um candidato pode ter votação extraordinária sem prefeitos ou fracassar com muitos. A votação depende também de identificação partidária, reconhecimento, opinião pública, concorrência e campanha.
+Um candidato pode ter votação extraordinária sem prefeitos ou fracassar com muitos.
 
 ## 3. Proporcional (vereador, deputado estadual, deputado federal)
 
 Votos nominais do candidato:
 ```
-V = baseUF(partido)^a
+V = baseUF(partido)^a      (identificação partidária; já contém aprovação do governo e carona)
   × maquina^b
-  × popLocal^c
-  × gasto^d               (retorno decrescente)
-  × caronaNacional^e
-  × conjuntura^f          (clima favorável ou adverso ao partido e ao perfil)
+  × popLocal^c             (já contém desempenho do mandato)
+  × gasto^d                (retorno decrescente)
   × ruido(semente)
 ```
 
-O potencial não entra em nenhuma fórmula de urna (decisão D1). A capacidade efetiva entra só de forma indireta, pela qualidade das ações de campanha resolvidas nas cartas.
+A capacidade efetiva entra só de forma indireta, pela qualidade das ações de campanha resolvidas nas cartas.
 
 Apuração:
 1. Quociente eleitoral = válidos ÷ vagas.
@@ -46,10 +79,10 @@ Coligação não existe em proporcional. Federação conta como um partido.
 
 Peso maior em opinião e rejeição:
 ```
-V = (popEscopo - k × rejeicao)^a × notoriedade^b × maquina^c × gasto^d × coligacao^e × tempoTV^f × redes^g × conjuntura^h × desempenho^i × ruido
+V = (popEscopo - k × rejeicao)^a × notoriedade^b × baseUF^c × maquina^d × gasto^e × coligacao^f × tempoTV^g × redes^h × ruido
 ```
 
-`desempenho`: avaliação do mandato anterior ou do governo apoiado, quando houver (realizações entregues, aprovação).
+`k` e o peso de `redes` variam com a polarização. Desempenho e aprovação chegam via popularidade, rejeição e baseUF (seção 0).
 
 - Senado 2026: cada eleitor tem 2 votos; as 2 maiores votações vencem.
 - 2º turno: os dois primeiros, com eventos de apoio, debate e transferência probabilística dos derrotados. TV com tempo igual.
@@ -115,13 +148,19 @@ bloco = { partido ou federação, cadeiras, alinhamento (aliado, independente, o
 
 Componentes:
 - **Composição e tamanho:** cadeiras aliadas sobre o total.
-- **Coesão:** fração esperada de cada bloco aliado que vota com o governo. Cai com conjuntura ruim, compromissos rompidos e disputa de espaço.
+- **Coesão:** fração esperada de cada bloco aliado que vota com o governo. Cai com aprovação do governo baixa, compromissos rompidos e disputa de espaço.
 - **Custo de manutenção:** Capital de Entrega por ciclo para cada bloco, maior para blocos grandes, independentes ou com baixa coesão.
 
 ```
-apoioEfetivo   = Σ cadeiras(bloco aliado) × coesao(bloco)
-governabilidade = f(apoioEfetivo / maioriaExigida)   (faixas: crítica, frágil, funcional, sólida)
+apoioEfetivo    = Σ cadeiras(bloco aliado) × coesao(bloco)
+estabilidade    = f(tempo da coalizão sem ruptura, compromissos cumpridos com os blocos, dispersão ideológica dos blocos)
+folgaDeCusto    = Capital de Entrega disponível ÷ custo de manutenção da base
+negociacao      = f(credibilidade, relação com Bancada, capacidade efetiva em Articulação)
+governabilidade = faixa( apoioEfetivo / maioriaExigida, ajustado por estabilidade, folgaDeCusto e negociacao )
+                  faixas: crítica, frágil, funcional, sólida
 ```
+
+Sem barra na interface: só a faixa textual. Folga de custo negativa (custo maior que o disponível) reduz a coesão no ciclo seguinte.
 
 `maioriaExigida` varia por tipo de proposta (simples, absoluta, qualificada; quóruns reais a confirmar). Governabilidade não equivale ao percentual de cadeiras: 60% de cadeiras com coesão 0,6 rendem menos que 52% com coesão 0,95.
 

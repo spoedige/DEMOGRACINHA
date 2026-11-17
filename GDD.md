@@ -80,7 +80,9 @@ O ritmo muda só a frequência das decisões manuais. A simulação é idêntica
 | Normal | 6 | 2 |
 | Express | 3 (J1, J3, J5) | 1 (calibrar) |
 
-Janela pulada é resolvida pela opção segura alinhada à ambição declarada, com os mesmos eventos e sorteios. Nenhum evento é removido. Requisito técnico: a sequência de consumo do RNG nunca depende do ritmo (fluxos de RNG separados por domínio; ver `CLAUDE.md`).
+Janela pulada é resolvida pela opção segura alinhada à ambição declarada, com os mesmos eventos e sorteios. Nenhum evento é removido.
+
+Compromissos vencidos em janela automática: cumpridos se houver recurso. Se o recurso não cobrir todos, cumprem-se primeiro os de maior `custoPoliticoDeRomper`; empate resolvido por prazo mais antigo e depois por `id`, nunca por sorteio. Os não cumpridos são registrados como rompidos e geram as consequências normais. Requisito técnico: a sequência de consumo do RNG nunca depende do ritmo (fluxos de RNG separados por domínio; ver `CLAUDE.md`).
 
 ## 4. Cartas e janela de decisão
 

@@ -20,16 +20,27 @@ Estrutura mínima:
 
 Poucas variáveis de mundo, atualizadas a cada janela (incluindo as automáticas), pelo fluxo de RNG de mundo, sem depender do jogador:
 
-| Variável | Escopo |
-|---|---|
-| Aprovação do governo | federal e estadual da UF do jogador |
-| Polarização | nacional |
-| Clima econômico percebido | nacional |
-| Tensão institucional | nacional |
+| Variável | Nacional | Estadual (27 UFs) | Local |
+|---|---|---|---|
+| Aprovação do governo | governo federal | governo de cada UF | prefeitura, só nos 10 municípios individualizados |
+| Polarização | sim | desvio da UF em relação à nacional | não |
+| Clima econômico percebido | sim | desvio da UF | não |
+| Tensão institucional | sim | não | não |
 
-- Evolução: tendência mais ruído, com reversão lenta à média (parâmetros a calibrar).
-- Uso: modula o fator `conjuntura` do motor, a coesão das bases parlamentares, a vantagem de partido pequeno e os gatilhos de crises e Pontos de Inflexão.
+- Estados e locais são desvios em torno do nacional, não simulações completas.
+- Alcance por eleição: presidente lê o nacional; governador e senador, o estadual; deputado, o estadual com o nacional na carona; prefeito e vereador, o local quando individualizado, senão o estadual.
+- Evolução: tendência mais ruído, com reversão lenta à média (calibrar).
+- Caminhos causais: ver `motor-eleitoral.md` seção 0. A conjuntura nunca entra direto na fórmula de voto.
 - O jogador influencia pouco e só no escopo do próprio cargo.
+
+### Gatilhos de evento
+Limiar não dispara evento sozinho. Regra:
+```
+habilitado = variável cruzou o limiar do evento
+chance     = probBase × intensidade do cruzamento
+bloqueio   = evento (ou família) não repete antes de N janelas (calibrar)
+```
+Assim a conjuntura torna o evento possível e provável, nunca certo.
 
 ## 3. Crises e escândalos
 

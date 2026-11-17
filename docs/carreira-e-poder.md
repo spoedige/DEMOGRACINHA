@@ -133,7 +133,7 @@ Representação agregada no MVP:
 
 ### 10.2 Base territorial (MVP simplificado, P3)
 
-Agregada por município, limitada aos municípios onde o personagem atua (teto a calibrar, hipótese 10), mais um agregado regional para o restante da UF.
+Agregada por município, com até 10 municípios individualizados no MVP (decisão D12). O restante da UF fica num agregado regional único.
 
 ```
 base[municipio] = { forca, custoManutencao, apoioLocal (prefeito e vereadores aliados, agregado) }
@@ -146,20 +146,56 @@ base[municipio] = { forca, custoManutencao, apoioLocal (prefeito e vereadores al
 ### 10.3 Compromissos com atores (MVP simplificado, P6)
 
 ```
-compromisso = { tipo, contraparte, prazo, beneficioRecebido, custoDeCumprir, custoDeRomper, estado }
+compromisso = {
+  id, tipo,
+  ator,            // contraparte agregada
+  objeto,          // o que foi prometido
+  prazo,           // janela de vencimento
+  custo,           // o que custa cumprir, em uma moeda
+  contrapartida,   // o que o personagem recebeu ao firmar
+  seCumprir,       // consequência de cumprir
+  seRomper,        // consequência de romper
+  custoPoliticoDeRomper,   // usado na priorização do Express
+  estado           // ativo, cumprido, rompido
+}
 ```
 
-- Tipos iniciais: apoio eleitoral, cargo ou espaço, voto em proposta, repasse de recurso (lista fechada a calibrar).
-- Contraparte agregada: partido, federação, governo, grupo político ou liderança local. Sem negociação aberta: o compromisso nasce de uma carta.
-- Limite de compromissos ativos (hipótese 5).
+Tipos (lista fechada no MVP):
+| Tipo | Objeto | Moeda de cumprimento |
+|---|---|---|
+| Apoio eleitoral | apoiar candidato ou chapa em eleição futura | relação, notoriedade emprestada |
+| Cargo ou espaço | indicar aliado do ator para posição | vaga de nomeação, Capital de Entrega |
+| Voto em proposta | votar ou orientar voto | relação com outros atores |
+| Repasse institucional | emenda, convênio ou prioridade orçamentária dirigida ao ator | Capital de Entrega |
+
+O repasse é sempre institucional ou orçamentário. Nunca envolve Fundo de Campanha, fundo partidário ou Caixa Pessoal. Prometer dinheiro de campanha ou pessoal em troca de apoio não é compromisso: é carta de corrupção (`eventos-e-risco.md` seção 5).
+
+- Ator agregado: partido, federação, governo, grupo político ou liderança local. Sem negociação aberta: o compromisso nasce de uma carta.
+- Até 5 compromissos ativos (decisão D12). Vencidos, cumpridos ou rompidos ficam no histórico e continuam valendo para credibilidade e memória do ator.
 - No vencimento: cumprido (credibilidade sobe, relação com a contraparte sobe) ou rompido (credibilidade cai, contraparte guarda memória e pode retaliar via evento atrasado).
 - Compromissos podem atravessar mandatos.
+
+### 10.4 Cargos de nomeação (MVP simplificado, P7)
+
+Posições relevantes que dão influência sem mandato eletivo. Lista fechada no MVP:
+| Escopo | Posições |
+|---|---|
+| Municipal | secretário municipal (nos 10 municípios individualizados) |
+| Estadual | secretário estadual |
+| Federal | ministro, secretário executivo de ministério |
+| Partidária | presidente de diretório municipal, estadual ou nacional |
+
+- Não há simulação de todas as nomeações do país. Só existem as vagas que podem ser oferecidas ao personagem, criadas quando ele tem relação suficiente com o governo ou o partido.
+- Oferta depende de: relação com Executivo (ou Cúpula, para cargo partidário), composição do governo (partido do personagem na coalizão), capital político derivado, compromissos firmados (tipo "cargo ou espaço") e conjuntura.
+- Efeitos: gera Capital de Entrega e presença institucional para o grupo; dá experiência executiva; exige desincompatibilização para disputar eleição (prazos a confirmar).
+- Saída: demissão por mudança de coalizão, crise ou queda de governabilidade; ou saída voluntária para disputar.
+- Sem Ponto de Inflexão próprio além de "Ministério em crise", já previsto.
 
 ## 11. Fase sem cargo
 
 Sabático, mídia, livro, aulas, curso, negócio. Cada opção troca recursos e indicadores (exemplo: livro sobe notoriedade e custa tempo; negócio sobe Caixa Pessoal e pode subir risco jurídico).
 
-Fora do cargo o personagem mantém poder por três vias: liderar o grupo político, manter a base territorial e cobrar compromissos a receber. Cargos de nomeação e direção partidária (P7) aguardam classificação.
+Fora do mandato eletivo o personagem mantém poder por quatro vias: cargo de nomeação ou direção partidária (10.4), liderança do grupo político, base territorial e compromissos a receber.
 
 ## 12. Avaliação final (decisão D4)
 

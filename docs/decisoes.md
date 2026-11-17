@@ -98,3 +98,18 @@ Pendências de arquitetura para a revisão do MVP:
 2. P6 depende de contrapartes agregadas; agentes individuais continuam restritos aos municípios selecionados.
 3. Estado salvo cresce com grupo, base, compromissos e bases parlamentares; revisar o formato do delta.
 4. Ritmo Express resolve automaticamente janelas com compromissos vencendo; a opção segura precisa definir se cumpre ou rompe (proposta: cumpre se houver recurso).
+
+## Revisão de arquitetura, 17/11/2026
+
+| Id | Decisão | Incorporado em |
+|---|---|---|
+| D8 | P7 cargos de nomeação: MVP simplificado, lista fechada, oferta por relação, composição do governo e articulação | `carreira-e-poder.md` 10.4 e 11 |
+| D9 | Conjuntura: 4 variáveis com alcance nacional, estadual (desvio) e local simplificado; limiar habilita, probabilidade decide, bloqueio de repetição | `eventos-e-risco.md` 2.1 |
+| D10 | Compromissos: 4 tipos; repasse só institucional ou orçamentário; registro de ator, objeto, prazo, custo, contrapartida e consequências | `carreira-e-poder.md` 10.3 |
+| D11 | Governabilidade: 4 faixas; considera cadeiras, coesão, estabilidade, custo e negociação; sem barra | `motor-eleitoral.md` 8 |
+| D12 | Limites: 10 municípios individualizados, 5 compromissos ativos; vencidos no histórico | `carreira-e-poder.md` 10.2 e 10.3 |
+| D13 | Save versionado com `saveVersion`, ids estáveis, só estado mutável, migração em cadeia | `CLAUDE.md` |
+| D14 | Express: cumpre com recurso; falta de recurso prioriza maior custo político de romper, desempate determinístico; rompidos registrados | `GDD.md` seção 3 |
+| D15 | Mapa de causalidade: cada causa chega à urna por um único caminho; `conjuntura` e `desempenho` saem da fórmula de voto | `motor-eleitoral.md` 0, 3 e 4 |
+
+As pendências 1, 3 e 4 da revisão integrada foram resolvidas por D8, D13 e D14. A pendência 2 segue: contrapartes são agregadas e agentes individuais continuam restritos.

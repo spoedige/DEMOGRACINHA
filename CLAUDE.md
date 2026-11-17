@@ -40,7 +40,12 @@ Para economizar contexto: leia só o documento da área da tarefa. Os docs não 
 - Motor separado da UI: funções puras `(estado, dados, rng) => novoEstado`, sem acesso ao DOM. Permite rodar o mesmo código em Node para calibração headless (`tools/sim.js`, fora de `public/`).
 - RNG: PRNG com semente (ex.: sfc32 ou mulberry32 com hash da semente textual). Nunca `Math.random`. Fluxos separados por domínio (mundo, eleição, eventos, cartas) para que o ritmo não altere a sequência do mundo.
 - Semente textual compartilhável com prefixo de versão (ex.: `v1-ABCD-1234`).
-- Save: localStorage guarda só o delta da carreira, chave versionada. Sem IndexedDB. Export e import por código de texto (JSON compactado e codificado em base64). Aviso de que limpar o navegador apaga a partida.
+- Save (decisão D13):
+  - Objeto com `saveVersion` inteiro, `gameVersion` e semente.
+  - Persiste só o estado mutável da carreira: personagem, indicadores, bolsos, relações, grupo, base, compromissos (ativos e histórico), bases parlamentares em que atua, conjuntura atual, fila de eventos, histórico, posição dos fluxos de RNG.
+  - Dados consolidados (partidos, municípios, regras) nunca vão no save; são referenciados por identificadores estáveis (código IBGE para município, sigla fixa interna para partido, id textual para evento, carta, título e compromisso). Ids nunca são reutilizados nem renomeados.
+  - Migração: função `migrar[n]` de `saveVersion` n para n+1, aplicada em cadeia ao carregar. Save mais novo que o jogo é recusado com aviso.
+  - localStorage com chave versionada. Sem IndexedDB. Export e import por código de texto (JSON compactado e base64). Aviso de que limpar o navegador apaga a partida.
 - Acessibilidade: viewport 360 px, toque de 44 px, contraste 4.5:1, `prefers-reduced-motion`.
 
 ## Skills úteis por fase

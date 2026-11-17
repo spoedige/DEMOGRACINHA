@@ -17,7 +17,9 @@ Cargos de vereador a presidente; motor proporcional, majoritário e 2º turno; 3
 
 Incluídos após a análise de referência (versões simplificadas, ver `decisoes.md`): potencial fora da urna (P11), conjuntura autônoma (P9), compromissos (P6), base territorial agregada (P3), grupo político agregado (P1), base parlamentar e governabilidade (P4), credibilidade visível, capital político derivado, avaliação final em cinco dimensões.
 
-Sem classificação: P5, P7, P8, P10, P12, P13.
+Também: cargos de nomeação (P7), conjuntura com alcance nacional, estadual e local simplificado.
+
+Sem classificação: P5, P8, P10, P12, P13 (P5 e P8 já estão parcialmente cobertas por credibilidade e pela dimensão influência do grau).
 
 ## 3. Fase 2
 
@@ -79,6 +81,12 @@ Rede: antes de coletar, testar IBGE e TSE com `curl -sI`. Em 403, parar, registr
 29. Compromisso rompido reduz credibilidade; cumprido aumenta.
 30. Grupo político mantém influência após saída do cargo e decai sem entregas.
 31. Grau final permite que carreiras sem Presidência superem uma carreira com Presidência.
+32. Dupla contagem: cada causa do mapa de causalidade chega à urna por um único caminho (teste de desligamento).
+33. Evento de conjuntura não dispara com certeza ao cruzar limiar e respeita o bloqueio de repetição.
+34. Repasse institucional nunca movimenta Fundo de Campanha, fundo partidário ou Caixa Pessoal.
+35. Express prioriza compromissos de forma determinística e registra os rompidos.
+36. Save de versão anterior migra e reproduz a mesma carreira; ids estáveis entre versões.
+37. Nomeação só é oferecida com relação e composição de governo compatíveis.
 
 ## 7. Itens a confirmar
 
