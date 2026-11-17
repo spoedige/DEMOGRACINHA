@@ -71,7 +71,7 @@ Rede: antes de coletar, testar IBGE e TSE com `curl -sI`. Em 403, parar, registr
 19. Ritmos: (a) determinístico: com a mesma semente, o fluxo de RNG de mundo e a conjuntura fora do escopo de influência do jogador são idênticos em Intenso, Normal e Express; (b) estatístico: a distribuição dos resultados de carreira é equivalente entre ritmos.
 20. Janela pulada resolve com a opção segura.
 21. Nenhuma carta sem tensão, fora a segura.
-22. Tela de decisão com aproximadamente seis números, pelo critério de `GDD.md` 5 (indicadores do escopo atual e até 3 recursos); faixas qualitativas não contam.
+22. Tela de decisão com no máximo 6 números apresentados simultaneamente (`GDD.md` 5); faixas qualitativas ficam fora da contagem.
 23. Export e import restauram a mesma carreira.
 24. Resumo inclui derrotas.
 25. Nenhum travessão em textos do jogo (varredura automática).
@@ -91,7 +91,7 @@ Rede: antes de coletar, testar IBGE e TSE com `curl -sI`. Em 403, parar, registr
 39. Transferência de cada liderança entre 0 e a força dela; mesmo sorteio com a mesma semente, em qualquer ritmo.
 40. Força pessoal de lideranças (prefeitos, vereadores, lideranças locais) não altera identificação partidária, base territorial nem estrutura aliada; a estrutura da base não contém campo de apoio local (D53).
 41. `popularidade + rejeicao` nunca excede `notoriedade`.
-42. Saturação do gasto: com opinião fixa, base, estrutura e transferência nulas e um concorrente de referência de pontuação fixa, (a) `maquinaEfetiva` em função do gasto de mobilização é crescente, côncava e menor que 1; (b) o ganho marginal de votos por real decresce monotonicamente; (c) a participação do candidato converge a um limite estritamente menor que a obtida com máquina igual a 1.
+42. Saturação do gasto: com opinião fixa, base, estrutura e transferência nulas e um concorrente de referência de pontuação fixa, (a) para qualquer gasto finito de mobilização, `maquinaEfetiva` é menor que 1; (b) a participação do candidato cresce com o gasto, com ganho marginal decrescente; (c) quando o gasto tende ao infinito, a participação converge para a obtida com `maquinaEfetiva = 1`, mantidos os demais fatores.
 43. TV e redes não aparecem na fórmula de voto; desligar o fluxo zera seu efeito.
 44. 2º turno nunca transfere integralmente os votos dos derrotados.
 45. Fechamento do ciclo: oportunidades e Capital de Entrega são distribuídos só após matrizes, fundos, TV e cláusula atualizados.
@@ -136,12 +136,14 @@ Rede: antes de coletar, testar IBGE e TSE com `curl -sI`. Em 403, parar, registr
 82. Parâmetros de comparecimento, abstenção, brancos e nulos permanecem iguais com e sem mudanças de conjuntura no MVP.
 83. O Improvável não depende do potencial, exige ao menos duas condições desfavoráveis registradas no histórico, consulta `redePoliticaPrevia` da origem e compara notoriedade e rejeição com a média dos candidatos registrados na mesma disputa no início da campanha.
 84. Distribuição hierárquica no segmento livre: antes do arredondamento, os votos reais de cada candidato são iguais aos da competição única; após o arredondamento, `Σ_L F_L = F` e o erro do total de cada lista é menor que `2 + s_L`.
-85. `k` não muda com a polarização; a polarização só altera a conversão de exposição em rejeição.
+85. `k` não muda com a polarização, e a polarização não aparece em nenhum termo da pontuação eleitoral; seus efeitos ocorrem só antes da urna (conversão de exposição em rejeição, alcance das redes, gatilhos de eventos, vantagem de partidos pequenos).
 86. Conjunto de agentes: determinístico pela regra de `regras-e-mundo.md` 4, fixo durante a carreira e independente do conjunto da base; agentes e conjunturas locais só existem nele.
 87. Conjunto da base: no máximo 10 municípios, inclui o inicial, aceita qualquer UF e não altera o conjunto de agentes.
 88. Eleição municipal usa a máquina do próprio município; disputa estadual não conta duas vezes municípios com base detalhada.
 89. A oferta de nomeação não usa capital político.
 90. Suplência mínima: afastamento ou licença de legislador põe um suplente sintético em exercício e preserva o mandato do titular conforme a regra do cargo.
+91. Eleição municipal fora do conjunto da base: `baseTerritorial = 0` e o agregado regional não é usado; em disputa estadual ou nacional, o agregado regional exclui os municípios do conjunto da base.
+92. Afastamento ou licença sem convocação pela regra do cargo não gera suplente.
 
 ## 7. Itens a confirmar
 

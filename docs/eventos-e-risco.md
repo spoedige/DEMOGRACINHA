@@ -99,7 +99,7 @@ Status: Regular, Investigado, Condenado, InelegibilidadeReconhecida. Risco jurí
 | Licença para nomeação | legislador que aceita cargo de nomeação governamental | duração da nomeação | suplente assume; mandato preservado (a confirmar por cargo); pode voltar. Não se aplica a chefe do Executivo |
 Cada estado tem id estável, origem registrada no histórico e fim definido. Nenhum gera game over.
 
-Suplência no MVP (D55): mínima. Quando um legislador se afasta ou se licencia, o suplente da lista (proporcional) ou da chapa (Senado) assume como agente sintético, sem atributos próprios além de partido e alinhamento; o mandato do titular é preservado conforme a regra do cargo (L23, L25, L27). Ordem detalhada de suplência, suplentes individualizados do Senado e sucessão definitiva por suplente: Fase 2.
+Suplência no MVP (D55): mínima. Quando ocorrer afastamento ou licença que, conforme a regra aplicável ao cargo, determine a convocação de suplente (L23, L25, L27), o sistema registra a entrada do suplente da lista (proporcional) ou da chapa (Senado) como agente sintético, sem atributos próprios além de partido e alinhamento; o mandato do titular é preservado conforme a regra do cargo. Afastamento ou licença que não determinem convocação não geram suplente. Ordem detalhada de suplência, suplentes individualizados do Senado e sucessão definitiva por suplente: Fase 2.
 
 ## 7. Saúde
 

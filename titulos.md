@@ -44,7 +44,7 @@ Títulos são conquistas de carreira em tom sério. Cada um tem condição verif
 |---|---|
 | O Relator | Relatou uma CPI que terminou em Momento |
 | O Líder | Fase 2: liderança de bancada não é modelada no MVP |
-| O Articulador | Construiu 3 coligações vencedoras para outros candidatos |
+| O Articulador | Fase 2: coligações para chapas de outros candidatos não são modeladas no MVP |
 | O Presidente da Casa | Fase 2: mesa diretora não é modelada no MVP |
 | O Dono da Legenda | Presidiu o próprio partido nacionalmente |
 

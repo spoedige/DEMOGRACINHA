@@ -145,8 +145,8 @@ Para convites, filiações, candidaturas e vice: atributos descritivos calculado
 
 - Viewport base 360 px, uma coluna, sem hover, alvos de toque de 44 px ou mais.
 - Navegação inferior fixa: **Janela** (decisão), **Carreira** (histórico, mandatos, biografia), **Partido** (situação partidária, federação, bancada), **Indicadores** (todos os escopos), **Menu** (save, ritmo, opções).
-- Tela de decisão com no máximo cerca de 6 números: dos indicadores, só o escopo do cargo atual (local, estadual ou nacional) mais até 3 números de recurso. O resto vai para as telas de consulta.
-- Credibilidade, governabilidade (só para executivos), conjuntura e grupo político aparecem por faixa qualitativa (ex.: "base frágil", "credibilidade sólida"), não por número, e não contam no limite.
+- Tela de decisão com no máximo 6 números apresentados simultaneamente: dos indicadores, só o escopo do cargo atual (local, estadual ou nacional) mais até 3 números de recurso. O resto vai para as telas de consulta.
+- Credibilidade, governabilidade (só para executivos), conjuntura e grupo político aparecem por faixa qualitativa (ex.: "base frágil", "credibilidade sólida"), não por número, e ficam fora da contagem do limite de 6.
 - Capital político nunca aparece: é calculado internamente.
 - Telas de consulta nunca exigem decisão.
 - Aptidões aparecem só como descrição qualitativa e até 3 etiquetas.

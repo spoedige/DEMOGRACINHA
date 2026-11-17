@@ -215,7 +215,7 @@ Base: `3b9b68e`. Itens R1 a R24 e A1 do relatório de auditoria.
 | Id | Decisão | Onde |
 |---|---|---|
 | D50 (R1) | Segmento livre repartido em dois níveis (listas por `S_L = Σ S_i`, depois candidatos), equivalente à competição única antes do arredondamento; erro do total da lista menor que `2 + s_L` | `motor-eleitoral.md` 5.2 |
-| D51 (R2) | `k` fixo por cargo; polarização só na conversão de exposição em rejeição | `motor-eleitoral.md` 4.6 e 6 |
+| D51 (R2) | `k` fixo por cargo; a polarização não entra na pontuação eleitoral e age só antes da urna (conversão de exposição em rejeição, alcance das redes, gatilhos de eventos, vantagem de partidos pequenos). Redação corrigida em 17/11/2026 | `motor-eleitoral.md` 4.6 e 6 |
 | D52 (R4) | Dois conjuntos municipais: agentes (fixo, inicial mais nove maiores eleitorados da UF inicial) e base (dinâmico, até 10, qualquer UF). D12 interpretada: o limite de 10 vale para cada conjunto | `regras-e-mundo.md` 4; `motor-eleitoral.md` 4.5 e 9 |
 | D53 (R3) | Base territorial sem apoio local; força das lideranças só na transferência | `carreira-e-poder.md` 10.2 |
 | D54 (R6) | Oferta de nomeação sem capital político | `carreira-e-poder.md` 10.4 |
@@ -223,3 +223,16 @@ Base: `3b9b68e`. Itens R1 a R24 e A1 do relatório de auditoria.
 | A1 | Professor/Educador mantém `nenhuma`; descrição como vínculo profissional | `carreira-e-poder.md` 1 |
 
 Demais correções (R5, R7, R9 a R24) são de redação, referência e testes, sem nova decisão de projeto. Pendências L33 a L35 incluídas e abertas.
+
+## Ajustes pós-auditoria, 17/11/2026
+
+| Id | Mudança | Onde |
+|---|---|---|
+| D51 (redação) | Polarização fora da pontuação e do `k`; caminhos anteriores à urna mantidos como em 1.2 | `motor-eleitoral.md` 4.6; teste 85 |
+| D56 | Fora do conjunto da base, `baseTerritorial = 0` na máquina municipal; agregado regional só em disputa estadual ou nacional | `motor-eleitoral.md` 2 e 4.5; teste 91 |
+| D55 (redação) | Suplente só quando a regra do cargo determinar convocação | `eventos-e-risco.md` 6.1; teste 92 |
+| D57 | Tela de decisão: no máximo 6 números simultâneos; faixas fora da contagem | `GDD.md` 5; teste 22 |
+| Títulos | O Articulador passa à Fase 2 | `titulos.md` |
+| Teste 42 | Enunciado (c) corrigido: convergência para máquina igual a 1 | `roadmap.md` |
+
+D50 inalterada.

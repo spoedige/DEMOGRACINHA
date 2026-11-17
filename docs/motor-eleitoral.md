@@ -64,7 +64,7 @@ Escalas são definições de projeto, não calibração. Faixas de valores dentr
 | `semOpiniao[e]` | fração que conhece o candidato sem avaliação formada: `notoriedade - popularidade - rejeicao` | 0 a `notoriedade[e]` | idem | derivado, nunca reclassificado |
 | `desconhecimento[e]` | `1 - notoriedade[e]` | 0 a 1 | idem | derivado |
 | `identPartidaria[p,u]` | fração dos votantes válidos da unidade identificados com a lista p (partido isolado ou federação); categorias mutuamente exclusivas | 0 a 1; com `semIdentificacao[u]`, soma exatamente 1 por construção (5.2) | UF; município | estado |
-| `baseTerritorial[m]` | força da organização própria do candidato no município | 0 a 1 | municípios do conjunto da base (até 10, qualquer UF; `regras-e-mundo.md` 4); fora dele, agregado regional | estoque |
+| `baseTerritorial[m]` | força da organização própria do candidato no município | 0 a 1 | detalhada nos municípios do conjunto da base (até 10, qualquer UF; `regras-e-mundo.md` 4); fora dele vale 0 na máquina municipal, e o agregado regional é usado só em disputa estadual ou nacional (4.5) | estoque |
 | `grupo.influencia` | peso agregado do grupo político | 0 a 1 | personagem | estoque |
 | `credibilidade` | confiança dos atores no cumprimento de acordos | 0 a 1, exibida em faixa | personagem | estado |
 | `forca[l]` | capacidade pessoal de mobilização da liderança aliada l (prefeito, vereador, liderança local) | 0 a 1 | município | estado do agente ou do agregado municipal |
@@ -166,8 +166,9 @@ maquinaEfetiva[m] = 1 - (1 - baseTerritorial[m]) × (1 - estruturaAliada[m])
 - `T[l]`: um sorteio por par (liderança, candidato, eleição), ordem fixa por código IBGE e id. Média 1 antes do corte; o corte superior em `forca[l]` reduz levemente a média, efeito a medir na calibração. A força pessoal da liderança não compõe identificação, base própria nem estrutura.
 - Fora do conjunto de agentes, as lideranças são um agregado municipal (prefeito eleito e bancada municipal aliada), sem agentes.
 - Escopo da máquina por tipo de eleição:
-  - Eleição municipal: cada município usa a própria `maquinaEfetiva[m]`, calculada com os dados daquele município.
-  - Disputa estadual ou nacional: média de `maquinaEfetiva[m]` ponderada pelo eleitorado. Municípios do conjunto da base entram com seu valor detalhado; os demais entram pelo agregado regional do candidato. Um município com base detalhada é retirado do agregado regional, para não ser contado duas vezes.
+  - Eleição municipal: a máquina é calculada no próprio município. Nos municípios do conjunto da base, `baseTerritorial[m]` é o valor detalhado. Fora dele, `baseTerritorial[m] = 0` (D56), e a máquina municipal se compõe só de estrutura aliada, mobilização e transferência. O agregado regional nunca é usado em eleição municipal.
+  - Disputa estadual ou nacional: média de `maquinaEfetiva[m]` ponderada pelo eleitorado. Municípios do conjunto da base entram com seu valor detalhado; os demais entram pelo agregado regional do candidato, que exclui os municípios com base detalhada, para não contá-los duas vezes.
+  - Candidatos sintéticos não usam base territorial: sua máquina é `capilaridade[L] × r_g` (5.3).
 - O agregado da UF é sempre soma ou média ponderada das unidades, nunca simulação paralela (9.2).
 
 ### 4.6 Opinião e eleitores sem avaliação formada
@@ -181,7 +182,7 @@ desconhecimento + popularidade + rejeicao + semOpiniao = 1
 opiniao_c = clamp( popularidade_c + α × semOpiniao_c - k × rejeicao_c,  0,  1 )
 ```
   `α` (calibrar, entre 0 e 1) é a disposição de quem conhece sem opinião a votar no candidato quando outros fatores ajudam. É um peso do segmento, não reclassificação: `popularidade` e `rejeicao` continuam inalterados.
-  `k`: parâmetro fixo por cargo (calibrar). Não depende da polarização (D51). A polarização age só na conversão de exposição em rejeição (1.2), o que evita contar o mesmo efeito no estado e na urna.
+  `k`: parâmetro fixo por cargo (calibrar). Não depende da polarização (D51). A polarização não entra na pontuação eleitoral: age só antes da urna, pelos caminhos de 1.2 (conversão de exposição em rejeição, alcance das redes, gatilhos de eventos, vantagem de partidos pequenos), o que evita contar o mesmo efeito no estado e na urna.
 - `desconhecimento` não entra em `opiniao`; esse eleitorado só chega ao candidato pela máquina e, no proporcional, pela legenda.
 
 ## 5. Eleições proporcionais (D35: competição única)
