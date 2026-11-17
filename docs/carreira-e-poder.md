@@ -8,18 +8,25 @@ Origem é o que o personagem era antes de entrar na carreira política, não o q
 
 Cada origem define principalmente **caminhos**: rede inicial, cartas próprias no pool e tipos de oportunidade que tendem a surgir. Diferenças numéricas iniciais são pequenas (calibrar) e servem ao caminho, não o substituem.
 
-| Origem | Rede inicial | Cartas e oportunidades próprias | Limitação de partida |
-|---|---|---|---|
-| Influenciador/Coach | audiência digital | cartas de redes sociais; convites de partidos que buscam exposição | Cúpula inicial baixa; pouca base territorial |
-| Pastor | comunidade religiosa | cartas de mobilização da congregação; diálogo com eleitorado evangélico | notoriedade fora da comunidade baixa |
-| Líder Comunitário | associações de bairro, movimentos locais | cartas de demandas locais e mutirões; base territorial inicial em um município | notoriedade estadual e nacional baixa |
-| Empresário | entidades empresariais, fornecedores | doações próprias a campanha dentro da lei; cartas de gestão e investimento local | rejeição inicial maior entre trabalhadores organizados (calibrar); risco jurídico só por ações, nunca pela origem |
-| Rede Familiar Política | relações preexistentes com políticos da família | acesso facilitado à Cúpula e a convites; cartas de herança de base | expectativa de lealdade à família (compromissos herdados); nenhuma tag de nepotismo ou corrupção pela origem |
-| Liderança Sindical ou Associativa | sindicato, associação profissional ou de classe | cartas de mobilização organizada; diálogo com eleitorado sindicalizado ou associado | relação inicial com Executivo dependente do alinhamento do governo |
-| Servidor | carreira pública, colegas de órgão | cartas técnicas; oportunidades em funções de gestão | sem penalidade automática |
-| Assessor | gabinetes, bastidores | cartas de articulação; acesso a lideranças | baixa exposição pública inicial (notoriedade baixa), sem penalidade de popularidade |
-| Gestor Público | ex-gestor de órgão ou programa, fora do cargo | cartas de gestão e entrega; oportunidades de nomeação futura | Bancada inicial baixa |
-| Professor/Educador | escola, universidade, comunidade escolar | cartas de educação, serviços públicos e articulação comunitária | recurso financeiro inicial baixo |
+| Origem | Rede inicial | `redePoliticaPrevia` | Cartas e oportunidades próprias | Limitação de partida |
+|---|---|---|---|---|
+| Influenciador/Coach | audiência digital | nenhuma | cartas de redes sociais; convites de partidos que buscam exposição | Cúpula inicial baixa; pouca base territorial |
+| Pastor | comunidade religiosa | indireta | cartas de mobilização da congregação; diálogo com eleitorado evangélico | notoriedade fora da comunidade baixa |
+| Líder Comunitário | associações de bairro, movimentos locais | indireta | cartas de demandas locais e mutirões; base territorial inicial em um município | notoriedade estadual e nacional baixa |
+| Empresário | entidades empresariais, fornecedores | indireta | doações próprias a campanha dentro da lei; cartas de gestão e investimento local | rejeição inicial maior entre trabalhadores organizados (calibrar); risco jurídico só por ações, nunca pela origem |
+| Rede Familiar Política | relações preexistentes com políticos da família | direta | acesso facilitado à Cúpula e a convites; cartas de herança de base | expectativa de lealdade à família (compromissos herdados); nenhuma tag de nepotismo ou corrupção pela origem |
+| Liderança Sindical ou Associativa | sindicato, associação profissional ou de classe | indireta | cartas de mobilização organizada; diálogo com eleitorado sindicalizado ou associado | relação inicial com Executivo dependente do alinhamento do governo |
+| Servidor | carreira pública, colegas de órgão | nenhuma | cartas técnicas; oportunidades em funções de gestão | sem penalidade automática |
+| Assessor | gabinetes, bastidores | direta | cartas de articulação; acesso a lideranças | baixa exposição pública inicial (notoriedade baixa), sem penalidade de popularidade |
+| Gestor Público | ex-gestor de órgão ou programa, fora do cargo | direta | cartas de gestão e entrega; oportunidades de nomeação futura | Bancada inicial baixa |
+| Professor/Educador | escola, universidade, comunidade escolar | nenhuma | cartas de educação, serviços públicos e articulação comunitária | recurso financeiro inicial baixo |
+
+`redePoliticaPrevia` (propriedade fixa da origem, valores propostos para revisão):
+- **nenhuma:** sem acesso prévio a políticos, partidos ou governos e sem rede organizada com peso político.
+- **indireta:** rede organizada não partidária com peso político (igreja, associação, sindicato, entidade empresarial), sem acesso direto à política institucional.
+- **direta:** acesso prévio a políticos, gabinetes, direção partidária ou estrutura de governo.
+
+Regras e títulos que dependem de rede prévia consultam só esta propriedade.
 
 ### Indicadores
 Popularidade, notoriedade e rejeição em 3 escopos (local, estadual, nacional). Reputação é indicador derivado, não atributo.

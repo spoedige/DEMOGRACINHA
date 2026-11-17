@@ -127,12 +127,14 @@ Rede: antes de coletar, testar IBGE e TSE com `curl -sI`. Em 403, parar, registr
 75. Uma mesma regra nunca usa capital político e seus componentes ao mesmo tempo.
 76. Influência e legado não somam o mesmo período: legado só mede o ciclo posterior à saída.
 77. Segmentos: em toda unidade, `Σ_L I_L ≤ validos` e `F ≥ 0`, inclusive após atualizações extremas de conjuntura.
-78. Normalização: identificação bruta com soma acima de 1 é reescalada antes da eleição; a soma resultante é no máximo 1 e as proporções entre listas são preservadas.
+78. Distribuição conservativa: após qualquer sequência de atualizações, `Σ identPartidaria + semIdentificacao = 1` dentro da tolerância sem acionar a normalização; acionamento da normalização é registrado como falha.
+78a. Dado inicial com soma diferente de 1 ou categorias sobrepostas é rejeitado na carga.
+78b. Segmentos inteiros: após o maior resto, `Σ I_L + F = validos` exatamente, e cada segmento difere do valor real em menos de 1 voto.
 79. Sem sobreposição: partido federado não tem identificação própria fora da federação na mesma unidade; identificação da federação é a soma das dos membros.
 80. Base única: `identPartidaria` e segmentos usam a mesma base (válidos); nenhuma etapa aplica fração do eleitorado sobre válidos.
 81. Dupla contagem no proporcional: zerar `identPartidaria` de uma lista elimina só o segmento fiel e a legenda dela, sem mudar pontuações; zerar a opinião de um candidato muda só os votos dele nos dois segmentos e, por soma, o total da lista; legenda não muda com opinião ou máquina.
 82. Parâmetros de comparecimento, abstenção, brancos e nulos permanecem iguais com e sem mudanças de conjuntura no MVP.
-83. O Improvável não depende do potencial e exige ao menos duas condições desfavoráveis registradas no histórico.
+83. O Improvável não depende do potencial, exige ao menos duas condições desfavoráveis registradas no histórico, consulta `redePoliticaPrevia` da origem e compara notoriedade e rejeição com a média dos candidatos registrados na mesma disputa no início da campanha.
 
 ## 7. Itens a confirmar
 

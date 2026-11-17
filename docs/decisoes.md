@@ -195,3 +195,13 @@ Correções técnicas da auditoria, aplicadas sem decisão nova por não alterar
 | D44 | Calendário oficial único no `GDD.md` 3; demais docs referenciam | `GDD.md`, `regras-e-mundo.md`, `roadmap.md` |
 | D45 | Pendências legais L1 a L32 com objeto e tipo de fonte | `roadmap.md` 7.1 |
 | D46 | Correção de definição: `identPartidaria` como fração dos válidos, normalizada, sem sobreposição. A arquitetura D35 não muda | `motor-eleitoral.md` 2 e 5.2 |
+
+## Correções de fechamento, 17/11/2026
+
+| Id | Mudança | Onde |
+|---|---|---|
+| D47 | Propriedade `redePoliticaPrevia` (nenhuma, indireta, direta) por origem; O Improvável a consulta; comparações com a média dos registrados na disputa, início da campanha | `carreira-e-poder.md` 1; `titulos.md` |
+| D48 | Identificação como distribuição exclusiva com categoria residual, atualização conservativa, normalização só como proteção | `motor-eleitoral.md` 2 e 5.2 |
+| D49 | Segmentos convertidos em inteiros por maior resto antes da repartição interna | `motor-eleitoral.md` 5.2 |
+
+Os valores de `redePoliticaPrevia` por origem são proposta para revisão do autor.

@@ -63,7 +63,7 @@ Escalas são definições de projeto, não calibração. Faixas de valores dentr
 | `rejeicao[e]` | fração com opinião desfavorável a ponto de não votar | 0 a `notoriedade[e] - popularidade[e]` | idem | estado |
 | `semOpiniao[e]` | fração que conhece o candidato sem avaliação formada: `notoriedade - popularidade - rejeicao` | 0 a `notoriedade[e]` | idem | derivado, nunca reclassificado |
 | `desconhecimento[e]` | `1 - notoriedade[e]` | 0 a 1 | idem | derivado |
-| `identPartidaria[p,u]` | fração dos votantes válidos da unidade identificados com a lista p (partido isolado ou federação); cada votante identificado pertence a uma única lista | 0 a 1; `Σ_p identPartidaria[p,u] ≤ 1` garantido por normalização (5.2) | UF; município | estado |
+| `identPartidaria[p,u]` | fração dos votantes válidos da unidade identificados com a lista p (partido isolado ou federação); categorias mutuamente exclusivas | 0 a 1; com `semIdentificacao[u]`, soma exatamente 1 por construção (5.2) | UF; município | estado |
 | `baseTerritorial[m]` | força da organização própria do candidato no município | 0 a 1 | até 10 municípios mais agregado regional | estoque |
 | `grupo.influencia` | peso agregado do grupo político | 0 a 1 | personagem | estoque |
 | `credibilidade` | confiança dos atores no cumprimento de acordos | 0 a 1, exibida em faixa | personagem | estado |
@@ -201,11 +201,19 @@ I_L = validos × identPartidaria[L] × (1 - δ)           segmento fiel à lista
 F   = validos - Σ_L I_L                                segmento livre
 ```
 - `δ` (calibrar): fração dos identificados que escolhe fora da própria lista.
-- Normalização: se a soma bruta das identificações de uma unidade passar de 1 (por atualizações de conjuntura), todas são reescaladas pelo mesmo fator para que `Σ_L identPartidaria[L] ≤ 1`. Feita antes de cada eleição e registrada no histórico.
+- Construção como distribuição: em cada unidade, a identificação é uma distribuição sobre categorias mutuamente exclusivas, uma por lista e uma residual `semIdentificacao`, com `Σ_L identPartidaria[L] + semIdentificacao = 1`. Os dados iniciais da 1B são montados nesse formato.
+- Atualização conservativa: conjuntura e eventos só movem massa entre categorias (de uma lista para outra ou de e para `semIdentificacao`); nenhuma atualização cria ou destrói massa. A soma permanece 1 por construção.
+- Normalização como proteção: se, por erro numérico, a soma se afastar de 1 além da tolerância, as categorias são reescaladas e o desvio é registrado como inconsistência. Não é mecanismo ordinário e não corrige dados sobrepostos; dado de entrada com sobreposição é rejeitado na 1B.
 - Sem sobreposição: cada votante identificado pertence a uma única lista. A identificação de uma federação é a soma das identificações dos seus partidos, que são conjuntos disjuntos; um partido federado não tem identificação própria fora da federação na mesma unidade.
 - Consequências: `Σ_L I_L = validos × Σ_L identPartidaria[L] × (1 - δ) ≤ validos` e `F = validos - Σ_L I_L ≥ 0`, com `0 ≤ δ ≤ 1`.
 - A base é a mesma em todo o cálculo: `identPartidaria` é fração dos válidos, e os segmentos são calculados sobre os válidos.
 - Federação: uma lista; sua identificação é a dos partidos membros somada (a confirmar tratamento legal).
+
+Conversão dos segmentos em inteiros, antes de qualquer repartição:
+1. Calcular os valores reais `I_L` de todas as listas e `F`.
+2. Aplicar maior resto (4.3) ao conjunto `{I_1, ..., I_n, F}` com total `validos`, desempate por id da lista e F por último. Resultado: inteiros com `Σ I_L + F = validos` exatamente.
+3. Repartir os votos inteiros de cada segmento entre seus concorrentes, de novo por maior resto.
+Como cada etapa preserva a soma, a soma final de legendas e nominais é igual a `validos`.
 
 Repartição (forma 4.2, com τ = 1 e D = 0 em cada segmento):
 ```
