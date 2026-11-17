@@ -206,3 +206,44 @@ Consultas preparadas (podem ser abertas num navegador comum; a resposta é JSON 
 | `consulta_vagas_2022.zip` | https://web.archive.org/cdx/search/cdx?url=cdn.tse.jus.br%2Festatistica%2Fsead%2Fodsele%2Fconsulta_vagas%2Fconsulta_vagas_2022.zip&to=20251231&output=json&fl=timestamp%2Coriginal%2Cmimetype%2Cstatuscode%2Cdigest%2Clength | https://web.archive.org/cdx/search/cdx?url=dadosabertos.tse.jus.br%2Fdataset%2Fcandidatos-2022&to=20251231&output=json&fl=timestamp%2Coriginal%2Cmimetype%2Cstatuscode%2Cdigest%2Clength |
 | `consulta_vagas_2024.zip` | https://web.archive.org/cdx/search/cdx?url=cdn.tse.jus.br%2Festatistica%2Fsead%2Fodsele%2Fconsulta_vagas%2Fconsulta_vagas_2024.zip&to=20251231&output=json&fl=timestamp%2Coriginal%2Cmimetype%2Cstatuscode%2Cdigest%2Clength | https://web.archive.org/cdx/search/cdx?url=dadosabertos.tse.jus.br%2Fdataset%2Fcandidatos-2024&to=20251231&output=json&fl=timestamp%2Coriginal%2Cmimetype%2Cstatuscode%2Cdigest%2Clength |
 | `municipio_tse_ibge.zip` | https://web.archive.org/cdx/search/cdx?url=cdn.tse.jus.br%2Festatistica%2Fsead%2Fodsele%2Fmunicipio_tse_ibge%2Fmunicipio_tse_ibge.zip&to=20251231&output=json&fl=timestamp%2Coriginal%2Cmimetype%2Cstatuscode%2Cdigest%2Clength | https://web.archive.org/cdx/search/cdx?url=dadosabertos.tse.jus.br%2Fdataset%2Fcodigos-oficiais-de-uf-e-municipios-segundo-o-tse-e-o-ibge&to=20251231&output=json&fl=timestamp%2Coriginal%2Cmimetype%2Cstatuscode%2Cdigest%2Clength |
+
+## 8. Fontes no GitHub: auditoria de aproveitamento, 17/11/2026
+
+Estratégia definida pelo autor: GitHub como caminho principal para localizar e obter dados; Internet Archive só para lacunas pontuais. Espelho no GitHub não prova admissibilidade pela D60. Nenhuma classificação mudou e nenhum dado de jogo foi gerado.
+
+Repositórios lidos por clone raso, fora do repositório do projeto, sem executar código deles:
+- `adrianogpena/minha-bancada`, commit `0cd975762338ff032869a04820ab4d86a76f1a00` (17/11/2026).
+- `basedosdados/pipelines`, commit `c921822ace9bf4f6603fab234e1b5d838daec68f` (12/11/2026), só `models/br_tse_eleicoes`.
+
+Comparação reproduzível: `tools/dados/comparar_minha_bancada.py` (só leitura), contra os brutos oficiais já coletados.
+
+### 8.1 Minha Bancada: comparação com os brutos oficiais
+
+| Conjunto derivado | Comparado com | Resultado | Lacunas e divergências |
+|---|---|---|---|
+| `dados/municipios_ibge.json` | tabela oficial TSE x IBGE | 5.571 pares, todos iguais | O changelog diz que foi refeito em 18/10/2026 por ligação UF + nome, com 14 grafias ajustadas à mão; coincide com a tabela oficial, mas não é fonte independente nem anterior ao corte |
+| `dados/tse/eleitorado/2024/<UF>.json` | aptos de vereador, 1º turno, eleição ordinária 2024 | total igual nos 5.569 municípios (155.912.680) | as somas por gênero, faixa etária e escolaridade não fecham com o total em cerca de 1.000 municípios por recorte (gênero: 1.034; faixa etária: 875; escolaridade: 986); provável omissão de categorias como "não informado" (não verificado no código do projeto) |
+| `dados/tse/disputa/2024/<UF>.json` | detalhe da apuração 2024 (eleição ordinária) | 11.138 linhas (cargo, turno, município); aptos, comparecimento, abstenções e brancos iguais em 11.102 | 36 linhas misturam eleição ordinária e suplementar (exemplo: Oiapoque, AP, prefeito: 47.174 aptos no derivado = 24.120 da ordinária + 23.054 da suplementar), contra a D61; 58 linhas com válidos diferentes porque os votos anulados foram somados aos válidos (exemplo: município 28037, AL, vereador: 11.760 = 9.864 válidos + 1.896 anulados), contra a D59 e a D62; não há as três parcelas anuladas (presentes no TSE em 1.502 linhas); 51 linhas sem correspondência na eleição ordinária |
+| `dados/tse/partidos/2024/<UF>.json` | votação por partido 2024 (vereador, eleição ordinária) | 44.494 pares (município, sigla) comparados: posição 0 igual ao total de votos de legenda em 44.472, posição 1 igual aos nominais válidos em 44.453 | 5.179 pares sem correspondência no arquivo oficial: 294 com zero e 4.885 com votos; causa não identificada |
+
+Temporalidade: os dados de eleitorado e de votos por partido entraram no repositório em outubro de 2026 (changelog). Os commits não comprovam disponibilidade até 31/12/2025. Os dados vêm dos mesmos arquivos do TSE que já temos, regenerados depois do corte.
+
+### 8.2 Base dos Dados (`basedosdados/pipelines`)
+
+- O repositório traz código e metodologia; os dados tratados ficam no BigQuery da Base dos Dados, fora do GitHub. Consultá-los exige credencial do BigQuery (não configurada nesta sessão).
+- Cobertura documentada (`code/DEPENDENCIES.md`): detalhe da votação por município e zona, perfil do eleitorado por município e zona, vagas, candidatos, resultados por partido e por candidato, de 1994 (ou ano inicial de cada tabela) a 2024.
+- `detalhes_votacao_municipio` só tem válidos, brancos e nulos; não preserva as três parcelas anuladas da D59 e da D62.
+- Utilidade: referência de tratamento (ETL) e de dicionário; não substitui os brutos para a D59, a D61 e a D62.
+
+### 8.3 Matriz de aproveitamento
+
+| Necessidade | Minha Bancada | Base dos Dados | Brutos oficiais coletados |
+|---|---|---|---|
+| Correspondência TSE x IBGE | igual à oficial | não avaliado | tabela oficial |
+| Eleitorado por município 2024 | total igual; recortes incompletos | tabela disponível no BigQuery | perfil 2024 (versão de 12/09/2025) |
+| Comparecimento e parcelas da D59 | incompleto e com mistura de eleições | incompleto (sem anulados) | completo |
+| Vagas da eleição ordinária | mistura suplementares em parte | tabela de vagas | completo, com `CD_ELEICAO` |
+| Votos por partido | quase igual, com lacunas sem explicação | tabela disponível no BigQuery | completo |
+| Prova de disponibilidade até 31/12/2025 | não | não avaliado | não (ver seção 6) |
+
+Conclusão: os dois repositórios confirmam a consistência dos brutos que já temos, mas não os substituem nem resolvem a D60. Para os parâmetros da D59, D61 e D62, o tratamento precisa partir dos brutos oficiais.
