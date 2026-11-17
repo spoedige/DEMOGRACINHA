@@ -243,7 +243,7 @@ D50 inalterada.
 |---|---|---|
 | D58 | Três conjuntos: 5.571 municípios do cadastro IBGE; 5.569 com eleição municipal própria (sem Brasília e Fernando de Noronha); unidades estatísticas eleitorais variáveis, com exterior sem associação a município | `regras-e-mundo.md` 4; `motor-eleitoral.md` 9 |
 | D59 | Identidade do comparecimento com as seis parcelas do TSE (válidos, brancos, nulos com técnicos, anulados, anulados sub judice, anulados em apuração separada) e votos por eleitor; agregação em `anuladosTotal` só com transformação explícita | `motor-eleitoral.md` 4.2.1 |
-| D60 | Mundo inicial só com dados publicados até 31/12/2025; dados de 2026 só para calibração. Consequência: a regra do conjunto de agentes (D52) passa a usar o último retrato de eleitorado até essa data, em vez do snapshot de 2026 | `regras-e-mundo.md` 4; `roadmap.md` 4 |
+| D60 | (Substituída pela D60 revisada abaixo.) Mundo inicial só com dados publicados até 31/12/2025; dados de 2026 só para calibração. Consequência: a regra do conjunto de agentes (D52) passa a usar o último retrato de eleitorado até essa data, em vez do snapshot de 2026 | `regras-e-mundo.md` 4; `roadmap.md` 4 |
 | D61 | Eleições ordinária e suplementares separadas por `CD_ELEICAO`; suplementares mantidas nos brutos e fora dos parâmetros da ordinária | `roadmap.md` 4; `coleta-estatistica.md` 2 |
 | D62 | No MVP, as três categorias de votos anulados são parâmetros históricos fixos por unidade eleitoral e tipo de eleição, da última eleição ordinária anterior a 31/12/2025 (municipal: 2024; geral: 2022), calculadas sobre o total de votos possíveis com `votosPorEleitor`, mantidas separadas e não atribuídas a candidatos. Ausência de referência tem fallback explícito (taxa da UF, marcada como estimativa) ou lacuna registrada, nunca zero. Relação com a situação jurídica das candidaturas: Fase 2 | `motor-eleitoral.md` 4.2.1; teste 97 |
 
@@ -260,4 +260,10 @@ O manifesto registra, sempre que disponíveis: data de referência, data de publ
 
 Resultados eleitorais de 2026 servem só para calibração e validação posterior, nunca para o estado inicial.
 
-Estados de admissibilidade: `admissivel`, `admissivel_por_equivalencia` (com o campo e a fonte de comparação indicados), `admissibilidade_temporal_nao_comprovada`, `inadmissivel` (referência ou publicação posterior ao corte), `somente_calibracao`.
+Estados de admissibilidade (padronizados):
+- `admissivel`: os dois critérios temporais foram comprovados.
+- `admissibilidade_temporal_nao_comprovada`: a referência é compatível com o corte, mas não há evidência suficiente de que a versão utilizada estava disponível até 31/12/2025.
+- `nao_admissivel`: a informação ou versão utilizada foi publicada após o corte, ou representa período posterior ao corte.
+- `pendente`: a investigação ainda não foi concluída.
+
+Nenhuma fonte é classificada como `admissivel` com base apenas na data de criação do recurso, na data de referência eleitoral ou no `Last-Modified` isoladamente. Cada classificação registra a evidência que a fundamenta. Esta redação substitui a linha D60 da tabela "Dados estatísticos" acima.

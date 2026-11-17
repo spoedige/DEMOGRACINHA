@@ -1,0 +1,2721 @@
+{
+ "consulta_cand_2022.zip": {
+  "membros": [
+   {
+    "arquivo": "leiame.pdf",
+    "data_no_zip": "2026-11-06 19:49:54",
+    "bytes": 208302,
+    "sha256": "f30553fb57dddd4ea6a3b1a636b50cb90edf2ac40ada27fe5cb7993d0c0cad70",
+    "dt_geracao": {}
+   },
+   {
+    "arquivo": "consulta_cand_2022_AC.csv",
+    "data_no_zip": "2026-11-17 06:19:48",
+    "bytes": 293962,
+    "sha256": "17324e33e73ed9f5d0be01651b1d7162736ecaecdfb0aa7d13220785b0354549",
+    "dt_geracao": {
+     "17/11/2026": 542
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2022_AL.csv",
+    "data_no_zip": "2026-11-17 06:19:52",
+    "bytes": 273831,
+    "sha256": "745b1e0d6f2440715b4bcd64bab2cc18513b2b0acdf8aef4985feaa9ff9af9ca",
+    "dt_geracao": {
+     "17/11/2026": 503
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2022_AM.csv",
+    "data_no_zip": "2026-11-17 06:19:46",
+    "bytes": 361075,
+    "sha256": "323459ee8c9ee855f6fc49224ee7048ae4a7c0e4f181519a53c86d2562cf456a",
+    "dt_geracao": {
+     "17/11/2026": 664
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2022_SE.csv",
+    "data_no_zip": "2026-11-17 06:19:40",
+    "bytes": 298584,
+    "sha256": "0acfd8847f325916081bcd65d3a501c3134afbad300b4f5d9779bdf543d3527b",
+    "dt_geracao": {
+     "17/11/2026": 545
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2022_SP.csv",
+    "data_no_zip": "2026-11-17 06:20:04",
+    "bytes": 1978923,
+    "sha256": "1e17f4b83fc6185a0d6b3c1724a3ee86c19f6174e7cb42252577e20fdef9180e",
+    "dt_geracao": {
+     "17/11/2026": 3659
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2022_BA.csv",
+    "data_no_zip": "2026-11-17 06:19:06",
+    "bytes": 926743,
+    "sha256": "0faceb29248211f5e5cff73467571e7720117fae7b5d2c9390cb6a6663ac7143",
+    "dt_geracao": {
+     "17/11/2026": 1723
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2022_AP.csv",
+    "data_no_zip": "2026-11-17 06:19:02",
+    "bytes": 301039,
+    "sha256": "79db675693d7d93d48d5eca90343da49c7b4a7e913253023e6d771e7e3352795",
+    "dt_geracao": {
+     "17/11/2026": 557
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2022_TO.csv",
+    "data_no_zip": "2026-11-17 06:20:08",
+    "bytes": 291232,
+    "sha256": "63687fa2097290c5c8d84e50517ab9569c4b5bae4962e1fdefc2b3dbe72ec244",
+    "dt_geracao": {
+     "17/11/2026": 531
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2022_PE.csv",
+    "data_no_zip": "2026-11-17 06:19:16",
+    "bytes": 626333,
+    "sha256": "1daa2f0ac633cee1e182ee097dd9bcd67f039e5af96a2f43c3fa5fa1aa75c7bc",
+    "dt_geracao": {
+     "17/11/2026": 1142
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2022_MT.csv",
+    "data_no_zip": "2026-11-17 06:19:06",
+    "bytes": 287204,
+    "sha256": "dc83d061f80c2aecdd42a64c0a5b81870f7412b1abb40b902bc3678f0638795b",
+    "dt_geracao": {
+     "17/11/2026": 525
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2022_PB.csv",
+    "data_no_zip": "2026-11-17 06:19:14",
+    "bytes": 416194,
+    "sha256": "7d26bdec9d5803cf198672ae8c08c89bdc791a9e195382ab33f56226f9e0f7c9",
+    "dt_geracao": {
+     "17/11/2026": 756
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2022_PA.csv",
+    "data_no_zip": "2026-11-17 06:19:06",
+    "bytes": 566293,
+    "sha256": "54d29945425d5f2595a613db0c4888c03ae9e774895518d157264935698fa580",
+    "dt_geracao": {
+     "17/11/2026": 1043
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2022_MG.csv",
+    "data_no_zip": "2026-11-17 06:19:12",
+    "bytes": 1402534,
+    "sha256": "c9a525abad2f27796593323ee4a101d97980c75a90b956f01f19e0500761014b",
+    "dt_geracao": {
+     "17/11/2026": 2562
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2022_MA.csv",
+    "data_no_zip": "2026-11-17 06:19:10",
+    "bytes": 522850,
+    "sha256": "0d574c68c3bedff9a8c2175faa83e6bc1369acc19e75ab5c154bbc67e0e0652c",
+    "dt_geracao": {
+     "17/11/2026": 959
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2022_BR.csv",
+    "data_no_zip": "2026-11-17 06:19:16",
+    "bytes": 17446,
+    "sha256": "9204899626f97516ec8306107cd5a9f24b2b1a08397b88a017f02381ef254789",
+    "dt_geracao": {
+     "17/11/2026": 30
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2022_SC.csv",
+    "data_no_zip": "2026-11-17 06:19:32",
+    "bytes": 547579,
+    "sha256": "274c53c63a5d447179c83f096a1df3368c0f8b4cc89d0a8259e7bf43ddd382cc",
+    "dt_geracao": {
+     "17/11/2026": 996
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2022_RN.csv",
+    "data_no_zip": "2026-11-17 06:19:12",
+    "bytes": 312287,
+    "sha256": "3d1b956ab2fb779782233fe9d91e45314701d9196280deeab5c4ed0d8c0e3650",
+    "dt_geracao": {
+     "17/11/2026": 557
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2022_RJ.csv",
+    "data_no_zip": "2026-11-17 06:19:22",
+    "bytes": 1528746,
+    "sha256": "d5acf2e88158737f5e8c5f08eb43426e720939394a624be3fd14bba36834cdbb",
+    "dt_geracao": {
+     "17/11/2026": 2785
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2022_PI.csv",
+    "data_no_zip": "2026-11-17 06:19:10",
+    "bytes": 237779,
+    "sha256": "3480647fe7f8da4d1f436915148f5e5aa5f890454fec2d314cc353915efa33c4",
+    "dt_geracao": {
+     "17/11/2026": 433
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2022_RR.csv",
+    "data_no_zip": "2026-11-17 06:19:24",
+    "bytes": 337602,
+    "sha256": "c0007feb8f24325e0f68e737988a6a726f727f58f7eb039e506c0b9946b52d1f",
+    "dt_geracao": {
+     "17/11/2026": 620
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2022_RO.csv",
+    "data_no_zip": "2026-11-17 06:19:12",
+    "bytes": 343970,
+    "sha256": "c873e5c0c8139419e293a6b909167e209caa49693adf799ecda16cfaf36a9043",
+    "dt_geracao": {
+     "17/11/2026": 633
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2022_PR.csv",
+    "data_no_zip": "2026-11-17 06:19:22",
+    "bytes": 857904,
+    "sha256": "5ad5e744bee4075294b57f9ab61d9e3f99f8fc5d0962ca9c72d395bdd74ad864",
+    "dt_geracao": {
+     "17/11/2026": 1583
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2022_BRASIL.csv",
+    "data_no_zip": "2026-11-17 06:19:26",
+    "bytes": 15990235,
+    "sha256": "004bda3383fc3f1c367be6236df4fe0a3afd1bffd9f0b75861ab7c37cf227231",
+    "dt_geracao": {
+     "17/11/2026": 29322
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2022_CE.csv",
+    "data_no_zip": "2026-11-17 06:19:00",
+    "bytes": 558154,
+    "sha256": "c79d26ae10b377bbb2ea35a9b1cd5e31355b8663693a368c41b8c6eb67b2ef84",
+    "dt_geracao": {
+     "17/11/2026": 1018
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2022_RS.csv",
+    "data_no_zip": "2026-11-17 06:19:24",
+    "bytes": 795793,
+    "sha256": "c164d6c66663f556a9f000b32650d5910ff49567806198af5d9e36ae28b603ec",
+    "dt_geracao": {
+     "17/11/2026": 1437
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2022_GO.csv",
+    "data_no_zip": "2026-11-17 06:19:06",
+    "bytes": 668003,
+    "sha256": "0b3d01fdf783c7af499f80f4a67f45877549a25a0dab296f3d2b9007ce9ffe10",
+    "dt_geracao": {
+     "17/11/2026": 1243
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2022_MS.csv",
+    "data_no_zip": "2026-11-17 06:19:04",
+    "bytes": 334785,
+    "sha256": "5da0bb17cdad9fba6f896d2e58e8bf737552d07bd0d19f39cab7a7ed2e0e5dc8",
+    "dt_geracao": {
+     "17/11/2026": 598
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2022_ES.csv",
+    "data_no_zip": "2026-11-17 06:19:02",
+    "bytes": 429867,
+    "sha256": "ea05e701723d674a857eb247050d678b6c4c1679fd75f35bae2ed4fc9ad58abd",
+    "dt_geracao": {
+     "17/11/2026": 782
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2022_DF.csv",
+    "data_no_zip": "2026-11-17 06:19:02",
+    "bytes": 495177,
+    "sha256": "a7bd61740c7f52fe7f52d4bc9bc7df1aef019881d1ac4376266e6af2fa584931",
+    "dt_geracao": {
+     "17/11/2026": 896
+    }
+   }
+  ],
+  "datas_no_zip": [
+   "2026-11-06",
+   "2026-11-17"
+  ],
+  "dt_geracao_distintas": [
+   "17/11/2026"
+  ]
+ },
+ "consulta_vagas_2022.zip": {
+  "membros": [
+   {
+    "arquivo": "consulta_vagas_2022_AP.csv",
+    "data_no_zip": "2026-11-17 06:18:28",
+    "bytes": 1252,
+    "sha256": "a665c6c18d457bcc19c966eb9512b90795b2ee20f1a1b4c2cdd9253667a1652c",
+    "dt_geracao": {
+     "17/11/2026": 7
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2022_AM.csv",
+    "data_no_zip": "2026-11-17 06:18:28",
+    "bytes": 1273,
+    "sha256": "09971867d7c0f1681e9732406285f7e8e8b8e736ec856b5496bed5d484e2b0c4",
+    "dt_geracao": {
+     "17/11/2026": 7
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2022_CE.csv",
+    "data_no_zip": "2026-11-17 06:18:22",
+    "bytes": 1253,
+    "sha256": "2b8f06db8f1538475e6aa6e4a9d9edbffc4ffe23fba6d182be8d96ae750290d2",
+    "dt_geracao": {
+     "17/11/2026": 7
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2022_AC.csv",
+    "data_no_zip": "2026-11-17 06:18:26",
+    "bytes": 1245,
+    "sha256": "94f8c9af83f7e3a65c85cf871fa708a18271eb8b5e606bf478b7d949e1a027ce",
+    "dt_geracao": {
+     "17/11/2026": 7
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2022_BA.csv",
+    "data_no_zip": "2026-11-17 06:18:32",
+    "bytes": 1253,
+    "sha256": "a58c5d0da420da8187232cd3f0da741647091b3e31fb41e8dca0815782a01846",
+    "dt_geracao": {
+     "17/11/2026": 7
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2022_AL.csv",
+    "data_no_zip": "2026-11-17 06:18:28",
+    "bytes": 1266,
+    "sha256": "3fbea09c8e84c7ab18a2d992381dfb594b472792e5aafe9175b9bb8b097b71c2",
+    "dt_geracao": {
+     "17/11/2026": 7
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2022_SC.csv",
+    "data_no_zip": "2026-11-17 06:17:00",
+    "bytes": 1316,
+    "sha256": "ac5523b6b3b794cee412ae44ccbe35ca15e788aadd640ceb28d28f16a1c36000",
+    "dt_geracao": {
+     "17/11/2026": 7
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2022_PB.csv",
+    "data_no_zip": "2026-11-17 06:18:08",
+    "bytes": 1267,
+    "sha256": "7956801447c1aca925f0a67ab2ce6f7ec42d545b5e6b9cef5300ecb8f31928fd",
+    "dt_geracao": {
+     "17/11/2026": 7
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2022_MA.csv",
+    "data_no_zip": "2026-11-17 06:18:06",
+    "bytes": 1274,
+    "sha256": "9147ee68fa02a9ec9d998514ce5c468566380a28250365830b645e05c286ae7f",
+    "dt_geracao": {
+     "17/11/2026": 7
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2022_ES.csv",
+    "data_no_zip": "2026-11-17 06:18:32",
+    "bytes": 1316,
+    "sha256": "aa35bbc2ea736eb01829b6a1dbe6097d06608950cf47aa0ef2ec23781ea990dc",
+    "dt_geracao": {
+     "17/11/2026": 7
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2022_GO.csv",
+    "data_no_zip": "2026-11-17 06:18:32",
+    "bytes": 1253,
+    "sha256": "50ff7a224add27f4038f302e7dff611372de5e18977f7a75f7a81acc77639486",
+    "dt_geracao": {
+     "17/11/2026": 7
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2022_MG.csv",
+    "data_no_zip": "2026-11-17 06:18:32",
+    "bytes": 1302,
+    "sha256": "1f701332f3e7c55c2eb9207f9e72a6614581c9c479dc9ef9857cad2ceeea013d",
+    "dt_geracao": {
+     "17/11/2026": 7
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2022_DF.csv",
+    "data_no_zip": "2026-11-17 06:18:24",
+    "bytes": 1330,
+    "sha256": "a3c3cfb6508253c9e5a18b9522a83ee3908e7019d896735c7c72b75adb0fe467",
+    "dt_geracao": {
+     "17/11/2026": 7
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2022_MT.csv",
+    "data_no_zip": "2026-11-17 06:18:12",
+    "bytes": 1294,
+    "sha256": "25abaa918753be88921eeaee597dc5e9cda2508647f6e27d67b01509af6b56fc",
+    "dt_geracao": {
+     "17/11/2026": 7
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2022_PE.csv",
+    "data_no_zip": "2026-11-17 06:17:12",
+    "bytes": 1288,
+    "sha256": "8d8e59477512499d78ba785267dec7752d55cf0e1fba913a15e35fe024bf516b",
+    "dt_geracao": {
+     "17/11/2026": 7
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2022_MS.csv",
+    "data_no_zip": "2026-11-17 06:18:32",
+    "bytes": 1343,
+    "sha256": "5b7cd9eded3c6f70e5e6ac6264ab8d150132afc2a703a3564f8637370c445fe4",
+    "dt_geracao": {
+     "17/11/2026": 7
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2022_BRASIL.csv",
+    "data_no_zip": "2026-11-17 06:17:58",
+    "bytes": 30519,
+    "sha256": "c245525c64e19727f2b58983dfad7a9ba2af5145e5eeab989622e125ac07eafb",
+    "dt_geracao": {
+     "17/11/2026": 193
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2022_PA.csv",
+    "data_no_zip": "2026-11-17 06:18:38",
+    "bytes": 1246,
+    "sha256": "b7121f83e5cf504f15fcf56d96ee1f4cc8d4f0ee222c1f991ddb2fccb8e08de5",
+    "dt_geracao": {
+     "17/11/2026": 7
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2022_BR.csv",
+    "data_no_zip": "2026-11-17 06:17:56",
+    "bytes": 482,
+    "sha256": "ddb0f816273e0c47e2bdbf9248c8002f025dfa838aa9ae3150eaaa0fd27dd286",
+    "dt_geracao": {
+     "17/11/2026": 2
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2022_RJ.csv",
+    "data_no_zip": "2026-11-17 06:18:14",
+    "bytes": 1316,
+    "sha256": "aeb0d5ba028a35e3d95274a86b6a814a2270972907a5295727927740fad763e5",
+    "dt_geracao": {
+     "17/11/2026": 7
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2022_PR.csv",
+    "data_no_zip": "2026-11-17 06:18:20",
+    "bytes": 1260,
+    "sha256": "283c8b5897596c656e4846cf4576d13ed35ba7e2ff81520bd897836e571d496c",
+    "dt_geracao": {
+     "17/11/2026": 7
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2022_RN.csv",
+    "data_no_zip": "2026-11-17 06:18:18",
+    "bytes": 1350,
+    "sha256": "77381c896cb40f3ed1bae03080773935d98c65a3eab3ab70020d570f3b836f3c",
+    "dt_geracao": {
+     "17/11/2026": 7
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2022_RO.csv",
+    "data_no_zip": "2026-11-17 06:17:24",
+    "bytes": 1273,
+    "sha256": "8f80424220131625cfa553c3934b04e90408b983e18d5334f4543c4ff860018e",
+    "dt_geracao": {
+     "17/11/2026": 7
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2022_PI.csv",
+    "data_no_zip": "2026-11-17 06:18:08",
+    "bytes": 1253,
+    "sha256": "7aa360eb89442a9292136e89dbfd5076dba608181521a6fee0cb4910c6f4d841",
+    "dt_geracao": {
+     "17/11/2026": 7
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2022_RR.csv",
+    "data_no_zip": "2026-11-17 06:18:22",
+    "bytes": 1591,
+    "sha256": "8a2659bd9ce920e8417017f625d20b6cadcb64dc8e8e0fa7c2c4d41367d3f361",
+    "dt_geracao": {
+     "17/11/2026": 9
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2022_SE.csv",
+    "data_no_zip": "2026-11-17 06:17:00",
+    "bytes": 1266,
+    "sha256": "ca2a6e567bab865a3037b610f752f54735039ca3524519e9a649868a63dae4c5",
+    "dt_geracao": {
+     "17/11/2026": 7
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2022_SP.csv",
+    "data_no_zip": "2026-11-17 06:17:00",
+    "bytes": 1281,
+    "sha256": "57627a99bc2b58cdfafef84ef35357cd32acf20f60c2bbc7775d5ce1d62404d6",
+    "dt_geracao": {
+     "17/11/2026": 7
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2022_RS.csv",
+    "data_no_zip": "2026-11-17 06:17:00",
+    "bytes": 1337,
+    "sha256": "4023191d16bdf1d2df6d3a377bd1cc69fb9294ff2077e0739e1f57816c9ae4ae",
+    "dt_geracao": {
+     "17/11/2026": 7
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2022_TO.csv",
+    "data_no_zip": "2026-11-17 06:17:00",
+    "bytes": 1280,
+    "sha256": "e32003e42f35db61be3e9995b3080ac4a56f966184c1cbc26e6d38de1bbc34be",
+    "dt_geracao": {
+     "17/11/2026": 7
+    }
+   },
+   {
+    "arquivo": "leiame.pdf",
+    "data_no_zip": "2026-11-06 19:49:54",
+    "bytes": 181141,
+    "sha256": "ff3f74ff24dee59c8666c5d7e0cfb9ebb113a0eedbfc500ba698a35a3c9fcc04",
+    "dt_geracao": {}
+   }
+  ],
+  "datas_no_zip": [
+   "2026-11-06",
+   "2026-11-17"
+  ],
+  "dt_geracao_distintas": [
+   "17/11/2026"
+  ]
+ },
+ "consulta_vagas_2024.zip": {
+  "membros": [
+   {
+    "arquivo": "consulta_vagas_2024_AM.csv",
+    "data_no_zip": "2026-11-17 05:18:36",
+    "bytes": 28604,
+    "sha256": "1aeca2c49b2b3fee0e842ddcbbae976160ec8a04e56bca1e0fc20bca743fce39",
+    "dt_geracao": {
+     "17/11/2026": 186
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2024_AP.csv",
+    "data_no_zip": "2026-11-17 05:18:48",
+    "bytes": 7871,
+    "sha256": "dd0dd40e17de4ba03593a32c8d21930375a9d0a40c852d47ee3fe4e01d25dd24",
+    "dt_geracao": {
+     "17/11/2026": 50
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2024_BA.csv",
+    "data_no_zip": "2026-11-17 05:18:54",
+    "bytes": 192221,
+    "sha256": "cd97937d5417d7afa8374ff109114788af46a1934133dba95a0d00f8810e2849",
+    "dt_geracao": {
+     "17/11/2026": 1253
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2024_GO.csv",
+    "data_no_zip": "2026-11-17 05:19:12",
+    "bytes": 114548,
+    "sha256": "801154b17b4fc9339ba36f881edbb0363663f01170bbd7152296326a46b7296a",
+    "dt_geracao": {
+     "17/11/2026": 740
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2024_CE.csv",
+    "data_no_zip": "2026-11-17 05:18:54",
+    "bytes": 85860,
+    "sha256": "1679d500ed851fe24a9f6b42d7fd574b2c21c57e2102a73a5df7dbf8abef0105",
+    "dt_geracao": {
+     "17/11/2026": 563
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2024_ES.csv",
+    "data_no_zip": "2026-11-17 05:19:04",
+    "bytes": 36378,
+    "sha256": "f4352454c1a2f547a5bd0b4c8037bf6aa00fea3615d24f893dfac630ac08f29b",
+    "dt_geracao": {
+     "17/11/2026": 234
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2024_MG.csv",
+    "data_no_zip": "2026-11-17 05:19:24",
+    "bytes": 399094,
+    "sha256": "0e3a5de747df9761c365d7811ab1862107bcbd3021d92e1407ee681423f141d6",
+    "dt_geracao": {
+     "17/11/2026": 2577
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2024_MS.csv",
+    "data_no_zip": "2026-11-17 05:19:24",
+    "bytes": 37230,
+    "sha256": "c7d2f8b787d0fee29ba5020fc201d9f48160c036a07e31066e9e271e8f8d5c14",
+    "dt_geracao": {
+     "17/11/2026": 241
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2024_MA.csv",
+    "data_no_zip": "2026-11-17 05:19:02",
+    "bytes": 102541,
+    "sha256": "9cad5475fa662c8667f8931b066fc3b3b96d184613294b4f8dcd7b4f8e26d08a",
+    "dt_geracao": {
+     "17/11/2026": 653
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2024_RS.csv",
+    "data_no_zip": "2026-11-17 05:18:18",
+    "bytes": 231945,
+    "sha256": "17649460786c42e4755fe302cbbc326b53e69a3ca0fd15f648acb378636b364c",
+    "dt_geracao": {
+     "17/11/2026": 1498
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2024_MT.csv",
+    "data_no_zip": "2026-11-17 05:19:26",
+    "bytes": 66512,
+    "sha256": "d836d77862fa2aec91d166928083672aabbb7eb00a49f4db9fa5993271e3dd73",
+    "dt_geracao": {
+     "17/11/2026": 426
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2024_PA.csv",
+    "data_no_zip": "2026-11-17 05:18:32",
+    "bytes": 68122,
+    "sha256": "a5db6ed128b6a3e3c2f02c339818fce9da8a529ff9c32864fa0fc09f4af6d46f",
+    "dt_geracao": {
+     "17/11/2026": 439
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2024_TO.csv",
+    "data_no_zip": "2026-11-17 05:18:14",
+    "bytes": 65705,
+    "sha256": "af622f5778de11b8f291719270751f21b4df8ca474f99cf17ddc2684f8780969",
+    "dt_geracao": {
+     "17/11/2026": 419
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2024_PB.csv",
+    "data_no_zip": "2026-11-17 12:23:36",
+    "bytes": 103295,
+    "sha256": "3b9ff4553c8026e0bc7ef36a4908fd73affc2d98b116d979cd8371a74a7da8a0",
+    "dt_geracao": {
+     "17/11/2026": 671
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2024_SP.csv",
+    "data_no_zip": "2026-11-17 05:18:58",
+    "bytes": 302264,
+    "sha256": "e1130173d66b35a899470e7338d403edc6d60dc4e034b571ab18a59d6c4d55ec",
+    "dt_geracao": {
+     "17/11/2026": 1967
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2024_PE.csv",
+    "data_no_zip": "2026-11-17 05:19:38",
+    "bytes": 84945,
+    "sha256": "a47a4d096b7669b2a91467292cf4be02b12efcac3d29bfec55fef20989d6aa1a",
+    "dt_geracao": {
+     "17/11/2026": 554
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2024_BRASIL.csv",
+    "data_no_zip": "2026-11-17 05:19:22",
+    "bytes": 2598044,
+    "sha256": "36815761ffd8ac26e4a17e2b558b78a515167a71876c1fa268ee473106bfa93f",
+    "dt_geracao": {
+     "17/11/2026": 16818
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2024_PI.csv",
+    "data_no_zip": "2026-11-17 05:19:16",
+    "bytes": 105818,
+    "sha256": "9919fa091323014a96bab9940b5cf83c345b2ae203a448e322cdf78745176253",
+    "dt_geracao": {
+     "17/11/2026": 672
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2024_PR.csv",
+    "data_no_zip": "2026-11-17 05:19:38",
+    "bytes": 186666,
+    "sha256": "bea7413a9c609e16fffee7063b183448bc1346af034d2f68b1619082d4767b2e",
+    "dt_geracao": {
+     "17/11/2026": 1205
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2024_RJ.csv",
+    "data_no_zip": "2026-11-17 05:19:36",
+    "bytes": 43537,
+    "sha256": "f0c973133edf226c32089b9fdf0664663e0b8830b66357b7940b8132efe520d7",
+    "dt_geracao": {
+     "17/11/2026": 280
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2024_RN.csv",
+    "data_no_zip": "2026-11-17 05:19:36",
+    "bytes": 78586,
+    "sha256": "d3801a88542117a48cdbe04deec80b5e3d1ae9a39e95e9129980dac768a59ad3",
+    "dt_geracao": {
+     "17/11/2026": 507
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2024_RO.csv",
+    "data_no_zip": "2026-11-17 05:18:58",
+    "bytes": 24657,
+    "sha256": "aa08112c174fd8afbb04cdd14e3a36382ecb32443ec265bcfa92ab8b2c5a5e3e",
+    "dt_geracao": {
+     "17/11/2026": 156
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2024_SE.csv",
+    "data_no_zip": "2026-11-17 05:18:28",
+    "bytes": 35094,
+    "sha256": "43c18dcb0379198927a3cbe14d5cf17fba21993e8027706d95bd2c829add6449",
+    "dt_geracao": {
+     "17/11/2026": 225
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2024_RR.csv",
+    "data_no_zip": "2026-11-17 05:19:36",
+    "bytes": 7005,
+    "sha256": "c79fde0bf39d809f6c56d13d8b9cf1de844453f36d01fe871ca6be64adc17e8d",
+    "dt_geracao": {
+     "17/11/2026": 45
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2024_SC.csv",
+    "data_no_zip": "2026-11-17 05:18:20",
+    "bytes": 136157,
+    "sha256": "cd727c6a849b2bdc5851af303ddcafd8ebb7bc219a757ad2c713c77e4ff71969",
+    "dt_geracao": {
+     "17/11/2026": 885
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2024_AL.csv",
+    "data_no_zip": "2026-11-17 05:18:32",
+    "bytes": 47585,
+    "sha256": "0f7221f5bbfebfaa9b6fb09f6f53193b2deb37c3ce32b88ec996ff17c1c338e6",
+    "dt_geracao": {
+     "17/11/2026": 306
+    }
+   },
+   {
+    "arquivo": "consulta_vagas_2024_AC.csv",
+    "data_no_zip": "2026-11-17 05:18:10",
+    "bytes": 10379,
+    "sha256": "ccde3b6125c40f217596cd038470f7a683898604af1f682afc4e1eb98e89eecb",
+    "dt_geracao": {
+     "17/11/2026": 66
+    }
+   },
+   {
+    "arquivo": "leiame.pdf",
+    "data_no_zip": "2026-11-06 19:49:54",
+    "bytes": 181141,
+    "sha256": "ff3f74ff24dee59c8666c5d7e0cfb9ebb113a0eedbfc500ba698a35a3c9fcc04",
+    "dt_geracao": {}
+   }
+  ],
+  "datas_no_zip": [
+   "2026-11-06",
+   "2026-11-17"
+  ],
+  "dt_geracao_distintas": [
+   "17/11/2026"
+  ]
+ },
+ "detalhe_votacao_munzona_2022.zip": {
+  "membros": [
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_SE.csv",
+    "data_no_zip": "2026-11-17 06:52:28",
+    "bytes": 111190,
+    "sha256": "c9450ddc189e7b0e8899a1d6d36ceb01a5a580b9843f515f9e995a6181113a24",
+    "dt_geracao": {
+     "17/11/2026": 385
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_SC.csv",
+    "data_no_zip": "2026-11-17 06:52:30",
+    "bytes": 455228,
+    "sha256": "aa712b4a0b73e349407f4aeb23d6a861bdf523149c04c416b0e28e97ed8920e9",
+    "dt_geracao": {
+     "17/11/2026": 1570
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_RS.csv",
+    "data_no_zip": "2026-11-17 06:52:30",
+    "bytes": 765343,
+    "sha256": "f6ed590d1f0143e988d5ff46ce01005b42fca408a5ddfc0de2e4d9fca49802b6",
+    "dt_geracao": {
+     "17/11/2026": 2610
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_TO.csv",
+    "data_no_zip": "2026-11-17 06:52:28",
+    "bytes": 159919,
+    "sha256": "32f4dda92d5b4870d00a2b99092f1e101a44c0e0fd4e7186bd62efb7478a2a0c",
+    "dt_geracao": {
+     "17/11/2026": 560
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_SP.csv",
+    "data_no_zip": "2026-11-17 06:52:30",
+    "bytes": 1134508,
+    "sha256": "bfcde25389e513330becde85784600d299b27190ca218b01a17e531bab23b737",
+    "dt_geracao": {
+     "17/11/2026": 3900
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_RO.csv",
+    "data_no_zip": "2026-11-17 06:52:32",
+    "bytes": 81851,
+    "sha256": "539f969ab56e5628587f904088acabc91591fbe30869ce7519d05ab2c0bbbc70",
+    "dt_geracao": {
+     "17/11/2026": 280
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_RR.csv",
+    "data_no_zip": "2026-11-17 06:52:32",
+    "bytes": 23632,
+    "sha256": "fd399ce1fa574119f9dc8222b9e25455db280b87ceef5bf0662ab18dce90846f",
+    "dt_geracao": {
+     "17/11/2026": 80
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_RN.csv",
+    "data_no_zip": "2026-11-17 06:52:34",
+    "bytes": 204570,
+    "sha256": "f3881293f73d81cfd9b5f9a452713aee9cd27cc498f5bd835f2d50a6dfdacd0e",
+    "dt_geracao": {
+     "17/11/2026": 688
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_RJ.csv",
+    "data_no_zip": "2026-11-17 06:52:34",
+    "bytes": 225438,
+    "sha256": "bd2219eb861ccfb1ea8f193703a7466ae7e13365292362a65f5c3ef01e62cffd",
+    "dt_geracao": {
+     "17/11/2026": 732
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_PR.csv",
+    "data_no_zip": "2026-11-17 06:52:36",
+    "bytes": 479608,
+    "sha256": "1664c5c355e85f9ae1f97a9178a4e670f49e7f4101f724e3de14cc1b2e9c973b",
+    "dt_geracao": {
+     "17/11/2026": 1680
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_PI.csv",
+    "data_no_zip": "2026-11-17 06:52:38",
+    "bytes": 262054,
+    "sha256": "b7ee9231c50d724fd1c614d4f384ef2f03f5b73ac0c2ac0d2eb10ab0f2317f8a",
+    "dt_geracao": {
+     "17/11/2026": 920
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_PE.csv",
+    "data_no_zip": "2026-11-17 06:52:38",
+    "bytes": 304575,
+    "sha256": "85620ef054b8df90c5c80011a943dbf6abe4f9f4ae3a4ed20ca996ebc82213fd",
+    "dt_geracao": {
+     "17/11/2026": 1045
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_PB.csv",
+    "data_no_zip": "2026-11-17 06:52:38",
+    "bytes": 326462,
+    "sha256": "16477be9bd4c7691097809f2366d3e31853f440de03c8fccaffe7b1635c0e852",
+    "dt_geracao": {
+     "17/11/2026": 1150
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_BRASIL.csv",
+    "data_no_zip": "2026-11-17 06:52:44",
+    "bytes": 11380718,
+    "sha256": "f31741063c233b4cbe547e662fb0b72977d155ce315a8739aa385f0d35732d17",
+    "dt_geracao": {
+     "17/11/2026": 39982
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_BR.csv",
+    "data_no_zip": "2026-11-17 06:52:42",
+    "bytes": 3451986,
+    "sha256": "47e58f974d3c183cbec6897ed0cfa1576de843a4e5ea3ea1e40ffcfbcc0f9ef7",
+    "dt_geracao": {
+     "17/11/2026": 12566
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_PA.csv",
+    "data_no_zip": "2026-11-17 06:52:42",
+    "bytes": 183637,
+    "sha256": "89a2e3254f16d8f15adc1d84af060ff13c21ec1ee5cbab2b60ebc7936fc70386",
+    "dt_geracao": {
+     "17/11/2026": 636
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_MS.csv",
+    "data_no_zip": "2026-11-17 06:52:42",
+    "bytes": 131659,
+    "sha256": "8600f68c60ee8b478e213c93fe9ca09e6689ed2b57c1edfcd2fbbb3780088bef",
+    "dt_geracao": {
+     "17/11/2026": 440
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_MT.csv",
+    "data_no_zip": "2026-11-17 06:52:44",
+    "bytes": 170120,
+    "sha256": "9d7465e67a716d2b7a482d5de10bcceab921825d428831a3b0b6320a9d97d228",
+    "dt_geracao": {
+     "17/11/2026": 584
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_MG.csv",
+    "data_no_zip": "2026-11-17 06:52:48",
+    "bytes": 1045469,
+    "sha256": "ef9445c1c3f2b69fe8da04837a28e35b738cabbd991fc8c799b0f6c9296c634f",
+    "dt_geracao": {
+     "17/11/2026": 3592
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_MA.csv",
+    "data_no_zip": "2026-11-17 06:52:46",
+    "bytes": 260302,
+    "sha256": "69cd1b35065d929c1d34791b07101d5d3b028735eb9ce8a30ca4a534af3341e6",
+    "dt_geracao": {
+     "17/11/2026": 892
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_GO.csv",
+    "data_no_zip": "2026-11-17 06:52:46",
+    "bytes": 293463,
+    "sha256": "4742afb71fc041b0d6eca790c5fd9dc49ed9c76890977a5028ec42d4dfd12aad",
+    "dt_geracao": {
+     "17/11/2026": 1036
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_ES.csv",
+    "data_no_zip": "2026-11-17 06:52:48",
+    "bytes": 126233,
+    "sha256": "df38c865012db2417b4689010fb3e2e97ab2f5b4342a06e906c980dd28d6e35a",
+    "dt_geracao": {
+     "17/11/2026": 425
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_DF.csv",
+    "data_no_zip": "2026-11-17 06:52:50",
+    "bytes": 24304,
+    "sha256": "4b0a0c4624b76778db701d8af4f331c0617d68e38a763058423a8ee802222fbb",
+    "dt_geracao": {
+     "17/11/2026": 76
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_AP.csv",
+    "data_no_zip": "2026-11-17 06:52:52",
+    "bytes": 20301,
+    "sha256": "943cd9325491f5a633e47136c7f8a84d3861c181c5ba2bcbcdc6f3a300597938",
+    "dt_geracao": {
+     "17/11/2026": 68
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_BA.csv",
+    "data_no_zip": "2026-11-17 06:52:52",
+    "bytes": 639870,
+    "sha256": "231c481dfbf57242cd779bedab87f8e9a86024fed352aa5f9b92e71f1898dff9",
+    "dt_geracao": {
+     "17/11/2026": 2250
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_CE.csv",
+    "data_no_zip": "2026-11-17 06:52:52",
+    "bytes": 236063,
+    "sha256": "a01fcb496aac8bed6cc1bb0109e3802ee237a5ca1fc8e9c4a0f73038ba79b99a",
+    "dt_geracao": {
+     "17/11/2026": 820
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_AM.csv",
+    "data_no_zip": "2026-11-17 06:52:52",
+    "bytes": 106991,
+    "sha256": "6db8530789625cdb8a9cbd56b4303ef14ab18fa3f5dca10a20f130b4c9bec841",
+    "dt_geracao": {
+     "17/11/2026": 370
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_AL.csv",
+    "data_no_zip": "2026-11-17 06:52:54",
+    "bytes": 154290,
+    "sha256": "0d0aa6acd97cd0972fe0e0544e763237be79774c3dab808ff8167af4692e874b",
+    "dt_geracao": {
+     "17/11/2026": 535
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2022_AC.csv",
+    "data_no_zip": "2026-11-17 06:52:56",
+    "bytes": 26897,
+    "sha256": "a938268c5c095b8b7ff3ecd6e14a2abe4e7e9f059e1dab6672886cbb65cca9f5",
+    "dt_geracao": {
+     "17/11/2026": 92
+    }
+   },
+   {
+    "arquivo": "leiame.pdf",
+    "data_no_zip": "2026-11-06 19:49:54",
+    "bytes": 134884,
+    "sha256": "e408341e545bc198e90339261aa2771eec0d121abfb3f56de51a21db99ef43f2",
+    "dt_geracao": {}
+   }
+  ],
+  "datas_no_zip": [
+   "2026-11-06",
+   "2026-11-17"
+  ],
+  "dt_geracao_distintas": [
+   "17/11/2026"
+  ]
+ },
+ "detalhe_votacao_munzona_2024.zip": {
+  "membros": [
+   {
+    "arquivo": "detalhe_votacao_munzona_2024_RR.csv",
+    "data_no_zip": "2026-11-16 12:36:08",
+    "bytes": 9800,
+    "sha256": "bc96e4afecb7c6c8513724bba0400d7eea480560fa36a54ba134daa8e6686549",
+    "dt_geracao": {
+     "16/11/2026": 32
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2024_RO.csv",
+    "data_no_zip": "2026-11-16 12:37:08",
+    "bytes": 34338,
+    "sha256": "14797c14cc50017e096b5071c679fe9b953640dcb98e4862c9e2da90608af30a",
+    "dt_geracao": {
+     "16/11/2026": 116
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2024_RS.csv",
+    "data_no_zip": "2026-11-16 12:37:08",
+    "bytes": 300854,
+    "sha256": "f356b083ca8b322731fb6e677ecdd3a374bde413ab02ec3ba324897d454b147c",
+    "dt_geracao": {
+     "16/11/2026": 1067
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2024_SC.csv",
+    "data_no_zip": "2026-11-16 12:37:08",
+    "bytes": 176729,
+    "sha256": "48d098357c8f1ef1933037d34284d9ab9e1c351db3cccb37b07b08407d083649",
+    "dt_geracao": {
+     "16/11/2026": 630
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2024_AM.csv",
+    "data_no_zip": "2026-11-16 12:37:14",
+    "bytes": 46511,
+    "sha256": "6f0d9693096ac26ace0a006806db78a957793e06c7f46f4e8db85706c4d62cbf",
+    "dt_geracao": {
+     "16/11/2026": 161
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2024_SP.csv",
+    "data_no_zip": "2026-11-16 12:37:14",
+    "bytes": 481477,
+    "sha256": "d9227257176dc80ee38049fb5db1f3b1ed9bc08b890f8f56e8946cfcb219be7d",
+    "dt_geracao": {
+     "16/11/2026": 1682
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2024_BA.csv",
+    "data_no_zip": "2026-11-16 12:37:14",
+    "bytes": 257242,
+    "sha256": "440ce3a90271a001b1327974f7664107a4afcea3fdce634589a3709930007fdd",
+    "dt_geracao": {
+     "16/11/2026": 903
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2024_AL.csv",
+    "data_no_zip": "2026-11-16 12:37:32",
+    "bytes": 61815,
+    "sha256": "06600378de0d64f562719842a35bf04ab98b0881c916bcfdfba7a855a86821f1",
+    "dt_geracao": {
+     "16/11/2026": 214
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2024_CE.csv",
+    "data_no_zip": "2026-11-16 12:37:46",
+    "bytes": 123862,
+    "sha256": "728fab2986ceff7c706a8f8700b7a8c362340ab7e0325d26b58e2543574c858e",
+    "dt_geracao": {
+     "16/11/2026": 434
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2024_BRASIL.csv",
+    "data_no_zip": "2026-11-16 12:37:46",
+    "bytes": 3547532,
+    "sha256": "4b568ea0ae06dda913200b80fe0f89c42d4f9c59d5698e00c652a9ceb871a9e9",
+    "dt_geracao": {
+     "16/11/2026": 12493
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2024_TO.csv",
+    "data_no_zip": "2026-11-16 12:37:46",
+    "bytes": 80220,
+    "sha256": "2da772c8f83f3c9f905220e127f9d7f7fdf708c13572a618f79b8290663a9cba",
+    "dt_geracao": {
+     "16/11/2026": 282
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2024_MT.csv",
+    "data_no_zip": "2026-11-16 12:37:58",
+    "bytes": 85507,
+    "sha256": "a1592aa768bae9704202a4b352def04f9a03da760ac96dbf291eba24582f4a96",
+    "dt_geracao": {
+     "16/11/2026": 298
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2024_PA.csv",
+    "data_no_zip": "2026-11-16 12:37:58",
+    "bytes": 96897,
+    "sha256": "f7c2083a5287a2e3d8630fa4357d41480cd3784b73eaf2dd62a1e40f7324b4c0",
+    "dt_geracao": {
+     "16/11/2026": 334
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2024_PE.csv",
+    "data_no_zip": "2026-11-16 12:37:58",
+    "bytes": 121328,
+    "sha256": "004b79edcdf614110ca327221465bbe2a9e4767011fe6d29ba73a786c7458fb2",
+    "dt_geracao": {
+     "16/11/2026": 423
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2024_MG.csv",
+    "data_no_zip": "2026-11-16 12:37:58",
+    "bytes": 517750,
+    "sha256": "5be46ef44c5fbdea0d73749886768f72b331be5584f3aeb628033d1a5666ada4",
+    "dt_geracao": {
+     "16/11/2026": 1822
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2024_PB.csv",
+    "data_no_zip": "2026-11-16 12:38:04",
+    "bytes": 132137,
+    "sha256": "fa5354d0eb31bd64919042119df0a66bff1da5cc1b6eb5f015d365f30fe1f9e9",
+    "dt_geracao": {
+     "16/11/2026": 469
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2024_PI.csv",
+    "data_no_zip": "2026-11-16 12:38:04",
+    "bytes": 132222,
+    "sha256": "cbb3ecddf40f1b421d9d4355bbd31954508be83a96f730205044596f440120b0",
+    "dt_geracao": {
+     "16/11/2026": 460
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2024_AC.csv",
+    "data_no_zip": "2026-11-16 12:38:04",
+    "bytes": 14006,
+    "sha256": "95897bedaa9300411ced81eda12007d9ea7dd77dfcf9b8a61bd0789e2b9d65c9",
+    "dt_geracao": {
+     "16/11/2026": 46
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2024_RJ.csv",
+    "data_no_zip": "2026-11-16 12:38:20",
+    "bytes": 111962,
+    "sha256": "3012f61595dce3bd1168e4edba6b5097bc991c5b7807a9fb4015315ffa57f911",
+    "dt_geracao": {
+     "16/11/2026": 375
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2024_GO.csv",
+    "data_no_zip": "2026-11-16 12:38:26",
+    "bytes": 151370,
+    "sha256": "108dca3d76cc1e0f23ba80023830c684b458f6b076d230f6ce100fbecb96f91e",
+    "dt_geracao": {
+     "16/11/2026": 534
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2024_MS.csv",
+    "data_no_zip": "2026-11-16 12:38:28",
+    "bytes": 52891,
+    "sha256": "a64e7e1026ddf1cd0e917af46d8d9e15bf86a55d9cd0d877ab7d4d1f4217b84b",
+    "dt_geracao": {
+     "16/11/2026": 184
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2024_AP.csv",
+    "data_no_zip": "2026-11-16 12:38:32",
+    "bytes": 10775,
+    "sha256": "320986958941827978f5ce591e4abe655283f04d6fb5039935b1d3ae292b238d",
+    "dt_geracao": {
+     "16/11/2026": 35
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2024_ES.csv",
+    "data_no_zip": "2026-11-16 12:38:32",
+    "bytes": 50456,
+    "sha256": "e6f7b0553e355d5817495bfa9444b12e47251d99601f1a1391c4bd241f4170d1",
+    "dt_geracao": {
+     "16/11/2026": 173
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2024_RN.csv",
+    "data_no_zip": "2026-11-16 12:38:40",
+    "bytes": 99412,
+    "sha256": "dabed979aaf08ab7971b32057ddeb85bf8e41bc97fde3cbf2eedbbe089af1b48",
+    "dt_geracao": {
+     "16/11/2026": 351
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2024_PR.csv",
+    "data_no_zip": "2026-11-16 12:39:00",
+    "bytes": 245357,
+    "sha256": "7e170e78ec69a38ed97df72f33374910ff8f78f2519ebaa88cb3e96289dbc226",
+    "dt_geracao": {
+     "16/11/2026": 863
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2024_MA.csv",
+    "data_no_zip": "2026-11-16 12:39:04",
+    "bytes": 130328,
+    "sha256": "0ce6a7a4d4c0ce9c39e980be19011966dec4cb42de49ec341aa46db280377556",
+    "dt_geracao": {
+     "16/11/2026": 448
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2024_SE.csv",
+    "data_no_zip": "2026-11-16 12:39:08",
+    "bytes": 45661,
+    "sha256": "51d55cd020e6eea336e1358d54f6aa36f29392f77c6efc0bf4e0d3eef546e238",
+    "dt_geracao": {
+     "16/11/2026": 157
+    }
+   },
+   {
+    "arquivo": "leiame.pdf",
+    "data_no_zip": "2026-11-06 19:49:54",
+    "bytes": 134884,
+    "sha256": "e408341e545bc198e90339261aa2771eec0d121abfb3f56de51a21db99ef43f2",
+    "dt_geracao": {}
+   }
+  ],
+  "datas_no_zip": [
+   "2026-11-06",
+   "2026-11-16"
+  ],
+  "dt_geracao_distintas": [
+   "16/11/2026"
+  ]
+ },
+ "detalhe_votacao_munzona_2026.zip": {
+  "membros": [
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_TO.csv",
+    "data_no_zip": "2026-11-16 22:48:32",
+    "bytes": 200544,
+    "sha256": "a112ccdd1983540e7d69d848492cd9a5a1dbf337e1bdb932f75ac0058c1dc1cb",
+    "dt_geracao": {
+     "16/11/2026": 700
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_SE.csv",
+    "data_no_zip": "2026-11-16 22:48:32",
+    "bytes": 90970,
+    "sha256": "3e415790279b9b7acf7127b3ac998be01f311f917df6d4054dbe5136e45008ac",
+    "dt_geracao": {
+     "16/11/2026": 308
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_SP.csv",
+    "data_no_zip": "2026-11-16 22:48:32",
+    "bytes": 911408,
+    "sha256": "2a3ccb0ddc5f4e0b082301748c2c2689ef0b3f42ac43071bacf9f24c609bf715",
+    "dt_geracao": {
+     "16/11/2026": 3116
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_SC.csv",
+    "data_no_zip": "2026-11-16 22:48:36",
+    "bytes": 369062,
+    "sha256": "cad6c9fe57c27ccee3c838007746fa0c0f250abe7254654865568f648c6201ac",
+    "dt_geracao": {
+     "16/11/2026": 1260
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_RS.csv",
+    "data_no_zip": "2026-11-16 22:48:36",
+    "bytes": 616614,
+    "sha256": "b7b0d322776c37ffec2a3f9bd46ea95f66c211cf6f9948dfcd8d1c0a4d0d8277",
+    "dt_geracao": {
+     "16/11/2026": 2088
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_RR.csv",
+    "data_no_zip": "2026-11-16 22:48:38",
+    "bytes": 19141,
+    "sha256": "9b138a2db152e0bb180f243a64a618ea42466e64b2ad845b9bb465331dd1861b",
+    "dt_geracao": {
+     "16/11/2026": 64
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_RO.csv",
+    "data_no_zip": "2026-11-16 22:48:40",
+    "bytes": 66198,
+    "sha256": "4a80ac5907692296e455b772bef324771f1935c42a89e035f5c577083d711987",
+    "dt_geracao": {
+     "16/11/2026": 224
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_RN.csv",
+    "data_no_zip": "2026-11-16 22:48:42",
+    "bytes": 255522,
+    "sha256": "4ea10614708cc21ca567ceeb7295da31bf1eadd970e642516134a379f362986d",
+    "dt_geracao": {
+     "16/11/2026": 860
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_RJ.csv",
+    "data_no_zip": "2026-11-16 22:48:44",
+    "bytes": 226229,
+    "sha256": "74cca5b8225ea888bdf4175144ff1b0ecfd0bc35c19fd0f88a98643106eba72c",
+    "dt_geracao": {
+     "16/11/2026": 732
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_PR.csv",
+    "data_no_zip": "2026-11-16 22:48:46",
+    "bytes": 483177,
+    "sha256": "baa86e2c88a5297989433362442d5e90f8605af7075908d5c0de1d666bfd6a72",
+    "dt_geracao": {
+     "16/11/2026": 1684
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_PI.csv",
+    "data_no_zip": "2026-11-16 22:48:46",
+    "bytes": 263672,
+    "sha256": "a969134db78a8c9d5779437da5c11c85f549d42ac475ca956c58a54a3e8f4a00",
+    "dt_geracao": {
+     "16/11/2026": 920
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_PE.csv",
+    "data_no_zip": "2026-11-16 22:48:48",
+    "bytes": 246331,
+    "sha256": "6827fa810dc156ff35905d9d4bcd1e8047efad3eac6dd1154f6e4e8a26cdbbfc",
+    "dt_geracao": {
+     "16/11/2026": 836
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_PB.csv",
+    "data_no_zip": "2026-11-16 22:48:52",
+    "bytes": 263050,
+    "sha256": "d2e98ad5c5f6dab35ab9a495cafdf799611bca7e476614d7dc18dc2bcd0365a5",
+    "dt_geracao": {
+     "16/11/2026": 920
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_BRASIL.csv",
+    "data_no_zip": "2026-11-16 22:48:58",
+    "bytes": 10726608,
+    "sha256": "76dcf135d404f5851c3be0eaf9834fe63fcbde6b6b98c375ec311cf1fbda82bc",
+    "dt_geracao": {
+     "16/11/2026": 37521
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_BR.csv",
+    "data_no_zip": "2026-11-16 22:48:56",
+    "bytes": 3470048,
+    "sha256": "a8b543a6715066b7f283d4fb5d76d2ad992887ff1f9e8be6da13f6be56e8522e",
+    "dt_geracao": {
+     "16/11/2026": 12584
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_PA.csv",
+    "data_no_zip": "2026-11-16 22:48:56",
+    "bytes": 185913,
+    "sha256": "7105301804ef086bf0b460c76dc15d1d75079ba52456d6fdb2c8253eb2283fef",
+    "dt_geracao": {
+     "16/11/2026": 640
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_MT.csv",
+    "data_no_zip": "2026-11-16 22:49:02",
+    "bytes": 171816,
+    "sha256": "91c3ffb1cc703c62354228610074597b09be0264177d1d62af72879f768d48b6",
+    "dt_geracao": {
+     "16/11/2026": 588
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_MS.csv",
+    "data_no_zip": "2026-11-16 22:49:02",
+    "bytes": 106077,
+    "sha256": "0e635f092efc6633669d2b554b5fcaaad2ffbaffe726699f02b7e369357e4f98",
+    "dt_geracao": {
+     "16/11/2026": 352
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_MG.csv",
+    "data_no_zip": "2026-11-16 22:49:04",
+    "bytes": 1051335,
+    "sha256": "f07d06557d63c0e23e3db1bb7e661964a5257762dfaa12079709223b42c1bad2",
+    "dt_geracao": {
+     "16/11/2026": 3592
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_GO.csv",
+    "data_no_zip": "2026-11-16 22:49:06",
+    "bytes": 294651,
+    "sha256": "fc6ef0239b29732b4a149ea7e4ddaae9f0492688c856ad98c8ec8436599ead18",
+    "dt_geracao": {
+     "16/11/2026": 1036
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_MA.csv",
+    "data_no_zip": "2026-11-16 22:49:06",
+    "bytes": 262257,
+    "sha256": "92c4da131c35cefd7164e72ba5a353871849fb3be0f55bce6b742cac52be407b",
+    "dt_geracao": {
+     "16/11/2026": 892
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_ES.csv",
+    "data_no_zip": "2026-11-16 22:49:08",
+    "bytes": 126929,
+    "sha256": "17cb15c3c58d09438b1416ecf2b785c07e23d044df2fc5f919101c0558df4970",
+    "dt_geracao": {
+     "16/11/2026": 425
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_DF.csv",
+    "data_no_zip": "2026-11-16 22:49:10",
+    "bytes": 30174,
+    "sha256": "a9f91b68d349cc7632d9ec16e0a1b716d267999be1a25afbc5dcd430ec5003c2",
+    "dt_geracao": {
+     "16/11/2026": 95
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_CE.csv",
+    "data_no_zip": "2026-11-16 22:49:10",
+    "bytes": 236306,
+    "sha256": "386babe224bb9812588353d1e2e8d8db8f114b87e6bc176023d0690d5ad1bcc2",
+    "dt_geracao": {
+     "16/11/2026": 820
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_BA.csv",
+    "data_no_zip": "2026-11-16 22:49:14",
+    "bytes": 517343,
+    "sha256": "14db0b051b4bb12058c80a97b8bf7663d7c0fb859827c6ffebbf121043d32d0d",
+    "dt_geracao": {
+     "16/11/2026": 1800
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_AP.csv",
+    "data_no_zip": "2026-11-16 22:49:16",
+    "bytes": 21473,
+    "sha256": "c1498f38273fa5f3ffb6fa4b6b002e2b9a434a3809a1c386a653af0cb8cc6abc",
+    "dt_geracao": {
+     "16/11/2026": 72
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_AM.csv",
+    "data_no_zip": "2026-11-16 22:49:16",
+    "bytes": 107474,
+    "sha256": "124fe6eb1a9b23bc390cf3508a3c0f786417f4165ddd626a162f3eb37b39ea3e",
+    "dt_geracao": {
+     "16/11/2026": 370
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_AL.csv",
+    "data_no_zip": "2026-11-16 22:49:18",
+    "bytes": 124389,
+    "sha256": "1327618c243f15b72ea8055ff7d2614afcb5f160552a120d8b3e4e09cccb1e81",
+    "dt_geracao": {
+     "16/11/2026": 428
+    }
+   },
+   {
+    "arquivo": "detalhe_votacao_munzona_2026_AC.csv",
+    "data_no_zip": "2026-11-16 22:49:20",
+    "bytes": 33750,
+    "sha256": "8994fe084f3f969fa0cecbe5289a91d9cdfada2d5cd6d3f01116d9661e1872a3",
+    "dt_geracao": {
+     "16/11/2026": 115
+    }
+   },
+   {
+    "arquivo": "leiame.pdf",
+    "data_no_zip": "2026-11-06 19:49:54",
+    "bytes": 134884,
+    "sha256": "e408341e545bc198e90339261aa2771eec0d121abfb3f56de51a21db99ef43f2",
+    "dt_geracao": {}
+   }
+  ],
+  "datas_no_zip": [
+   "2026-11-06",
+   "2026-11-16"
+  ],
+  "dt_geracao_distintas": [
+   "16/11/2026"
+  ]
+ },
+ "municipio_tse_ibge.zip": {
+  "membros": [
+   {
+    "arquivo": "leiame.pdf",
+    "data_no_zip": "2026-11-13 18:36:24",
+    "bytes": 60546,
+    "sha256": "c6995db3ca1e0e2edb16cca0c78b7081953374c9b371619b5f5e4d326f18ee95",
+    "dt_geracao": {}
+   },
+   {
+    "arquivo": "municipio_tse_ibge.csv",
+    "data_no_zip": "2026-11-16 13:26:36",
+    "bytes": 520097,
+    "sha256": "d8e7bc4be14df67578856e8772bf80aa1a321cab39e7aabb756de40ad79b0cd8",
+    "dt_geracao": {
+     "16/11/2026": 5571
+    }
+   }
+  ],
+  "datas_no_zip": [
+   "2026-11-13",
+   "2026-11-16"
+  ],
+  "dt_geracao_distintas": [
+   "16/11/2026"
+  ]
+ },
+ "votacao_partido_munzona_2024.zip": {
+  "membros": [
+   {
+    "arquivo": "votacao_partido_munzona_2024_PA.csv",
+    "data_no_zip": "2026-11-17 12:19:28",
+    "bytes": 911371,
+    "sha256": "90ca095a4146bf945c917ea27dcdb9fc73217ea90523705901871c93b7332c2b",
+    "dt_geracao": {
+     "17/11/2026": 2696
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2024_AC.csv",
+    "data_no_zip": "2026-11-17 12:20:42",
+    "bytes": 110088,
+    "sha256": "94fd546ceca1365c46c3ee9c0844432e94fb58b8cddbd4c3876b31af99bc177c",
+    "dt_geracao": {
+     "17/11/2026": 328
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2024_PB.csv",
+    "data_no_zip": "2026-11-17 12:20:52",
+    "bytes": 610540,
+    "sha256": "30f11a48668fa7b93c6b3d3cb4a23090cde3a358110cd916a6d7c97d3924a038",
+    "dt_geracao": {
+     "17/11/2026": 1813
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2024_PE.csv",
+    "data_no_zip": "2026-11-17 12:20:52",
+    "bytes": 943874,
+    "sha256": "384f0b41ce21ade63315df43346dbf0e9dd2cc685424032f12890355a0f15954",
+    "dt_geracao": {
+     "17/11/2026": 2756
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2024_PR.csv",
+    "data_no_zip": "2026-11-17 12:20:54",
+    "bytes": 1924531,
+    "sha256": "49ac850e29ea1dd024a4b190b470e58afd20699138357ce132c21fd1f12ee611",
+    "dt_geracao": {
+     "17/11/2026": 5683
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2024_RJ.csv",
+    "data_no_zip": "2026-11-17 12:20:56",
+    "bytes": 1603708,
+    "sha256": "7f4fd4aa318456c3a93006a1203bf9c68565630ac1f137e7fceafbe0ab2e7a28",
+    "dt_geracao": {
+     "17/11/2026": 4764
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2024_RN.csv",
+    "data_no_zip": "2026-11-17 12:20:58",
+    "bytes": 492705,
+    "sha256": "b5ed158b7d72277f349e2798caf735d779d8776ca98b0b0aaf68564053bdb197",
+    "dt_geracao": {
+     "17/11/2026": 1428
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2024_SC.csv",
+    "data_no_zip": "2026-11-17 12:21:26",
+    "bytes": 1286141,
+    "sha256": "45e48c037eaceb40b3a62446a231027c009ef65c97e8ab5575e40429104552bb",
+    "dt_geracao": {
+     "17/11/2026": 3783
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2024_RS.csv",
+    "data_no_zip": "2026-11-17 12:21:26",
+    "bytes": 1952317,
+    "sha256": "ed7d297f3c28fa78fe0cf705f498d612249021ae20aa68944f72969d7a2ef08e",
+    "dt_geracao": {
+     "17/11/2026": 5662
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2024_AM.csv",
+    "data_no_zip": "2026-11-17 12:21:28",
+    "bytes": 459837,
+    "sha256": "7abc65672797a86e56eebe7fc2300d8ead2c331581d720c618fe7233133d0518",
+    "dt_geracao": {
+     "17/11/2026": 1392
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2024_AL.csv",
+    "data_no_zip": "2026-11-17 12:21:32",
+    "bytes": 304250,
+    "sha256": "881dcdb5d1b70a1f0ff592168179fa4832ea46d87fc229d2eafa92880fe370e6",
+    "dt_geracao": {
+     "17/11/2026": 914
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2024_MS.csv",
+    "data_no_zip": "2026-11-17 12:21:38",
+    "bytes": 448687,
+    "sha256": "e6438cd0860389731303b0c60927e80f3f3211882ffcacb6a70a52c5fe04f6bd",
+    "dt_geracao": {
+     "17/11/2026": 1295
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2024_MA.csv",
+    "data_no_zip": "2026-11-17 12:21:48",
+    "bytes": 863802,
+    "sha256": "b06699de49d77cffda05ec8757d9902663affae23468147e3c1083d2b25f9383",
+    "dt_geracao": {
+     "17/11/2026": 2534
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2024_CE.csv",
+    "data_no_zip": "2026-11-17 12:21:52",
+    "bytes": 879069,
+    "sha256": "a04f156c6eeea055e93b12901863bcfcee28a2eaa4668c0e21fac7e91d80790f",
+    "dt_geracao": {
+     "17/11/2026": 2554
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2024_BRASIL.csv",
+    "data_no_zip": "2026-11-17 12:22:10",
+    "bytes": 27475399,
+    "sha256": "6b0f6975fe617db2c1b9fed84b9f9fc152761c6017c18cdd19e476bd6a64d313",
+    "dt_geracao": {
+     "17/11/2026": 80934
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2024_AP.csv",
+    "data_no_zip": "2026-11-17 12:21:54",
+    "bytes": 83103,
+    "sha256": "217d8e95aa50bc70bdfb5e7119b86c9990051612a25c83fe31baa360c10aeafb",
+    "dt_geracao": {
+     "17/11/2026": 249
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2024_SP.csv",
+    "data_no_zip": "2026-11-17 12:23:08",
+    "bytes": 4708234,
+    "sha256": "cf5b314d49e1117db831b0faee20db34af952582dd305e78da6516e252f7fd67",
+    "dt_geracao": {
+     "17/11/2026": 14079
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2024_RR.csv",
+    "data_no_zip": "2026-11-17 12:23:06",
+    "bytes": 64683,
+    "sha256": "068a726b3b763dbdd1dd322992af0ca9bfca22df46be9fc043b4324a6b402c8b",
+    "dt_geracao": {
+     "17/11/2026": 197
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2024_MG.csv",
+    "data_no_zip": "2026-11-17 12:23:14",
+    "bytes": 4105131,
+    "sha256": "805c89327cabad42f16e56766a2b45bfd29b27c06c6d4df0bed20934be289b74",
+    "dt_geracao": {
+     "17/11/2026": 12000
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2024_GO.csv",
+    "data_no_zip": "2026-11-17 12:23:12",
+    "bytes": 1025816,
+    "sha256": "e0f6685d7bb9e7d8b9b789cc1f547187e530926baffff7068de416619274f1cf",
+    "dt_geracao": {
+     "17/11/2026": 3070
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2024_BA.csv",
+    "data_no_zip": "2026-11-17 12:23:20",
+    "bytes": 2021319,
+    "sha256": "43100d5abe854e76469864c7652768258ce5a26871694b514a1498cac92ae0e5",
+    "dt_geracao": {
+     "17/11/2026": 5898
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2024_RO.csv",
+    "data_no_zip": "2026-11-17 12:23:24",
+    "bytes": 264803,
+    "sha256": "3dcbc523465a69fd9635d08c6367c3e1198c924e8e8268d7a86c29428779c1e1",
+    "dt_geracao": {
+     "17/11/2026": 793
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2024_ES.csv",
+    "data_no_zip": "2026-11-17 12:23:26",
+    "bytes": 482225,
+    "sha256": "b688109b6d04da42a952f91091afa539f329a20370c593d02be9f328c2fcc860",
+    "dt_geracao": {
+     "17/11/2026": 1436
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2024_MT.csv",
+    "data_no_zip": "2026-11-17 12:23:30",
+    "bytes": 594016,
+    "sha256": "785491aa9dd0e08b05bfe980a4e6e3190abfb2e4fc0c18287c2fb2bb06825594",
+    "dt_geracao": {
+     "17/11/2026": 1751
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2024_SE.csv",
+    "data_no_zip": "2026-11-17 12:23:34",
+    "bytes": 268536,
+    "sha256": "36a8b06240eb67a84e11ab9ec97146480c35a6510408f87ecbc5c96bf481ad10",
+    "dt_geracao": {
+     "17/11/2026": 788
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2024_TO.csv",
+    "data_no_zip": "2026-11-17 12:23:42",
+    "bytes": 409520,
+    "sha256": "6c653a9b9015b8ac715697a58b6e219219dd509ac00a8402a64b744897303b89",
+    "dt_geracao": {
+     "17/11/2026": 1204
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2024_PI.csv",
+    "data_no_zip": "2026-11-17 12:23:42",
+    "bytes": 673868,
+    "sha256": "e49cc7e6843018ff8a865b3f7669c0931641bbfa4bfffcfd3ed183718a16f5bd",
+    "dt_geracao": {
+     "17/11/2026": 1867
+    }
+   },
+   {
+    "arquivo": "leiame.pdf",
+    "data_no_zip": "2026-11-06 19:49:54",
+    "bytes": 118902,
+    "sha256": "513db4f999d7c8cdd32f6e78c6ea437cfd9e96ecb279a86b58b8b9e31af592a4",
+    "dt_geracao": {}
+   }
+  ],
+  "datas_no_zip": [
+   "2026-11-06",
+   "2026-11-17"
+  ],
+  "dt_geracao_distintas": [
+   "17/11/2026"
+  ]
+ },
+ "consulta_cand_2024.zip": {
+  "membros": [
+   {
+    "arquivo": "leiame.pdf",
+    "data_no_zip": "2026-11-06 19:49:54",
+    "bytes": 208302,
+    "sha256": "f30553fb57dddd4ea6a3b1a636b50cb90edf2ac40ada27fe5cb7993d0c0cad70",
+    "dt_geracao": {}
+   },
+   {
+    "arquivo": "consulta_cand_2024_SE.csv",
+    "data_no_zip": "2026-11-17 12:23:52",
+    "bytes": 2996682,
+    "sha256": "d2ee3b8a0d222547b97cbcb24d7ee41792fbfd13cc9615e735262df1be021a32",
+    "dt_geracao": {
+     "17/11/2026": 5586
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2024_RR.csv",
+    "data_no_zip": "2026-11-17 12:22:28",
+    "bytes": 706061,
+    "sha256": "9bd0220a156ee0ee051d3cde3ddc2957b264df3268d8e71ad4ccf2332a2af021",
+    "dt_geracao": {
+     "17/11/2026": 1345
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2024_TO.csv",
+    "data_no_zip": "2026-11-17 12:22:28",
+    "bytes": 3845948,
+    "sha256": "0e5107a7b9cab3b13097530d44991a61916a9525ff685886756d7f279849b757",
+    "dt_geracao": {
+     "17/11/2026": 7202
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2024_SC.csv",
+    "data_no_zip": "2026-11-17 12:22:06",
+    "bytes": 10481234,
+    "sha256": "15ec605e232cfb5d20aba266ff169b2d10963d95a950946da02c718d9d660006",
+    "dt_geracao": {
+     "17/11/2026": 19619
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2024_RS.csv",
+    "data_no_zip": "2026-11-17 12:22:40",
+    "bytes": 15717710,
+    "sha256": "2f9a8cbc00d4bd0d572e1506248fb2c4b4de51990f7f30ba55527322d101bdf1",
+    "dt_geracao": {
+     "17/11/2026": 29062
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2024_SP.csv",
+    "data_no_zip": "2026-11-17 12:22:20",
+    "bytes": 41641305,
+    "sha256": "8574782db55768baa83dcf8439fe8af4b989f5665773a63d748e892bb9caa8ae",
+    "dt_geracao": {
+     "17/11/2026": 78450
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2024_RO.csv",
+    "data_no_zip": "2026-11-17 12:23:34",
+    "bytes": 2577205,
+    "sha256": "8c1be494db943a8b71688457c31f1a7f7f1fb0cd5f5e9760c87a990140b396d7",
+    "dt_geracao": {
+     "17/11/2026": 4878
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2024_AM.csv",
+    "data_no_zip": "2026-11-17 12:22:52",
+    "bytes": 4277772,
+    "sha256": "b49a83ed7b94dd9b7a2e3709c4935a9d99ed775ea8ef0a7b9087d7434c90cdb5",
+    "dt_geracao": {
+     "17/11/2026": 8114
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2024_PI.csv",
+    "data_no_zip": "2026-11-17 12:22:38",
+    "bytes": 4965377,
+    "sha256": "36e81b9a6001c5d825c0a92a4c8b39762cc2d9b5bb4b0fd12cf7263e627283c9",
+    "dt_geracao": {
+     "17/11/2026": 8978
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2024_RN.csv",
+    "data_no_zip": "2026-11-17 12:23:54",
+    "bytes": 4182808,
+    "sha256": "e795e4a7c05344edc37e6a6c6ca837e07f851408be6f616a194aa907a098e0ee",
+    "dt_geracao": {
+     "17/11/2026": 7702
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2024_GO.csv",
+    "data_no_zip": "2026-11-17 12:21:14",
+    "bytes": 10552415,
+    "sha256": "93525375256c32f59dee499edd2c95a97d251918808e99baa8f4d10e7d58f146",
+    "dt_geracao": {
+     "17/11/2026": 19984
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2024_MG.csv",
+    "data_no_zip": "2026-11-17 12:21:24",
+    "bytes": 39618748,
+    "sha256": "3cc80b1aeb99de4a4228f66ed9d01d55d624f2922b76e36e89cbf74ee2c57e5b",
+    "dt_geracao": {
+     "17/11/2026": 73498
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2024_PR.csv",
+    "data_no_zip": "2026-11-17 12:23:28",
+    "bytes": 18156108,
+    "sha256": "176c47519f1a51e783c7bcded358672e79603581c238240e11f7105cabf9a480",
+    "dt_geracao": {
+     "17/11/2026": 34037
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2024_AC.csv",
+    "data_no_zip": "2026-11-17 12:21:20",
+    "bytes": 1221255,
+    "sha256": "6a946ab67162f0e7ad73aab9baee08bb95325e7e895f7b1dadd6da73fac0efa2",
+    "dt_geracao": {
+     "17/11/2026": 2311
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2024_AL.csv",
+    "data_no_zip": "2026-11-17 12:23:28",
+    "bytes": 3079203,
+    "sha256": "430bb97bd81b20a2cff5ab8400d59d2fa7e2b2381c40fbf56fd5d401d92e8351",
+    "dt_geracao": {
+     "17/11/2026": 5834
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2024_AP.csv",
+    "data_no_zip": "2026-11-17 12:23:46",
+    "bytes": 848658,
+    "sha256": "a78a63822c1cde15b586ceef99029cab7248512c94f0738222382305d44f41a1",
+    "dt_geracao": {
+     "17/11/2026": 1605
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2024_ES.csv",
+    "data_no_zip": "2026-11-17 12:21:16",
+    "bytes": 5219342,
+    "sha256": "0640fec4611a3839f2d1ff9536bc0e212bc40f4e83ca975ef20943f0be30be0a",
+    "dt_geracao": {
+     "17/11/2026": 9861
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2024_RJ.csv",
+    "data_no_zip": "2026-11-17 12:22:36",
+    "bytes": 9376174,
+    "sha256": "114e661676aca66a8b06991d7a154a2fc5fe802d04b530ca814c506c8a8ebfdc",
+    "dt_geracao": {
+     "17/11/2026": 17612
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2024_BRASIL.csv",
+    "data_no_zip": "2026-11-17 12:23:20",
+    "bytes": 248237286,
+    "sha256": "4ca3f32a832954cbae0ad5469a695896e96194ed014bc8cf3f222d2c2af82f36",
+    "dt_geracao": {
+     "17/11/2026": 463935
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2024_MT.csv",
+    "data_no_zip": "2026-11-17 12:21:02",
+    "bytes": 5908583,
+    "sha256": "aa878b089f46ee9d3a5ff7ac9df9df56d23778c020e305c1442107cd5955519b",
+    "dt_geracao": {
+     "17/11/2026": 11104
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2024_PA.csv",
+    "data_no_zip": "2026-11-17 12:20:54",
+    "bytes": 9691009,
+    "sha256": "4540a98f227ffcd44c010ebd1ed7228e99b0a9607d975682df91a4faf3d2c81b",
+    "dt_geracao": {
+     "17/11/2026": 18137
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2024_CE.csv",
+    "data_no_zip": "2026-11-17 12:21:16",
+    "bytes": 7161385,
+    "sha256": "72848508546648d5907b31389c9286cae96b1bd5c26b94a8441e8bc9bf4b2efd",
+    "dt_geracao": {
+     "17/11/2026": 13261
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2024_MA.csv",
+    "data_no_zip": "2026-11-17 12:23:56",
+    "bytes": 9024588,
+    "sha256": "ec281349e4a7b20560ce011f29f908eb65d41649f91d739bf0c372aab6028c1f",
+    "dt_geracao": {
+     "17/11/2026": 16843
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2024_BA.csv",
+    "data_no_zip": "2026-11-17 12:22:58",
+    "bytes": 18855398,
+    "sha256": "043b6ff8a99cced1b114a17d1ca44c53afaef0dbcb7b2b815ea1b541e16f87b0",
+    "dt_geracao": {
+     "17/11/2026": 35209
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2024_MS.csv",
+    "data_no_zip": "2026-11-17 12:22:38",
+    "bytes": 3998591,
+    "sha256": "2d976fb6a083943caa41ad0464ad1bfb198c5c95e3bfbd2c5b2c64e86ae9149d",
+    "dt_geracao": {
+     "17/11/2026": 7383
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2024_PB.csv",
+    "data_no_zip": "2026-11-17 12:21:00",
+    "bytes": 5483350,
+    "sha256": "ef16fc9732038432734f20ce3713f8c092ca4620e4942a8a11bc97d82a073786",
+    "dt_geracao": {
+     "17/11/2026": 10247
+    }
+   },
+   {
+    "arquivo": "consulta_cand_2024_PE.csv",
+    "data_no_zip": "2026-11-17 12:21:06",
+    "bytes": 8670427,
+    "sha256": "826e3d91046d303cb3e4c5db663dc1f75fa59f223f675666f3c4156429d3fc61",
+    "dt_geracao": {
+     "17/11/2026": 16073
+    }
+   }
+  ],
+  "datas_no_zip": [
+   "2026-11-06",
+   "2026-11-17"
+  ],
+  "dt_geracao_distintas": [
+   "17/11/2026"
+  ]
+ },
+ "perfil_eleitorado_2024.zip": {
+  "membros": [
+   {
+    "arquivo": "perfil_eleitorado_2024_AM.csv",
+    "data_no_zip": "2025-09-12 16:32:22",
+    "bytes": 25901659,
+    "sha256": "6bf41129855882226ddafde630224b5ddc83b023ce7276e79ecd6941b161e67e",
+    "dt_geracao": {
+     "12/09/2025": 133273
+    }
+   },
+   {
+    "arquivo": "perfil_eleitorado_2024_BA.csv",
+    "data_no_zip": "2025-09-12 16:33:24",
+    "bytes": 136080401,
+    "sha256": "230dc8d142a0de21c15c60e1ecf406e96e81f8681e4aa9a0d42523e5d81289fe",
+    "dt_geracao": {
+     "12/09/2025": 684786
+    }
+   },
+   {
+    "arquivo": "perfil_eleitorado_2024_BRASIL.csv",
+    "data_no_zip": "2025-09-12 16:44:54",
+    "bytes": 1791473148,
+    "sha256": "6e6c6255bf69e85a1afe31406b7ace79d4b84c61312db88c2e3943a37efa04f3",
+    "dt_geracao": {
+     "12/09/2025": 8940315
+    }
+   },
+   {
+    "arquivo": "perfil_eleitorado_2024_AP.csv",
+    "data_no_zip": "2025-09-12 16:32:12",
+    "bytes": 6106350,
+    "sha256": "cea357fb036d547486623a478e139bca7ec1a64e77f2f09ec185320d0e42c4fc",
+    "dt_geracao": {
+     "12/09/2025": 31614
+    }
+   },
+   {
+    "arquivo": "perfil_eleitorado_2024_AC.csv",
+    "data_no_zip": "2025-09-12 16:32:14",
+    "bytes": 7277465,
+    "sha256": "f821f16a9656469d602056d25e92264234311a9817d35e019ec6064b8f67faaa",
+    "dt_geracao": {
+     "12/09/2025": 36977
+    }
+   },
+   {
+    "arquivo": "perfil_eleitorado_2024_ES.csv",
+    "data_no_zip": "2025-09-12 16:32:28",
+    "bytes": 30553689,
+    "sha256": "ba92829f00ea6e3d6ae19e5b6547004d0f28e63456898b16247724009f62c987",
+    "dt_geracao": {
+     "12/09/2025": 153210
+    }
+   },
+   {
+    "arquivo": "perfil_eleitorado_2024_MA.csv",
+    "data_no_zip": "2025-09-12 16:32:52",
+    "bytes": 65978984,
+    "sha256": "5c09b06627e490aee377e6362bd03fe204af1457d0d76cd545d57fec7f07176a",
+    "dt_geracao": {
+     "12/09/2025": 331979
+    }
+   },
+   {
+    "arquivo": "perfil_eleitorado_2024_GO.csv",
+    "data_no_zip": "2025-09-12 16:32:58",
+    "bytes": 77702998,
+    "sha256": "46bbea755444fa2195df5370d7d227bb9a0ca0eaaac7a706a6a7b06e6145ba00",
+    "dt_geracao": {
+     "12/09/2025": 388651
+    }
+   },
+   {
+    "arquivo": "perfil_eleitorado_2024_AL.csv",
+    "data_no_zip": "2025-09-12 16:32:30",
+    "bytes": 31845449,
+    "sha256": "c257c3b6a3a05da2e122b9dd542271a9ecebe8d9a4acf7c39a092c17d6237430",
+    "dt_geracao": {
+     "12/09/2025": 160544
+    }
+   },
+   {
+    "arquivo": "perfil_eleitorado_2024_CE.csv",
+    "data_no_zip": "2025-09-12 16:32:56",
+    "bytes": 71307452,
+    "sha256": "ba6a1b34d56c04e07d774849c5c98cce25c16d84590dfe9c9abe0b84b8baff0b",
+    "dt_geracao": {
+     "12/09/2025": 362632
+    }
+   },
+   {
+    "arquivo": "perfil_eleitorado_2024_MG.csv",
+    "data_no_zip": "2025-09-12 16:34:28",
+    "bytes": 235586141,
+    "sha256": "54f8f7eeae3e42a22830e302ac159cca461c1f51412a63f65ea2237ccdeaa9e0",
+    "dt_geracao": {
+     "12/09/2025": 1162717
+    }
+   },
+   {
+    "arquivo": "perfil_eleitorado_2024_MS.csv",
+    "data_no_zip": "2025-09-12 16:32:36",
+    "bytes": 29345730,
+    "sha256": "c9759fdde6e26ca6dd7d5fe717519b0b0cf8ebbb309ec9ee41a83b2032dc0723",
+    "dt_geracao": {
+     "12/09/2025": 147451
+    }
+   },
+   {
+    "arquivo": "perfil_eleitorado_2024_MT.csv",
+    "data_no_zip": "2025-09-12 16:32:52",
+    "bytes": 44981199,
+    "sha256": "f7caa84dd11077d870fc1cdbedd1e6e56e15df996729aa88d3e855a88cb7eb27",
+    "dt_geracao": {
+     "12/09/2025": 227450
+    }
+   },
+   {
+    "arquivo": "perfil_eleitorado_2024_PA.csv",
+    "data_no_zip": "2025-09-12 16:33:12",
+    "bytes": 62171236,
+    "sha256": "b9fa2c63886be852a37197ae63aaad5d87bfa371419af09c5caec15826577185",
+    "dt_geracao": {
+     "12/09/2025": 316695
+    }
+   },
+   {
+    "arquivo": "perfil_eleitorado_2024_PB.csv",
+    "data_no_zip": "2025-09-12 16:33:04",
+    "bytes": 55557328,
+    "sha256": "389d499e4fc91a1d19ba4ace818068f2eba20be33fb1c53ecadd641bd204a1af",
+    "dt_geracao": {
+     "12/09/2025": 278109
+    }
+   },
+   {
+    "arquivo": "perfil_eleitorado_2024_PE.csv",
+    "data_no_zip": "2025-09-12 16:33:28",
+    "bytes": 73103167,
+    "sha256": "e7b1b16feed6e78b6762cbb7d26d3530188cc9793548a9f7d03b2666040f8fdd",
+    "dt_geracao": {
+     "12/09/2025": 369410
+    }
+   },
+   {
+    "arquivo": "perfil_eleitorado_2024_PI.csv",
+    "data_no_zip": "2025-09-12 16:33:24",
+    "bytes": 51363235,
+    "sha256": "8ac314f907a7dc7d280691309597283dab4b06520e4eea69f666bcb3e894a081",
+    "dt_geracao": {
+     "12/09/2025": 253638
+    }
+   },
+   {
+    "arquivo": "perfil_eleitorado_2024_PR.csv",
+    "data_no_zip": "2025-09-12 16:34:02",
+    "bytes": 108532257,
+    "sha256": "c2767eb4b60bf815032aedd705b882e14af4d4bd3e7817ce97296c11670ec3eb",
+    "dt_geracao": {
+     "12/09/2025": 533994
+    }
+   },
+   {
+    "arquivo": "perfil_eleitorado_2024_RJ.csv",
+    "data_no_zip": "2025-09-12 16:33:58",
+    "bytes": 99913081,
+    "sha256": "5bb6708cd271e3686a182e2260ddbd8dc5c6d1fb621a0422f80fdb0d6c835758",
+    "dt_geracao": {
+     "12/09/2025": 497722
+    }
+   },
+   {
+    "arquivo": "perfil_eleitorado_2024_RN.csv",
+    "data_no_zip": "2025-09-12 16:33:30",
+    "bytes": 42465354,
+    "sha256": "d758c5d309dc8786d022fb6014265fffe182d127abb21d97ec6fb3dc200aeb54",
+    "dt_geracao": {
+     "12/09/2025": 212077
+    }
+   },
+   {
+    "arquivo": "perfil_eleitorado_2024_RO.csv",
+    "data_no_zip": "2025-09-12 16:33:20",
+    "bytes": 18773388,
+    "sha256": "2b7d70ebd8feb3e45bb6b797c9a2f1cb650125418568dc7cfaafbb44059c5ccf",
+    "dt_geracao": {
+     "12/09/2025": 94029
+    }
+   },
+   {
+    "arquivo": "perfil_eleitorado_2024_RR.csv",
+    "data_no_zip": "2025-09-12 16:33:20",
+    "bytes": 5638314,
+    "sha256": "7c50cd9cc78b514e5849cc221e8c23c7898714569b9ddf5aac8ab667255e817f",
+    "dt_geracao": {
+     "12/09/2025": 29228
+    }
+   },
+   {
+    "arquivo": "perfil_eleitorado_2024_SC.csv",
+    "data_no_zip": "2025-09-12 16:34:08",
+    "bytes": 78303156,
+    "sha256": "7cc0da9743989a5e58c392de6a16598340614a2384dbc0b6da7089eed6954383",
+    "dt_geracao": {
+     "12/09/2025": 388154
+    }
+   },
+   {
+    "arquivo": "perfil_eleitorado_2024_RS.csv",
+    "data_no_zip": "2025-09-12 16:34:28",
+    "bytes": 115810185,
+    "sha256": "a355ef4e031bd5082011af30565328e03fbbac384f03a3689dbde1c4b449a935",
+    "dt_geracao": {
+     "12/09/2025": 564605
+    }
+   },
+   {
+    "arquivo": "perfil_eleitorado_2024_SE.csv",
+    "data_no_zip": "2025-09-12 16:33:40",
+    "bytes": 21788633,
+    "sha256": "7870f84952a63f4b2941c36e3c2b3242d7a4838519ce6c5ab59c487bb720bfdd",
+    "dt_geracao": {
+     "12/09/2025": 108741
+    }
+   },
+   {
+    "arquivo": "perfil_eleitorado_2024_SP.csv",
+    "data_no_zip": "2025-09-12 16:35:36",
+    "bytes": 265405963,
+    "sha256": "6da8fa75a93e6d7a4723c3eb68890e3aa1dae1b0a2266db2bd8cb1559bd16360",
+    "dt_geracao": {
+     "12/09/2025": 1323706
+    }
+   },
+   {
+    "arquivo": "perfil_eleitorado_2024_TO.csv",
+    "data_no_zip": "2025-09-12 16:33:50",
+    "bytes": 29992234,
+    "sha256": "56bb2e14527e15ab1a5d215aa6e495dbf62131df556d3db7b3e247630e977f41",
+    "dt_geracao": {
+     "12/09/2025": 148923
+    }
+   }
+  ],
+  "datas_no_zip": [
+   "2025-09-12"
+  ],
+  "dt_geracao_distintas": [
+   "12/09/2025"
+  ]
+ },
+ "votacao_partido_munzona_2022.zip": {
+  "membros": [
+   {
+    "arquivo": "votacao_partido_munzona_2022_GO.csv",
+    "data_no_zip": "2026-11-17 06:22:28",
+    "bytes": 6782541,
+    "sha256": "1aacb061b8df12a263e47e9251c067048e767e3acc63c3bfe1dbfe3fe0635b1d",
+    "dt_geracao": {
+     "17/11/2026": 20720
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2022_DF.csv",
+    "data_no_zip": "2026-11-17 06:22:24",
+    "bytes": 557653,
+    "sha256": "0067923163b76b0be077a2b65dca8eb9dff292c1796d9af2ae0808d288ea3ef6",
+    "dt_geracao": {
+     "17/11/2026": 1634
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2022_BA.csv",
+    "data_no_zip": "2026-11-17 06:22:30",
+    "bytes": 10992217,
+    "sha256": "7dbe12a5ae83487c4626d69e0b2c79d71782410218d075cac89c34bf919a6541",
+    "dt_geracao": {
+     "17/11/2026": 32850
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2022_ES.csv",
+    "data_no_zip": "2026-11-17 06:22:26",
+    "bytes": 2011290,
+    "sha256": "4c41f0b59db7a320c3d7d5a663c64ed44ae9719b684c3abc59f4ec35ef55e380",
+    "dt_geracao": {
+     "17/11/2026": 5865
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2022_CE.csv",
+    "data_no_zip": "2026-11-17 06:22:26",
+    "bytes": 4399505,
+    "sha256": "d4f6bd9c5748d3e7a3ffcfa072576a6a86fdaad5a918ce1fd319a664d64920d0",
+    "dt_geracao": {
+     "17/11/2026": 13120
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2022_AC.csv",
+    "data_no_zip": "2026-11-17 06:22:30",
+    "bytes": 445216,
+    "sha256": "11ee091d27a291d7c332c5fe3b593c6139c7ce5a29c41a5510aeae835856efd1",
+    "dt_geracao": {
+     "17/11/2026": 1334
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2022_AM.csv",
+    "data_no_zip": "2026-11-17 06:22:30",
+    "bytes": 1649225,
+    "sha256": "b9f6d19ae6cf86da19e9cffc11b6f81b59f2079ebca39be107b10746b4fb5259",
+    "dt_geracao": {
+     "17/11/2026": 4958
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2022_AL.csv",
+    "data_no_zip": "2026-11-17 06:22:30",
+    "bytes": 2247062,
+    "sha256": "2bd78231b54d643ae48cb116a667ab043a80607b2dba71c567ac1a0f41712cbc",
+    "dt_geracao": {
+     "17/11/2026": 6634
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2022_SE.csv",
+    "data_no_zip": "2026-11-17 06:22:32",
+    "bytes": 1627269,
+    "sha256": "bd1deed39bea76fde7843c2836b993280f16b714e88013498acd0ba0e8da8484",
+    "dt_geracao": {
+     "17/11/2026": 4774
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2022_SP.csv",
+    "data_no_zip": "2026-11-17 06:22:44",
+    "bytes": 22677424,
+    "sha256": "f8c014b76f3671506642518220523c2d6ff06807e62fa17fc8366993b0c80064",
+    "dt_geracao": {
+     "17/11/2026": 67860
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2022_RS.csv",
+    "data_no_zip": "2026-11-17 06:22:42",
+    "bytes": 13540650,
+    "sha256": "7a6a5ba55934b297244bbdd0576248194991e1a529187ab6ef02e48696ab9918",
+    "dt_geracao": {
+     "17/11/2026": 39150
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2022_SC.csv",
+    "data_no_zip": "2026-11-17 06:22:40",
+    "bytes": 8111938,
+    "sha256": "dabfbf42292fca8e24c2b15f2e9575dd93f637f309408233c57fc1acdf3b7df7",
+    "dt_geracao": {
+     "17/11/2026": 23864
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2022_PB.csv",
+    "data_no_zip": "2026-11-17 06:22:38",
+    "bytes": 5301270,
+    "sha256": "e4052d35f065de09f151a581eaa40e2a9cc6d66ffb14d21ddf0b751a4da9e362",
+    "dt_geracao": {
+     "17/11/2026": 15640
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2022_TO.csv",
+    "data_no_zip": "2026-11-17 06:22:38",
+    "bytes": 2945786,
+    "sha256": "76bc05fef147f3ba41f3063444d8189bf99618cf4ec16bb8219c865c48e82cd8",
+    "dt_geracao": {
+     "17/11/2026": 8680
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2022_BRASIL.csv",
+    "data_no_zip": "2026-11-17 06:24:06",
+    "bytes": 181140940,
+    "sha256": "cda5d401581c27070fff7b4d8127ef7f135b83885901aed85386609f61dff927",
+    "dt_geracao": {
+     "17/11/2026": 537159
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2022_PE.csv",
+    "data_no_zip": "2026-11-17 06:22:44",
+    "bytes": 5703275,
+    "sha256": "7e98d267a5e66f70dfd86b2ffa1c63fb539bdc1bded9e0f1b217ff0fb7b5afae",
+    "dt_geracao": {
+     "17/11/2026": 16929
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2022_BR.csv",
+    "data_no_zip": "2026-11-17 06:22:58",
+    "bytes": 27635361,
+    "sha256": "24385730f5949d2a80a03778f87a72a71012f216ca7ef3d49b226e9761089710",
+    "dt_geracao": {
+     "17/11/2026": 81679
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2022_RR.csv",
+    "data_no_zip": "2026-11-17 06:22:44",
+    "bytes": 346473,
+    "sha256": "49d7bebead1e270f335129088ea822e57bfb7cda2e70f536631f4c765e3282c4",
+    "dt_geracao": {
+     "17/11/2026": 1040
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2022_PA.csv",
+    "data_no_zip": "2026-11-17 06:22:48",
+    "bytes": 3703729,
+    "sha256": "e551d0c591326cc50c1a4aad617709b67cbbb7e07b4d538179c8f3b8703087f9",
+    "dt_geracao": {
+     "17/11/2026": 11289
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2022_RO.csv",
+    "data_no_zip": "2026-11-17 06:22:50",
+    "bytes": 1129146,
+    "sha256": "98d934b114b758f825f90b5dcd6f9ce0da63f06ff335431bc1d297d2d61b537e",
+    "dt_geracao": {
+     "17/11/2026": 3360
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2022_RN.csv",
+    "data_no_zip": "2026-11-17 06:22:50",
+    "bytes": 4039949,
+    "sha256": "963b3200bbfb141127ea7a7111a3d2dbfabdc6476d37dd20cb61226a64207d20",
+    "dt_geracao": {
+     "17/11/2026": 11696
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2022_PI.csv",
+    "data_no_zip": "2026-11-17 06:22:50",
+    "bytes": 4271914,
+    "sha256": "71faf4c784e6a2936c95ffd1370cfb8ce48fc4baf69d9676868563e8aa7d237c",
+    "dt_geracao": {
+     "17/11/2026": 12650
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2022_MS.csv",
+    "data_no_zip": "2026-11-17 06:22:56",
+    "bytes": 2033158,
+    "sha256": "60abd7bd3929c314d73d77623d0261a1ae0c87e7dc5037872dd2fc72855d3967",
+    "dt_geracao": {
+     "17/11/2026": 5808
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2022_RJ.csv",
+    "data_no_zip": "2026-11-17 06:22:56",
+    "bytes": 4906774,
+    "sha256": "fa9a7d1770e079cc061ffbfdb165d50c9430f4c8f765f55d634794723b60ec0d",
+    "dt_geracao": {
+     "17/11/2026": 14457
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2022_AP.csv",
+    "data_no_zip": "2026-11-17 06:22:56",
+    "bytes": 327102,
+    "sha256": "f8422121af19163c71b54f143c1934322298e685e59853316f32490ae97cf163",
+    "dt_geracao": {
+     "17/11/2026": 986
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2022_PR.csv",
+    "data_no_zip": "2026-11-17 06:23:02",
+    "bytes": 10835334,
+    "sha256": "f19496d4250a39a26a6d3f304d78fd4ad80f5c6f43cd436347b17e88990a9864",
+    "dt_geracao": {
+     "17/11/2026": 32760
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2022_MG.csv",
+    "data_no_zip": "2026-11-17 06:23:16",
+    "bytes": 24843406,
+    "sha256": "e86705c7c535a4c7f364133deaad3e824e18a8b235c155b11c4907b1991b817b",
+    "dt_geracao": {
+     "17/11/2026": 73636
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2022_MT.csv",
+    "data_no_zip": "2026-11-17 06:23:02",
+    "bytes": 2839639,
+    "sha256": "5c3ef13fa7e750a43974a761043712a8d6bc66b0b8df97fab014668bb6da27ea",
+    "dt_geracao": {
+     "17/11/2026": 8176
+    }
+   },
+   {
+    "arquivo": "votacao_partido_munzona_2022_MA.csv",
+    "data_no_zip": "2026-11-17 06:23:04",
+    "bytes": 5254751,
+    "sha256": "afaf624012eaf560d00077057e7e7d158a0f6c2d0fd2a1e609f6c0eb44531819",
+    "dt_geracao": {
+     "17/11/2026": 15610
+    }
+   },
+   {
+    "arquivo": "leiame.pdf",
+    "data_no_zip": "2026-11-06 19:49:54",
+    "bytes": 118902,
+    "sha256": "513db4f999d7c8cdd32f6e78c6ea437cfd9e96ecb279a86b58b8b9e31af592a4",
+    "dt_geracao": {}
+   }
+  ],
+  "datas_no_zip": [
+   "2026-11-06",
+   "2026-11-17"
+  ],
+  "dt_geracao_distintas": [
+   "17/11/2026"
+  ]
+ }
+}
