@@ -1,0 +1,18 @@
+HTTP/1.1 200 Connection Established
+
+HTTP/2 404 
+date: Tue, 17 Nov 2026 13:21:56 GMT
+content-type: text/html;charset=utf-8
+content-length: 39141
+expires: Sat, 1 Jan 2000 00:00:00 GMT
+x-ua-compatible: IE=edge,chrome=1
+content-language: pt-br
+x-varnish: 178691173
+age: 0
+via: 1.1 www2-haproxy-ff9f98448-dh57n (Varnish/7.5)
+x-cache: MISS
+access-control-allow-origin: *
+server: envoy
+x-envoy-upstream-service-time: 65
+vary: Accept-Encoding
+

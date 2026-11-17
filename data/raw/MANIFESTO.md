@@ -28,3 +28,11 @@ Fichas da API de dados abertos de legislação do Senado. Contêm identificaçã
 | `legislacao/senado/lista_constituicao_1988.xml` | Senado Federal | lista da Constituição de 1988 | https://legis.senado.leg.br/dadosabertos/legislacao/lista?tipo=CON&ano=1988 | 2026-11-17T13:16:07Z | 17/11/2026 10:15:20 | XML | 864 | `c2c3f3976aab863b8daf8b50d04b2fed1186485cbe9eddeab92d0d37408ed6d1` |
 | `legislacao/senado/detalhe_551380_lei_9504_1997.xml` | Senado Federal | ficha da Lei 9.504/1997 (id 551380) | https://legis.senado.leg.br/dadosabertos/legislacao/551380 | 2026-11-17T13:16:09Z | 17/11/2026 10:15:36 | XML | 177125 | `9e79ab413b30e5917d7a3604da7d2108eb709f05fd256e40647a28baf8cc69a5` |
 | `legislacao/senado/detalhe_579494_constituicao_1988.xml` | Senado Federal | ficha da Constituição de 1988 (id 579494) | https://legis.senado.leg.br/dadosabertos/legislacao/579494 | 2026-11-17T13:16:11Z | 17/11/2026 10:15:44 | XML | 840578 | `579b012fbd5206b27551f831bb41d789533c13999567bfbd265112fe5c7a2b61` |
+
+## Legislação: normas.leg.br e Câmara (testes sem texto integral)
+
+| Arquivo | Órgão | Documento pedido | URL | Acesso (UTC) | Last-Modified | Resultado | Bytes | SHA-256 |
+|---|---|---|---|---|---|---|---|---|
+| `legislacao/normas/lei_9504_1997.html` | Senado Federal (normas.leg.br) | Lei 9.504/1997 | https://normas.leg.br/?urn=urn:lex:br:federal:lei:1997-09-30;9504 | 2026-11-17T13:21:34Z | Tue, 10 Nov 2026 23:08:26 GMT | 200; casca da aplicação web, sem o texto da norma; idêntica para as duas URNs | 66002 | `62b0cfdac0b029f66efc6472052103baf9a0f148ade44f56d3e273f02418197d` |
+| `legislacao/normas/constituicao_1988.html` | Senado Federal (normas.leg.br) | Constituição de 1988 | https://normas.leg.br/?urn=urn:lex:br:federal:constituicao:1988-10-05;1988 | 2026-11-17T13:21:36Z | Tue, 10 Nov 2026 23:08:26 GMT | 200; casca da aplicação web, sem o texto da norma; idêntica para as duas URNs | 66002 | `62b0cfdac0b029f66efc6472052103baf9a0f148ade44f56d3e273f02418197d` |
+| `legislacao/camara/busca_lei_9504_1997.headers.txt` (só cabeçalhos) | Câmara dos Deputados | busca da Lei 9.504/1997 | https://www2.camara.leg.br/busca-portal?contextoBusca=BuscaLegislacao&q=lei+9504+1997 | 2026-11-17T13:21:56Z | não informado | 404, sem redirecionamento | não guardado | não aplicável |

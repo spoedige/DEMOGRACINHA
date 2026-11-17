@@ -59,6 +59,21 @@ Evidência guardada: as quatro respostas do Senado, em `data/raw/legislacao/sena
 
 Situação das pendências: nenhuma alterada. As fichas do Senado servem para rastrear alterações da norma, mas não substituem a leitura do texto vigente.
 
+## normas.leg.br (H5) e busca na Câmara (H1, ajuste), 17/11/2026
+
+| Teste | Resultado |
+|---|---|
+| `normas.leg.br`, URN da Lei 9.504/1997 | 200, mas o conteúdo é a casca de uma aplicação web (66.002 bytes), sem nenhum trecho da lei |
+| `normas.leg.br`, URN da Constituição de 1988 | 200, conteúdo idêntico byte a byte ao anterior (mesmo SHA-256): a mesma casca |
+| `www2.camara.leg.br`, uma consulta de busca limitada à Lei 9.504/1997 | 404, sem redirecionamento |
+
+Conclusões:
+- `normas.leg.br` não entrega o texto integral pela URN. O texto é carregado por scripts da aplicação (`main.*.js`, no mesmo host), que fazem outras requisições. Essas requisições estão fora do escopo aprovado (só as duas URNs) e não foram feitas. Versão vigente não identificada.
+- A casca referencia também `www.googletagmanager.com` (rastreamento); não acessado.
+- Na Câmara, a única consulta autorizada não encontrou a busca no endereço usado. Nenhuma outra tentativa foi feita.
+
+Situação das pendências: nenhuma alterada; L1 a L35 abertas.
+
 ## Próximo passo
 
-Coleta estatística em `coleta-estatistica.md`. Texto integral da legislação federal ainda sem acesso: depende da aprovação de `normas.leg.br` ou de endereço correto na Câmara. Resoluções do TSE e acórdãos do STF continuam sem fonte acessível.
+Coleta estatística em `coleta-estatistica.md`. Texto integral da legislação federal ainda sem acesso: `normas.leg.br` só entrega a casca da aplicação, e a busca da Câmara deu 404. Resoluções do TSE e acórdãos do STF continuam sem fonte acessível.
