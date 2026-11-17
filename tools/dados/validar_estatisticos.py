@@ -66,10 +66,8 @@ def detalhe(pasta, ano, cargo_ref):
     for k, c in mun.items():
         tot.update(c)
         resto = c["QT_COMPARECIMENTO"] - c["QT_TOTAL_VOTOS_VALIDOS"] - c["QT_VOTOS_BRANCOS"] - c["QT_TOTAL_VOTOS_NULOS"]
-        if resto != 0:
-            falhas["comparecimento != validos + brancos + nulos (município; diferença são votos anulados)"] += 1
         if resto != c["QT_TOTAL_VOTOS_ANULADOS"] + c["QT_TOTAL_VOTOS_ANUL_SUBJUD"] + c["QT_VOTOS_ANULADOS_APU_SEP"]:
-            falhas["comparecimento != validos + brancos + nulos + anulados (município)"] += 1
+            falhas["comparecimento != validos + brancos + nulos + anulados + anulados sub judice + apuracao separada (município, D59)"] += 1
     print("  totais:", {k: tot[k] for k in ("QT_APTOS", "QT_COMPARECIMENTO", "QT_ABSTENCOES", "QT_TOTAL_VOTOS_VALIDOS", "QT_VOTOS_BRANCOS", "QT_TOTAL_VOTOS_NULOS")})
     print("  falhas de identidade:", dict(falhas) or "nenhuma")
     return mun, nomes
