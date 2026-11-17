@@ -1,10 +1,12 @@
 # Regras e mundo
 
+**Nenhuma regra legal deste documento está confirmada.** Todas são hipóteses documentais até a verificação da etapa 1B; a pendência correspondente está indicada entre colchetes e detalhada em `roadmap.md` 7.1. O calendário oficial está em `GDD.md` 3.
+
 ## 1. Cargos
 
 Vereador, prefeito, vice-prefeito, deputado estadual (distrital no DF), deputado federal, governador, vice-governador, senador, presidente, vice-presidente. Vices são cargos reais.
 
-### Idade mínima
+### Idade mínima [L30]
 | Cargo | Idade | Referência da data |
 |---|---|---|
 | Vereador | 18 | na data do registro de candidatura (`GDD.md` 3) |
@@ -12,36 +14,36 @@ Vereador, prefeito, vice-prefeito, deputado estadual (distrital no DF), deputado
 | Governador e vice | 30 | na posse |
 | Senador, presidente e vice | 35 | na posse |
 
-### Senado
+### Senado [L19, L23]
 - 81 cadeiras, mandato de 8 anos.
 - 2026: 2 vagas por UF (54), 2 votos por eleitor, majoritária, sem quociente.
 - 2030: 1 vaga por UF (27).
 - Início e fim do mandato dos eleitos em 2026: `GDD.md` 3.
-- Cada senador tem 2 suplentes (Fase 2).
+- Cada senador tem 2 suplentes. MVP: suplência mínima (`eventos-e-risco.md` 6.1); detalhamento na Fase 2.
 
-### Executivos e desincompatibilização
+### Executivos e desincompatibilização [L31, L12]
 - Uma reeleição consecutiva para o mesmo cargo executivo.
 - Para disputar outro cargo, chefe do Executivo renuncia 6 meses antes da eleição (data em `GDD.md` 3).
 - Legisladores concorrem sem renunciar.
 
-### 2º turno
+### 2º turno [L20]
 - Governador e presidente: sem maioria absoluta dos válidos.
 - Prefeito: só em municípios com mais de 200 mil eleitores.
 - Senador: nunca.
 
-### Janela partidária e filiação
+### Janela partidária e filiação [L14, L15, L35]
 - Período: `GDD.md` 3. Vale só para detentores de cargos proporcionais.
 - Majoritários podem trocar sem perder o mandato (ADI 5081, a confirmar).
 - Filiação e domicílio eleitoral até o prazo de `GDD.md` 3.
 - Domicílio com mandato em curso (a confirmar).
 
-### Barreira individual (só proporcional)
+### Barreira individual (só proporcional) [L1, L2]
 - 10% do quociente eleitoral para ser eleito.
 - 20% para disputar sobras; o partido precisa de 80% do quociente.
 - Fonte: Código Eleitoral, arts. 108 e 109 (a confirmar o texto vigente).
 - Em majoritária basta vencer.
 
-### Cláusula de desempenho
+### Cláusula de desempenho [L10]
 | Eleição | Votos | Ou |
 |---|---|---|
 | 2026 | 2,5% dos válidos, com 1,5% em 9 UFs | 13 deputados em 9 UFs |
@@ -62,7 +64,7 @@ Marca, capilaridade, quadros, caixa, coesão, liderança (agente fictício). Sem
 - Grande: dinheiro, máquina, fila interna longa, papel coadjuvante para recém-chegado.
 - Pequeno: espaço para protagonismo, risco de cláusula, pouca ou nenhuma TV.
 - Vantagem assimétrica do pequeno: bônus em mídia digital e discurso antissistema quando polarização ou tensão institucional estão altas.
-- Marca "modo difícil": partido sem TV ou com risco de cláusula. Em 2026, Novo e Missão estão sem TV.
+- Marca "modo difícil": partido sem TV ou com risco de cláusula. Hipótese para 2026: Novo e Missão sem TV [L8].
 
 ## 3. Federações
 
@@ -72,14 +74,17 @@ Marca, capilaridade, quadros, caixa, coesão, liderança (agente fictício). Sem
 | PSDB Cidadania | PSDB, Cidadania |
 | PSOL Rede | PSOL, Rede |
 | Renovação Solidária | PRD, Solidariedade |
-| União Progressista | União Brasil, PP (criada no jogo no 1º trimestre, registro em 26/03/2026) |
+| União Progressista | União Brasil, PP (criada no jogo no 1º trimestre; data de registro no calendário de `GDD.md` 3) [L3] |
 
-Federação atua como unidade única em todas as eleições e no Legislativo, com duração mínima legal (a confirmar prazo). Distribuição de fundo para federados (a confirmar).
+Federação atua como unidade única em todas as eleições e no Legislativo, com duração mínima legal [L3]. Distribuição de fundo para federados [L5].
 
 ## 4. Municípios
 
 - 5.570 municípios reais em um único `municipios.json` compacto (meta de cerca de 380 KB), com número oficial de vagas de vereador.
-- Agentes individuais só no município do jogador, nas capitais e nas cidades com mais de 200 mil eleitores. O resto é estatístico por UF.
+- Cada um dos 5.570 municípios tem eleição própria para prefeito e câmara (`motor-eleitoral.md` 9).
+- **Conjunto de agentes (fixo durante a carreira, D52):** município inicial mais os nove maiores eleitorados da UF inicial, pelo snapshot de 2026 da 1B. Se o município inicial estiver entre os nove maiores, entra o próximo da lista. Desempate pelo código IBGE. Agentes individuais e conjuntura local existem só nesse conjunto.
+- **Conjunto da base (dinâmico, até 10, D52):** inclui o município inicial e os municípios onde o personagem constrói base, em qualquer UF. Representa a base política do personagem, com ou sem agentes, e não altera o conjunto de agentes.
+- Lacunas registradas: (1) regra quando o conjunto da base está cheio; (2) UFs com menos de 10 municípios (o DF tem um só): o conjunto de agentes fica menor, sem regra de complemento definida.
 - Resultados municipais de 2024 entram como estado inicial fixo.
 - Base territorial do personagem é agregada por município (ver `carreira-e-poder.md` seção 10.2).
 
@@ -90,7 +95,7 @@ Federação atua como unidade única em todas as eleições e no Legislativo, co
 - **Federação:** unidade única, vale para proporcional e majoritária.
 - **Coligação:** só majoritária, por eleição.
 
-Aliança eleitoral, coalizão de governo e base parlamentar são três objetos separados no motor. Um aliado de campanha pode ser oposição no governo. Base parlamentar e governabilidade: ver `motor-eleitoral.md` seção 8. Grupo político atravessa partidos e não é estrutura partidária. Facções internas: Fase 2.
+Aliança eleitoral, coalizão de governo e base parlamentar são três objetos separados no motor. Um aliado de campanha pode ser oposição no governo. Base parlamentar e governabilidade: ver `motor-eleitoral.md` seção 10. Grupo político atravessa partidos e não é estrutura partidária. Facções internas: Fase 2.
 
 ### Negociação
 Nunca automática. Coligação é um leilão: o jogador recebe no máximo 4 ofertas, cada uma com contrapartida (vice, secretarias, apoio em outra disputa, tempo de TV).

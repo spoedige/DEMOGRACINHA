@@ -13,7 +13,7 @@ Estrutura mínima:
 
 - Nomes gerados por combinação de listas de prenomes e sobrenomes comuns, filtrados contra nomes de políticos reais conhecidos.
 - Atributos: partido, cargo, ambição, lealdade, ideologia, relação com o jogador.
-- Existem individualmente só no município do jogador, nas capitais e em cidades com mais de 200 mil eleitores. No resto, o mundo é estatístico.
+- Existem individualmente só no conjunto de agentes (`regras-e-mundo.md` 4). No resto, o mundo é estatístico, mas cada um dos 5.570 municípios tem eleição própria (`motor-eleitoral.md` 9).
 - Rede de agentes alimenta convites, rivalidades, janela partidária e escândalos.
 
 ## 2.1 Conjuntura autônoma (MVP simplificado, P9)
@@ -22,13 +22,13 @@ Poucas variáveis de mundo, atualizadas a cada janela (incluindo as automáticas
 
 | Variável | Nacional | Estadual (27 UFs) | Local |
 |---|---|---|---|
-| Aprovação do governo | governo federal | governo de cada UF | prefeitura, só nos 10 municípios individualizados |
+| Aprovação do governo | governo federal | governo de cada UF | prefeitura, só nos municípios do conjunto de agentes |
 | Polarização | sim | desvio da UF em relação à nacional | não |
 | Clima econômico percebido | sim | desvio da UF | não |
 | Tensão institucional | sim | não | não |
 
 - Estados e locais são desvios em torno do nacional, não simulações completas.
-- Alcance por eleição: presidente lê o nacional; governador e senador, o estadual; deputado, o estadual (o nacional chega via identificação partidária, `motor-eleitoral.md` 1.2); prefeito e vereador, o local quando individualizado, senão o estadual.
+- Alcance por eleição: presidente lê o nacional; governador e senador, o estadual; deputado, o estadual (o nacional chega via identificação partidária, `motor-eleitoral.md` 1.2); prefeito e vereador, o local nos municípios do conjunto de agentes, senão o estadual (inclusive em municípios da base fora desse conjunto).
 - Evolução: tendência mais ruído, com reversão lenta à média (calibrar).
 - Caminhos causais: ver `motor-eleitoral.md` seção 0. A conjuntura nunca entra direto na fórmula de voto.
 - O jogador influencia pouco e só no escopo do próprio cargo.
@@ -48,7 +48,7 @@ Livres da regra de acoplamento: até 3 variáveis, até 4 opções, sempre com u
 
 ## 4. Pontos de Inflexão
 
-- Raros e condicionais, oferecidos a quem está posicionado. O gatilho vem de limiares da conjuntura (seção 2.1), não de sorteio puro.
+- Raros e condicionais, oferecidos a quem está posicionado. Há dois tipos de gatilho: limiares da conjuntura (seção 2.1) e marcos do calendário (`GDD.md` 3), como o debate em J5. Nenhum é sorteio puro.
 - Cadeia de 2 a 3 decisões arriscadas, sempre com saída segura que mantém o platô.
 - Acerto concede **Momento**: forte efeito temporário em notoriedade e oportunidades, decaindo em 1 a 2 ciclos. Nunca é desbloqueio permanente.
 
@@ -75,7 +75,7 @@ Separação clara, pelo tipo de contrapartida:
 | Nível | Exemplo | Ganho | Risco |
 |---|---|---|---|
 | 1. Favor | emenda ou indicação em troca de benefício privado de pequeno valor ou de apoio eleitoral com uso de recurso institucional | pequeno | baixo, Arquivo Vermelho +1 |
-| 2. Desvio | converter Capital de Entrega em Caixa Pessoal | médio | médio, agenda investigação |
+| 2. Desvio | usar a capacidade institucional (emenda, contrato, indicação) para desviar recurso público em benefício pessoal; o Capital de Entrega não se converte em dinheiro, o desvio é do recurso orçamentário influenciado | médio | médio, agenda investigação |
 | 3. Esquema | estrutura recorrente com operadores | alto | alto, cadeia de escândalo |
 
 - Descoberta atrasada: cada ato agenda eventos de exposição com probabilidade crescente no tempo.
@@ -98,6 +98,8 @@ Status: Regular, Investigado, Condenado, InelegibilidadeReconhecida. Risco jurí
 | Licença de saúde | saúde abaixo de limiar ou evento | 1 a 3 janelas (calibrar) | sem cartas de ação, só opção segura; notoriedade decai; se longa, no Executivo assume o vice e no Legislativo assume o suplente (prazos legais distintos por cargo, a confirmar) |
 | Licença para nomeação | legislador que aceita cargo de nomeação governamental | duração da nomeação | suplente assume; mandato preservado (a confirmar por cargo); pode voltar. Não se aplica a chefe do Executivo |
 Cada estado tem id estável, origem registrada no histórico e fim definido. Nenhum gera game over.
+
+Suplência no MVP (D55): mínima. Quando um legislador se afasta ou se licencia, o suplente da lista (proporcional) ou da chapa (Senado) assume como agente sintético, sem atributos próprios além de partido e alinhamento; o mandato do titular é preservado conforme a regra do cargo (L23, L25, L27). Ordem detalhada de suplência, suplentes individualizados do Senado e sucessão definitiva por suplente: Fase 2.
 
 ## 7. Saúde
 

@@ -4,6 +4,8 @@ Decisões aprovadas pelo autor. Cada uma indica o que muda nos docs e o que depe
 
 ## D1. Potencial fora da urna (P11), 17/11/2026
 
+> Revista por D34: o potencial não tem efeito eleitoral direto, mas as aptidões que ajuda a desenvolver agem normalmente. O texto abaixo é histórico.
+
 **Decisão:** o potencial não modifica o resultado eleitoral. Afeta aprendizado, evolução das aptidões e aproveitamento de oportunidades. A urna responde a fatores políticos, eleitorais, territoriais, partidários e conjunturais.
 
 **Impacto nos docs:**
@@ -205,3 +207,19 @@ Correções técnicas da auditoria, aplicadas sem decisão nova por não alterar
 | D49 | Segmentos convertidos em inteiros por maior resto antes da repartição interna | `motor-eleitoral.md` 5.2 |
 
 Os valores de `redePoliticaPrevia` por origem são proposta para revisão do autor.
+
+## Correções da auditoria de consistência cruzada, 17/11/2026
+
+Base: `3b9b68e`. Itens R1 a R24 e A1 do relatório de auditoria.
+
+| Id | Decisão | Onde |
+|---|---|---|
+| D50 (R1) | Segmento livre repartido em dois níveis (listas por `S_L = Σ S_i`, depois candidatos), equivalente à competição única antes do arredondamento; erro do total da lista menor que `2 + s_L` | `motor-eleitoral.md` 5.2 |
+| D51 (R2) | `k` fixo por cargo; polarização só na conversão de exposição em rejeição | `motor-eleitoral.md` 4.6 e 6 |
+| D52 (R4) | Dois conjuntos municipais: agentes (fixo, inicial mais nove maiores eleitorados da UF inicial) e base (dinâmico, até 10, qualquer UF). D12 interpretada: o limite de 10 vale para cada conjunto | `regras-e-mundo.md` 4; `motor-eleitoral.md` 4.5 e 9 |
+| D53 (R3) | Base territorial sem apoio local; força das lideranças só na transferência | `carreira-e-poder.md` 10.2 |
+| D54 (R6) | Oferta de nomeação sem capital político | `carreira-e-poder.md` 10.4 |
+| D55 (R8) | Suplência mínima no MVP; detalhamento na Fase 2 | `eventos-e-risco.md` 6.1; `regras-e-mundo.md` 1 |
+| A1 | Professor/Educador mantém `nenhuma`; descrição como vínculo profissional | `carreira-e-poder.md` 1 |
+
+Demais correções (R5, R7, R9 a R24) são de redação, referência e testes, sem nova decisão de projeto. Pendências L33 a L35 incluídas e abertas.

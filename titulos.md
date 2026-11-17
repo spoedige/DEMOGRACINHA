@@ -12,7 +12,7 @@ Títulos são conquistas de carreira em tom sério. Cada um tem condição verif
 | O Reformador | Aprovou 3 reformas estruturais |
 | O Vice | Sucedeu um titular |
 | O Paraquedista | Venceu eleições em 3 estados |
-| O Municipalista | Venceu em 10 ou mais municípios pequenos |
+| O Municipalista | Fase 2: condição depende de votação por município em disputas proporcionais, não calculada no MVP |
 | O Cassado | Perdeu mandato por decisão da Justiça |
 | O Vitalício | 40 anos de vida pública |
 | O Improvável | Venceu eleição para governador, senador ou presidente acumulando ao menos duas condições políticas desfavoráveis observáveis na trajetória: partido marcado "modo difícil" na eleição vencida; origem com `redePoliticaPrevia` igual a "nenhuma" (`docs/carreira-e-poder.md` 1); derrota na eleição imediatamente anterior; notoriedade abaixo da média dos candidatos registrados na mesma disputa; rejeição acima dessa mesma média. As duas comparações usam o escopo da disputa e os valores no início da campanha (abertura de J4). Limiares a calibrar; não depende do potencial |
@@ -43,9 +43,9 @@ Títulos são conquistas de carreira em tom sério. Cada um tem condição verif
 | Título | Condição |
 |---|---|
 | O Relator | Relatou uma CPI que terminou em Momento |
-| O Líder | Liderou a bancada do partido na Câmara ou no Senado |
+| O Líder | Fase 2: liderança de bancada não é modelada no MVP |
 | O Articulador | Construiu 3 coligações vencedoras para outros candidatos |
-| O Presidente da Casa | Presidiu Câmara, Senado ou Assembleia |
+| O Presidente da Casa | Fase 2: mesa diretora não é modelada no MVP |
 | O Dono da Legenda | Presidiu o próprio partido nacionalmente |
 
 ### Partido e eleição

@@ -19,7 +19,7 @@ Cada origem define principalmente **caminhos**: rede inicial, cartas próprias n
 | Servidor | carreira pública, colegas de órgão | nenhuma | cartas técnicas; oportunidades em funções de gestão | sem penalidade automática |
 | Assessor | gabinetes, bastidores | direta | cartas de articulação; acesso a lideranças | baixa exposição pública inicial (notoriedade baixa), sem penalidade de popularidade |
 | Gestor Público | ex-gestor de órgão ou programa, fora do cargo | direta | cartas de gestão e entrega; oportunidades de nomeação futura | Bancada inicial baixa |
-| Professor/Educador | escola, universidade, comunidade escolar | nenhuma | cartas de educação, serviços públicos e articulação comunitária | recurso financeiro inicial baixo |
+| Professor/Educador | vínculo profissional com escola, universidade e comunidade escolar, sem acesso institucional nem rede organizada com peso político na partida | nenhuma | cartas de educação, serviços públicos e articulação comunitária | recurso financeiro inicial baixo |
 
 `redePoliticaPrevia` (propriedade fixa da origem, valores propostos para revisão):
 - **nenhuma:** sem acesso prévio a políticos, partidos ou governos e sem rede organizada com peso político.
@@ -57,7 +57,7 @@ Cúpula (direção partidária), Bancada (pares no Legislativo), Executivo (vín
   | Reputação histórica | ambos, como tag | padrão de escolhas ao longo da carreira | relações (modificador de partida), grau |
   | Arquivo Vermelho | justiça e imprensa | atos ilícitos | risco jurídico, escândalos |
   Um mesmo fato só altera mais de uma dimensão quando atinge públicos diferentes por meios diferentes (exemplo: escândalo publicado atinge rejeição; o rompimento de acordo que o causou atinge credibilidade).
-- **Governabilidade**: ver `motor-eleitoral.md` seção 8.
+- **Governabilidade**: ver `motor-eleitoral.md` seção 10.
 - **Capital político** não é estado guardado. É calculado quando necessário:
   `capitalPolitico = f(relações, influência do grupo, credibilidade, reputação, base territorial)` (pesos a calibrar).
   Regra de não duplicação: onde capital político é usado (oferta de convites e nomeações, força em negociação), seus componentes não entram de novo como termos separados. Uma regra usa ou o capital político ou componentes específicos, nunca os dois.
@@ -155,13 +155,15 @@ Representação agregada no MVP:
 
 ### 10.2 Base territorial (MVP simplificado, P3)
 
-Agregada por município, com até 10 municípios individualizados no MVP (decisão D12). O restante da UF fica num agregado regional único.
+Detalhada nos municípios do conjunto da base (até 10, qualquer UF, inclui o município inicial; `regras-e-mundo.md` 4; D12 interpretada por D52). Fora dele, um agregado regional. O conjunto da base não altera o conjunto de agentes.
 
 ```
-base[municipio] = { forca, custoManutencao, apoioLocal (prefeito e vereadores aliados, agregado) }
+base[municipio] = { forca, custoManutencao }
 ```
 
-- Cresce com presença, entregas (Capital de Entrega dirigido) e aliados eleitos em 2028 e 2032.
+- Cresce com presença, entregas (Capital de Entrega dirigido) e organização construída com aliados eleitos em 2028 e 2032.
+- Distinção (D53): base territorial é estrutura política duradoura do próprio personagem. A força pessoal de prefeitos, vereadores e lideranças aliadas não faz parte da base; chega à máquina só pela transferência (`motor-eleitoral.md` 4.5), eleição a eleição.
+- Lacuna registrada: não há regra para o que acontece quando o personagem tenta criar base num 11º município com o conjunto cheio.
 - Decai sem manutenção a cada ciclo.
 - Alimenta Máquina no motor eleitoral; transferência continua probabilística.
 
@@ -202,7 +204,7 @@ O repasse é sempre institucional ou orçamentário. Nunca envolve Fundo de Camp
 Posições relevantes que dão influência sem mandato eletivo. Lista fechada no MVP:
 | Escopo | Posições |
 |---|---|
-| Municipal | secretário municipal (nos 10 municípios individualizados) |
+| Municipal | secretário municipal (nos municípios do conjunto de agentes) |
 | Estadual | secretário estadual |
 | Federal | ministro, secretário executivo de ministério |
 | Partidária | presidente de diretório municipal, estadual ou nacional |
@@ -212,7 +214,7 @@ Fase 2 (decisão D37): secretário-geral, tesoureiro, coordenador de campanha do
 Nomeações governamentais (municipal, estadual, federal) dependem de relação com Executivo e composição do governo e exigem desincompatibilização para disputar. Posições partidárias dependem da Cúpula, não exigem desincompatibilização (a confirmar) e não recebem Capital de Entrega (decisão D25). Seus efeitos são de influência partidária e organizacional: peso na escolha de candidaturas, na distribuição interna de fundos, na distribuição interna da exposição dentro do tempo de TV que a lei dá à legenda (o tempo legal não muda) e na capilaridade da legenda.
 
 - Não há simulação de todas as nomeações do país. Só existem as vagas que podem ser oferecidas ao personagem, criadas quando ele tem relação suficiente com o governo ou o partido.
-- Oferta depende de: relação com Executivo (ou Cúpula, para cargo partidário), composição do governo (partido do personagem na coalizão), capital político derivado, compromissos firmados (tipo "cargo ou espaço") e conjuntura.
+- Oferta depende de: relação com Executivo (ou Cúpula, para cargo partidário), composição do governo (partido do personagem na coalizão), compromissos firmados (tipo "cargo ou espaço") e conjuntura. Capital político não entra, porque seus componentes já estão presentes (D54).
 - Efeitos das nomeações governamentais: Capital de Entrega, presença institucional para o grupo, experiência executiva; exigem desincompatibilização para disputar eleição (prazos a confirmar).
 - Efeitos das posições partidárias: influência sobre legenda, distribuição interna de fundos e presença institucional; sem Capital de Entrega.
 - Saída: demissão por mudança de coalizão, crise ou queda de governabilidade; ou saída voluntária para disputar.

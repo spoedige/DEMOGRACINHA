@@ -67,6 +67,7 @@ Limites de J2 e J6 são convenção do jogo.
 **Calendário oficial do jogo (fonte única).** Os demais documentos referenciam esta seção.
 | Marco 2026 | Data | Regra associada (detalhe em `docs/regras-e-mundo.md`) |
 |---|---|---|
+| Registro da federação União Progressista (evento do jogo) | 26/03 | federação (L3) |
 | Janela partidária | 05/03 a 03/04 | troca sem perda de mandato, só proporcionais |
 | Prazo de filiação e domicílio | 04/04 | condição de candidatura |
 | Desincompatibilização de chefes do Executivo | 04/04 | renúncia 6 meses antes para disputar outro cargo |
@@ -129,7 +130,7 @@ Livres da regra de acoplamento: até 3 variáveis de uma vez e até 4 opções, 
 - Modificadores decaem no tempo (calibrar meia-vida).
 
 ### Ficha de oportunidade
-Para convites, filiações, candidaturas e vice: nível do cargo, prestígio, papel esperado (protagonista ou coadjuvante), custo, risco, aderência à ambição. Subir cedo demais, sem base, reduz papel esperado e exposição.
+Para convites, filiações, candidaturas e vice: atributos descritivos calculados do contexto (eleitorado alcançado, exposição esperada, recurso político, posição na coalizão, papel esperado), mais custo, risco e aderência à ambição. Definição em `docs/carreira-e-poder.md` 10.5 (D28). Subir cedo demais, sem base, reduz papel esperado e exposição.
 
 ### Exemplo de carta
 

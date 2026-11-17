@@ -64,14 +64,14 @@ Escalas são definições de projeto, não calibração. Faixas de valores dentr
 | `semOpiniao[e]` | fração que conhece o candidato sem avaliação formada: `notoriedade - popularidade - rejeicao` | 0 a `notoriedade[e]` | idem | derivado, nunca reclassificado |
 | `desconhecimento[e]` | `1 - notoriedade[e]` | 0 a 1 | idem | derivado |
 | `identPartidaria[p,u]` | fração dos votantes válidos da unidade identificados com a lista p (partido isolado ou federação); categorias mutuamente exclusivas | 0 a 1; com `semIdentificacao[u]`, soma exatamente 1 por construção (5.2) | UF; município | estado |
-| `baseTerritorial[m]` | força da organização própria do candidato no município | 0 a 1 | até 10 municípios mais agregado regional | estoque |
+| `baseTerritorial[m]` | força da organização própria do candidato no município | 0 a 1 | municípios do conjunto da base (até 10, qualquer UF; `regras-e-mundo.md` 4); fora dele, agregado regional | estoque |
 | `grupo.influencia` | peso agregado do grupo político | 0 a 1 | personagem | estoque |
 | `credibilidade` | confiança dos atores no cumprimento de acordos | 0 a 1, exibida em faixa | personagem | estado |
 | `forca[l]` | capacidade pessoal de mobilização da liderança aliada l (prefeito, vereador, liderança local) | 0 a 1 | município | estado do agente ou do agregado municipal |
 | `aderencia[l,c]` | compatibilidade entre liderança e candidato (partido, ideologia, histórico) | 0 a 1 | município | derivado |
 | `transferencia[m]` | contribuição efetiva das lideranças aliadas à máquina | 0 a 1 | município | fator do dia |
 | `maquinaEfetiva[m]` | mobilização disponível no dia | 0 a 1 | município ou agregado | fator do dia |
-| `aprovacaoGov[g]` | avaliação do governo g | 0 a 1 | nacional, UF, município individualizado | estado de conjuntura |
+| `aprovacaoGov[g]` | avaliação do governo g | 0 a 1 | nacional, UF, municípios do conjunto de agentes | estado de conjuntura |
 | `polarizacao`, `climaEconomico`, `tensaoInstitucional` | variáveis de conjuntura | 0 a 1 | nacional, com desvio por UF quando previsto (`eventos-e-risco.md` 2.1) | estado de conjuntura |
 | `fefcPartido[p]` | parcela legal do FEFC destinada ao partido | R$ | nacional | fluxo por ciclo |
 | `fundoDisponivel` | recurso que o partido efetivamente repassou ao candidato, mais doações recebidas | R$ | candidatura | estoque de campanha |
@@ -164,8 +164,11 @@ maquinaEfetiva[m] = 1 - (1 - baseTerritorial[m]) × (1 - estruturaAliada[m])
 - Combinação por complemento: cada componente acrescenta, o total fica entre 0 e 1.
 - `estruturaAliada` existe só com coligação registrada (majoritária) ou federação (proporcional). Partido da própria lista não conta como aliado.
 - `T[l]`: um sorteio por par (liderança, candidato, eleição), ordem fixa por código IBGE e id. Média 1 antes do corte; o corte superior em `forca[l]` reduz levemente a média, efeito a medir na calibração. A força pessoal da liderança não compõe identificação, base própria nem estrutura.
-- Nos municípios não individualizados, as lideranças são um agregado municipal (prefeito eleito e bancada municipal aliada), sem agentes.
-- Agregado em escopo maior: média de `maquinaEfetiva[m]` ponderada pelo eleitorado; municípios fora dos 10 individualizados usam o agregado regional.
+- Fora do conjunto de agentes, as lideranças são um agregado municipal (prefeito eleito e bancada municipal aliada), sem agentes.
+- Escopo da máquina por tipo de eleição:
+  - Eleição municipal: cada município usa a própria `maquinaEfetiva[m]`, calculada com os dados daquele município.
+  - Disputa estadual ou nacional: média de `maquinaEfetiva[m]` ponderada pelo eleitorado. Municípios do conjunto da base entram com seu valor detalhado; os demais entram pelo agregado regional do candidato. Um município com base detalhada é retirado do agregado regional, para não ser contado duas vezes.
+- O agregado da UF é sempre soma ou média ponderada das unidades, nunca simulação paralela (9.2).
 
 ### 4.6 Opinião e eleitores sem avaliação formada
 Partição do eleitorado do escopo para cada candidato:
@@ -178,6 +181,7 @@ desconhecimento + popularidade + rejeicao + semOpiniao = 1
 opiniao_c = clamp( popularidade_c + α × semOpiniao_c - k × rejeicao_c,  0,  1 )
 ```
   `α` (calibrar, entre 0 e 1) é a disposição de quem conhece sem opinião a votar no candidato quando outros fatores ajudam. É um peso do segmento, não reclassificação: `popularidade` e `rejeicao` continuam inalterados.
+  `k`: parâmetro fixo por cargo (calibrar). Não depende da polarização (D51). A polarização age só na conversão de exposição em rejeição (1.2), o que evita contar o mesmo efeito no estado e na urna.
 - `desconhecimento` não entra em `opiniao`; esse eleitorado só chega ao candidato pela máquina e, no proporcional, pela legenda.
 
 ## 5. Eleições proporcionais (D35: competição única)
@@ -209,11 +213,26 @@ F   = validos - Σ_L I_L                                segmento livre
 - A base é a mesma em todo o cálculo: `identPartidaria` é fração dos válidos, e os segmentos são calculados sobre os válidos.
 - Federação: uma lista; sua identificação é a dos partidos membros somada (a confirmar tratamento legal).
 
-Conversão dos segmentos em inteiros, antes de qualquer repartição:
+Conversão em inteiros (D49, com distribuição hierárquica no segmento livre por D50):
 1. Calcular os valores reais `I_L` de todas as listas e `F`.
 2. Aplicar maior resto (4.3) ao conjunto `{I_1, ..., I_n, F}` com total `validos`, desempate por id da lista e F por último. Resultado: inteiros com `Σ I_L + F = validos` exatamente.
-3. Repartir os votos inteiros de cada segmento entre seus concorrentes, de novo por maior resto.
-Como cada etapa preserva a soma, a soma final de legendas e nominais é igual a `validos`.
+3. Segmento fiel: repartir cada `I_L` inteiro entre `ℓ_L` e os candidatos de L, por maior resto (inalterado, D35).
+4. Segmento livre, em dois níveis:
+   - 4a. Pontuação agregada de cada lista: `S_L = Σ_{i em L} S_i`.
+   - 4b. Repartir `F` inteiro entre as listas, em proporção a `S_L`, por maior resto: `F_L`.
+   - 4c. Repartir cada `F_L` inteiro entre os candidatos de L, em proporção a `S_i`, por maior resto.
+
+Equivalência antes do arredondamento: na competição única, o candidato i recebe `F × S_i ÷ Σ_j S_j`. Na distribuição hierárquica, recebe `(F × S_L ÷ Σ_L' S_L') × (S_i ÷ S_L) = F × S_i ÷ Σ_j S_j`, porque `Σ_L' S_L' = Σ_j S_j`. As frações reais são idênticas; só a ordem do arredondamento muda. Não há pontuação nova de lista nem bônus partidário: `S_L` é apenas a soma das pontuações já definidas.
+
+Conservação: cada etapa reparte um inteiro com soma exata, então `Σ_L (legenda_L + Σ_{i em L} votos_i) = validos`.
+
+Erro do total da lista. Com `s_L = S_L ÷ Σ_j S_j`:
+```
+votosLista_L(int) - votosLista_L(real) = (I_L,int - I_L,real) + (F_L,int - s_L × F_real)
+F_L,int - s_L × F_real = (F_L,int - s_L × F_int) + s_L × (F_int - F_real)
+|erro| < 1 + 1 + s_L = 2 + s_L < 3
+```
+O erro não cresce com o número de candidatos. Não se afirma limite de erro por candidato: ele depende dos dois segmentos e dos dois níveis de arredondamento e não foi demonstrado.
 
 Repartição (forma 4.2, com τ = 1 e D = 0 em cada segmento):
 ```
@@ -230,8 +249,8 @@ Garantias:
 - **Opinião e máquina em dois segmentos:** a pontuação do candidato é usada no segmento fiel e no livre, mas cada segmento é um conjunto diferente de votantes e cada votante vota uma vez. Não há soma do mesmo eleitor.
 - **Legenda:** existe só no segmento fiel e só depende de `λ_L`; não usa opinião nem máquina, e candidatos não usam identificação.
 - **Puxador:** um candidato de opinião e máquina altas capta grande parte de `F`; esses votos somam ao total da lista e ajudam a eleger outros. Não há termo extra.
-- **Sem inflação por número de candidatos no segmento fiel:** `I_L` é fixo; mais candidatos só dividem o mesmo segmento. No segmento livre, cada candidato adicional só ganha votos se tiver pontuação; candidatos sintéticos têm pontuação baixa por construção (5.3).
-- **Soma exata:** os segmentos particionam `validos`; cada segmento usa maior resto (4.3); a soma de legendas e nominais é igual a `validos`.
+- **Número de candidatos:** no segmento fiel, `I_L` é fixo; mais candidatos só dividem o mesmo segmento. No segmento livre, toda pontuação é positiva (ε e ruído), então cada candidato adicional aumenta `S_L` e a fatia da lista em F. É característica estrutural do modelo, não inflação do total de votos (a soma continua igual a `validos`); seu tamanho depende do número de candidaturas registradas (L21) e da pontuação baixa dos sintéticos (5.3), e é medido pelo teste 64.
+- **Soma exata:** os segmentos particionam `validos`; cada etapa usa maior resto (4.3); a soma de legendas e nominais é igual a `validos`.
 
 ### 5.3 Candidatos sintéticos
 - Gerados antes da distribuição de votos, para cada lista, no fluxo de RNG de eleição com chave (unidade, lista, eleição). Não são guardados no save: são recriados pela semente.
@@ -264,7 +283,7 @@ identChapa_c = clamp( Σ_{p em chapa(c)} identPartidaria[p] × adesao[p,c],  0, 
 chapa(c) = partido ou federação do candidato + partidos formalmente coligados
 votos_c = repartição 4.2 com D para candidaturas não modeladas
 ```
-- `opiniao` (4.6) com `k` dependente da polarização.
+- `opiniao` (4.6) com `k` fixo por cargo.
 - `adesao[p,c]`: fração do eleitorado identificado com o partido p que segue a chapa c (calibrar; para o próprio partido ou federação do candidato, maior que para aliados; menor para aliado distante ideologicamente). Candidatura isolada tem `identChapa` igual à do próprio partido.
 - `ruido_c`: dispersão `σ_c` cresce com `alcanceRedes`. Com o ruído normalizado (4.1), a votação esperada não muda; só a variância.
 
@@ -287,8 +306,8 @@ segundo voto, condicionado ao primeiro:
 votos_d  = v1_d + Σ_{c ≠ d} v2[c→d]
 ```
 - Cada eleitor representado em `v1_c` dá o segundo voto a um candidato diferente de c: a matriz exclui a diagonal.
-- `Σ_d Σ_c v2[c→d] = validos1`: a soma das segundas escolhas corresponde exatamente ao eleitorado que deu o primeiro voto válido.
-- Segundo voto branco ou nulo: parcela de `validos1` retirada antes da matriz, por taxa de base da 1B (a confirmar existência do dado separado por voto).
+- `Σ_d Σ_c v2[c→d] = validos1 - invalidos2`: a soma das segundas escolhas corresponde exatamente aos eleitores que deram primeiro voto válido e segundo voto válido.
+- Segundo voto branco ou nulo: `invalidos2` retirado de `validos1` antes da matriz, por taxa de base da 1B (a confirmar existência do dado separado por voto, L19). As linhas da matriz repartem `v1_c` reduzido na mesma proporção.
 - `S_d` no segundo voto é a mesma pontuação do primeiro. Afinidade entre pares (mesma coligação, mesmo campo político) é hipótese de calibração futura, sem fórmula aprovada e sem implementação no MVP.
 - As duas maiores votações vencem. 2030: uma vaga e um voto.
 - Arredondamento: maior resto em `v1` e em cada linha da matriz.
@@ -381,20 +400,20 @@ Três conceitos separados:
 | Conceito | Alcance |
 |---|---|
 | Dados municipais | os 5.570 municípios |
-| Agentes individuais | só os até 10 municípios individualizados (D12) e as disputas em que o jogador concorre |
+| Agentes individuais | só o conjunto de agentes (`regras-e-mundo.md` 4) e as disputas em que o jogador concorre |
 | Simulação eleitoral | toda unidade eleitoral real: cada município (prefeito e câmara), cada UF (governador, senado, deputados), o país (presidente) |
 
-### 9.1 Municípios não individualizados (2028, 2032)
+### 9.1 Municípios fora do conjunto de agentes (2028, 2032)
 Cada município tem eleição própria, simulada estatisticamente sem agentes guardados:
-- **Prefeito:** um candidato sintético por partido ou chapa que concorra (presença definida por capilaridade do partido no município e resultado de 2024), pontuação 6 com `opiniao` sintética, `identChapa` municipal e máquina do agregado municipal. 2º turno só acima de 200 mil eleitores (a confirmar).
+- **Prefeito:** um candidato sintético por partido ou chapa que concorra (presença definida por capilaridade do partido no município e resultado de 2024), pontuação 6 com `opiniao` sintética, `identChapa` municipal e a máquina municipal própria daquele município (4.5). 2º turno só acima de 200 mil eleitores (a confirmar).
 - **Câmara:** competição única 5 com candidatos sintéticos por lista e apuração completa (quociente, barreira individual, sobras).
 - `identPartidaria` municipal: valor da UF ajustado pelo desvio do município observado em 2024 (definição a fechar na 1B).
 - Custo: o volume de candidatos sintéticos em 5.570 câmaras é alto. A proposta de amostragem com votos reescalados **não está validada nem escolhida**; a questão fica para a etapa 2. A validação deverá comparar amostragem e simulação integral nos mesmos municípios e sementes, verificando distribuição de cadeiras por lista, quocientes eleitoral e partidário, cumprimento da barreira individual e distribuição das sobras. Nenhum método ou parâmetro é definido agora.
 
 ### 9.2 Coerência
 - Totais respeitam eleitorado, comparecimento e válidos de cada unidade.
-- Resultados municipais atualizam prefeituras, bancadas municipais e lideranças agregadas usadas na transferência (4.5) e na base territorial.
-- Agregados por UF são somas das unidades, nunca simulação paralela.
+- Resultados municipais atualizam prefeituras, bancadas municipais e lideranças. As lideranças aliadas eleitas entram na transferência (4.5) da eleição seguinte. A base territorial do personagem pode crescer com aliados eleitos (`carreira-e-poder.md` 10.2), mas por variável própria; a força pessoal das lideranças nunca é copiada para a base.
+- Agregados por UF são somas das unidades, nunca simulação paralela; municípios com base detalhada não entram também no agregado regional (4.5).
 - Bancadas, governos e fundos vêm sempre do resultado simulado.
 - Mesma semente e mesmas decisões produzem os mesmos resultados (RNG de eleição em ordem fixa por unidade e id).
 
@@ -423,7 +442,7 @@ Precisam de definição de função ou calibração antes da implementação:
 1. Pesos `w`, `v`, `m` por cargo (soma 1 fixada; repartição interna a calibrar).
 2. `ε`, `D` (dispersão) e `τ` (estrutural 1; muda só com calibração histórica).
 3. `escalaGasto(cargo, eleitorado)` e padrão de distribuição da mobilização entre municípios.
-4. `α` (peso de quem conhece sem opinião formada) e `k(polarizacao)`.
+4. `α` (peso de quem conhece sem opinião formada) e `k` por cargo.
 5. `λ_L` (atratividade da legenda) e `δ` (identificados que escolhem fora da lista).
 6. `adesao[p,c]`, inclusive para o partido do próprio candidato.
 7. `quadros`, `capilaridade`, número de candidatos sintéticos e distribuições de `q_g` e `r_g`.
@@ -436,4 +455,4 @@ Precisam de definição de função ou calibração antes da implementação:
 14. Branco e nulo no segundo voto do Senado.
 15. Funções `estabilidade`, `negociacao` e limites das faixas de governabilidade.
 16. Critérios de distribuição interna de fundos pelos partidos.
-17. Amostragem de candidatos sintéticos nas câmaras municipais não individualizadas.
+17. Amostragem de candidatos sintéticos nas câmaras municipais fora do conjunto de agentes.
