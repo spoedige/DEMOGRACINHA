@@ -113,3 +113,26 @@ Pendências de arquitetura para a revisão do MVP:
 | D15 | Mapa de causalidade: cada causa chega à urna por um único caminho; `conjuntura` e `desempenho` saem da fórmula de voto | `motor-eleitoral.md` 0, 3 e 4 |
 
 As pendências 1, 3 e 4 da revisão integrada foram resolvidas por D8, D13 e D14. A pendência 2 segue: contrapartes são agregadas e agentes individuais continuam restritos.
+
+## Consolidação do motor eleitoral, 17/11/2026
+
+| Id | Mudança | Onde |
+|---|---|---|
+| D16 | Mapa de causalidade por fenômeno; urna lê estados; três fenômenos nacionais separados; hipótese H1 (palanque) documentada e não implementada | `motor-eleitoral.md` 0 e 1 |
+| D17 | Forma de repartição limitada (pontuação logarítmica e participação nos válidos) no lugar de produto aberto | 4.1 |
+| D18 | Proporcional em dois níveis: lista (com identificação) e nominal (sem identificação) | 5.1 |
+| D19 | Majoritária sem `notoriedade`, `tempoTV`, `redes`, `gasto` e `coligacao` como termos; `identChapa` e máquina no lugar | 6 |
+| D20 | Gasto dividido em exposição (fluxo) e mobilização (dia); transferência de prefeito limitada e exclusiva da máquina | 4.2, 4.3 |
+| D21 | Cadeia do dinheiro em cinco etapas; candidato não recebe parcela automática | 7.1 |
+| D22 | Teste de dupla contagem por desligamento de caminho, sem proporção fixa | `roadmap.md` teste 32 |
+
+Correção registrada: o teste de dupla contagem é o 32, não o 37. A versão da `main` ainda contém `potencialMod` e `caronaNacional`; a branch de revisão já os havia removido desde D1.
+
+### Recomendação de classificação (aguarda aprovação)
+| Proposta | Recomendação | Justificativa |
+|---|---|---|
+| P5 credibilidade | MVP, já absorvida por D3 | não cria variável nova; fechar como incorporada |
+| P8 influência | MVP, absorvida pela dimensão influência do grau e por `grupo.influencia` | medida separada duplicaria o grupo |
+| P10 estados temporários | MVP simplificado: investigação, afastamento cautelar, licença de saúde, licença para nomeação | já exigidos por status jurídico, saúde e D8; sem eles essas regras ficam sem forma |
+| P12 valor do cargo por contexto | MVP simplificado na ficha de oportunidade, derivado de escopo, governabilidade e posição na coalizão; orçamento real na Fase 2 | orçamento exige dados não previstos na 1B |
+| P13 coalizão de governo | Fase 2 para formação completa da coalizão federal com distribuição de ministérios; MVP já cobre base parlamentar (D11) e nomeações (D8) | evita o item mais caro sem perder o essencial |

@@ -28,7 +28,7 @@ Poucas variáveis de mundo, atualizadas a cada janela (incluindo as automáticas
 | Tensão institucional | sim | não | não |
 
 - Estados e locais são desvios em torno do nacional, não simulações completas.
-- Alcance por eleição: presidente lê o nacional; governador e senador, o estadual; deputado, o estadual com o nacional na carona; prefeito e vereador, o local quando individualizado, senão o estadual.
+- Alcance por eleição: presidente lê o nacional; governador e senador, o estadual; deputado, o estadual (o nacional chega via identificação partidária, `motor-eleitoral.md` 1.2); prefeito e vereador, o local quando individualizado, senão o estadual.
 - Evolução: tendência mais ruído, com reversão lenta à média (calibrar).
 - Caminhos causais: ver `motor-eleitoral.md` seção 0. A conjuntura nunca entra direto na fórmula de voto.
 - O jogador influencia pouco e só no escopo do próprio cargo.

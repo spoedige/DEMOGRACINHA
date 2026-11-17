@@ -185,9 +185,12 @@ Posições relevantes que dão influência sem mandato eletivo. Lista fechada no
 | Federal | ministro, secretário executivo de ministério |
 | Partidária | presidente de diretório municipal, estadual ou nacional |
 
+Nomeações governamentais (municipal, estadual, federal) dependem de relação com Executivo e composição do governo e exigem desincompatibilização para disputar. Posições partidárias dependem da Cúpula, não exigem desincompatibilização (a confirmar) e não dão Capital de Entrega, só influência sobre legenda e fundos.
+
 - Não há simulação de todas as nomeações do país. Só existem as vagas que podem ser oferecidas ao personagem, criadas quando ele tem relação suficiente com o governo ou o partido.
 - Oferta depende de: relação com Executivo (ou Cúpula, para cargo partidário), composição do governo (partido do personagem na coalizão), capital político derivado, compromissos firmados (tipo "cargo ou espaço") e conjuntura.
-- Efeitos: gera Capital de Entrega e presença institucional para o grupo; dá experiência executiva; exige desincompatibilização para disputar eleição (prazos a confirmar).
+- Efeitos das nomeações governamentais: Capital de Entrega, presença institucional para o grupo, experiência executiva; exigem desincompatibilização para disputar eleição (prazos a confirmar).
+- Efeitos das posições partidárias: influência sobre legenda, distribuição interna de fundos e presença institucional; sem Capital de Entrega.
 - Saída: demissão por mudança de coalizão, crise ou queda de governabilidade; ou saída voluntária para disputar.
 - Sem Ponto de Inflexão próprio além de "Ministério em crise", já previsto.
 
