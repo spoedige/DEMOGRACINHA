@@ -20,6 +20,7 @@ from collections import defaultdict
 from fractions import Fraction
 
 from . import fontes as fx
+from .eleicoes import ORDINARIAS
 
 SEM_ELEICAO_MUNICIPAL_IBGE = {"5300108", "2605459"}  # Brasília (DF), Fernando de Noronha (PE)
 CARGOS_1T = {
@@ -38,12 +39,22 @@ def correspondencia(raiz=fx.RAIZ):
     return {r["CD_MUNICIPIO_TSE"].zfill(5): (r["SG_UF"], r["CD_MUNICIPIO_IBGE"]) for r in sel}
 
 
+ANO = {"municipal": 2024, "geral": 2022}
+
+
+def segundo_turno_de(linhas, ano):
+    """(cargo, unidade eleitoral) com candidatura no 2º turno da eleição ordinária do ano (D61)."""
+    ordin = ORDINARIAS[ano]
+    return {(r["DS_CARGO"].title(), r["SG_UE"]) for r in linhas
+            if r["CD_ELEICAO"] in ordin and r["NR_TURNO"] == "2"
+            and r["DS_CARGO"].upper() in ("PREFEITO", "GOVERNADOR", "PRESIDENTE")}
+
+
 def disputas_segundo_turno(tipo, raiz=fx.RAIZ):
-    """Conjunto de (cargo, unidade eleitoral TSE) com candidatura no 2º turno, pelo arquivo de candidaturas."""
+    """Disputas de 2º turno da ordinária, pelo arquivo de candidaturas (hash conferido; só para controle)."""
     fonte = fx.carregar_registro()[CANDIDATURAS[tipo]]
     fx.verificar_integridade(fonte, raiz)
-    return {(r["DS_CARGO"].title(), r["SG_UE"]) for r in fx.linhas_csv(fonte, raiz) if r["NR_TURNO"] == "2"
-            and r["DS_CARGO"].upper() in ("PREFEITO", "GOVERNADOR", "PRESIDENTE")}
+    return segundo_turno_de(fx.linhas_csv(fonte, raiz), ANO[tipo])
 
 
 def _cargo(cargo, uf):

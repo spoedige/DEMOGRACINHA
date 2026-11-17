@@ -530,19 +530,88 @@ class TestVotacaoCandidato2024(unittest.TestCase):
         self.assertEqual({(e, u, "PREFEITO" if c == "VICE-PREFEITO" else c) for e, u, c in chaves}, esperadas)
         self.assertEqual(len(regras), len({tuple(sorted(r.items())) for r in regras}))
 
-    def test_vagas_segregadas_nao_entram(self):
-        regras = {(r["excluir"]["SG_UE"], r["excluir"]["DS_CARGO"]) for r in REG["tse_vagas_2024"]["parcelas"] if "excluir" in r}
-        sel = fx.Selecao(REG["tse_vagas_2024"], "mundo_inicial", ORD24)
-        for r in sel:
-            self.assertNotIn((r["SG_UE"], r["DS_CARGO"]), regras)
-        self.assertEqual(sel.segregadas["integridade_pendente"], len(regras))
+    def test_vagas_pendentes_nao_entram(self):
+        # rebaixada: concordância só com fontes pendentes não valida (validação circular)
+        f = REG["tse_vagas_2024"]
+        self.assertEqual(f["proveniencia"], "integridade_pendente")
+        sel = fx.Selecao(f, "mundo_inicial", ORD24)
+        self.assertEqual(sum(1 for _ in sel), 0)
+        self.assertGreater(sel.segregadas["integridade_pendente"], 0)
+
+    def test_ausencia_distinta_de_parcial(self):
+        d = self.r["nominais_x_detalhe"]["divergentes"]
+        sem = [x for x in d if x["situacao"] == "sem_linhas"]
+        par = sorted(tuple(x["chave"]) for x in d if x["situacao"] == "parcial")
+        self.assertEqual(len(sem), 36)
+        self.assertTrue(all(x["votacao_candidato"] == 0 for x in sem))
+        self.assertEqual(par, [("619", "1", "63134", "303", "VEREADOR"), ("619", "1", "63134", "388", "VEREADOR"),
+                               ("619", "1", "64696", "48", "VEREADOR")])
+
+
+@precisa("tse_votacao_candidato_2024")
+class TestCobertura(unittest.TestCase):
+    def test_cobertura_2024_e_bloqueio_registrado(self):
+        from tools.dados.pipeline.cobertura import cobertura_por_zona
+        c = cobertura_por_zona("tse_votacao_candidato_2024", 2024)
+        sit = Counter(z["situacao"] for z in c["zonas"].values())
+        self.assertEqual((sit["sem_linhas"], sit["parcial"], len(c["unidades"]), c["chaves_referencia"]), (36, 3, 34, 12449))
+        reg = {u["unidade"] for u in REG["tse_votacao_candidato_2024"]["unidades_bloqueadas"]}
+        self.assertEqual(reg, set(c["unidades"]))
+
+    @precisa("tse_votacao_candidato_2022")
+    def test_cobertura_2022_sem_divergencia(self):
+        from tools.dados.pipeline.cobertura import cobertura_por_zona
+        self.assertEqual(cobertura_por_zona("tse_votacao_candidato_2022", 2022)["zonas"], {})
+
+    def test_nacional_igual_estaduais(self):
+        from tools.dados.pipeline.cobertura import conferir_nacional
+        r = conferir_nacional("tse_votacao_candidato_2024")
+        self.assertTrue(r["iguais"])
+        self.assertEqual((r["nacional"][0], r["nacional"][2]), (717170, 241436100))
+
+    @precisa("tse_votacao_candidato_2022")
+    def test_nacional_igual_estaduais_2022(self):
+        from tools.dados.pipeline.cobertura import conferir_nacional
+        r = conferir_nacional("tse_votacao_candidato_2022")
+        self.assertTrue(r["iguais"])
+        self.assertEqual((r["nacional"][0], r["nacional"][2]), (9377845, 710840707))
+
+
+class TestBloqueioUnidades(unittest.TestCase):
+    F = {"id": "sintetica_bloq", "temporalidade": "historico_compativel", "proveniencia": "versao_posterior_validada",
+         "unidades_bloqueadas": [{"unidade": "A", "motivo": "teste"}]}
+
+    def test_exige_chave(self):
+        with self.assertRaises(adm.FonteInadmissivel):
+            fx.Selecao.sintetica(self.F, "calibracao", [])
+
+    def test_unidade_bloqueada_segregada_inteira(self):
+        linhas = [{"u": "A"}, {"u": "A"}, {"u": "B"}]
+        sel = fx.Selecao.sintetica(self.F, "calibracao", linhas, chave=lambda r: r["u"])
+        self.assertEqual([r["u"] for r in sel], ["B"])
+        self.assertEqual(sel.segregadas["unidade_bloqueada"], 2)
+        self.assertIn("A", sel.unidades_segregadas)
+
+    def test_bloqueada_mesmo_sem_linhas(self):
+        sel = fx.Selecao.sintetica(self.F, "calibracao", [{"u": "B"}], chave=lambda r: r["u"])
+        list(sel)
+        self.assertIn("A", sel.unidades_segregadas)
+
+
+class TestSegundoTurnoOrdinaria(unittest.TestCase):
+    def test_exclui_nao_ordinaria(self):
+        from tools.dados.pipeline.completude import segundo_turno_de
+        linhas = [{"CD_ELEICAO": "620", "NR_TURNO": "2", "DS_CARGO": "PREFEITO", "SG_UE": "1"},
+                  {"CD_ELEICAO": "9999", "NR_TURNO": "2", "DS_CARGO": "PREFEITO", "SG_UE": "2"},
+                  {"CD_ELEICAO": "620", "NR_TURNO": "1", "DS_CARGO": "PREFEITO", "SG_UE": "3"}]
+        self.assertEqual(segundo_turno_de(linhas, 2024), {("Prefeito", "1")})
 
 
 class TestVagas2022(unittest.TestCase):
-    def test_vices_e_suplentes_segregados(self):
-        sel = fx.Selecao(REG["tse_vagas_2022"], "mundo_inicial", filtro_ordinaria(2022))
-        cargos = Counter(r["DS_CARGO"] for r in sel)
-        self.assertNotIn("Vice-governador", cargos)
-        self.assertNotIn("1. Suplente", cargos)
-        self.assertEqual(cargos["Governador"], 27)
-        self.assertEqual(sel.segregadas["integridade_pendente"], 27 * 3 + 1)
+    def test_pendente_segregada(self):
+        f = REG["tse_vagas_2022"]
+        self.assertEqual(f["proveniencia"], "integridade_pendente")
+        sel = fx.Selecao(f, "mundo_inicial", filtro_ordinaria(2022))
+        self.assertEqual(sum(1 for _ in sel), 0)
+        sit = REG["tse_votacao_candidato_2022"]["colunas_pendentes"]
+        self.assertIn("DS_SIT_TOT_TURNO", sit)

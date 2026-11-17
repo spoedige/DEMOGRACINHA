@@ -578,8 +578,8 @@
    "referencia": "eleição geral de 2022",
    "data_fenomeno": "2022-10-02",
    "temporalidade": "historico_compativel",
-   "proveniencia": "versao_posterior_validada",
-   "evidencia": "Versão regenerada após o corte. Vagas da eleição ordinária iguais aos eleitos (situação final na votação por candidato e nas candidaturas) nas 55 unidades majoritárias e 54 proporcionais (tools/dados/auditar_votacao_candidato.py). Vices e suplentes segregados; suplementar de 2026 marcada pela data.",
+   "proveniencia": "integridade_pendente",
+   "evidencia": "Versão regenerada após o corte. Vagas da eleição ordinária iguais aos eleitos (situação final na votação por candidato e nas candidaturas) nas 55 unidades majoritárias e 54 proporcionais (tools/dados/auditar_votacao_candidato.py). Vices e suplentes segregados; suplementar de 2026 marcada pela data. Rebaixada em 17/11/2026 para `integridade_pendente`: a concordância vagas x eleitos usa situações finais de fontes ainda pendentes (votação por candidato e candidaturas), sem confirmação independente. As regras de parcela ficam registradas para quando houver validação.",
    "observacoes": "",
    "parcelas": [
     {
@@ -624,8 +624,8 @@
    "referencia": "eleição municipal de 2024 e suplementares até 2026",
    "data_fenomeno": "2024-10-06",
    "temporalidade": "historico_compativel",
-   "proveniencia": "versao_posterior_validada",
-   "evidencia": "Versão regenerada após o corte. Vagas da eleição ordinária iguais aos eleitos em 5.528 de 5.569 municípios (prefeito, com vice-prefeito acompanhando) e em 5.545 de 5.569 (vereador). As 106 linhas das unidades divergentes ficam segregadas (41 municípios em prefeito e vice-prefeito, 24 em vereador).",
+   "proveniencia": "integridade_pendente",
+   "evidencia": "Versão regenerada após o corte. Vagas da eleição ordinária iguais aos eleitos em 5.528 de 5.569 municípios (prefeito, com vice-prefeito acompanhando) e em 5.545 de 5.569 (vereador). As 106 linhas das unidades divergentes ficam segregadas (41 municípios em prefeito e vice-prefeito, 24 em vereador). Rebaixada em 17/11/2026 para `integridade_pendente`: a concordância vagas x eleitos usa situações finais de fontes ainda pendentes (votação por candidato e candidaturas), sem confirmação independente. As regras de parcela ficam registradas para quando houver validação.",
    "observacoes": "Inclui suplementares realizadas em 2025 e 2026; a regra por parcela marca as posteriores ao corte.",
    "parcelas": [
     {
@@ -1623,7 +1623,7 @@
    "data_fenomeno": "2022-10-30",
    "temporalidade": "historico_compativel",
    "proveniencia": "versao_posterior_validada",
-   "evidencia": "Coletado em 17/11/2026; versão regenerada após o corte (datas internas no zip: 2026-11-06, 2026-11-17). Sem controles de conteúdo executados. Controles executados em 17/11/2026 (tools/dados/auditar_votacao_candidato.py): votos nominais válidos por eleição, turno, município, zona e cargo iguais ao detalhe da apuração nas 39.966 chaves; disputas de 2º turno iguais às das candidaturas (13); eleitos pela situação final iguais às vagas nas 55 unidades majoritárias e 54 proporcionais; eleito sempre o mais votado nos majoritários. Validados só identificadores, votos nominais válidos e situação final; demais colunas pendentes.",
+   "evidencia": "Coletado em 17/11/2026; versão regenerada após o corte. Arquivo nacional igual aos estaduais linha a linha. Votos nominais válidos iguais ao detalhe da apuração (validado) nas 39.966 chaves. Validados só identificadores e votos nominais válidos. Situação final concorda com vagas e candidaturas, mas essas fontes estão pendentes; por isso fica em `colunas_pendentes`.",
    "observacoes": "Arquivo fora do git. Uso previsto: confronto de vagas e eleitos por turno (docs/pipeline-dados.md 8.3).",
    "parcelas": [
     {
@@ -1656,7 +1656,9 @@
     "NM_COLIGACAO": "não confrontado com outra fonte",
     "DS_COMPOSICAO_COLIGACAO": "não confrontado com outra fonte",
     "QT_VOTOS_NOMINAIS": "não confrontado com outra fonte",
-    "NM_TIPO_DESTINACAO_VOTOS": "não confrontado com outra fonte"
+    "NM_TIPO_DESTINACAO_VOTOS": "não confrontado com outra fonte",
+    "CD_SIT_TOT_TURNO": "confrontada só com vagas e candidaturas, ambas pendentes (validação circular)",
+    "DS_SIT_TOT_TURNO": "confrontada só com vagas e candidaturas, ambas pendentes (validação circular)"
    }
   },
   {
@@ -1669,11 +1671,149 @@
    "data_fenomeno": "2024-10-27",
    "temporalidade": "historico_compativel",
    "proveniencia": "integridade_pendente",
-   "evidencia": "Coletado em 17/11/2026; versão regenerada após o corte (datas internas no zip: 2026-11-06, 2026-11-17). Sem controles de conteúdo executados. Controles executados em 17/11/2026: nominais iguais ao detalhe em 12.410 de 12.449 chaves; nas 39 restantes a fonte não traz linhas da zona (ver docs/pipeline-dados.md 8.4). Continua pendente porque a ausência não tem linhas para segregar e o código ainda não bloqueia unidade incompleta nesta fonte.",
+   "evidencia": "Coletado em 17/11/2026; versão regenerada após o corte. Arquivo nacional igual aos estaduais linha a linha (tools/dados/pipeline/cobertura.py). Votos nominais válidos iguais ao detalhe da apuração em 12.410 de 12.449 chaves; 36 zonas sem nenhuma linha e 3 com votos parciais, propagadas para 34 unidades bloqueadas (`unidades_bloqueadas`, aplicadas pela Selecao). Situação final e demais campos sem validação independente. Continua pendente.",
    "observacoes": "Arquivo fora do git. Uso previsto: confronto de vagas e eleitos por turno (docs/pipeline-dados.md 8.3).",
    "parcelas": [
     {
      "campo_data": "DT_ELEICAO"
+    }
+   ],
+   "unidades_bloqueadas": [
+    {
+     "unidade": "04154|Vereador|1",
+     "motivo": "zonas sem linhas: 107, 43, 72"
+    },
+    {
+     "unidade": "04448|Vereador|1",
+     "motivo": "zonas sem linhas: 103"
+    },
+    {
+     "unidade": "04626|Vereador|1",
+     "motivo": "zonas sem linhas: 68"
+    },
+    {
+     "unidade": "05894|Vereador|1",
+     "motivo": "zonas sem linhas: 68"
+    },
+    {
+     "unidade": "07137|Prefeito|1",
+     "motivo": "zonas sem linhas: 109"
+    },
+    {
+     "unidade": "07420|Vereador|1",
+     "motivo": "zonas sem linhas: 30"
+    },
+    {
+     "unidade": "07951|Prefeito|1",
+     "motivo": "zonas sem linhas: 30"
+    },
+    {
+     "unidade": "08001|Vereador|1",
+     "motivo": "zonas sem linhas: 80"
+    },
+    {
+     "unidade": "08052|Vereador|1",
+     "motivo": "zonas sem linhas: 35"
+    },
+    {
+     "unidade": "08079|Vereador|1",
+     "motivo": "zonas sem linhas: 16"
+    },
+    {
+     "unidade": "08222|Prefeito|1",
+     "motivo": "zonas sem linhas: 51"
+    },
+    {
+     "unidade": "08567|Vereador|1",
+     "motivo": "zonas sem linhas: 9"
+    },
+    {
+     "unidade": "09059|Vereador|1",
+     "motivo": "zonas sem linhas: 73"
+    },
+    {
+     "unidade": "09539|Vereador|1",
+     "motivo": "zonas sem linhas: 49"
+    },
+    {
+     "unidade": "12670|Vereador|1",
+     "motivo": "zonas sem linhas: 33"
+    },
+    {
+     "unidade": "31054|Prefeito|1",
+     "motivo": "zonas sem linhas: 1, 2, 27"
+    },
+    {
+     "unidade": "31119|Prefeito|1",
+     "motivo": "zonas sem linhas: 2"
+    },
+    {
+     "unidade": "31313|Prefeito|1",
+     "motivo": "zonas sem linhas: 3"
+    },
+    {
+     "unidade": "31917|Vereador|1",
+     "motivo": "zonas sem linhas: 16"
+    },
+    {
+     "unidade": "31950|Prefeito|1",
+     "motivo": "zonas sem linhas: 34"
+    },
+    {
+     "unidade": "63134|Vereador|1",
+     "motivo": "zonas com votos parciais: 303, 388"
+    },
+    {
+     "unidade": "64696|Vereador|1",
+     "motivo": "zonas com votos parciais: 48"
+    },
+    {
+     "unidade": "90468|Vereador|1",
+     "motivo": "zonas sem linhas: 56"
+    },
+    {
+     "unidade": "92770|Vereador|1",
+     "motivo": "zonas sem linhas: 5"
+    },
+    {
+     "unidade": "93050|Vereador|1",
+     "motivo": "zonas sem linhas: 99"
+    },
+    {
+     "unidade": "93300|Vereador|1",
+     "motivo": "zonas sem linhas: 33"
+    },
+    {
+     "unidade": "93343|Vereador|1",
+     "motivo": "zonas sem linhas: 28"
+    },
+    {
+     "unidade": "93564|Vereador|1",
+     "motivo": "zonas sem linhas: 31"
+    },
+    {
+     "unidade": "93998|Prefeito|1",
+     "motivo": "zonas sem linhas: 53"
+    },
+    {
+     "unidade": "93998|Vereador|1",
+     "motivo": "zonas sem linhas: 53"
+    },
+    {
+     "unidade": "94331|Vereador|1",
+     "motivo": "zonas sem linhas: 18"
+    },
+    {
+     "unidade": "95915|Vereador|1",
+     "motivo": "zonas sem linhas: 47"
+    },
+    {
+     "unidade": "96610|Prefeito|1",
+     "motivo": "zonas sem linhas: 34"
+    },
+    {
+     "unidade": "96776|Vereador|1",
+     "motivo": "zonas sem linhas: 24"
     }
    ]
   }

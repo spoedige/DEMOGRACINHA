@@ -36,6 +36,7 @@ def auditar(ano, reg=None):
 
     # 1. nominais por zona x detalhe da apuração
     nom = Counter()
+    com_linhas = set()                       # chaves com ao menos uma linha na votação por candidato
     por_cand = defaultdict(Counter)          # (eleicao, ue, cargo, turno) -> sq -> votos
     sit = {}                                 # (eleicao, ue, cargo, turno, sq) -> situação final
     segundo_vc = set()
@@ -43,7 +44,9 @@ def auditar(ano, reg=None):
         if r["CD_ELEICAO"] not in ordin:
             continue
         cargo = r["DS_CARGO"].upper()
-        nom[(r["CD_ELEICAO"], r["NR_TURNO"], r["CD_MUNICIPIO"].zfill(5), r["NR_ZONA"], cargo)] += i(r["QT_VOTOS_NOMINAIS_VALIDOS"])
+        kz = (r["CD_ELEICAO"], r["NR_TURNO"], r["CD_MUNICIPIO"].zfill(5), r["NR_ZONA"], cargo)
+        nom[kz] += i(r["QT_VOTOS_NOMINAIS_VALIDOS"])
+        com_linhas.add(kz)
         k = (r["CD_ELEICAO"], r["SG_UE"], cargo, r["NR_TURNO"])
         por_cand[k][r["SQ_CANDIDATO"]] += i(r["QT_VOTOS_NOMINAIS_VALIDOS"])
         sit[k + (r["SQ_CANDIDATO"],)] = r["DS_SIT_TOT_TURNO"]
@@ -56,7 +59,8 @@ def auditar(ano, reg=None):
     chaves = set(nom) | set(det)
     dif = sorted((k, nom[k], det[k]) for k in chaves if nom[k] != det[k])
     rel["nominais_x_detalhe"] = {"chaves": len(chaves), "iguais": len(chaves) - len(dif), "divergentes": [
-        {"chave": list(k), "votacao_candidato": a, "detalhe": b} for k, a, b in dif]}
+        {"chave": list(k), "votacao_candidato": a, "detalhe": b,
+         "situacao": "sem_linhas" if k not in com_linhas else "parcial"} for k, a, b in dif]}
 
     # 2. segundo turno: votação por candidato x candidaturas
     cand_seg, eleitos_cand = set(), Counter()

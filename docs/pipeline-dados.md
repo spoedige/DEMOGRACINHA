@@ -319,9 +319,14 @@ Divergências de 2024 entre vagas e eleitos (65 unidades). Vínculos demonstrado
 
 Resumo dos vínculos: 23 das 24 de vereador são unidades das 38 exceções da votação por partido, sem linhas na votação por candidato; a 24ª (município 04898, PA) tem linhas, mas nenhum eleito. Em prefeito, 31 das 41 têm eleição suplementar de prefeito registrada; 10 não têm vínculo demonstrado.
 
-Classificação após o confronto (`data/fontes.json`):
-- `tse_votacao_candidato_2022`: `versao_posterior_validada`; validados identificadores, votos nominais válidos e situação final; demais colunas em `colunas_pendentes`.
-- `tse_vagas_2022`: `versao_posterior_validada`; vices e suplentes segregados.
-- `tse_vagas_2024`: `versao_posterior_validada`; 106 linhas segregadas (41 municípios em prefeito e vice-prefeito, 24 em vereador). Teste de regressão confere que as regras são exatamente as divergências.
-- `tse_votacao_candidato_2024`: continua `integridade_pendente` (zonas sem linhas não podem ser segregadas, e o bloqueio de unidade incompleta nesta fonte ainda não está no código).
+Classificação após o confronto (`data/fontes.json`), revista na rodada de correções de 17/11/2026:
+- `tse_votacao_candidato_2022`: `versao_posterior_validada` só para identificadores e votos nominais válidos (confrontados com o detalhe, validado). `CD_SIT_TOT_TURNO` e `DS_SIT_TOT_TURNO` foram para `colunas_pendentes`: a situação final só foi confrontada com vagas e candidaturas, ambas pendentes.
+- `tse_vagas_2022` e `tse_vagas_2024`: voltaram a `integridade_pendente`. A concordância vagas x eleitos dependia de fontes pendentes (validação circular). As regras de parcela (vices, suplentes, 106 linhas de 2024) continuam registradas.
+- `tse_votacao_candidato_2024`: continua `integridade_pendente`, agora com 34 unidades em `unidades_bloqueadas`, geradas por `pipeline/cobertura.py` contra o detalhe: 36 zonas sem nenhuma linha e 3 com linhas e soma parcial (63134 zonas 303 e 388; 64696 zona 48). A auditoria distingue as duas situações pelo campo `situacao`, não pela soma zero.
 - Candidaturas 2022 e 2024: continuam `integridade_pendente`.
+
+Bloqueio (`Selecao`): fonte com `unidades_bloqueadas` exige função `chave`; toda linha de unidade bloqueada é segregada (`unidade_bloqueada`) e a unidade entra em `unidades_segregadas` mesmo sem linhas. Nunca se agregam só as zonas restantes.
+
+Arquivo nacional x estaduais (`cobertura.conferir_nacional`): por grupo, contagem de linhas, soma módulo 2^64 dos hashes blake2b de 8 bytes de cada linha sem `DT_GERACAO` e `HH_GERACAO`, e soma de votos nominais válidos. Resultado: iguais em 2024 (717.170 linhas, 241.436.100 votos) e 2022 (9.377.845 linhas, 710.840.707 votos). Coberto por teste.
+
+2º turno na completude: `segundo_turno_de` aplica D61 (só `CD_ELEICAO` ordinário), com teste sintético.

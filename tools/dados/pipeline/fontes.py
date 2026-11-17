@@ -123,13 +123,17 @@ class Selecao:
         if destino not in adm.DESTINOS:
             raise ValueError(f"destino desconhecido: {destino}")
         colunas_permitidas(fonte, colunas)
+        bloqueadas = {u["unidade"] for u in fonte.get("unidades_bloqueadas", [])}
+        if bloqueadas and chave is None:
+            raise adm.FonteInadmissivel(f"{fonte['id']}: fonte com unidades bloqueadas exige função de chave da unidade")
         self.fonte, self.destino, self.filtro, self.chave, self._linhas = fonte, destino, filtro, chave, linhas
+        self.bloqueadas = bloqueadas
         self.sintetica_ = False
         self.aceitas = 0
         self.fora_do_filtro = 0
         self.recusadas = Counter()
         self.segregadas = Counter()
-        self.unidades_segregadas = set()
+        self.unidades_segregadas = set(self.bloqueadas)
         self.unidades_recusadas = set()
         self.consumida = False
 
@@ -149,6 +153,9 @@ class Selecao:
         for linha in self._linhas:
             if self.filtro is not None and not self.filtro(linha):
                 self.fora_do_filtro += 1
+                continue
+            if self.bloqueadas and self.chave(linha) in self.bloqueadas:
+                self.segregadas["unidade_bloqueada"] += 1
                 continue
             t, p = classificar_parcela(self.fonte, linha)
             if p in _SEGREGAR:
