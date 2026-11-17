@@ -143,3 +143,47 @@ Não realizada: não há versão anterior ao corte acessível pelos hosts aprova
 ### 6.7 Utilidade dos campos (só registro)
 - Perfil do eleitorado de 2024: eleitorado por município, zona e perfil demográfico; suficiente para o retrato territorial (eleitorado por município e conjunto de agentes da D52), se vier a ser admissível.
 - Detalhe da apuração: parcelas de comparecimento e votos da D59 e taxas da D62.
+
+## 7. Plano de recuperação de evidências históricas (aguarda aprovação)
+
+Objetivo: obter registro externo datado de que a versão de cada arquivo estava disponível publicamente até 31/12/2025. Resultado esperado: matriz de evidências, não reclassificação por suposição.
+
+### 7.1 Serviço e host
+Um único serviço: Internet Archive (Wayback Machine), host `web.archive.org`. Não usar outros serviços de arquivamento nesta etapa.
+
+### 7.2 Método
+O índice CDX do Wayback registra, para cada captura, data e hora, código HTTP, tipo e o resumo SHA-1 do conteúdo capturado (em base32). Comparar esse resumo com o SHA-1 do arquivo que temos responde, sem baixar a cópia, se a captura anterior ao corte tem conteúdo idêntico ao nosso.
+
+Requisições, em ordem, uma por conjunto, sempre filtradas até 31/12/2025 (`to=20251231`):
+1. CDX do URL direto do arquivo, por exemplo `https://web.archive.org/cdx/search/cdx?url=cdn.tse.jus.br/estatistica/sead/odsele/perfil_eleitorado/perfil_eleitorado_2024.zip&to=20251231&output=json`.
+2. CDX da página do conjunto no catálogo (`dadosabertos.tse.jus.br/dataset/<nome>`), só como evidência secundária de que o recurso estava anunciado.
+
+Leitura dos resultados:
+| Achado | Efeito |
+|---|---|
+| Captura do arquivo até o corte com SHA-1 igual ao nosso | evidência forte de equivalência; candidato a `admissivel`, com a captura registrada no manifesto |
+| Captura do arquivo até o corte com SHA-1 diferente | versão nossa diferente da publicada até o corte; registrar; a cópia arquivada pode ser avaliada como fonte em etapa própria |
+| Só captura da página do catálogo | indício de anúncio, não de conteúdo; continua não comprovada |
+| Nenhuma captura | lacuna registrada |
+
+Ordem de prioridade: perfil do eleitorado 2024; detalhe da apuração 2024; detalhe da apuração 2022; votação por partido 2022 e 2024; candidaturas e vagas 2022 e 2024; tabela TSE x IBGE.
+
+Fora desta etapa: baixar cópias arquivadas (só com nova aprovação e se o CDX indicar captura útil); qualquer outro host.
+
+### 7.3 SHA-1 dos brutos (para comparação com o CDX)
+| Arquivo | SHA-1 (hex) | SHA-1 (base32, formato do CDX) |
+|---|---|---|
+| `tse/consulta_cand_2022.zip` | `7745be84e4a56726cf654a05713c8ad001d5e395` | `O5C35BHEUVTSNT3FJICXCPEK2AA5LY4V` |
+| `tse/consulta_vagas_2022.zip` | `b316498e91918c82be3c94d89ab2ba0f53b57045` | `WMLETDURSGGIFPR4STMJVMV2B5J3K4CF` |
+| `tse/consulta_vagas_2024.zip` | `cfe977ef6493e96d31490696c33d86a0d2328d41` | `Z7UXP33ESPUW2MKJA2LMGPMGUDJDFDKB` |
+| `tse/detalhe_votacao_munzona_2022.zip` | `fe429da20d173d05b6342469d266e0d3db939bfc` | `7ZBJ3IQNC46QLNRUERU5EZXA2PNZHG74` |
+| `tse/detalhe_votacao_munzona_2024.zip` | `4dbe25fcc453aef41fc13183b002fc40b3dfc907` | `JW7CL7GEKOXPIH6BGGB3AAX4ICZ57SIH` |
+| `tse/detalhe_votacao_munzona_2026.zip` | `6a6db7af1e39f4da12079f5143583208691ea938` | `NJW3PLY6HH2NUEQHT5IUGWBSBBUR5KJY` |
+| `tse/grandes/consulta_cand_2024.zip` | `4e5aa5e8e35019522e5b0761abdbf5eb58f8e601` | `JZNKL2HDKAMVELS3A5Q2XW7V5NMPRZQB` |
+| `tse/grandes/perfil_eleitorado_2024.zip` | `d4e1d23a2cc8cddbc583dd7e79035b2a0762a1e0` | `2TQ5EORMZDG5XRMD3V7HSA23FIDWFIPA` |
+| `tse/grandes/votacao_partido_munzona_2022.zip` | `1852a3d1803e41ca2b3b5e894e23058c05f28348` | `DBJKHUMAHZA4UKZ3L2EU4IYFRQC7FA2I` |
+| `tse/municipio_tse_ibge.zip` | `d0210197bfca8c7d30817924dc862177d38f9790` | `2AQQDF57ZKGH2MEBPESNZBRBO7JY7F4Q` |
+| `tse/votacao_partido_munzona_2024.zip` | `4ee445f3886e95af7abb3f428274dd0a24cba5c1` | `J3SEL44IN2K266V3H5BIE5G5BISMXJOB` |
+
+### 7.4 Tabela TSE x IBGE (investigação separada)
+Hipótese a testar depois: reconstruir a correspondência a partir de fontes admissíveis individualmente, sem depender da versão atual da tabela. Com o que temos, não é possível: os arquivos do TSE trazem só o código TSE, e a API do IBGE não tem data de versão. Fica pendente de fonte.

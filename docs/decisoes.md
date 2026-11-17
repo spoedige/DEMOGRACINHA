@@ -267,3 +267,7 @@ Estados de admissibilidade (padronizados):
 - `pendente`: a investigação ainda não foi concluída.
 
 Nenhuma fonte é classificada como `admissivel` com base apenas na data de criação do recurso, na data de referência eleitoral ou no `Last-Modified` isoladamente. Cada classificação registra a evidência que a fundamenta. Esta redação substitui a linha D60 da tabela "Dados estatísticos" acima.
+
+### Questão registrada sobre a D60 (sem alteração da decisão), 17/11/2026
+
+A admissibilidade da fonte e a de cada informação extraída dela são relacionadas, mas não idênticas. Uma fonte pode ter informações comprovadamente disponíveis antes do corte, informações atualizadas depois e campos de temporalidade indeterminável. Se aparecer fonte com conteúdo misto, avaliar a separação das parcelas, com rastreabilidade preservada, em vez de descartar o conjunto inteiro. Ausência de histórico de versões não é evidência de publicação posterior: fonte sem prova fica `admissibilidade_temporal_nao_comprovada`, não `nao_admissivel`.
