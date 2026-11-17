@@ -1,0 +1,599 @@
+{
+ "versao": 1,
+ "corte": "2025-12-31",
+ "decisoes": [
+  "D60",
+  "D63"
+ ],
+ "fontes": [
+  {
+   "id": "ibge_municipios",
+   "orgao": "IBGE",
+   "arquivo": "data/raw/ibge/municipios.json",
+   "url": "https://servicodados.ibge.gov.br/api/v1/localidades/municipios",
+   "sha256": "86ecdccdf97d72e7e5e46f0854cfcea8bacc28154cc1bc4ed0e6110e3a6c9c02",
+   "referencia": "cadastro de municípios vigente; 5.571 códigos",
+   "data_fenomeno": "2024-10-06",
+   "temporalidade": "historico_compativel",
+   "proveniencia": "versao_posterior_validada",
+   "evidencia": "Sem data de versão. Os 5.571 códigos coincidem com a tabela oficial TSE x IBGE; todos os municípios existiam até a eleição de 2024 (Boa Esperança do Norte, o mais recente, votou em 2024). Data do fenômeno: eleição municipal de 2024, último evento verificado.",
+   "observacoes": ""
+  },
+  {
+   "id": "tse_ibge_correspondencia",
+   "orgao": "TSE",
+   "arquivo": "data/raw/tse/municipio_tse_ibge.zip",
+   "url": "https://cdn.tse.jus.br/estatistica/sead/odsele/municipio_tse_ibge/municipio_tse_ibge.zip",
+   "sha256": "dba4a4a3bfcc34f4fbca827c539c614105b742434542ca2a535d8c0f34101428",
+   "referencia": "correspondência de códigos TSE e IBGE",
+   "data_fenomeno": "2024-10-06",
+   "temporalidade": "historico_compativel",
+   "proveniencia": "versao_posterior_validada",
+   "evidencia": "Versão de 16/11/2026. Cobre os 5.571 códigos do IBGE e todos os códigos TSE das apurações de 2022 e 2024, sem divergência de UF.",
+   "observacoes": ""
+  },
+  {
+   "id": "tse_perfil_eleitorado_2024",
+   "orgao": "TSE",
+   "arquivo": "data/raw/tse/grandes/perfil_eleitorado_2024.zip",
+   "url": "https://cdn.tse.jus.br/estatistica/sead/odsele/perfil_eleitorado/perfil_eleitorado_2024.zip",
+   "sha256": "fd6703bdaa89aba023b3a21fc1dccede94aa315b985d91011ad5c2e971819de6",
+   "referencia": "cadastro eleitoral da eleição de 2024 (AA_ELEICAO = 2024)",
+   "data_fenomeno": "2024-10-06",
+   "temporalidade": "historico_compativel",
+   "proveniencia": "versao_posterior_validada",
+   "evidencia": "Versão de 12/09/2025 (Last-Modified, data interna dos CSVs e DT_GERACAO concordantes); publicação até o corte não comprovada. Eleitorado por município igual aos aptos de vereador da eleição ordinária de 2024 nos 5.569 municípios.",
+   "observacoes": "Arquivo fora do git. O zip contém o arquivo nacional e 26 estaduais com as mesmas linhas: usar só um dos dois."
+  },
+  {
+   "id": "tse_detalhe_apuracao_2022",
+   "orgao": "TSE",
+   "arquivo": "data/raw/tse/detalhe_votacao_munzona_2022.zip",
+   "url": "https://cdn.tse.jus.br/estatistica/sead/odsele/detalhe_votacao_munzona/detalhe_votacao_munzona_2022.zip",
+   "sha256": "f6d1716e87e4af0686f563fa7ca5caa0903481b5df924454f686fb6b99ed4460",
+   "referencia": "eleição geral de 2022",
+   "data_fenomeno": "2022-10-30",
+   "temporalidade": "historico_compativel",
+   "proveniencia": "versao_posterior_validada",
+   "evidencia": "Identidades da D59 verificadas em todas as linhas (tools/dados/validar_estatisticos.py); códigos com correspondência na tabela oficial TSE x IBGE; versão regenerada pelo TSE após o corte (DT_GERACAO de novembro de 2026), publicação até o corte não comprovada.",
+   "observacoes": ""
+  },
+  {
+   "id": "tse_detalhe_apuracao_2024",
+   "orgao": "TSE",
+   "arquivo": "data/raw/tse/detalhe_votacao_munzona_2024.zip",
+   "url": "https://cdn.tse.jus.br/estatistica/sead/odsele/detalhe_votacao_munzona/detalhe_votacao_munzona_2024.zip",
+   "sha256": "c76b586a72af31427c8d202df150156adf4943d24ad34954a20d333f03d6b04f",
+   "referencia": "eleição municipal de 2024 e suplementares",
+   "data_fenomeno": "2024-10-27",
+   "temporalidade": "historico_compativel",
+   "proveniencia": "versao_posterior_validada",
+   "evidencia": "Identidades da D59 verificadas em todas as linhas (tools/dados/validar_estatisticos.py); códigos com correspondência na tabela oficial TSE x IBGE; versão regenerada pelo TSE após o corte (DT_GERACAO de novembro de 2026), publicação até o corte não comprovada.",
+   "observacoes": "Suplementares separadas por CD_ELEICAO (D61); a regra por parcela classifica cada linha pela própria data da eleição.",
+   "parcelas": [
+    {
+     "campo_data": "DT_ELEICAO"
+    }
+   ]
+  },
+  {
+   "id": "tse_detalhe_apuracao_2026",
+   "orgao": "TSE",
+   "arquivo": "data/raw/tse/detalhe_votacao_munzona_2026.zip",
+   "url": "https://cdn.tse.jus.br/estatistica/sead/odsele/detalhe_votacao_munzona/detalhe_votacao_munzona_2026.zip",
+   "sha256": "83b307b262ec81f7a6466407928677ffe645293a86b03d74cf65d6268ce1d103",
+   "referencia": "eleição geral de 2026",
+   "data_fenomeno": "2026-10-25",
+   "temporalidade": "posterior_ao_corte",
+   "proveniencia": "versao_posterior_validada",
+   "evidencia": "Identidades da D59 verificadas em todas as linhas (tools/dados/validar_estatisticos.py); códigos com correspondência na tabela oficial TSE x IBGE; versão regenerada pelo TSE após o corte (DT_GERACAO de novembro de 2026), período posterior ao corte.",
+   "observacoes": "Só calibração."
+  },
+  {
+   "id": "tse_votacao_partido_2022",
+   "orgao": "TSE",
+   "arquivo": "data/raw/tse/grandes/votacao_partido_munzona_2022.zip",
+   "url": "https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_partido_munzona/votacao_partido_munzona_2022.zip",
+   "sha256": "c49c0706d73c646803af26d7415fc4d63403f6487bf0897302585850d97fa6af",
+   "referencia": "eleição geral de 2022",
+   "data_fenomeno": "2022-10-30",
+   "temporalidade": "historico_compativel",
+   "proveniencia": "versao_posterior_validada",
+   "evidencia": "Nominais mais total de legenda por eleição, turno, município, zona e cargo iguais aos válidos do detalhe da apuração em todas as 39.982 chaves; versão regenerada após o corte.",
+   "observacoes": "Arquivo fora do git. CD_MUNICIPIO sem zeros à esquerda: normalizar para 5 dígitos."
+  },
+  {
+   "id": "tse_votacao_partido_2024",
+   "orgao": "TSE",
+   "arquivo": "data/raw/tse/votacao_partido_munzona_2024.zip",
+   "url": "https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_partido_munzona/votacao_partido_munzona_2024.zip",
+   "sha256": "17b3618951de5f51e605914503744dd16eb0494993c20ef25aa1d0aa0f76a89a",
+   "referencia": "eleição municipal de 2024 e suplementares",
+   "data_fenomeno": "2024-10-27",
+   "temporalidade": "historico_compativel",
+   "proveniencia": "versao_posterior_validada",
+   "evidencia": "Nominais mais total de legenda iguais aos válidos do detalhe da apuração em 12455 de 12.493 chaves; as 38 restantes ficam como parcela com integridade pendente; versão regenerada após o corte.",
+   "observacoes": "CD_MUNICIPIO sem zeros à esquerda: normalizar para 5 dígitos.",
+   "parcelas": [
+    {
+     "campo_data": "DT_ELEICAO"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "4154",
+      "NR_ZONA": "107",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "4154",
+      "NR_ZONA": "43",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "4154",
+      "NR_ZONA": "72",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "4448",
+      "NR_ZONA": "103",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "4626",
+      "NR_ZONA": "68",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "5894",
+      "NR_ZONA": "68",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "07137",
+      "NR_ZONA": "109",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "7420",
+      "NR_ZONA": "30",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "07951",
+      "NR_ZONA": "30",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "8001",
+      "NR_ZONA": "80",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "8052",
+      "NR_ZONA": "35",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "8079",
+      "NR_ZONA": "16",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "08222",
+      "NR_ZONA": "51",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "8567",
+      "NR_ZONA": "9",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "9059",
+      "NR_ZONA": "73",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "9539",
+      "NR_ZONA": "49",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "12670",
+      "NR_ZONA": "33",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "31054",
+      "NR_ZONA": "1",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "31054",
+      "NR_ZONA": "2",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "31054",
+      "NR_ZONA": "27",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "31119",
+      "NR_ZONA": "2",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "31313",
+      "NR_ZONA": "3",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "31917",
+      "NR_ZONA": "16",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "31950",
+      "NR_ZONA": "34",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "63134",
+      "NR_ZONA": "303",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "63134",
+      "NR_ZONA": "388",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "90468",
+      "NR_ZONA": "56",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "92770",
+      "NR_ZONA": "5",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "93050",
+      "NR_ZONA": "99",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "93300",
+      "NR_ZONA": "33",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "93343",
+      "NR_ZONA": "28",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "93564",
+      "NR_ZONA": "31",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "93998",
+      "NR_ZONA": "53",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "93998",
+      "NR_ZONA": "53",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "94331",
+      "NR_ZONA": "18",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "95915",
+      "NR_ZONA": "47",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "96610",
+      "NR_ZONA": "34",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "NR_TURNO": "1",
+      "CD_MUNICIPIO": "96776",
+      "NR_ZONA": "24",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "soma de nominais e legenda difere dos válidos do detalhe da apuração"
+    }
+   ]
+  },
+  {
+   "id": "tse_vagas_2022",
+   "orgao": "TSE",
+   "arquivo": "data/raw/tse/consulta_vagas_2022.zip",
+   "url": "https://cdn.tse.jus.br/estatistica/sead/odsele/consulta_vagas/consulta_vagas_2022.zip",
+   "sha256": "b1b7f831e7e77285bd6cab9839a4008d4fdf937e904c38ec7413e36c28b9543e",
+   "referencia": "eleição geral de 2022",
+   "data_fenomeno": "2022-10-02",
+   "temporalidade": "historico_compativel",
+   "proveniencia": "integridade_pendente",
+   "evidencia": "Controles de conteúdo ainda não definidos para vagas (confronto com eleitos e com a legislação, L30 e afins).",
+   "observacoes": ""
+  },
+  {
+   "id": "tse_vagas_2024",
+   "orgao": "TSE",
+   "arquivo": "data/raw/tse/consulta_vagas_2024.zip",
+   "url": "https://cdn.tse.jus.br/estatistica/sead/odsele/consulta_vagas/consulta_vagas_2024.zip",
+   "sha256": "7b5397baacf0a37f28f4f55042db159240f367e0725e003f0106182d230e33a1",
+   "referencia": "eleição municipal de 2024 e suplementares até 2026",
+   "data_fenomeno": "2024-10-06",
+   "temporalidade": "historico_compativel",
+   "proveniencia": "integridade_pendente",
+   "evidencia": "Controles de conteúdo ainda não definidos para vagas.",
+   "observacoes": "Inclui suplementares realizadas em 2025 e 2026; a regra por parcela marca as posteriores ao corte.",
+   "parcelas": [
+    {
+     "campo_data": "DT_ELEICAO"
+    }
+   ]
+  },
+  {
+   "id": "tse_candidatos_2022",
+   "orgao": "TSE",
+   "arquivo": "data/raw/tse/consulta_cand_2022.zip",
+   "url": "https://cdn.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2022.zip",
+   "sha256": "1eda57728f0980dd1474b2cbd465d95ab4bb2ce7d9aa1e1b4ca9b2fce798f875",
+   "referencia": "eleição geral de 2022",
+   "data_fenomeno": "2022-10-02",
+   "temporalidade": "historico_compativel",
+   "proveniencia": "integridade_pendente",
+   "evidencia": "Sem validação de conteúdo nesta etapa.",
+   "observacoes": ""
+  },
+  {
+   "id": "tse_candidatos_2024",
+   "orgao": "TSE",
+   "arquivo": "data/raw/tse/grandes/consulta_cand_2024.zip",
+   "url": "https://cdn.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2024.zip",
+   "sha256": "14e33e2bd85bd01427dc6b8db4f039874235a13746ea3493c021b6e845df1381",
+   "referencia": "eleição municipal de 2024",
+   "data_fenomeno": "2024-10-06",
+   "temporalidade": "historico_compativel",
+   "proveniencia": "integridade_pendente",
+   "evidencia": "Sem validação de conteúdo nesta etapa.",
+   "observacoes": "Arquivo fora do git."
+  }
+ ]
+}

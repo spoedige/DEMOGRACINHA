@@ -14,6 +14,9 @@ import unicodedata
 from collections import Counter, defaultdict
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from tools.dados.pipeline.votos import votos_por_eleitor  # noqa: E402
+
 
 def norm(nome):
     s = unicodedata.normalize("NFKD", nome).encode("ascii", "ignore").decode()
@@ -95,15 +98,6 @@ def cruzar_oficial(tab, ibge_mun, tse_nomes, rotulo):
     print(f"Tabela oficial TSE x IBGE ({rotulo}): códigos TSE sem correspondência {len(sem)}, correspondência fora da API IBGE {len(fora_ibge)}, UF divergente {len(uf_diverge)}, grafia divergente {len(nome_diverge)}")
     for x in nome_diverge:
         print("   grafia:", x)
-
-
-def votos_por_eleitor(r):
-    # Senado: um voto por vaga da UF na eleição. Renovação de dois terços (2 vagas) a cada
-    # 8 anos (2018, 2026, 2034...); de um terço (1 vaga) nos ciclos intermediários
-    # (2022, 2030...). Regra a confirmar (L19).
-    if r["DS_CARGO"] == "Senador" and (int(r["ANO_ELEICAO"]) - 2010) % 8 == 0:
-        return 2
-    return 1
 
 
 IDENTIDADES = {

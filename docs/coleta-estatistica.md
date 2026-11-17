@@ -224,7 +224,7 @@ Comparação reproduzível: `tools/dados/comparar_minha_bancada.py` (só leitura
 | `dados/municipios_ibge.json` | tabela oficial TSE x IBGE | 5.571 pares, todos iguais | O changelog diz que foi refeito em 18/10/2026 por ligação UF + nome, com 14 grafias ajustadas à mão; coincide com a tabela oficial, mas não é fonte independente nem anterior ao corte |
 | `dados/tse/eleitorado/2024/<UF>.json` | aptos de vereador, 1º turno, eleição ordinária 2024 | total igual nos 5.569 municípios (155.912.680) | as somas por gênero, faixa etária e escolaridade não fecham com o total em cerca de 1.000 municípios por recorte (gênero: 1.034; faixa etária: 875; escolaridade: 986); provável omissão de categorias como "não informado" (não verificado no código do projeto) |
 | `dados/tse/disputa/2024/<UF>.json` | detalhe da apuração 2024 (eleição ordinária) | 11.138 linhas (cargo, turno, município); aptos, comparecimento, abstenções e brancos iguais em 11.102 | 36 linhas misturam eleição ordinária e suplementar (exemplo: Oiapoque, AP, prefeito: 47.174 aptos no derivado = 24.120 da ordinária + 23.054 da suplementar), contra a D61; 58 linhas com válidos diferentes porque os votos anulados foram somados aos válidos (exemplo: município 28037, AL, vereador: 11.760 = 9.864 válidos + 1.896 anulados), contra a D59 e a D62; não há as três parcelas anuladas (presentes no TSE em 1.502 linhas); 51 linhas sem correspondência na eleição ordinária |
-| `dados/tse/partidos/2024/<UF>.json` | votação por partido 2024 (vereador, eleição ordinária) | 44.494 pares (município, sigla) comparados: posição 0 igual ao total de votos de legenda em 44.472, posição 1 igual aos nominais válidos em 44.453 | 5.179 pares sem correspondência no arquivo oficial: 294 com zero e 4.885 com votos; causa não identificada |
+| `dados/tse/partidos/2024/<UF>.json` | votação por partido 2024 (vereador, eleição ordinária) | 49.672 pares (município, sigla) comparados: posição 0 igual ao total de votos de legenda em 49.646, posição 1 igual aos nominais válidos em 49.619 | 1 par sem correspondência. Correção: o relatório anterior falava em 5.179 pares sem correspondência; a causa era minha comparação, que não normalizava o código do município (o arquivo oficial de votação por partido grava o código sem zeros à esquerda) |
 
 Temporalidade: os dados de eleitorado e de votos por partido entraram no repositório em outubro de 2026 (changelog). Os commits não comprovam disponibilidade até 31/12/2025. Os dados vêm dos mesmos arquivos do TSE que já temos, regenerados depois do corte.
 
@@ -247,3 +247,9 @@ Temporalidade: os dados de eleitorado e de votos por partido entraram no reposit
 | Prova de disponibilidade até 31/12/2025 | não | não avaliado | não (ver seção 6) |
 
 Conclusão: os dois repositórios confirmam a consistência dos brutos que já temos, mas não os substituem nem resolvem a D60. Para os parâmetros da D59, D61 e D62, o tratamento precisa partir dos brutos oficiais.
+
+## 9. Revisão temporal (D63) e pipeline, 17/11/2026
+
+- A D63 separa a temporalidade do fenômeno da proveniência da versão. Classificação vigente em `data/fontes.json`; arquitetura e especificação em `docs/pipeline-dados.md`.
+- Nova validação entre fontes: na votação por partido, nominais mais total de legenda igualam os válidos do detalhe da apuração em todas as 39.982 chaves de 2022 e em 12.455 de 12.493 chaves de 2024. As 38 restantes ficam como parcela com integridade pendente.
+- Achado de normalização: `CD_MUNICIPIO` na votação por partido não tem zeros à esquerda (8.034 linhas em 2024 e 45.241 em 2022); o pipeline normaliza para 5 dígitos.

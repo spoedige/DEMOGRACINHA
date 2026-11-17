@@ -30,6 +30,10 @@ Guia para quem trabalha neste repositório. Leia antes de qualquer alteração.
 | Eventos, crises, corrupção, jurídico, saúde | `docs/eventos-e-risco.md` |
 | Etapas, dados, calibração, testes, pendências | `docs/roadmap.md` |
 | Títulos e resumo | `titulos.md` |
+| Decisões aprovadas | `docs/decisoes.md` |
+| Fontes, coleta e pipeline de dados | `docs/coleta-estatistica.md`, `docs/pipeline-dados.md`, `data/fontes.json` |
+
+Testes do pipeline de dados: `python3 -m unittest discover -s tests -v`, da raiz.
 
 Para economizar contexto: leia só o documento da área da tarefa. Fonte única por regra: calendário e ritmos no `GDD.md`; regras legais em `docs/regras-e-mundo.md`; fórmulas em `docs/motor-eleitoral.md`. Outros documentos citam e não redefinem. O GDD é o índice.
 

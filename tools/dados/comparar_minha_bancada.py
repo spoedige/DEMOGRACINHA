@@ -107,7 +107,7 @@ def comparar_partidos(mb, pasta):
     for r in ler_csv(arq):
         if r["CD_ELEICAO"] != "619" or r["DS_CARGO"].upper() != "VEREADOR":
             continue
-        k = (r["CD_MUNICIPIO"], r["NR_PARTIDO"])
+        k = (r["CD_MUNICIPIO"].zfill(5), r["NR_PARTIDO"])  # o arquivo de votação por partido omite zeros à esquerda
         ref[k]["legenda"] += i(r["QT_VOTOS_LEGENDA_VALIDOS"])
         ref[k]["total_legenda"] += i(r["QT_TOTAL_VOTOS_LEG_VALIDOS"])
         ref[k]["nominais"] += i(r["QT_VOTOS_NOMINAIS_VALIDOS"])

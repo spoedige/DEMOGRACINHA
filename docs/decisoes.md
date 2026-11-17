@@ -271,3 +271,24 @@ Nenhuma fonte é classificada como `admissivel` com base apenas na data de cria�
 ### Questão registrada sobre a D60 (sem alteração da decisão), 17/11/2026
 
 A admissibilidade da fonte e a de cada informação extraída dela são relacionadas, mas não idênticas. Uma fonte pode ter informações comprovadamente disponíveis antes do corte, informações atualizadas depois e campos de temporalidade indeterminável. Se aparecer fonte com conteúdo misto, avaliar a separação das parcelas, com rastreabilidade preservada, em vez de descartar o conjunto inteiro. Ausência de histórico de versões não é evidência de publicação posterior: fonte sem prova fica `admissibilidade_temporal_nao_comprovada`, não `nao_admissivel`.
+
+## D63. Revisão da política temporal: fenômeno e fonte em eixos separados, 17/11/2026
+
+Complementa e revisa a D60 revisada, que continua registrada acima com o histórico da investigação.
+
+**Diagnóstico.** A D60 revisada exigia comprovar que a versão usada estava publicamente disponível até 31/12/2025. Os arquivos oficiais do TSE de 2022 e 2024 representam eleições anteriores ao corte, mas as versões disponíveis foram regeradas em novembro de 2026; o catálogo não guarda histórico de versões; o Internet Archive não respondeu a partir deste ambiente. Pela regra, nenhuma fonte entrava no mundo inicial, embora os conteúdos tenham passado em todos os controles de consistência. A regra confundia a data de publicação do arquivo com a data do fenômeno.
+
+**Decisão.** O corte de 31/12/2025 continua sendo a referência do mundo simulado. A admissibilidade passa a ter dois eixos independentes, registrados por fonte e, quando preciso, por parcela (conjunto, tabela, coluna ou linha):
+
+1. Temporalidade do fenômeno: `historico_compativel` (fenômeno até 31/12/2025), `posterior_ao_corte`, `temporalidade_nao_comprovada`. Decidida só pela data do fenômeno; a data de coleta não entra.
+2. Proveniência da versão: `publicacao_historica_comprovada` (versão comprovadamente disponível até o corte), `versao_posterior_validada` (publicação até o corte não comprovada, com origem oficial identificada, hash registrado e conteúdo histórico validado pelos controles de integridade e consistência), `proveniencia_nao_comprovada`, `integridade_pendente`.
+
+Regras:
+- Mundo inicial: só `historico_compativel` com `publicacao_historica_comprovada` ou `versao_posterior_validada`.
+- Calibração: também aceita `posterior_ao_corte`, com as mesmas exigências de proveniência. Os dois usos ficam separados no código (`docs/pipeline-dados.md` 2).
+- Dados de eleições de 2026 nunca alimentam o mundo inicial.
+- Versão posterior não é presumida idêntica à histórica, e não recebe `publicacao_historica_comprovada` sem prova de publicação.
+- A limitação documental continua registrada: nenhuma fonte coletada tem publicação histórica comprovada.
+- Hashes, datas, URLs, órgãos e evidências ficam preservados no manifesto e em `data/fontes.json`.
+
+Relação com os estados da D60 revisada: `admissivel` corresponde a `historico_compativel` com `publicacao_historica_comprovada`; `admissibilidade_temporal_nao_comprovada` se desdobra em `versao_posterior_validada` (quando os controles passaram) ou `integridade_pendente`; `nao_admissivel` corresponde a `posterior_ao_corte` para o mundo inicial; `pendente` corresponde a `integridade_pendente`.

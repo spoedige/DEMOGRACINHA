@@ -38,7 +38,9 @@ Fichas da API de dados abertos de legislação do Senado. Contêm identificaçã
 | `legislacao/normas/constituicao_1988.html` | Senado Federal (normas.leg.br) | Constituição de 1988 | https://normas.leg.br/?urn=urn:lex:br:federal:constituicao:1988-10-05;1988 | 2026-11-17T13:21:36Z | Tue, 10 Nov 2026 23:08:26 GMT | 200; casca da aplicação web, sem o texto da norma; idêntica para as duas URNs | 66002 | `62b0cfdac0b029f66efc6472052103baf9a0f148ade44f56d3e273f02418197d` |
 | `legislacao/camara/busca_lei_9504_1997.headers.txt` (só cabeçalhos) | Câmara dos Deputados | busca da Lei 9.504/1997 | https://www2.camara.leg.br/busca-portal?contextoBusca=BuscaLegislacao&q=lei+9504+1997 | 2026-11-17T13:21:56Z | não informado | 404, sem redirecionamento | não guardado | não aplicável |
 
-## Admissibilidade temporal para o mundo inicial (D60)
+## Admissibilidade temporal para o mundo inicial (D60, histórico)
+
+> A classificação vigente é a da D63, em dois eixos, registrada em `data/fontes.json`. Os blocos abaixo preservam a avaliação feita pela D60 revisada.
 
 Estados: `admissivel` (os dois critérios da D60 comprovados), `admissibilidade_temporal_nao_comprovada` (referência compatível, sem prova de que a versão usada estava disponível até 31/12/2025), `nao_admissivel` (versão publicada ou período representado posterior ao corte), `pendente` (investigação não concluída).
 

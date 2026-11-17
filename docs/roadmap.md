@@ -37,7 +37,7 @@ Detalhamento da suplência (ordem, suplentes individualizados do Senado, sucess�
 
 Cada registro leva `fonte` e `confianca` (`oficial`, `secundaria`, `estimado`). Divergências entre fontes ficam registradas.
 
-Corte temporal (D60, revisada): o mundo inicial usa só dados com data de referência e disponibilidade pública até 31/12/2025; versões regeneradas depois só entram com equivalência comprovada (estado de admissibilidade no manifesto). Dados de 2026 vão apenas para `calibration-targets.json`. Eleições suplementares ficam nos brutos e fora dos parâmetros da eleição ordinária, separadas por `CD_ELEICAO` (D61). Brutos, manifesto e validação: `docs/coleta-estatistica.md`.
+Corte temporal (D60 e D63): o mundo inicial usa só fenômenos até 31/12/2025, em versões com publicação comprovada ou conteúdo validado; dois eixos de classificação em `data/fontes.json`; pipeline em `docs/pipeline-dados.md`. Dados de 2026 vão apenas para `calibration-targets.json`. Eleições suplementares ficam nos brutos e fora dos parâmetros da eleição ordinária, separadas por `CD_ELEICAO` (D61). Brutos, manifesto e validação: `docs/coleta-estatistica.md`.
 
 Rede: antes de coletar, testar IBGE e TSE com `curl -sI`. Em 403, parar, registrar o que faltou e usar arquivos enviados pelo autor. Nunca fabricar dados.
 
@@ -147,7 +147,7 @@ Rede: antes de coletar, testar IBGE e TSE com `curl -sI`. Em 403, parar, registr
 91. Eleição municipal fora do conjunto da base: `baseTerritorial = 0` e o agregado regional não é usado; em disputa estadual ou nacional, o agregado regional exclui os municípios do conjunto da base.
 92. Afastamento ou licença sem convocação pela regra do cargo não gera suplente.
 93. Identidade de comparecimento (D59) com as seis parcelas e `votosPorEleitor` fecha em toda unidade simulada; se o motor usar `anuladosTotal`, a desagregação reproduz a identidade.
-94. O mundo inicial só usa fontes com estado `admissivel` no manifesto (D60); nenhuma fonte `admissibilidade_temporal_nao_comprovada`, `nao_admissivel` ou `pendente` entra nele; dados de 2026 só aparecem em `calibration-targets.json`.
+94. O mundo inicial só usa fontes `historico_compativel` com `publicacao_historica_comprovada` ou `versao_posterior_validada` (D63); dados de 2026 só aparecem em calibração. Implementado em `tests/test_pipeline_dados.py` (testes 01 a 12).
 95. Parâmetros da eleição ordinária de 2024 vêm só de `CD_ELEICAO = 619`; eleições suplementares não alteram vagas nem taxas (D61).
 96. O exterior não é atribuído a nenhum município; totais nacionais o incluem como unidade própria (D58).
 97. Parcelas anuladas (D62): taxas vêm da eleição ordinária de referência do mesmo tipo, sobre `comparecimento × votosPorEleitor`; ficam separadas e fora dos candidatos; unidade sem referência usa a taxa da UF marcada como estimativa ou registra lacuna; nenhuma taxa ausente vira zero; situação jurídica simulada não as altera.
