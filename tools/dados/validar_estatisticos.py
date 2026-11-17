@@ -99,26 +99,62 @@ def cruzar_oficial(tab, ibge_mun, tse_nomes, rotulo):
         print("   grafia:", x)
 
 
-def cruzar(ibge_mun, tse_nomes, rotulo):
-    idx = defaultdict(list)
-    for cod, (uf, nome) in ibge_mun.items():
-        idx[(uf, norm(nome))].append(cod)
-    casados, sem_par, ambiguos = {}, [], []
-    for k, (uf, nome) in tse_nomes.items():
-        cand = idx.get((uf, norm(nome)), [])
-        if len(cand) == 1:
-            casados[k] = cand[0]
-        elif not cand:
-            sem_par.append((k, uf, nome))
-        else:
-            ambiguos.append((k, uf, nome, cand))
-    ibge_sem_tse = set(ibge_mun) - set(casados.values())
-    print(f"Cruzamento TSE x IBGE por UF e nome ({rotulo}): casados {len(casados)}, TSE sem par {len(sem_par)}, ambíguos {len(ambiguos)}, IBGE sem par {len(ibge_sem_tse)}")
-    for x in sem_par[:30]:
-        print("   TSE sem par:", x)
-    for c in sorted(ibge_sem_tse)[:30]:
-        print("   IBGE sem par:", c, ibge_mun[c])
-    return casados
+def votos_por_eleitor(r):
+    # Senado em eleição de dois terços (2026): dois votos por eleitor (L19, a confirmar).
+    return 2 if r["DS_CARGO"] == "Senador" and r["ANO_ELEICAO"] == "2026" else 1
+
+
+IDENTIDADES = {
+    # Base: leiame.pdf do detalhe da apuração (TSE). Ver docs/coleta-estatistica.md 2.1.
+    "concorrentes = validos + anulados + anulados sub judice":
+        lambda r: i(r["QT_VOTOS_CONCORRENTES"]) == i(r["QT_TOTAL_VOTOS_VALIDOS"]) + i(r["QT_TOTAL_VOTOS_ANULADOS"]) + i(r["QT_TOTAL_VOTOS_ANUL_SUBJUD"]),
+    "total de nulos = nulos + nulos tecnicos":
+        lambda r: i(r["QT_TOTAL_VOTOS_NULOS"]) == i(r["QT_VOTOS_NULOS"]) + i(r["QT_VOTOS_NULOS_TECNICOS"]),
+    "votos = concorrentes + brancos + total de nulos + anulados em apuracao separada":
+        lambda r: i(r["QT_VOTOS"]) == i(r["QT_VOTOS_CONCORRENTES"]) + i(r["QT_VOTOS_BRANCOS"]) + i(r["QT_TOTAL_VOTOS_NULOS"]) + i(r["QT_VOTOS_ANULADOS_APU_SEP"]),
+    "votos = comparecimento x votos por eleitor":
+        lambda r: i(r["QT_VOTOS"]) == i(r["QT_COMPARECIMENTO"]) * votos_por_eleitor(r),
+    "comparecimento x votos por eleitor = validos + brancos + nulos + anulados + anulados sub judice + anulados apuracao separada (D59)":
+        lambda r: i(r["QT_COMPARECIMENTO"]) * votos_por_eleitor(r) == i(r["QT_TOTAL_VOTOS_VALIDOS"]) + i(r["QT_VOTOS_BRANCOS"]) + i(r["QT_TOTAL_VOTOS_NULOS"]) + i(r["QT_TOTAL_VOTOS_ANULADOS"]) + i(r["QT_TOTAL_VOTOS_ANUL_SUBJUD"]) + i(r["QT_VOTOS_ANULADOS_APU_SEP"]),
+    "aptos = comparecimento + abstencoes + eleitores de secoes nao instaladas":
+        lambda r: i(r["QT_APTOS"]) == i(r["QT_COMPARECIMENTO"]) + i(r["QT_ABSTENCOES"]) + i(r["QT_ELEITORES_SECOES_NAO_INSTALADAS"]),
+}
+
+
+def identidades_completas(pasta, ano):
+    """Verifica cada identidade em todas as linhas do arquivo BRASIL, todos os cargos e turnos."""
+    arq = next(Path(pasta).glob(f"detalhe_votacao_munzona_{ano}/*BRASIL*.csv"))
+    linhas = 0
+    falhas = Counter()
+    cont = Counter()
+    exemplos = {}
+    for r in ler_csv(arq):
+        linhas += 1
+        for nome, f in IDENTIDADES.items():
+            if not f(r):
+                falhas[nome] += 1
+                exemplos.setdefault(nome, (r["SG_UF"], r["CD_MUNICIPIO"], r["NR_ZONA"], r["DS_CARGO"], r["NR_TURNO"]))
+        cont["linhas com anulados"] += i(r["QT_TOTAL_VOTOS_ANULADOS"]) > 0
+        cont["linhas com anulados sub judice"] += i(r["QT_TOTAL_VOTOS_ANUL_SUBJUD"]) > 0
+        cont["linhas com as duas categorias"] += i(r["QT_TOTAL_VOTOS_ANULADOS"]) > 0 and i(r["QT_TOTAL_VOTOS_ANUL_SUBJUD"]) > 0
+        cont["linhas com apuracao separada > 0"] += i(r["QT_VOTOS_ANULADOS_APU_SEP"]) > 0
+        cont["linhas com secoes nao instaladas"] += i(r["QT_ELEITORES_SECOES_NAO_INSTALADAS"]) > 0
+        cont["linhas no exterior (UF ZZ)"] += r["SG_UF"] == "ZZ"
+    print(f"Identidades completas {ano}: {linhas} linhas")
+    for nome in IDENTIDADES:
+        print(f"  {'ok' if not falhas[nome] else 'FALHA'}: {nome}" + (f" ({falhas[nome]} linhas; ex. {exemplos[nome]})" if falhas[nome] else ""))
+    print("  contagens:", dict(cont))
+    return not falhas
+
+
+def vagas_por_eleicao(pasta, ano):
+    arq = next(Path(pasta).glob(f"consulta_vagas_{ano}/*BRASIL*.csv"))
+    c = Counter()
+    for r in ler_csv(arq):
+        c[(r["CD_ELEICAO"], r["DS_ELEICAO"], r["DS_CARGO"])] += 1
+    print(f"Vagas {ano} por eleição (CD_ELEICAO, D61):")
+    for k, v in sorted(c.items()):
+        print("  ", k, v)
 
 
 def main():
@@ -130,6 +166,9 @@ def main():
     m26, n26 = detalhe(p_tse, 2026, "Governador")
     vagas(p_tse, 2022)
     vagas(p_tse, 2024)
+    ok = all([identidades_completas(p_tse, a) for a in (2022, 2024, 2026)])
+    print("Identidades completas nos três anos:", "ok" if ok else "FALHA")
+    vagas_por_eleicao(p_tse, 2024)
     tab = tabela_oficial(p_tse)
     print("Tabela oficial: linhas", len(tab), " IBGE cobertos", len(set(tab.values()) & set(ib)), "de", len(ib))
     for rot, n in (("2022", n22), ("2024", n24), ("2026", n26)):

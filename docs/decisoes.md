@@ -236,3 +236,12 @@ Demais correções (R5, R7, R9 a R24) são de redação, referência e testes, s
 | Teste 42 | Enunciado (c) corrigido: convergência para máquina igual a 1 | `roadmap.md` |
 
 D50 inalterada.
+
+## Dados estatísticos, 17/11/2026
+
+| Id | Decisão | Onde |
+|---|---|---|
+| D58 | Três conjuntos: 5.571 municípios do cadastro IBGE; 5.569 com eleição municipal própria (sem Brasília e Fernando de Noronha); unidades estatísticas eleitorais variáveis, com exterior sem associação a município | `regras-e-mundo.md` 4; `motor-eleitoral.md` 9 |
+| D59 | Identidade do comparecimento com as seis parcelas do TSE (válidos, brancos, nulos com técnicos, anulados, anulados sub judice, anulados em apuração separada) e votos por eleitor; agregação em `anuladosTotal` só com transformação explícita | `motor-eleitoral.md` 4.2.1 |
+| D60 | Mundo inicial só com dados publicados até 31/12/2025; dados de 2026 só para calibração. Consequência: a regra do conjunto de agentes (D52) passa a usar o último retrato de eleitorado até essa data, em vez do snapshot de 2026 | `regras-e-mundo.md` 4; `roadmap.md` 4 |
+| D61 | Eleições ordinária e suplementares separadas por `CD_ELEICAO`; suplementares mantidas nos brutos e fora dos parâmetros da ordinária | `roadmap.md` 4; `coleta-estatistica.md` 2 |

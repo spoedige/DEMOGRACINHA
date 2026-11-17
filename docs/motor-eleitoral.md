@@ -84,7 +84,7 @@ Escalas são definições de projeto, não calibração. Faixas de valores dentr
 | `tempoTV[p]` | segundos de propaganda por partido ou chapa | segundos | por eleição | fator temporário |
 | `alcanceRedes` | exposição digital obtida no período | 0 a 1 | candidato | fluxo |
 | `ruido` | multiplicador determinístico `exp(σZ - σ²/2)`, Z normal padrão do RNG de eleição; média 1 para qualquer σ | maior que 0 | por concorrente e eleição | fator do dia |
-| `eleitorado[u]`, `comparecimento[u]`, `brancos[u]`, `nulos[u]` | contagens da unidade; taxas de base vêm dos dados da 1B | votos | unidade eleitoral | dado e resultado |
+| `eleitorado[u]`, `comparecimento[u]`, `brancos[u]`, `nulos[u]`, `anulados[u]`, `anuladosSubJudice[u]`, `anuladosApuracaoSeparada[u]` | contagens da unidade (4.2.1); taxas de base vêm dos dados da 1B, com corte temporal da D60 | votos | unidade eleitoral (D58) | dado e resultado |
 | `Capital de Entrega` | representação abstrata da capacidade institucional de produzir entregas, articular recursos orçamentários e negociar espaços; não é dinheiro público disponível ao personagem | unidades abstratas inteiras | personagem | estoque |
 
 Restrição estrutural: `popularidade + rejeicao` nunca passa de `notoriedade`. Assim popularidade e rejeição são contadas uma vez, e notoriedade não precisa de multiplicador próprio: ela é o teto das duas.
@@ -124,9 +124,16 @@ votos_c        = participacao_c × votosValidos
 
 #### 4.2.1 Eleitorado, comparecimento e válidos
 ```
-eleitorado = comparecimento + abstencao
-comparecimento = validos + brancos + nulos
+eleitorado = comparecimento + abstencao + eleitoresSecoesNaoInstaladas
+comparecimento × votosPorEleitor = validos + brancos + nulos + anulados + anuladosSubJudice + anuladosApuracaoSeparada
 ```
+Definições (D59, categorias do TSE, `coleta-estatistica.md` 2.1):
+- `nulos` inclui os nulos técnicos.
+- `anulados`: votos anulados pela situação jurídica do candidato ou da legenda.
+- `anuladosSubJudice`: anulados com recurso pendente na totalização.
+- `anuladosApuracaoSeparada`: votos de urna sub judice, ainda não válidos nem nulos.
+- `votosPorEleitor`: 1, exceto Senado em eleição de duas vagas (2 em 2026, L19).
+- O motor pode agregar `anuladosTotal = anulados + anuladosSubJudice + anuladosApuracaoSeparada`, desde que a transformação seja explícita e reproduza a identidade acima.
 Grandezas distintas. No MVP, comparecimento, abstenção, brancos e nulos são parâmetros fixos por unidade, vindos dos dados de base da 1B (a confirmar fonte). **Não respondem dinamicamente à conjuntura, às campanhas nem a eventos nesta fase.** A repartição 4.2 opera só sobre `validos`. Modelo dinâmico de comparecimento e votos inválidos: Fase 2. No 2º turno (6.3), a matriz de destinos usa fatores fixos pelo mesmo motivo.
 
 ### 4.3 Arredondamento e soma exata
@@ -400,7 +407,9 @@ Eleitos governam e legislam via Capital de Entrega (`carreira-e-poder.md` seçã
 Três conceitos separados:
 | Conceito | Alcance |
 |---|---|
-| Dados municipais | os 5.570 municípios |
+| Cadastro territorial (D58) | 5.571 municípios do cadastro IBGE |
+| Eleição municipal própria (D58) | 5.569 municípios (sem Brasília e Fernando de Noronha) |
+| Unidades estatísticas eleitorais (D58) | variável: municípios, Fernando de Noronha e exterior nas eleições gerais; o exterior não é associado a município |
 | Agentes individuais | só o conjunto de agentes (`regras-e-mundo.md` 4) e as disputas em que o jogador concorre |
 | Simulação eleitoral | toda unidade eleitoral real: cada município (prefeito e câmara), cada UF (governador, senado, deputados), o país (presidente) |
 
@@ -409,7 +418,7 @@ Cada município tem eleição própria, simulada estatisticamente sem agentes gu
 - **Prefeito:** um candidato sintético por partido ou chapa que concorra (presença definida por capilaridade do partido no município e resultado de 2024), pontuação 6 com `opiniao` sintética, `identChapa` municipal e a máquina municipal própria daquele município (4.5). 2º turno só acima de 200 mil eleitores (a confirmar).
 - **Câmara:** competição única 5 com candidatos sintéticos por lista e apuração completa (quociente, barreira individual, sobras).
 - `identPartidaria` municipal: valor da UF ajustado pelo desvio do município observado em 2024 (definição a fechar na 1B).
-- Custo: o volume de candidatos sintéticos em 5.570 câmaras é alto. A proposta de amostragem com votos reescalados **não está validada nem escolhida**; a questão fica para a etapa 2. A validação deverá comparar amostragem e simulação integral nos mesmos municípios e sementes, verificando distribuição de cadeiras por lista, quocientes eleitoral e partidário, cumprimento da barreira individual e distribuição das sobras. Nenhum método ou parâmetro é definido agora.
+- Custo: o volume de candidatos sintéticos em 5.569 câmaras é alto. A proposta de amostragem com votos reescalados **não está validada nem escolhida**; a questão fica para a etapa 2. A validação deverá comparar amostragem e simulação integral nos mesmos municípios e sementes, verificando distribuição de cadeiras por lista, quocientes eleitoral e partidário, cumprimento da barreira individual e distribuição das sobras. Nenhum método ou parâmetro é definido agora.
 
 ### 9.2 Coerência
 - Totais respeitam eleitorado, comparecimento e válidos de cada unidade.

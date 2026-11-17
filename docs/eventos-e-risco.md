@@ -13,7 +13,7 @@ Estrutura mínima:
 
 - Nomes gerados por combinação de listas de prenomes e sobrenomes comuns, filtrados contra nomes de políticos reais conhecidos.
 - Atributos: partido, cargo, ambição, lealdade, ideologia, relação com o jogador.
-- Existem individualmente só no conjunto de agentes (`regras-e-mundo.md` 4). No resto, o mundo é estatístico, mas cada um dos 5.570 municípios tem eleição própria (`motor-eleitoral.md` 9).
+- Existem individualmente só no conjunto de agentes (`regras-e-mundo.md` 4). No resto, o mundo é estatístico, mas cada um dos 5.569 municípios com eleição municipal tem eleição própria (D58) (`motor-eleitoral.md` 9).
 - Rede de agentes alimenta convites, rivalidades, janela partidária e escândalos.
 
 ## 2.1 Conjuntura autônoma (MVP simplificado, P9)

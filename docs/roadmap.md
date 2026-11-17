@@ -13,7 +13,7 @@ Cada etapa termina com commit na `main`, que dispara deploy no Cloudflare.
 
 ## 2. MVP
 
-Cargos de vereador a presidente; motor proporcional, majoritário e 2º turno; 30 partidos com dados básicos e 5 federações; 5.570 municípios com eleição própria cada um (simulação estatística sem agentes fora do conjunto de agentes; agentes só no conjunto fixo de até 10, `regras-e-mundo.md` 4); potencial, aptidão, experiência, oportunidades contextuais, platô e 3 a 5 cadeias de Ponto de Inflexão; vice; janela partidária simulada; corrupção em 3 níveis; saúde; fase sem cargo básica; resumo, títulos, grau e cartão de conquista; exportar e importar save; visual pixel de Brasília; ritmos Intenso, Normal e Express.
+Cargos de vereador a presidente; motor proporcional, majoritário e 2º turno; 30 partidos com dados básicos e 5 federações; 5.569 municípios com eleição municipal própria, num cadastro de 5.571 (D58), (simulação estatística sem agentes fora do conjunto de agentes; agentes só no conjunto fixo de até 10, `regras-e-mundo.md` 4); potencial, aptidão, experiência, oportunidades contextuais, platô e 3 a 5 cadeias de Ponto de Inflexão; vice; janela partidária simulada; corrupção em 3 níveis; saúde; fase sem cargo básica; resumo, títulos, grau e cartão de conquista; exportar e importar save; visual pixel de Brasília; ritmos Intenso, Normal e Express.
 
 Incluídos após a análise de referência (versões simplificadas, ver `decisoes.md`): potencial sem efeito eleitoral direto (P11, revisto por D34), conjuntura autônoma (P9), compromissos (P6), base territorial agregada (P3), grupo político agregado (P1), base parlamentar e governabilidade (P4), credibilidade visível, capital político derivado, avaliação final em cinco dimensões.
 
@@ -32,10 +32,12 @@ Detalhamento da suplência (ordem, suplentes individualizados do Senado, sucess�
 | `rules-and-offices.json` | cargos, idades, mandatos, calendário, cláusula, barreiras |
 | `politics-2026.json` | partidos, federações, bancadas, FEFC, TV |
 | `world-2026.json` | estado inicial por UF, governos, prefeituras 2024 |
-| `municipios.json` | 5.570 municípios, UF, eleitorado, vagas de vereador |
+| `municipios.json` | 5.571 municípios do cadastro, UF, indicação de eleição municipal própria, eleitorado (corte D60), vagas de vereador da eleição ordinária (D61) |
 | `calibration-targets.json` | metas de calibração; nunca alimenta o mundo inicial |
 
 Cada registro leva `fonte` e `confianca` (`oficial`, `secundaria`, `estimado`). Divergências entre fontes ficam registradas.
+
+Corte temporal (D60): o mundo inicial usa só dados publicados até 31/12/2025. Dados de 2026 vão apenas para `calibration-targets.json`. Eleições suplementares ficam nos brutos e fora dos parâmetros da eleição ordinária, separadas por `CD_ELEICAO` (D61). Brutos, manifesto e validação: `docs/coleta-estatistica.md`.
 
 Rede: antes de coletar, testar IBGE e TSE com `curl -sI`. Em 403, parar, registrar o que faltou e usar arquivos enviados pelo autor. Nunca fabricar dados.
 
@@ -119,7 +121,7 @@ Rede: antes de coletar, testar IBGE e TSE com `curl -sI`. Em 403, parar, registr
 67. Senado: cada eleitor representado dá dois votos a candidatos distintos; diagonal da matriz nula; `Σ v2 = validos1 - invalidos2`.
 68. `identChapa` de candidatura isolada é igual à do próprio partido ou federação.
 69. 2º turno: eleitorado constante; contingentes de origem distribuídos sem sobra entre A, B, branco/nulo e abstenção; nenhuma origem transfere integralmente.
-70. Cada um dos 5.570 municípios produz prefeito e câmara próprios em 2028 e 2032; agregados da UF são somas.
+70. Cada um dos 5.569 municípios com eleição municipal produz prefeito e câmara próprios em 2028 e 2032; Brasília e Fernando de Noronha não; agregados da UF são somas.
 71. Nenhuma origem inicia com mandato, nomeação ou Capital de Entrega.
 72. Rede Familiar Política não gera tag de nepotismo nem risco jurídico pela origem.
 73. Aposentadoria nunca ocorre sem decisão do jogador, em qualquer idade.
@@ -144,6 +146,10 @@ Rede: antes de coletar, testar IBGE e TSE com `curl -sI`. Em 403, parar, registr
 90. Suplência mínima: afastamento ou licença de legislador que, pela regra aplicável ao cargo, determine convocação põe um suplente sintético em exercício e preserva o mandato do titular conforme essa regra.
 91. Eleição municipal fora do conjunto da base: `baseTerritorial = 0` e o agregado regional não é usado; em disputa estadual ou nacional, o agregado regional exclui os municípios do conjunto da base.
 92. Afastamento ou licença sem convocação pela regra do cargo não gera suplente.
+93. Identidade de comparecimento (D59) com as seis parcelas e `votosPorEleitor` fecha em toda unidade simulada; se o motor usar `anuladosTotal`, a desagregação reproduz a identidade.
+94. Nenhum dado com data de publicação posterior a 31/12/2025 entra no mundo inicial (D60); dados de 2026 só aparecem em `calibration-targets.json`.
+95. Parâmetros da eleição ordinária de 2024 vêm só de `CD_ELEICAO = 619`; eleições suplementares não alteram vagas nem taxas (D61).
+96. O exterior não é atribuído a nenhum município; totais nacionais o incluem como unidade própria (D58).
 
 ## 7. Itens a confirmar
 

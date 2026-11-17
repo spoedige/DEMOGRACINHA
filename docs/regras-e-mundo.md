@@ -80,9 +80,14 @@ Federação atua como unidade única em todas as eleições e no Legislativo, co
 
 ## 4. Municípios
 
-- 5.570 municípios reais em um único `municipios.json` compacto (meta de cerca de 380 KB), com número oficial de vagas de vereador.
-- Cada um dos 5.570 municípios tem eleição própria para prefeito e câmara (`motor-eleitoral.md` 9).
-- **Conjunto de agentes (fixo durante a carreira, D52):** município inicial mais os nove maiores eleitorados da UF inicial, pelo snapshot de 2026 da 1B. Se o município inicial estiver entre os nove maiores, entra o próximo da lista. Desempate pelo código IBGE. Agentes individuais e conjuntura local existem só nesse conjunto.
+- Três conjuntos distintos (D58):
+  - **Cadastro territorial:** 5.571 municípios do cadastro IBGE, identificados pelo código IBGE.
+  - **Eleição municipal própria:** 5.569 municípios. Brasília (DF) e Fernando de Noronha (PE) não têm eleição municipal.
+  - **Unidades estatísticas eleitorais:** variáveis por eleição; incluem Fernando de Noronha e o exterior nas eleições gerais. O exterior não é associado a nenhum município.
+- `municipios.json` compacto (meta de cerca de 380 KB), com número oficial de vagas de vereador da eleição ordinária (D61).
+- Cada um dos 5.569 municípios com eleição própria elege prefeito e câmara (`motor-eleitoral.md` 9).
+- Corte temporal do mundo inicial (D60): só dados publicados até 31/12/2025. Resultados e eleitorado de 2026 ficam restritos à calibração.
+- **Conjunto de agentes (fixo durante a carreira, D52):** município inicial mais os nove maiores eleitorados da UF inicial, pelo último retrato oficial de eleitorado disponível até 31/12/2025 (D60; disponibilidade a verificar na 1B). Se o município inicial estiver entre os nove maiores, entra o próximo da lista. Desempate pelo código IBGE. Agentes individuais e conjuntura local existem só nesse conjunto.
 - **Conjunto da base (dinâmico, até 10, D52):** inclui o município inicial e os municípios onde o personagem constrói base, em qualquer UF. Representa a base política do personagem, com ou sem agentes, e não altera o conjunto de agentes.
 - Lacunas registradas: (1) regra quando o conjunto da base está cheio; (2) UFs com menos de 10 municípios (o DF tem um só): o conjunto de agentes fica menor, sem regra de complemento definida.
 - Resultados municipais de 2024 entram como estado inicial fixo.

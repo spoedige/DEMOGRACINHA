@@ -39,7 +39,7 @@ Script: `tools/dados/validar_estatisticos.py`. Só lê os brutos e imprime o rel
 Explicação das contagens por ano, com códigos verificados na tabela oficial:
 - 2024 não tem Brasília (DF, sem eleição municipal) nem Fernando de Noronha (distrito estadual, código IBGE 2605459), que votam nas eleições gerais.
 - 2022 não tem Boa Esperança do Norte (MT, código IBGE 5101837), cuja primeira eleição foi em 2024.
-- Vagas de 2024 têm 5.572 unidades de vereador: 5.569 da eleição ordinária mais 3 eleições suplementares. O tratamento deve filtrar a eleição ordinária.
+- Vagas de 2024: a eleição ordinária (`CD_ELEICAO = 619`) tem 5.569 unidades de prefeito, vice e vereador. O arquivo traz também dezenas de eleições suplementares, quase todas para prefeito e vice e 3 para vereador, algumas realizadas em 2025 e 2026. Correção: o relatório anterior falava em 3 suplementares porque contava só vereador. Tratamento pela D61.
 - Treze municípios têm grafia diferente no TSE e no IBGE (por exemplo, "Boa Saúde" no TSE e "Januário Cicco" no IBGE, mesmo código). O cruzamento usa sempre a tabela oficial, nunca o nome.
 
 ### 2.1 Verificação pelo dicionário oficial
@@ -51,19 +51,25 @@ Fonte: `leiame.pdf` incluído no zip oficial do detalhe da apuração de 2024 (`
 | `QT_VOTOS_CONCORRENTES = válidos + anulados + anulados sub judice` | "votos nominais e em legenda válidos, anulados sub judice e anulados totalizados" | ok em todas as linhas |
 | `QT_TOTAL_VOTOS_NULOS = QT_VOTOS_NULOS + QT_VOTOS_NULOS_TECNICOS` | nulos técnicos descritos como categoria própria | ok em todas as linhas |
 | `QT_VOTOS = concorrentes + brancos + total de nulos + anulados em apuração separada` | `QT_VOTOS_ANULADOS_APU_SEP`: "ainda não são votos válidos e nem nulos" | ok em todas as linhas; `APU_SEP` vale 0 em todos os arquivos coletados |
-| `QT_COMPARECIMENTO = QT_VOTOS` | comparecimento e votos totalizados | ok em todas as linhas |
+| `QT_VOTOS = QT_COMPARECIMENTO × votos por eleitor` | comparecimento e votos totalizados | ok em todas as linhas, com 2 votos por eleitor para senador em 2026 (6.106 linhas em que os votos são exatamente o dobro do comparecimento). Correção: o relatório anterior dizia que comparecimento e votos eram iguais em todas as linhas, o que não vale para o Senado de 2026 |
 | `QT_APTOS = comparecimento + abstenções + eleitores de seções não instaladas` | `QT_ELEITORES_SECOES_NAO_INSTALADAS` é contagem própria | ok; as 89 linhas de 2022 e 80 de 2026 em que aptos não fecham só com comparecimento e abstenções têm diferença exatamente igual a essa contagem, quase todas no exterior (UF "ZZ") |
 
 Conclusão sobre os anulados: o dicionário os descreve como parcelas distintas (anulados pela situação jurídica, anulados sub judice com recurso pendente, anulados em apuração separada), e os dados confirmam que se somam sem dupla contagem. Anulados e anulados sub judice aparecem juntos na mesma linha em parte das zonas (706 em 2022, 140 em 2024, 1.563 em 2026), o que é compatível com parcelas aditivas, porque a soma fecha. A "zona divergente de 2022" registrada antes era uma linha do filtro inicial (governador, 1º turno); no arquivo completo são 89 linhas, todas explicadas por seções não instaladas.
 
 Observação: os arquivos de 2022 e 2026 incluem votação no exterior (UF "ZZ", só para presidente). Não pertence a nenhum município e precisa de tratamento próprio nos totais nacionais.
 
-## 3. Divergências com os documentos, para decisão do autor
+## 3. Divergências decididas
 
-1. **Número de municípios.** Os documentos dizem 5.570. As fontes oficiais coletadas têm 5.571 (inclui Boa Esperança do Norte). Têm eleição municipal 5.569. Afeta `regras-e-mundo.md` 4, `motor-eleitoral.md` 9, `roadmap.md` 2 e os testes 70 e 86.
-2. **Votos anulados.** `motor-eleitoral.md` 4.2.1 define `comparecimento = validos + brancos + nulos`. Os dados oficiais têm uma quarta parcela: votos anulados (inclusive anulados sub judice e em apuração separada). Sem ela, a conta não fecha em parte dos municípios.
-3. **Resultados de 2026 já publicados.** O jogo começa em 01/01/2026 e simula a eleição de 2026. Os resultados reais de 2026 estão disponíveis (arquivo coletado). Pela regra de `roadmap.md` 4, só podem entrar em `calibration-targets.json`, nunca no mundo inicial. O snapshot de eleitorado de 2026 previsto na D52 pode vir dos aptos de 2026; falta decidir se o uso do eleitorado de 2026 no mundo inicial é aceitável, já que é dado posterior à data de início.
+| Divergência | Decisão |
+|---|---|
+| 5.570 nos documentos, 5.571 nas fontes, 5.569 com eleição municipal | D58: três conjuntos distintos (cadastro, eleição municipal, unidades estatísticas) |
+| Identidade do comparecimento sem os votos anulados | D59: identidade com as seis parcelas do TSE e votos por eleitor |
+| Resultados e eleitorado de 2026 | D60: corte em 31/12/2025 para o mundo inicial; 2026 só para calibração |
+| Eleições suplementares nas vagas | D61: separação por `CD_ELEICAO` |
+
+O script `tools/dados/validar_estatisticos.py` reproduz todas as verificações da seção 2.1, linha a linha, nos três anos.
 
 ## 4. Pendências da coleta
 - Definir quais arquivos grandes serão necessários e quando baixá-los.
+- Verificar se existe retrato oficial do eleitorado publicado até 31/12/2025 (D60). Não presumir que exista. Os detalhes de 2022 e 2024 têm aptos por município das respectivas eleições.
 - O FEFC e o tempo de TV não foram procurados no catálogo de dados abertos; são frente legal (L4, L8).
