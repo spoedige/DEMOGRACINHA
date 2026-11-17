@@ -1,0 +1,16 @@
+HTTP/1.1 200 Connection Established
+
+HTTP/2 200 
+accept-ranges: bytes
+access-control-allow-origin: *
+content-type: application/zip
+access-control-allow-headers: *
+access-control-allow-methods: POST, GET, OPTIONS, DELETE
+access-control-allow-origin: *
+last-modified: Fri, 12 Sep 2025 16:47:08 GMT
+etag: "13e249dd-63e9d6787bb00"
+content-length: 333597149
+cache-control: max-age=43200
+date: Tue, 17 Nov 2026 17:48:08 GMT
+alt-svc: h3=":443"; ma=93600
+

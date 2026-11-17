@@ -17,6 +17,7 @@ Arquivos em `data/raw/tse/grandes/` (acima de 10 MB) não são versionados no gi
 | `tse/votacao_partido_munzona_2024.zip` | TSE | Resultados 2024: votação em partido por município e zona | https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_partido_munzona/votacao_partido_munzona_2024.zip | 2026-11-17T13:08:28Z | Tue, 17 Nov 2026 12:26:09 GMT | ZIP com CSV (latin-1, ;) | 6135093 | `17b3618951de5f51e605914503744dd16eb0494993c20ef25aa1d0aa0f76a89a` | sim |
 | `tse/grandes/votacao_partido_munzona_2022.zip` | TSE | Resultados 2022: votação em partido por município e zona | https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_partido_munzona/votacao_partido_munzona_2022.zip | 2026-11-17T13:08:55Z | Tue, 17 Nov 2026 06:24:29 GMT | ZIP com CSV (latin-1, ;) | 26276253 | `c49c0706d73c646803af26d7415fc4d63403f6487bf0897302585850d97fa6af` | não |
 | `tse/grandes/consulta_cand_2024.zip` | TSE | Candidatos 2024 | https://cdn.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2024.zip | 2026-11-17T13:08:57Z | Tue, 17 Nov 2026 12:26:25 GMT | ZIP com CSV (latin-1, ;) | 64653991 | `14e33e2bd85bd01427dc6b8db4f039874235a13746ea3493c021b6e845df1381` | não |
+| `tse/grandes/perfil_eleitorado_2024.zip` | TSE | Eleitorado 2024: perfil do eleitorado | https://cdn.tse.jus.br/estatistica/sead/odsele/perfil_eleitorado/perfil_eleitorado_2024.zip | 2026-11-17T17:55:22Z | Fri, 12 Sep 2025 16:47:08 GMT | ZIP com CSV (latin-1, ;) | 333597149 | `fd6703bdaa89aba023b3a21fc1dccede94aa315b985d91011ad5c2e971819de6` | não |
 
 ## Legislação: Senado Federal (metadados)
 
@@ -36,3 +37,20 @@ Fichas da API de dados abertos de legislação do Senado. Contêm identificaçã
 | `legislacao/normas/lei_9504_1997.html` | Senado Federal (normas.leg.br) | Lei 9.504/1997 | https://normas.leg.br/?urn=urn:lex:br:federal:lei:1997-09-30;9504 | 2026-11-17T13:21:34Z | Tue, 10 Nov 2026 23:08:26 GMT | 200; casca da aplicação web, sem o texto da norma; idêntica para as duas URNs | 66002 | `62b0cfdac0b029f66efc6472052103baf9a0f148ade44f56d3e273f02418197d` |
 | `legislacao/normas/constituicao_1988.html` | Senado Federal (normas.leg.br) | Constituição de 1988 | https://normas.leg.br/?urn=urn:lex:br:federal:constituicao:1988-10-05;1988 | 2026-11-17T13:21:36Z | Tue, 10 Nov 2026 23:08:26 GMT | 200; casca da aplicação web, sem o texto da norma; idêntica para as duas URNs | 66002 | `62b0cfdac0b029f66efc6472052103baf9a0f148ade44f56d3e273f02418197d` |
 | `legislacao/camara/busca_lei_9504_1997.headers.txt` (só cabeçalhos) | Câmara dos Deputados | busca da Lei 9.504/1997 | https://www2.camara.leg.br/busca-portal?contextoBusca=BuscaLegislacao&q=lei+9504+1997 | 2026-11-17T13:21:56Z | não informado | 404, sem redirecionamento | não guardado | não aplicável |
+
+## Admissibilidade temporal para o mundo inicial (D60 revisada)
+
+| Arquivo | Data de referência | Versão disponível | Evidência da versão | Estado |
+|---|---|---|---|---|
+| `ibge/municipios.json` | cadastro vigente na consulta | sem `Last-Modified` | nenhuma | `admissibilidade_temporal_nao_comprovada` |
+| `tse/municipio_tse_ibge.zip` | tabela vigente | 16/11/2026 (`DT_GERACAO`) | cabeçalho e campo de geração | `admissibilidade_temporal_nao_comprovada` |
+| `tse/detalhe_votacao_munzona_2022.zip` | eleição de 2022 | novembro de 2026 | `Last-Modified` | `admissibilidade_temporal_nao_comprovada` |
+| `tse/detalhe_votacao_munzona_2024.zip` | eleição de 2024 | novembro de 2026 | `Last-Modified` | `admissibilidade_temporal_nao_comprovada` para o arquivo; o campo `QT_APTOS` da eleição ordinária (`CD_ELEICAO = 619`, vereador, 1º turno) é `admissivel_por_equivalencia`: igual, município a município, ao eleitorado do perfil de 2024 (versão de 12/09/2025) |
+| `tse/detalhe_votacao_munzona_2026.zip` | eleição de 2026 | novembro de 2026 | `Last-Modified` | `somente_calibracao` |
+| `tse/consulta_vagas_2022.zip`, `tse/consulta_vagas_2024.zip` | eleições de 2022 e 2024 | novembro de 2026 | `Last-Modified` | `admissibilidade_temporal_nao_comprovada` |
+| `tse/consulta_cand_2022.zip`, `tse/grandes/consulta_cand_2024.zip` | eleições de 2022 e 2024 | novembro de 2026 | `Last-Modified` | `admissibilidade_temporal_nao_comprovada` |
+| `tse/votacao_partido_munzona_2022.zip`, `tse/votacao_partido_munzona_2024.zip` | eleições de 2022 e 2024 | novembro de 2026 | `Last-Modified` | `admissibilidade_temporal_nao_comprovada` |
+| `tse/grandes/perfil_eleitorado_2024.zip` | cadastro da eleição de 2024 (`AA_ELEICAO = 2024`) | 12/09/2025 | `Last-Modified`, carimbo interno dos CSVs (12/09/2025) e `DT_GERACAO = 12/09/2025` em todas as 17.880.630 linhas | `admissivel` |
+| `legislacao/...` | normas | ver seções acima | ver seções acima | fora do escopo do mundo inicial estatístico |
+
+Comprovação de equivalência das versões regeneradas: não há versão anterior acessível pelos hosts aprovados. Arquivo histórico de terceiros (por exemplo, serviço de arquivamento da web) exigiria host novo e aprovação.

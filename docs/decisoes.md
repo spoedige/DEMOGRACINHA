@@ -246,3 +246,18 @@ D50 inalterada.
 | D60 | Mundo inicial só com dados publicados até 31/12/2025; dados de 2026 só para calibração. Consequência: a regra do conjunto de agentes (D52) passa a usar o último retrato de eleitorado até essa data, em vez do snapshot de 2026 | `regras-e-mundo.md` 4; `roadmap.md` 4 |
 | D61 | Eleições ordinária e suplementares separadas por `CD_ELEICAO`; suplementares mantidas nos brutos e fora dos parâmetros da ordinária | `roadmap.md` 4; `coleta-estatistica.md` 2 |
 | D62 | No MVP, as três categorias de votos anulados são parâmetros históricos fixos por unidade eleitoral e tipo de eleição, da última eleição ordinária anterior a 31/12/2025 (municipal: 2024; geral: 2022), calculadas sobre o total de votos possíveis com `votosPorEleitor`, mantidas separadas e não atribuídas a candidatos. Ausência de referência tem fallback explícito (taxa da UF, marcada como estimativa) ou lacuna registrada, nunca zero. Relação com a situação jurídica das candidaturas: Fase 2 | `motor-eleitoral.md` 4.2.1; teste 97 |
+
+## D60 revisada: corte temporal e admissibilidade das fontes, 17/11/2026
+
+O mundo inicial da carreira representa as informações publicamente disponíveis até 31/12/2025. A admissibilidade de cada fonte depende de dois critérios simultâneos:
+
+1. **Data de referência:** o fenômeno, período ou situação representada é anterior ou igual a 31/12/2025.
+2. **Disponibilidade pública:** a informação utilizada foi publicada ou disponibilizada até 31/12/2025, naquela versão ou em conteúdo comprovadamente equivalente.
+
+A data de download não determina a admissibilidade. Arquivos obtidos depois podem ser usados quando houver comprovação de que o conteúdo é idêntico ao de uma versão disponibilizada até a data de corte. Arquivos históricos regenerados ou atualizados após 31/12/2025 não são automaticamente admissíveis, mesmo quando representam eleições ou fenômenos anteriores ao corte; sem comprovação de equivalência, recebem o estado `admissibilidade_temporal_nao_comprovada` e não alimentam o mundo inicial.
+
+O manifesto registra, sempre que disponíveis: data de referência, data de publicação ou atualização da versão, data de acesso, URL, órgão, formato e SHA-256. A data de criação de um recurso no catálogo não comprova a data de cada versão.
+
+Resultados eleitorais de 2026 servem só para calibração e validação posterior, nunca para o estado inicial.
+
+Estados de admissibilidade: `admissivel`, `admissivel_por_equivalencia` (com o campo e a fonte de comparação indicados), `admissibilidade_temporal_nao_comprovada`, `inadmissivel` (referência ou publicação posterior ao corte), `somente_calibracao`.

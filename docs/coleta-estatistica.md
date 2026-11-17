@@ -89,3 +89,13 @@ Consulta ao catálogo de dados abertos do TSE (API CKAN), sem download dos arqui
 - Candidato mais próximo do corte: perfil do eleitorado de 2024, cuja versão atual do arquivo é de 12/09/2025. Não foi baixado.
 
 Questão para o autor: o corte da D60 se aplica à data de referência do dado ou à data de publicação da versão do arquivo? Os arquivos de detalhe da apuração de 2022 e 2024 já coletados se referem a eleições anteriores ao corte, mas as versões baixadas têm `Last-Modified` de novembro de 2026 (o TSE regera os arquivos). Pela leitura estrita, seriam versões posteriores ao corte, mesmo com conteúdo de 2022 e 2024.
+
+### 5.1 Perfil do eleitorado de 2024: download e verificação, 17/11/2026
+
+- Baixado (cerca de 318 MB, fora do git), registrado no manifesto com hash.
+- Evidência da versão: `Last-Modified` de 12/09/2025 16:47 GMT; carimbo interno dos 27 CSVs de 12/09/2025; campo `DT_GERACAO` igual a 12/09/2025 em todas as 17.880.630 linhas do arquivo nacional e dos estaduais. `AA_ELEICAO` igual a 2024 em todas.
+- Estrutura: 26 arquivos por UF e um arquivo nacional (`BRASIL`) que repete todas as linhas; somar todos os arquivos conta o eleitorado duas vezes. O tratamento deve usar só o nacional ou só os estaduais.
+- Campos: município pelo código TSE, zona, gênero, estado civil, faixa etária, escolaridade, raça e cor, identidade de gênero, quilombola, intérprete de Libras e contagens de eleitores (total, biometria, deficiência, nome social).
+- Cobertura: 5.569 municípios, todos com correspondência na tabela oficial TSE x IBGE. Ausentes Brasília e Fernando de Noronha, que não tiveram eleição municipal em 2024.
+- Conteúdo de 2024 sem informação posterior: a contagem de eleitores por município é igual, nos 5.569 municípios, aos aptos de vereador da eleição ordinária de 2024 (total 155.912.680 nos dois).
+- Estado: `admissivel` (D60 revisada). Ainda não incorporado ao mundo inicial.

@@ -86,7 +86,7 @@ Federação atua como unidade única em todas as eleições e no Legislativo, co
   - **Unidades estatísticas eleitorais:** variáveis por eleição; incluem Fernando de Noronha e o exterior nas eleições gerais. O exterior não é associado a nenhum município.
 - `municipios.json` compacto (meta de cerca de 380 KB), com número oficial de vagas de vereador da eleição ordinária (D61).
 - Cada um dos 5.569 municípios com eleição própria elege prefeito e câmara (`motor-eleitoral.md` 9).
-- Corte temporal do mundo inicial (D60): só dados publicados até 31/12/2025. Resultados e eleitorado de 2026 ficam restritos à calibração.
+- Corte temporal do mundo inicial (D60, revisada): o dado precisa ter data de referência e disponibilidade pública, naquela versão ou em conteúdo comprovadamente equivalente, até 31/12/2025. Data de download não conta. Resultados e eleitorado de 2026 ficam restritos à calibração. Critério completo em `decisoes.md`.
 - **Conjunto de agentes (fixo durante a carreira, D52):** município inicial mais os nove maiores eleitorados da UF inicial, pelo último retrato oficial de eleitorado disponível até 31/12/2025 (D60; disponibilidade a verificar na 1B). Se o município inicial estiver entre os nove maiores, entra o próximo da lista. Desempate pelo código IBGE. Agentes individuais e conjuntura local existem só nesse conjunto.
 - **Conjunto da base (dinâmico, até 10, D52):** inclui o município inicial e os municípios onde o personagem constrói base, em qualquer UF. Representa a base política do personagem, com ou sem agentes, e não altera o conjunto de agentes.
 - Lacunas registradas: (1) regra quando o conjunto da base está cheio; (2) UFs com menos de 10 municípios (o DF tem um só): o conjunto de agentes fica menor, sem regra de complemento definida.
