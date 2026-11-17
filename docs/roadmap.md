@@ -23,7 +23,7 @@ Também: credibilidade sem duplicação (P5), influência como dimensão própri
 
 ## 3. Fase 2
 
-Detalhamento da suplência (ordem, suplentes individualizados do Senado, sucessão definitiva; MVP tem suplência mínima, D55); sucessão e apadrinhamento; desenvolvimento detalhado das 6 dimensões e reputação por atividade; ambição dinâmica e oportunidades que cruzam mandatos; poder entre eleições completo; legado dinâmico; conformidade eleitoral ampliada (prestação de contas, limites de gasto); facções partidárias (P2); posições partidárias secundárias (secretário-geral, tesoureiro, coordenador de campanha, D37); modelo de comparecimento sensível à conjuntura; coalizão de governo completa (P13); hipótese H1 de palanque presidencial, se aprovada; membros individuais, disputa interna e sucessão do grupo político; parlamentares individuais. Ranking global fora do MVP.
+Detalhamento da suplência (ordem, suplentes individualizados do Senado, sucessão definitiva; MVP tem suplência mínima, D55); sucessão e apadrinhamento; desenvolvimento detalhado das 6 dimensões e reputação por atividade; ambição dinâmica e oportunidades que cruzam mandatos; poder entre eleições completo; legado dinâmico; conformidade eleitoral ampliada (prestação de contas, limites de gasto); facções partidárias (P2); posições partidárias secundárias (secretário-geral, tesoureiro, coordenador de campanha, D37); modelo de comparecimento sensível à conjuntura; relação entre situação jurídica das candidaturas e votos anulados (D62); coalizão de governo completa (P13); hipótese H1 de palanque presidencial, se aprovada; membros individuais, disputa interna e sucessão do grupo político; parlamentares individuais. Ranking global fora do MVP.
 
 ## 4. Dados da etapa 1B
 
@@ -150,6 +150,7 @@ Rede: antes de coletar, testar IBGE e TSE com `curl -sI`. Em 403, parar, registr
 94. Nenhum dado com data de publicação posterior a 31/12/2025 entra no mundo inicial (D60); dados de 2026 só aparecem em `calibration-targets.json`.
 95. Parâmetros da eleição ordinária de 2024 vêm só de `CD_ELEICAO = 619`; eleições suplementares não alteram vagas nem taxas (D61).
 96. O exterior não é atribuído a nenhum município; totais nacionais o incluem como unidade própria (D58).
+97. Parcelas anuladas (D62): taxas vêm da eleição ordinária de referência do mesmo tipo, sobre `comparecimento × votosPorEleitor`; ficam separadas e fora dos candidatos; unidade sem referência usa a taxa da UF marcada como estimativa ou registra lacuna; nenhuma taxa ausente vira zero; situação jurídica simulada não as altera.
 
 ## 7. Itens a confirmar
 

@@ -134,7 +134,13 @@ Definições (D59, categorias do TSE, `coleta-estatistica.md` 2.1):
 - `anuladosApuracaoSeparada`: votos de urna sub judice, ainda não válidos nem nulos.
 - `votosPorEleitor`: 1, exceto Senado, em que é o número de vagas da UF na eleição: 2 nas renovações de dois terços (2018, 2026, 2034...), 1 nas de um terço (2022, 2030...). Regra a confirmar (L19).
 - O motor pode agregar `anuladosTotal = anulados + anuladosSubJudice + anuladosApuracaoSeparada`, desde que a transformação seja explícita e reproduza a identidade acima.
-Grandezas distintas. No MVP, comparecimento, abstenção, brancos e nulos são parâmetros fixos por unidade, vindos dos dados de base da 1B (a confirmar fonte). O tratamento de `anulados`, `anuladosSubJudice` e `anuladosApuracaoSeparada` nos resultados simulados está pendente de decisão (D59); não se presume que sejam zero. **Não respondem dinamicamente à conjuntura, às campanhas nem a eventos nesta fase.** A repartição 4.2 opera só sobre `validos`. Modelo dinâmico de comparecimento e votos inválidos: Fase 2. No 2º turno (6.3), a matriz de destinos usa fatores fixos pelo mesmo motivo.
+Grandezas distintas. No MVP, comparecimento, abstenção, brancos e nulos são parâmetros fixos por unidade, vindos dos dados de base da 1B (a confirmar fonte). Tratamento das três parcelas anuladas no MVP (D62):
+- Parâmetros históricos fixos por unidade eleitoral e tipo de eleição, da última eleição ordinária anterior a 31/12/2025 (D60): eleição municipal usa 2024; eleição geral usa 2022.
+- Calculados como taxa sobre o total de votos possíveis: `taxa_x = votos_x ÷ (comparecimento × votosPorEleitor)`.
+- As três categorias ficam separadas, não são atribuídas a candidatos e entram como votos não válidos próprios; o restante vai a válidos, brancos e nulos, com arredondamento determinístico e soma exata (4.3).
+- Sem referência histórica na unidade: taxa da UF no mesmo tipo de eleição, marcada como estimativa. Sem isso, a lacuna é registrada. Nunca se presume zero.
+- A situação jurídica de candidaturas simuladas não altera essas taxas; essa relação fica para a Fase 2.
+- Limitação conhecida: taxa fixa não reproduz a causa jurídica de cada anulação. **Não respondem dinamicamente à conjuntura, às campanhas nem a eventos nesta fase.** A repartição 4.2 opera só sobre `validos`. Modelo dinâmico de comparecimento e votos inválidos: Fase 2. No 2º turno (6.3), a matriz de destinos usa fatores fixos pelo mesmo motivo.
 
 ### 4.3 Arredondamento e soma exata
 Votos são inteiros. Usa-se o método do maior resto: piso de cada `votos_c`, e as unidades restantes vão aos maiores restos, com desempate por id. A soma distribuída é sempre igual a `votosValidos`.

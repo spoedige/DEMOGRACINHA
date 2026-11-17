@@ -32,8 +32,9 @@ Script: `tools/dados/validar_estatisticos.py`. Só lê os brutos e imprime o rel
 | Tabela oficial TSE x IBGE cobre todos os códigos da API do IBGE | ok, 5.571 de 5.571, sem UF divergente |
 | Todo código TSE presente nos resultados de 2022, 2024 e 2026 tem correspondência oficial | ok |
 | `aptos = comparecimento + abstenções + eleitores de seções não instaladas` por zona | ok em todas as linhas dos três anos (ver 2.1) |
-| `comparecimento = válidos + brancos + nulos + anulados` por município | ok em 2022, 2024 e 2026 |
-| `comparecimento = válidos + brancos + nulos`, sem anulados | falha em 1.240 municípios (vereador 2024), 264 (prefeito 2024), 1.633 (governador 2022) e 1.398 (governador 2026) |
+| Identidade da D59: `comparecimento × votos por eleitor = válidos + brancos + nulos (com técnicos) + anulados + anulados sub judice + anulados em apuração separada`, por linha | ok em todas as linhas de 2022, 2024 e 2026 (detalhe em 2.1) |
+
+Nota: a soma só de válidos, brancos e nulos não é identidade do TSE; ela deixa de fora as três parcelas anuladas, que aparecem em parte dos municípios. Por isso não é tratada como verificação.
 | Municípios com resultado por ano | 2022: 5.570; 2024: 5.569; 2026: 5.571 |
 
 Explicação das contagens por ano, com códigos verificados na tabela oficial:
@@ -71,5 +72,20 @@ O script `tools/dados/validar_estatisticos.py` reproduz todas as verificações 
 
 ## 4. Pendências da coleta
 - Definir quais arquivos grandes serão necessários e quando baixá-los.
-- Verificar se existe retrato oficial do eleitorado publicado até 31/12/2025 (D60). Não presumir que exista. Os detalhes de 2022 e 2024 têm aptos por município das respectivas eleições.
+- Retrato do eleitorado até 31/12/2025 (D60): investigado em 17/11/2026, ver seção 5.
 - O FEFC e o tempo de TV não foram procurados no catálogo de dados abertos; são frente legal (L4, L8).
+
+## 5. Retrato do eleitorado para o corte de 31/12/2025 (D60)
+
+Consulta ao catálogo de dados abertos do TSE (API CKAN), sem download dos arquivos grandes.
+
+| Conjunto | Recurso criado no catálogo | `Last-Modified` do arquivo | Tamanho | Situação frente ao corte |
+|---|---|---|---|---|
+| `eleitorado-2024` (perfil do eleitorado 2024) | 18/07/2024 | 12/09/2025 | cerca de 318 MB | data de referência e versão do arquivo anteriores ao corte |
+| `eleitorado-atual` | 25/08/2021 | 04/11/2026 | cerca de 81 MB | versão posterior ao corte; conteúdo é o cadastro vigente, sem data fixa; não atende |
+| `eleitorado-2026` | 20/07/2026 | (coletado em julho de 2026) | cerca de 390 MB | posterior ao corte; só calibração |
+
+- Não há conjunto de eleitorado de 2025 no catálogo. A busca por "eleitorado 2025" só retorna transferências de eleitorado e requerimentos de alistamento, que não são retrato do cadastro.
+- Candidato mais próximo do corte: perfil do eleitorado de 2024, cuja versão atual do arquivo é de 12/09/2025. Não foi baixado.
+
+Questão para o autor: o corte da D60 se aplica à data de referência do dado ou à data de publicação da versão do arquivo? Os arquivos de detalhe da apuração de 2022 e 2024 já coletados se referem a eleições anteriores ao corte, mas as versões baixadas têm `Last-Modified` de novembro de 2026 (o TSE regera os arquivos). Pela leitura estrita, seriam versões posteriores ao corte, mesmo com conteúdo de 2022 e 2024.
