@@ -16,13 +16,28 @@ Estrutura mínima:
 - Existem individualmente só no município do jogador, nas capitais e em cidades com mais de 200 mil eleitores. No resto, o mundo é estatístico.
 - Rede de agentes alimenta convites, rivalidades, janela partidária e escândalos.
 
+## 2.1 Conjuntura autônoma (MVP simplificado, P9)
+
+Poucas variáveis de mundo, atualizadas a cada janela (incluindo as automáticas), pelo fluxo de RNG de mundo, sem depender do jogador:
+
+| Variável | Escopo |
+|---|---|
+| Aprovação do governo | federal e estadual da UF do jogador |
+| Polarização | nacional |
+| Clima econômico percebido | nacional |
+| Tensão institucional | nacional |
+
+- Evolução: tendência mais ruído, com reversão lenta à média (parâmetros a calibrar).
+- Uso: modula o fator `conjuntura` do motor, a coesão das bases parlamentares, a vantagem de partido pequeno e os gatilhos de crises e Pontos de Inflexão.
+- O jogador influencia pouco e só no escopo do próprio cargo.
+
 ## 3. Crises e escândalos
 
-Livres da regra de acoplamento: até 3 variáveis, até 4 opções, sempre com uma saída de contenção. Tipos iniciais: crise de gestão, denúncia de imprensa, racha partidário, crise fiscal, desastre natural, crise de aliado.
+Livres da regra de acoplamento: até 3 variáveis, até 4 opções, sempre com uma saída de contenção. Tipos iniciais: crise de gestão, denúncia de imprensa, racha partidário, crise fiscal, desastre natural, crise de aliado, perda de base parlamentar, retaliação por compromisso rompido.
 
 ## 4. Pontos de Inflexão
 
-- Raros e condicionais, oferecidos a quem está posicionado.
+- Raros e condicionais, oferecidos a quem está posicionado. O gatilho vem de limiares da conjuntura (seção 2.1), não de sorteio puro.
 - Cadeia de 2 a 3 decisões arriscadas, sempre com saída segura que mantém o platô.
 - Acerto concede **Momento**: forte efeito temporário em notoriedade e oportunidades, decaindo em 1 a 2 ciclos. Nunca é desbloqueio permanente.
 

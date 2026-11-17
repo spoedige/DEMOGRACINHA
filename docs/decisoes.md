@@ -70,3 +70,31 @@ Alcance institucional, influência política, realizações, reputação e legad
 ## D5. Diretriz, 17/11/2026
 
 Não iniciar o motor completo nem expandir o MVP antes da revisão integrada da arquitetura. Preservar a identidade própria: nenhum equivalente político de mecânica esportiva só para reproduzir a referência.
+
+## D6. Grupo político (P1), 17/11/2026
+
+**Decisão:** MVP simplificado. Representado por indicadores agregados (influência, relações, presença institucional). Atravessa partidos. Mantém influência fora do cargo. Membros individuais, disputa interna, facções e sucessão detalhada: Fase 2.
+
+**Incorporado em:** `carreira-e-poder.md` 10.1 e 12; `GDD.md` pilar 7.
+
+## D7. Base parlamentar e governabilidade (P4), 17/11/2026
+
+**Decisão:** MVP simplificado. Por casa legislativa, blocos de partido ou federação com cadeiras, alinhamento e coesão; custo de manutenção; perda de apoio durante o mandato. Governabilidade não equivale ao percentual de cadeiras. Sem parlamentares individuais.
+
+**Incorporado em:** `motor-eleitoral.md` 8.
+
+## D1 complemento, 17/11/2026
+
+O potencial pode aumentar a disponibilidade de oportunidades de desenvolvimento e formação. Não pode aumentar quantidade ou qualidade de oportunidades eleitorais, candidaturas competitivas, alianças ou recursos de campanha.
+
+**Incorporado em:** `carreira-e-poder.md` 3 e 8; `motor-eleitoral.md` 3 e 4; `roadmap.md` teste 26.
+
+## Revisão integrada, 17/11/2026
+
+D1 a D7 incorporadas a `GDD.md`, `docs/motor-eleitoral.md`, `docs/carreira-e-poder.md`, `docs/eventos-e-risco.md`, `docs/regras-e-mundo.md`, `docs/roadmap.md` e `titulos.md`.
+
+Pendências de arquitetura para a revisão do MVP:
+1. P7 (nomeações) segue sem classificação; sem ela, presença institucional do grupo conta só mandatos.
+2. P6 depende de contrapartes agregadas; agentes individuais continuam restritos aos municípios selecionados.
+3. Estado salvo cresce com grupo, base, compromissos e bases parlamentares; revisar o formato do delta.
+4. Ritmo Express resolve automaticamente janelas com compromissos vencendo; a opção segura precisa definir se cumpre ou rompe (proposta: cumpre se houver recurso).

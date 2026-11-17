@@ -26,7 +26,20 @@ Popularidade, notoriedade e rejeição em 3 escopos (local, estadual, nacional).
 Caixa do partido pertence aos agentes do partido, não ao jogador.
 
 ### Três relações
-Cúpula (direção partidária), Bancada (pares no Legislativo), Executivo (governos).
+Cúpula (direção partidária), Bancada (pares no Legislativo), Executivo (vínculo com governos: aliado, independente ou oposição). Relação com Executivo é relacional e vale para todos; não se confunde com governabilidade.
+
+### Dimensões institucionais e reputacionais (decisão D3)
+| Conceito | Natureza | Exibição | Quem tem |
+|---|---|---|---|
+| Relação com Executivo | relacional | número | todos |
+| Governabilidade | institucional, contextual | faixa | ocupante de cargo executivo |
+| Credibilidade | reputacional (confiança dos atores políticos) | faixa | todos |
+| Capital político | derivado | oculto | todos |
+
+- **Credibilidade** sobe com compromissos cumpridos e cai com rompidos. É distinta de popularidade (eleitor) e de reputação histórica (identidade).
+- **Governabilidade**: ver `motor-eleitoral.md` seção 8.
+- **Capital político** não é estado guardado. É calculado quando necessário:
+  `capitalPolitico = f(relações, influência do grupo, credibilidade, reputação, base territorial)` (pesos a calibrar). Usado para definir convites e força em negociação.
 
 ### Estado adicional
 Tags, Arquivo Vermelho, eventos atrasados, `mandatosConsecutivos`, saúde gradual (sem game over automático), status jurídico (ver `eventos-e-risco.md`).
@@ -45,8 +58,9 @@ Tags, Arquivo Vermelho, eventos atrasados, `mandatosConsecutivos`, saúde gradua
 ## 3. Potencial Político (oculto, 0 a 100)
 
 - Sorteado pela semente, distribuição concentrada no meio (hipótese: normal truncada, média 50, desvio 15; calibrar). Origem e dificuldade deslocam a média.
-- É o teto esperado com escolhas e sorte medianas, não limite rígido.
-- Efeitos limitados: velocidade de experiência; ganho de popularidade e notoriedade por exposição; modificador eleitoral estreito (ex.: 0,85 a 1,15).
+- É capacidade de desenvolvimento, não teto de carreira. O alcance real depende do espaço político (partido, território, grupo, conjuntura).
+- Efeitos (decisão D1): velocidade de aprendizado e de ganho de experiência; evolução das aptidões; recuperação e adaptação após derrotas e crises; disponibilidade de oportunidades de desenvolvimento e formação (cursos, mentorias, funções técnicas, relatorias de aprendizado).
+- Proibido: o potencial não modifica urna, não aumenta quantidade ou qualidade de oportunidades eleitorais, candidaturas competitivas, alianças ou recursos de campanha.
 - Mutável: feitos e fracassos extremos movem 1 a 5 pontos, com teto acumulado na carreira (calibrar, hipótese ±10).
 - Descoberta: número nunca exibido. Após 2 a 3 eleições aparecem faixas qualitativas. Balanço a cada 4 anos compara a posição com a faixa inferida.
 
@@ -72,14 +86,15 @@ Tags, Arquivo Vermelho, eventos atrasados, `mandatosConsecutivos`, saúde gradua
 
 - Sem gate. A candidatura emerge de notoriedade nacional, indicação partidária, coligação competitiva, recursos, rejeição administrável, apoio territorial e relações.
 - Trajetórias: carreira legislativa, executivo (prefeito, governador), articulador de bastidor (liderança, vice), fenômeno eleitoral, ascensão improvável.
-- Pode chegar e perder. Metas (hipóteses): Presidência em 1 a 3% das carreiras; potencial alto multiplica a chance sem garantir; potencial baixo mantém chance pequena e positiva.
+- Pode chegar e perder. Meta (hipótese): Presidência em 1 a 3% das carreiras. Como o potencial não age na urna, a diferença entre faixas de potencial deve emergir só do desenvolvimento mais rápido; é medida na calibração, não imposta.
 - Outros grandes finais: senador influente, governador popular, líder partidário.
 
 ## 8. Ambição, oportunidades e identidade
 
 - Objetivos declarados e emergentes, mutáveis, nunca obrigatórios. Orientam eventos, janelas automáticas e o veredito final.
 - Oportunidades têm prazo, dependem de talento, experiência, relações, notoriedade, histórico e posição. Podem ser aceitas, recusadas ou perdidas. Algumas nascem de decisões de anos antes.
-- Capital político (oculto): confiança e credibilidade acumuladas. Define convites e negociações.
+- Capital político (oculto, derivado): ver seção 1. Define convites e negociações.
+- Oportunidades eleitorais e de aliança dependem de posição, relações, grupo, base e conjuntura, nunca do potencial.
 - Reputação histórica: articulador, gestor, populista, reformista, oportunista, conciliador. Tag que influencia relações.
 
 ## 9. Vice
@@ -96,14 +111,68 @@ Tags, Arquivo Vermelho, eventos atrasados, `mandatosConsecutivos`, saúde gradua
 Áreas: partido por dentro, Legislativo, emendas, Executivo, federalismo, instituições externas, eleitorado, crises, conformidade eleitoral.
 
 - Capital de Entrega é a moeda de governar e legislar: emendas, cargos, apoio a projetos.
-- Legislador: votações, relatorias, comissões, liderança, emendas.
-- Executivo: entregas, nomeações, relação com Legislativo e outros entes.
+- Legislador: votações, relatorias, comissões, liderança, emendas. Pode integrar a base ou a oposição do governo correspondente.
+- Executivo: entregas, nomeações, formação e manutenção da base parlamentar (governabilidade).
 - Conformidade no MVP: candidatura laranja, desincompatibilização, registro e impugnação. Prestação de contas e limite de gastos ficam para a Fase 2.
+
+### 10.1 Grupo político (MVP simplificado, P1)
+
+Conjunto de aliados que orbitam o personagem e atravessa partidos. Não é partido nem facção. Permite que a influência sobreviva fora do cargo.
+
+Representação agregada no MVP:
+| Variável | Significado |
+|---|---|
+| influência | peso do grupo nas decisões em que atua |
+| relações | coesão interna e lealdade média ao personagem |
+| presença institucional | contagem de posições ocupadas por membros (mandatos e nomeações) por escopo |
+| papel do personagem | líder, integrante |
+
+- Cresce quando o personagem elege aliados, indica nomeações e cumpre compromissos com o grupo. Decai sem entregas, com compromissos rompidos e com longos períodos sem posição.
+- O personagem pode liderar um grupo próprio ou integrar o de outro líder (agente). Integrar dá acesso; liderar dá influência e custo.
+- Sem membros individuais, sem disputa interna, sem sucessão detalhada (Fase 2).
+
+### 10.2 Base territorial (MVP simplificado, P3)
+
+Agregada por município, limitada aos municípios onde o personagem atua (teto a calibrar, hipótese 10), mais um agregado regional para o restante da UF.
+
+```
+base[municipio] = { forca, custoManutencao, apoioLocal (prefeito e vereadores aliados, agregado) }
+```
+
+- Cresce com presença, entregas (Capital de Entrega dirigido) e aliados eleitos em 2028 e 2032.
+- Decai sem manutenção a cada ciclo.
+- Alimenta Máquina no motor eleitoral; transferência continua probabilística.
+
+### 10.3 Compromissos com atores (MVP simplificado, P6)
+
+```
+compromisso = { tipo, contraparte, prazo, beneficioRecebido, custoDeCumprir, custoDeRomper, estado }
+```
+
+- Tipos iniciais: apoio eleitoral, cargo ou espaço, voto em proposta, repasse de recurso (lista fechada a calibrar).
+- Contraparte agregada: partido, federação, governo, grupo político ou liderança local. Sem negociação aberta: o compromisso nasce de uma carta.
+- Limite de compromissos ativos (hipótese 5).
+- No vencimento: cumprido (credibilidade sobe, relação com a contraparte sobe) ou rompido (credibilidade cai, contraparte guarda memória e pode retaliar via evento atrasado).
+- Compromissos podem atravessar mandatos.
 
 ## 11. Fase sem cargo
 
 Sabático, mídia, livro, aulas, curso, negócio. Cada opção troca recursos e indicadores (exemplo: livro sobe notoriedade e custa tempo; negócio sobe Caixa Pessoal e pode subir risco jurídico).
 
-## 12. Legado
+Fora do cargo o personagem mantém poder por três vias: liderar o grupo político, manter a base territorial e cobrar compromissos a receber. Cargos de nomeação e direção partidária (P7) aguardam classificação.
 
-Grau qualitativo (faixas a definir, fórmula oculta) e cartão de conquista. Considera cargos, mandatos, realizações, influência partidária, reputação, alianças construídas e rompidas, escândalos, influência fora de cargo e, na Fase 2, sucessores. Linha de potencial estimado vs alcançado: abaixo, no teto, acima (tag Fenômeno).
+## 12. Avaliação final (decisão D4)
+
+Grau qualitativo (faixas a definir, fórmula oculta) em cinco dimensões:
+
+| Dimensão | Fontes no MVP |
+|---|---|
+| Alcance institucional | cargos e posições ocupadas, tempo em cada um |
+| Influência política | pico e duração da influência do grupo, presença institucional, liderança |
+| Realizações | entregas dos mandatos, propostas aprovadas |
+| Reputação | credibilidade, reputação histórica, Arquivo Vermelho, escândalos |
+| Legado | influência do grupo ao fim da carreira, base territorial remanescente, aliados em posição |
+
+O cargo mais alto pesa, mas não é multiplicador dominante. Pesos a calibrar para que presidente isolado, senador articulador e governador bem avaliado possam ter graus comparáveis. A avaliação considera o contexto: oportunidades que a conjuntura ofereceu.
+
+Linha de potencial estimado vs alcançado: abaixo, no teto, acima (tag Fenômeno). Sucessores individuais: Fase 2.

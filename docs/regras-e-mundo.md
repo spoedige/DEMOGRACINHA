@@ -81,6 +81,7 @@ Federação atua como unidade única em todas as eleições e no Legislativo, co
 - 5.570 municípios reais em um único `municipios.json` compacto (meta de cerca de 380 KB), com número oficial de vagas de vereador.
 - Agentes individuais só no município do jogador, nas capitais e nas cidades com mais de 200 mil eleitores. O resto é estatístico por UF.
 - Resultados municipais de 2024 entram como estado inicial fixo.
+- Base territorial do personagem é agregada por município (ver `carreira-e-poder.md` seção 10.2).
 
 ## 5. Alianças
 
@@ -89,7 +90,7 @@ Federação atua como unidade única em todas as eleições e no Legislativo, co
 - **Federação:** unidade única, vale para proporcional e majoritária.
 - **Coligação:** só majoritária, por eleição.
 
-Aliança eleitoral, coalizão de governo e base parlamentar são três objetos separados no motor. Um aliado de campanha pode ser oposição no governo.
+Aliança eleitoral, coalizão de governo e base parlamentar são três objetos separados no motor. Um aliado de campanha pode ser oposição no governo. Base parlamentar e governabilidade: ver `motor-eleitoral.md` seção 8. Grupo político atravessa partidos e não é estrutura partidária. Facções internas: Fase 2.
 
 ### Negociação
 Nunca automática. Coligação é um leilão: o jogador recebe no máximo 4 ofertas, cada uma com contrapartida (vice, secretarias, apoio em outra disputa, tempo de TV).

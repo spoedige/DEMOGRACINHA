@@ -15,9 +15,13 @@ Cada etapa termina com commit na `main`, que dispara deploy no Cloudflare.
 
 Cargos de vereador a presidente; motor proporcional, majoritário e 2º turno; 30 partidos com dados básicos e 5 federações; 5.570 municípios (estatístico por UF, agentes só nos selecionados); potencial, aptidão, experiência, oportunidades contextuais, platô e 3 a 5 cadeias de Ponto de Inflexão; vice; janela partidária simulada; corrupção em 3 níveis; saúde; fase sem cargo básica; resumo, títulos, grau e cartão de conquista; exportar e importar save; visual pixel de Brasília; ritmos Intenso, Normal e Express.
 
+Incluídos após a análise de referência (versões simplificadas, ver `decisoes.md`): potencial fora da urna (P11), conjuntura autônoma (P9), compromissos (P6), base territorial agregada (P3), grupo político agregado (P1), base parlamentar e governabilidade (P4), credibilidade visível, capital político derivado, avaliação final em cinco dimensões.
+
+Sem classificação: P5, P7, P8, P10, P12, P13.
+
 ## 3. Fase 2
 
-Suplentes de senador; sucessão e apadrinhamento; desenvolvimento detalhado das 6 dimensões e reputação por atividade; ambição dinâmica e oportunidades que cruzam mandatos; poder entre eleições completo; legado dinâmico; conformidade eleitoral ampliada (prestação de contas, limites de gasto). Ranking global fora do MVP.
+Suplentes de senador; sucessão e apadrinhamento; desenvolvimento detalhado das 6 dimensões e reputação por atividade; ambição dinâmica e oportunidades que cruzam mandatos; poder entre eleições completo; legado dinâmico; conformidade eleitoral ampliada (prestação de contas, limites de gasto); facções partidárias (P2); membros individuais, disputa interna e sucessão do grupo político; parlamentares individuais. Ranking global fora do MVP.
 
 ## 4. Dados da etapa 1B
 
@@ -39,6 +43,7 @@ Rede: antes de coletar, testar IBGE e TSE com `curl -sI`. Em 403, parar, registr
 - Eventos raros exigem dezenas de milhares de rodadas ou amostragem dirigida.
 - Verificar a frequência de resultados entre 1,45% e 1,5% na cláusula.
 - Calibrar 2026 (janela, Câmara, Senado) e a municipal de 2028. Backtest do motor municipal com 2024.
+- Calibrar também: evolução da conjuntura, coesão e custo das bases parlamentares, decaimento da base territorial e do grupo, pesos das cinco dimensões do grau, limites de compromissos.
 - Calibrar: distribuição de potencial, taxa de platô, frequência de Pontos de Inflexão, chance de Presidência por faixa de potencial, penalidade do vice sucessor, decaimento dos modificadores, custo de subir cedo demais.
 
 ## 6. Testes de coerência (mínimo)
@@ -68,6 +73,12 @@ Rede: antes de coletar, testar IBGE e TSE com `curl -sI`. Em 403, parar, registr
 23. Export e import restauram a mesma carreira.
 24. Resumo inclui derrotas.
 25. Nenhum travessão em textos do jogo (varredura automática).
+26. Potencial não altera nenhum resultado de urna nem oportunidade eleitoral (mesma carreira com potenciais diferentes e mesmas ações produz a mesma votação).
+27. Governabilidade difere com mesma fração de cadeiras e coesão diferente.
+28. Conjuntura evolui igual com e sem ações do jogador fora do escopo dele.
+29. Compromisso rompido reduz credibilidade; cumprido aumenta.
+30. Grupo político mantém influência após saída do cargo e decai sem entregas.
+31. Grau final permite que carreiras sem Presidência superem uma carreira com Presidência.
 
 ## 7. Itens a confirmar
 

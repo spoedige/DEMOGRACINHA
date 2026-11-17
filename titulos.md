@@ -84,6 +84,8 @@ Formato de partidos:
 
 Faixas qualitativas (nomes provisórios, fórmula oculta, calibrar): Discreta, Regional, Relevante, Destacada, Histórica.
 
+O grau combina cinco dimensões: alcance institucional, influência política, realizações, reputação e legado (ver `docs/carreira-e-poder.md` seção 12). O cartão mostra a dimensão mais forte em texto (ex.: "Carreira marcada pela influência política").
+
 ## 5. Cartão de conquista
 
-Nome, período, cargo mais alto, grau, até 3 títulos, linha "potencial estimado vs alcançado" (abaixo, no teto, acima) e semente da carreira. Renderizado em canvas pixel, exportável como imagem e como texto.
+Nome, período, cargo mais alto, grau, dimensão mais forte, até 3 títulos, linha "potencial estimado vs alcançado" (abaixo, no teto, acima) e semente da carreira. Renderizado em canvas pixel, exportável como imagem e como texto.
