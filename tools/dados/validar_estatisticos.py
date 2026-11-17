@@ -59,8 +59,8 @@ def detalhe(pasta, ano, cargo_ref):
         nomes[k] = (r["SG_UF"], r["NM_MUNICIPIO"])
         for c in ("QT_APTOS", "QT_COMPARECIMENTO", "QT_ABSTENCOES", "QT_TOTAL_VOTOS_VALIDOS", "QT_VOTOS_BRANCOS", "QT_TOTAL_VOTOS_NULOS", "QT_TOTAL_VOTOS_ANULADOS", "QT_TOTAL_VOTOS_ANUL_SUBJUD", "QT_VOTOS_ANULADOS_APU_SEP"):
             mun[k][c] += i(r[c])
-        if i(r["QT_COMPARECIMENTO"]) + i(r["QT_ABSTENCOES"]) != i(r["QT_APTOS"]):
-            falhas["aptos != comparecimento + abstencoes (zona)"] += 1
+        if i(r["QT_COMPARECIMENTO"]) + i(r["QT_ABSTENCOES"]) + i(r["QT_ELEITORES_SECOES_NAO_INSTALADAS"]) != i(r["QT_APTOS"]):
+            falhas["aptos != comparecimento + abstencoes + eleitores de secoes nao instaladas (zona)"] += 1
     print(f"Detalhe {ano}, cargo {cargo_ref}, 1º turno: municípios {len(mun)}")
     tot = Counter()
     for k, c in mun.items():
@@ -100,8 +100,12 @@ def cruzar_oficial(tab, ibge_mun, tse_nomes, rotulo):
 
 
 def votos_por_eleitor(r):
-    # Senado em eleição de dois terços (2026): dois votos por eleitor (L19, a confirmar).
-    return 2 if r["DS_CARGO"] == "Senador" and r["ANO_ELEICAO"] == "2026" else 1
+    # Senado: um voto por vaga da UF na eleição. Renovação de dois terços (2 vagas) a cada
+    # 8 anos (2018, 2026, 2034...); de um terço (1 vaga) nos ciclos intermediários
+    # (2022, 2030...). Regra a confirmar (L19).
+    if r["DS_CARGO"] == "Senador" and (int(r["ANO_ELEICAO"]) - 2010) % 8 == 0:
+        return 2
+    return 1
 
 
 IDENTIDADES = {

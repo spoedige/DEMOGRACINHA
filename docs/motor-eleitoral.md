@@ -132,9 +132,9 @@ Definições (D59, categorias do TSE, `coleta-estatistica.md` 2.1):
 - `anulados`: votos anulados pela situação jurídica do candidato ou da legenda.
 - `anuladosSubJudice`: anulados com recurso pendente na totalização.
 - `anuladosApuracaoSeparada`: votos de urna sub judice, ainda não válidos nem nulos.
-- `votosPorEleitor`: 1, exceto Senado em eleição de duas vagas (2 em 2026, L19).
+- `votosPorEleitor`: 1, exceto Senado, em que é o número de vagas da UF na eleição: 2 nas renovações de dois terços (2018, 2026, 2034...), 1 nas de um terço (2022, 2030...). Regra a confirmar (L19).
 - O motor pode agregar `anuladosTotal = anulados + anuladosSubJudice + anuladosApuracaoSeparada`, desde que a transformação seja explícita e reproduza a identidade acima.
-Grandezas distintas. No MVP, comparecimento, abstenção, brancos e nulos são parâmetros fixos por unidade, vindos dos dados de base da 1B (a confirmar fonte). **Não respondem dinamicamente à conjuntura, às campanhas nem a eventos nesta fase.** A repartição 4.2 opera só sobre `validos`. Modelo dinâmico de comparecimento e votos inválidos: Fase 2. No 2º turno (6.3), a matriz de destinos usa fatores fixos pelo mesmo motivo.
+Grandezas distintas. No MVP, comparecimento, abstenção, brancos e nulos são parâmetros fixos por unidade, vindos dos dados de base da 1B (a confirmar fonte). O tratamento de `anulados`, `anuladosSubJudice` e `anuladosApuracaoSeparada` nos resultados simulados está pendente de decisão (D59); não se presume que sejam zero. **Não respondem dinamicamente à conjuntura, às campanhas nem a eventos nesta fase.** A repartição 4.2 opera só sobre `validos`. Modelo dinâmico de comparecimento e votos inválidos: Fase 2. No 2º turno (6.3), a matriz de destinos usa fatores fixos pelo mesmo motivo.
 
 ### 4.3 Arredondamento e soma exata
 Votos são inteiros. Usa-se o método do maior resto: piso de cada `votos_c`, e as unidades restantes vão aos maiores restos, com desempate por id. A soma distribuída é sempre igual a `votosValidos`.
