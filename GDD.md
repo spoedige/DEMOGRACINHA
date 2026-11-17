@@ -1,89 +1,139 @@
 # DEMOGRACINHA: Game Design Document
 
-Versão do documento: 1A.0 (17/11/2026). Status: em revisão.
+Versão 1A.1 (17/11/2026). Status: em revisão.
 
-Simulador de carreira política brasileira, só modo carreira, tom sério. Partidos, federações e municípios reais; pessoas e eventos fictícios. Mecânicas inspiradas no Simulador de Carreira do Copero são adaptações de design próprio. Nenhum código, texto ou imagem do Copero é usado.
+Simulador de carreira política brasileira, só modo carreira, tom sério e sem sátira. Partidos, federações e municípios são reais. Pessoas, agentes e eventos são fictícios. A inspiração é o Simulador de Carreira do Copero; todas as mecânicas aqui são adaptações de design próprio. Nenhum código, texto ou imagem do Copero é usado, e o repositório copero-99-ovr não é referência técnica.
 
-Convenções deste documento:
-- **(a confirmar)**: informação legal ou numérica não verificada em fonte oficial.
-- **(calibrar)**: parâmetro de balanceamento. É hipótese, não verdade.
-- Detalhes ficam em `docs/`. Este arquivo é o mapa.
+## Convenções
+
+- **(a confirmar)**: dado legal ou numérico sem verificação em fonte oficial.
+- **(calibrar)**: parâmetro de balanceamento. É hipótese, nunca verdade.
+- Nenhum número oficial é inventado. Nenhum travessão em texto do jogo ou da documentação.
+
+## Mapa dos documentos
+
+| Arquivo | Conteúdo |
+|---|---|
+| `GDD.md` | Visão, loop, UX mobile, visual, acoplamento de cartas, ritmos |
+| `docs/regras-e-mundo.md` | Cargos, regras legais, partidos, federações, municípios, alianças |
+| `docs/motor-eleitoral.md` | Estoques, fórmulas, FEFC, TV, rede social, cláusula, fechamento do ciclo |
+| `docs/carreira-e-poder.md` | Personagem, bolsos, relações, talento, potencial, platô, vice, legado, poder entre eleições |
+| `docs/eventos-e-risco.md` | Eventos atrasados, agentes, crises, Pontos de Inflexão, corrupção, jurídico |
+| `docs/roadmap.md` | Etapas, MVP, Fase 2, dados da 1B, calibração, testes, itens a confirmar |
+| `titulos.md` | Títulos, resumo de carreira, grau e cartão de conquista |
+| `CLAUDE.md` | Regras de trabalho e arquitetura técnica |
 
 ## 1. Visão
 
-O jogador vive uma carreira política de 01/01/2026 até a aposentadoria, morte ou saída. A pergunta central de cada janela é "o que eu sacrifico agora para chegar onde quero depois". Não há trilha obrigatória e a Presidência nunca é desbloqueada: ela emerge de condições.
+O jogador vive uma carreira de 01/01/2026 até a aposentadoria, a saída voluntária ou o fim por saúde. Cada janela pergunta o que ele aceita perder agora para chegar aonde quer depois. Não há trilha obrigatória. A Presidência é possível para qualquer personagem e nunca é desbloqueada por nível, pontuação, flag ou sequência de cargos.
 
 Pilares:
 1. **Tensão em toda escolha.** Toda carta, exceto a segura, ganha em um eixo e paga em outro.
-2. **Trajetória vence lance isolado.** Efeitos limitados e decrescentes.
-3. **Talento oculto, nunca destino.** Potencial molda o teto provável, decisões podem superá-lo.
-4. **Regras reais como terreno.** Calendário, idades, cláusula, quociente e fundo seguem a lei (com marcações de confirmação).
-5. **Celular primeiro.** Uma coluna, poucos números, decisões em cartas.
+2. **Trajetória vence lance isolado.** Efeitos limitados e decrescentes no tempo.
+3. **Talento oculto, nunca destino.** O potencial molda o teto provável; decisões e eventos podem superá-lo.
+4. **Objetivos em conflito.** O jogo não pode virar maximização de pontos.
+5. **Lei como terreno.** Calendário, idades, quociente, cláusula, fundo e TV seguem as regras reais.
+6. **Celular primeiro.** Uma coluna, poucos números, decisões em cartas.
 
-## 2. Escopo por etapa
+## 2. Loop
 
-| Etapa | Conteúdo | Saída |
+1. **Criação:** nome fictício, data de nascimento (idade 18 a 60), UF e município, origem, partido, dificuldade, ritmo, ambição declarada, semente opcional. Tela inicial com aviso de ficção: "Partidos e lugares são reais. Pessoas e eventos são fictícios."
+2. **Janela:** contexto do momento, eventos vencidos, 2 a 4 cartas (uma segura), resolução, novos eventos atrasados.
+3. **Eleição:** motor proporcional ou majoritário, 2º turno quando a regra exige.
+4. **Mandato ou fase sem cargo.** Posse na primeira janela do ano seguinte.
+5. **Balanço de carreira** a cada 4 anos.
+6. **Fim:** resumo, títulos, grau, cartão de conquista, linha de potencial estimado vs alcançado.
+
+## 3. Tempo e ritmo
+
+### Ano eleitoral: 6 janelas
+
+| Janela | Período | Foco |
 |---|---|---|
-| 1A | GDD, docs, títulos, CLAUDE.md | Este repositório, sem código de jogo |
-| 1B | Dados consolidados (partidos, federações, municípios, FEFC, TV, calibração) | `data/` e embutido no HTML |
-| 2 | MVP jogável | `public/index.html` |
-| 3 | Fase 2 | Incrementos sobre o MVP |
+| J1 | janeiro a 04/04 | Janela partidária (05/03 a 03/04), filiação, domicílio, desincompatibilização |
+| J2 | 05/04 a 19/07 | Pré-campanha. Rádio e TV fora dos programas de pré-candidatos a partir de 30/06. Restrições a inaugurações e agentes públicos a partir de 04/07 |
+| J3 | 20/07 a 15/08 | Convenções (20/07 a 05/08), registro até 15/08, vice, coligação, TV |
+| J4 | a partir de 16/08 | Campanha de rua |
+| J5 | 28/08 a 04/10 | Horário gratuito (28/08 a 01/10), debates, reta final, urna em 04/10 |
+| J6 | após 04/10 | Entre turnos (2º turno em 25/10) ou pós-urna |
 
-MVP e Fase 2 detalhados em `docs/roadmap.md`.
+Limites de J2 e J6 são convenção do jogo. Datas do calendário 2026 (a confirmar no TSE).
 
-## 3. Loop de jogo
+### Ano calmo: 2 janelas (ritmo Normal)
 
-1. Criação: nome, nascimento (idade 18 a 60), UF e município, origem, partido, dificuldade, ritmo, ambição inicial, semente.
-2. Ano: sequência de janelas (6 no ano eleitoral, 2 no calmo no ritmo Normal).
-3. Janela: evento de contexto, 2 a 4 cartas (uma segura), resolução, eventos atrasados.
-4. Eleição: motor proporcional ou majoritário, 2º turno quando cabe.
-5. Mandato ou fase sem cargo, posse na primeira janela do ano seguinte.
-6. Balanço a cada 4 anos. Fim de carreira: resumo, títulos, grau, cartão de conquista.
+Posse 2027: presidente 05/01, governadores 06/01, Câmara e Senado 01/02. A posse cai na primeira janela do ano seguinte.
 
-Calendário e ritmos: `docs/tempo-e-ritmo.md`.
+### Ritmos
 
-## 4. Personagem
+O ritmo muda só a frequência das decisões manuais. A simulação é idêntica.
 
-- **Origens:** Influenciador/Coach, Pastor/Líder Comunitário, Empresário do Agro/Construtora, Herdeiro de Clã (tag Nepotismo permanente), Sindicalista/Militante, Servidor, Assessor, Vereador em exercício, Secretário. Efeitos em `docs/personagem.md`.
-- **Indicadores:** popularidade, notoriedade e rejeição em 3 escopos (local, estadual, nacional). Reputação é indicador.
-- **Três bolsos:** Caixa Pessoal, Fundo de Campanha, Capital de Entrega. Converter Capital de Entrega em Caixa Pessoal é corrupção.
-- **Três relações:** Cúpula, Bancada, Executivo.
-- **Estado:** tags, Arquivo Vermelho, eventos atrasados, mandatosConsecutivos, saúde gradual, status jurídico (Regular, Investigado, Condenado, InelegibilidadeReconhecida) separado do risco jurídico.
-- **Dificuldade:** Normal ou Difícil. A marca "modo difícil" do partido soma por fora.
+| Ritmo | Ano eleitoral | Ano calmo |
+|---|---|---|
+| Intenso | 6 | 4 |
+| Normal | 6 | 2 |
+| Express | 3 (J1, J3, J5) | 1 (calibrar) |
 
-## 5. Talento e progressão
+Janela pulada é resolvida pela opção segura alinhada à ambição declarada, com os mesmos eventos e sorteios. Nenhum evento é removido. Requisito técnico: a sequência de consumo do RNG nunca depende do ritmo (fluxos de RNG separados por domínio; ver `CLAUDE.md`).
 
-Potencial oculto 0 a 100, seis aptidões (Articulação, Comunicação, Mobilização, Gestão, Estratégia, Resiliência), capacidade efetiva, experiência sem decaimento por idade, platô com peso de saída, Pontos de Inflexão em cadeia com Momento temporário, caminho à Presidência sem gate, ambição mutável, vice como exposição, legado com grau qualitativo. Ver `docs/progressao.md`.
+## 4. Cartas e janela de decisão
 
-## 6. Regras legais
+### Composição da janela
+- Mínimo 2, máximo 4 cartas de ação. Sempre uma opção segura. Nunca completar com carta armadilha.
+- Pool contextual: cargo, fase do calendário, partido, tags, talento, experiência e histórico.
+- Talento nunca bloqueia carta. Altera probabilidade de sucesso, qualidade e risco.
 
-Idades mínimas, Senado 2026 com 2 vagas por UF, reeleição, desincompatibilização, 2º turno, janela partidária, barreira individual de 10% e 20% do quociente, cláusula de desempenho 2026 e 2030. Ver `docs/regras-legais.md`.
+### Regra de acoplamento (cartas de ação)
+Cada carta tem:
+- custo em **uma** moeda (Caixa Pessoal, Fundo de Campanha, Capital de Entrega, saúde ou uma relação);
+- efeito visível em no máximo **2 estoques + 1 relação**;
+- **um** risco;
+- **um** atraso (evento futuro possível).
 
-## 7. Mundo
+O motor pode encadear consequências extras via eventos atrasados. Toda carta, exceto a segura, tem tensão (exemplo: popularidade sobe, Cúpula cai). Não existe carta só de vantagem.
 
-30 partidos jogáveis, 5 federações, 5.570 municípios reais (agentes individuais só nos selecionados), partidos dinâmicos sem piso nem teto. Ver `docs/mundo.md`.
+### Eventos de crise e escândalo
+Livres da regra de acoplamento: até 3 variáveis de uma vez e até 4 opções, sempre com uma saída de contenção.
 
-## 8. Alianças
+### Efeitos
+- Cinco horizontes: imediato, curto, médio, longo prazo e efeito adverso. A carta exibe só o essencial (em geral imediato e adverso); o detalhe fica em toque longo ou botão "ver mais".
+- Exibição em linguagem provável ("tende a subir", "risco moderado"), nunca resultado garantido.
+- Modificadores decaem no tempo (calibrar meia-vida).
 
-Partido, federação e coligação são estruturas distintas. Coligação como leilão de até 4 ofertas. Peso ideológico municipal por tamanho do eleitorado. Janela partidária por agentes com efeito manada. Ver `docs/aliancas.md`.
+### Ficha de oportunidade
+Para convites, filiações, candidaturas e vice: nível do cargo, prestígio, papel esperado (protagonista ou coadjuvante), custo, risco, aderência à ambição. Subir cedo demais, sem base, reduz papel esperado e exposição.
 
-## 9. Eleição
+### Exemplo de carta
 
-Estoques Voto, Máquina e Dinheiro. Transferência de prefeito é probabilística. FEFC, TV e rede social como canais separados. Ver `docs/motor-eleitoral.md`.
+> **Discurso contra a mesa diretora**
+> Custo: Capital de Entrega (pequeno)
+> Tende a subir: notoriedade local
+> Relação: Cúpula cai
+> Risco: retaliação na distribuição de emendas
+> Atraso: pode voltar como convite de oposição
 
-## 10. Interface e visual
+## 5. UX mobile
 
-Viewport 360 px, toque de 44 px, navegação inferior, no máximo cerca de 6 números na tela de decisão, cartas com efeitos prováveis em 5 horizontes, telas de consulta sem decisão, pixel art de Brasília gerada em código. Ver `docs/ux-mobile.md` e `docs/visual.md`.
+- Viewport base 360 px, uma coluna, sem hover, alvos de toque de 44 px ou mais.
+- Navegação inferior fixa: **Janela** (decisão), **Carreira** (histórico, mandatos, biografia), **Partido** (situação partidária, federação, bancada), **Indicadores** (todos os escopos), **Menu** (save, ritmo, opções).
+- Tela de decisão com no máximo cerca de 6 números: dos indicadores, só o escopo do cargo atual (local, estadual ou nacional) mais até 3 números de recurso. O resto vai para as telas de consulta.
+- Telas de consulta nunca exigem decisão.
+- Aptidões aparecem só como descrição qualitativa e até 3 etiquetas.
+- Aviso permanente no menu: limpar os dados do navegador apaga a partida. Botão de exportar save sempre visível ali.
+- Acessibilidade: contraste mínimo 4.5:1, `prefers-reduced-motion` respeitado, texto sem depender de cor (sigla sempre escrita).
 
-## 11. Técnica
+## 6. Visual
 
-HTML único, Vanilla JS, sem build, sem dependências, sem backend, sem analytics. RNG com semente. localStorage só com o delta. Save por código de texto. Ver `docs/arquitetura.md`.
+- Pixel art inspirada em Brasília, gerada em código (canvas ou SVG), `image-rendering: pixelated`. Sem assets externos, sem CDN.
+- Paleta base (tons exatos a fixar na etapa 2 com teste de contraste): concreto claro, céu azul do cerrado, verde, ocre, terra vermelha.
+- Elementos: Congresso Nacional (duas torres e as duas cúpulas), Esplanada dos Ministérios, Catedral, colunas do Alvorada, Eixo Monumental, céu amplo.
+- Cenário muda com o cargo: câmara municipal genérica, assembleia, Congresso, Planalto. Céu muda com o mês (seca e chuva do cerrado), sem animação se `prefers-reduced-motion`.
+- Fonte pixel embutida em código ou fallback de sistema monoespaçado.
+- Siglas de partido em texto com cor própria, sem logos. Nenhum rosto de pessoa real; personagens são silhuetas ou sprites genéricos.
 
-## 12. Títulos e fim de carreira
+## 7. Dificuldade
 
-Lista em `titulos.md`. Derrotas entram no resumo por padrão.
+Normal (potencial mais favorável) e Difícil (potencial mais baixo, mais escândalos, menos recursos). A marca "modo difícil" de partido (sem TV ou com risco de cláusula) soma por fora.
 
-## 13. Pendências abertas
+## 8. Fim de carreira
 
-- O prompt original terminou em "Fechamento do ciclo: urna, matrizes, fundo". O restante da seção 9 (e seções seguintes, se houver) precisa ser reenviado.
-- Itens "(a confirmar)" listados em `docs/fontes-e-pendencias.md`.
+Resumo no formato "AAAA - AAAA - Cargo - Local", lista de partidos "AAAA - AAAA - Partido", derrotas incluídas, grau qualitativo, títulos e cartão de conquista. Ver `titulos.md`.
