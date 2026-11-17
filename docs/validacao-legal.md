@@ -29,6 +29,21 @@ Diagnóstico: a recusa vem do gateway de rede do ambiente de execução (403 no 
 | STF: ADI 4650, ADI 5081, decisões sobre sobras | L2, L14, L34, L35 |
 | Constituições estaduais, leis orgânicas, regimentos | L11, L16, L23, L25, L26, L27 |
 
+## Liberação de rede e novo teste, 17/11/2026
+
+Hosts incluídos na lista de permissões do ambiente pessoal "DEMOGRACINHA", sem curingas: www.ibge.gov.br, servicodados.ibge.gov.br, www.tse.jus.br, dadosabertos.tse.jus.br, cdn.tse.jus.br, www.planalto.gov.br. O gateway passou a aceitar todos (CONNECT 200).
+
+| Host | Resultado | Origem da recusa | Uso |
+|---|---|---|---|
+| servicodados.ibge.gov.br | 200 com JSON (API de localidades) | nenhuma | lista de municípios e códigos IBGE |
+| dadosabertos.tse.jus.br | 200 | nenhuma | dados abertos do TSE |
+| cdn.tse.jus.br | 200 | nenhuma | arquivos de dados do TSE |
+| www.ibge.gov.br | 403, página "Just a moment" | proteção contra automação do próprio site (Cloudflare) | dispensável se a API atender |
+| www.tse.jus.br | 403, "Access Denied" | proteção do próprio site | resoluções e legislação eleitoral do TSE |
+| www.planalto.gov.br | 302 para gov.br/planalto, sem o texto da lei | balanceador do próprio site | legislação federal |
+
+Não foram feitas tentativas de contornar as proteções dos sites. O redirecionamento do Planalto aponta para a página inicial de outro host, não para o documento; incluir esse host não daria acesso à lei, por isso não foi submetido.
+
 ## Próximo passo
 
-Depende do autor: envio dos arquivos oficiais ou liberação desses hosts na rede do ambiente.
+Coleta possível agora: municípios (IBGE) e dados abertos do TSE. Legislação federal e resoluções do TSE seguem sem acesso; dependem de decisão do autor (fonte oficial alternativa ou envio dos arquivos).
