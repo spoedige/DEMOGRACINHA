@@ -473,3 +473,76 @@ class TestPerfilEleitorado(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+@precisa("tse_votacao_candidato_2022")
+class TestVotacaoCandidato2022(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from tools.dados.auditar_votacao_candidato import auditar
+        cls.r = auditar(2022, REG)
+
+    def test_nominais_iguais_ao_detalhe(self):
+        n = self.r["nominais_x_detalhe"]
+        self.assertEqual((n["chaves"], n["iguais"], n["divergentes"]), (39966, 39966, []))
+
+    def test_vagas_iguais_aos_eleitos(self):
+        v = self.r["vagas_x_eleitos"]
+        self.assertEqual(v["majoritario"]["vagas = eleitos (votação por candidato)"], v["majoritario"]["unidades"])
+        self.assertEqual(v["proporcional"]["vagas = eleitos (votação por candidato)"], v["proporcional"]["unidades"])
+        self.assertEqual(self.r["divergencias_vagas"], [])
+        self.assertEqual(self.r["majoritarios_mais_votado"], {"eleito é o mais votado": 55})
+
+    def test_segundo_turno_confirmado_por_fonte_independente(self):
+        s = self.r["segundo_turno"]
+        self.assertEqual((s["votacao_candidato"], s["so_votacao"], s["so_candidaturas"]), (13, [], []))
+
+
+@precisa("tse_votacao_candidato_2024")
+class TestVotacaoCandidato2024(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from tools.dados.auditar_votacao_candidato import auditar
+        cls.r = auditar(2024, REG)
+
+    def test_nominais_e_divergencias_conhecidas(self):
+        n = self.r["nominais_x_detalhe"]
+        self.assertEqual((n["chaves"], n["iguais"], len(n["divergentes"])), (12449, 12410, 39))
+        parciais = sorted(tuple(x["chave"]) for x in n["divergentes"] if x["votacao_candidato"] != 0)
+        self.assertEqual(sum(1 for x in n["divergentes"] if x["votacao_candidato"] == 0), 36)
+        self.assertEqual(parciais, [("619", "1", "63134", "303", "VEREADOR"), ("619", "1", "63134", "388", "VEREADOR"),
+                                    ("619", "1", "64696", "48", "VEREADOR")])
+
+    def test_segundo_turno_confirmado_por_fonte_independente(self):
+        s = self.r["segundo_turno"]
+        self.assertEqual((s["votacao_candidato"], s["so_votacao"], s["so_candidaturas"]), (51, [], []))
+
+    def test_divergencias_de_vagas_conhecidas(self):
+        c = Counter(x["chave"][2] for x in self.r["divergencias_vagas"])
+        self.assertEqual(c, Counter({"PREFEITO": 41, "VEREADOR": 24}))
+        self.assertEqual(self.r["empates"], [["619", "46191", "PREFEITO"]])
+        self.assertNotIn("eleito não é o mais votado", self.r["majoritarios_mais_votado"])
+
+    def test_regras_de_vagas_igual_as_divergencias(self):
+        regras = [r["excluir"] for r in REG["tse_vagas_2024"]["parcelas"] if "excluir" in r]
+        chaves = {(r["CD_ELEICAO"], r["SG_UE"], r["DS_CARGO"].upper()) for r in regras}
+        esperadas = {tuple(x["chave"]) for x in self.r["divergencias_vagas"]}
+        self.assertEqual({(e, u, "PREFEITO" if c == "VICE-PREFEITO" else c) for e, u, c in chaves}, esperadas)
+        self.assertEqual(len(regras), len({tuple(sorted(r.items())) for r in regras}))
+
+    def test_vagas_segregadas_nao_entram(self):
+        regras = {(r["excluir"]["SG_UE"], r["excluir"]["DS_CARGO"]) for r in REG["tse_vagas_2024"]["parcelas"] if "excluir" in r}
+        sel = fx.Selecao(REG["tse_vagas_2024"], "mundo_inicial", ORD24)
+        for r in sel:
+            self.assertNotIn((r["SG_UE"], r["DS_CARGO"]), regras)
+        self.assertEqual(sel.segregadas["integridade_pendente"], len(regras))
+
+
+class TestVagas2022(unittest.TestCase):
+    def test_vices_e_suplentes_segregados(self):
+        sel = fx.Selecao(REG["tse_vagas_2022"], "mundo_inicial", filtro_ordinaria(2022))
+        cargos = Counter(r["DS_CARGO"] for r in sel)
+        self.assertNotIn("Vice-governador", cargos)
+        self.assertNotIn("1. Suplente", cargos)
+        self.assertEqual(cargos["Governador"], 27)
+        self.assertEqual(sel.segregadas["integridade_pendente"], 27 * 3 + 1)

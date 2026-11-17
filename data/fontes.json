@@ -578,9 +578,42 @@
    "referencia": "eleição geral de 2022",
    "data_fenomeno": "2022-10-02",
    "temporalidade": "historico_compativel",
-   "proveniencia": "integridade_pendente",
-   "evidencia": "Controles especificados em docs/pipeline-dados.md 7; execução parcial com divergências não explicadas; não validado.",
-   "observacoes": ""
+   "proveniencia": "versao_posterior_validada",
+   "evidencia": "Versão regenerada após o corte. Vagas da eleição ordinária iguais aos eleitos (situação final na votação por candidato e nas candidaturas) nas 55 unidades majoritárias e 54 proporcionais (tools/dados/auditar_votacao_candidato.py). Vices e suplentes segregados; suplementar de 2026 marcada pela data.",
+   "observacoes": "",
+   "parcelas": [
+    {
+     "campo_data": "DT_ELEICAO"
+    },
+    {
+     "excluir": {
+      "DS_CARGO": "Vice-governador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vice e suplente: sem confronto próprio (vices não têm votação; suplentes sem situação de eleito)"
+    },
+    {
+     "excluir": {
+      "DS_CARGO": "Vice-presidente"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vice e suplente: sem confronto próprio (vices não têm votação; suplentes sem situação de eleito)"
+    },
+    {
+     "excluir": {
+      "DS_CARGO": "1. Suplente"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vice e suplente: sem confronto próprio (vices não têm votação; suplentes sem situação de eleito)"
+    },
+    {
+     "excluir": {
+      "DS_CARGO": "2. Suplente"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vice e suplente: sem confronto próprio (vices não têm votação; suplentes sem situação de eleito)"
+    }
+   ]
   },
   {
    "id": "tse_vagas_2024",
@@ -591,12 +624,966 @@
    "referencia": "eleição municipal de 2024 e suplementares até 2026",
    "data_fenomeno": "2024-10-06",
    "temporalidade": "historico_compativel",
-   "proveniencia": "integridade_pendente",
-   "evidencia": "Controles especificados em docs/pipeline-dados.md 7; execução parcial com divergências não explicadas; não validado.",
+   "proveniencia": "versao_posterior_validada",
+   "evidencia": "Versão regenerada após o corte. Vagas da eleição ordinária iguais aos eleitos em 5.528 de 5.569 municípios (prefeito, com vice-prefeito acompanhando) e em 5.545 de 5.569 (vereador). As 106 linhas das unidades divergentes ficam segregadas (41 municípios em prefeito e vice-prefeito, 24 em vereador).",
    "observacoes": "Inclui suplementares realizadas em 2025 e 2026; a regra por parcela marca as posteriores ao corte.",
    "parcelas": [
     {
      "campo_data": "DT_ELEICAO"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "04154",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "04448",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "04626",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "04898",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "05614",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "05614",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "05894",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "07137",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "07137",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "07420",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "07951",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "07951",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "08001",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "08052",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "08079",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "08222",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "08222",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "08567",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "09059",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "09539",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "12670",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "15571",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "15571",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "16063",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "16063",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "16675",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "16675",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "19658",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "19658",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "24236",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "24236",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "31119",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "31119",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "31313",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "31313",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "31917",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "31950",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "31950",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "38458",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "38458",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "40495",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "40495",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "41041",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "41041",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "41742",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "41742",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "45616",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "45616",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "48313",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "48313",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "52612",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "52612",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "58394",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "58394",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "59196",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "59196",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "61107",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "61107",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "61620",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "61620",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "62081",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "62081",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "62359",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "62359",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "63975",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "63975",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "64556",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "64556",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "66656",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "66656",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "66850",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "66850",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "67237",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "67237",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "67458",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "67458",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "67512",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "67512",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "68098",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "68098",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "69515",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "69515",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "69990",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "69990",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "71250",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "71250",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "78972",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "78972",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "85308",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "85308",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "90298",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "90298",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "90468",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "92770",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "93050",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "93300",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "93343",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "93564",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "93998",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "93998",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "93998",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "94331",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "95915",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "96610",
+      "DS_CARGO": "Prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "96610",
+      "DS_CARGO": "Vice-prefeito"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
+    },
+    {
+     "excluir": {
+      "CD_ELEICAO": "619",
+      "SG_UE": "96776",
+      "DS_CARGO": "Vereador"
+     },
+     "proveniencia": "integridade_pendente",
+     "motivo": "vagas sem eleitos correspondentes na eleição ordinária (docs/pipeline-dados.md 8.4)"
     }
    ]
   },
@@ -610,7 +1597,7 @@
    "data_fenomeno": "2022-10-02",
    "temporalidade": "historico_compativel",
    "proveniencia": "integridade_pendente",
-   "evidencia": "Controles especificados em docs/pipeline-dados.md 7; execução parcial com divergências não explicadas; não validado.",
+   "evidencia": "Usado só como controle (2º turno e situação final). Situação final coerente com as vagas nos confrontos executados, mas sem validação dos demais campos; continua pendente.",
    "observacoes": ""
   },
   {
@@ -623,7 +1610,7 @@
    "data_fenomeno": "2024-10-06",
    "temporalidade": "historico_compativel",
    "proveniencia": "integridade_pendente",
-   "evidencia": "Controles especificados em docs/pipeline-dados.md 7; execução parcial com divergências não explicadas; não validado.",
+   "evidencia": "Usado só como controle (2º turno e situação final). Situação final coerente com as vagas nos confrontos executados, mas sem validação dos demais campos; continua pendente.",
    "observacoes": "Arquivo fora do git."
   },
   {
@@ -635,14 +1622,42 @@
    "referencia": "eleição de 2022 e suplementares",
    "data_fenomeno": "2022-10-30",
    "temporalidade": "historico_compativel",
-   "proveniencia": "integridade_pendente",
-   "evidencia": "Coletado em 17/11/2026; versão regenerada após o corte (datas internas no zip: 2026-11-06, 2026-11-17). Sem controles de conteúdo executados.",
+   "proveniencia": "versao_posterior_validada",
+   "evidencia": "Coletado em 17/11/2026; versão regenerada após o corte (datas internas no zip: 2026-11-06, 2026-11-17). Sem controles de conteúdo executados. Controles executados em 17/11/2026 (tools/dados/auditar_votacao_candidato.py): votos nominais válidos por eleição, turno, município, zona e cargo iguais ao detalhe da apuração nas 39.966 chaves; disputas de 2º turno iguais às das candidaturas (13); eleitos pela situação final iguais às vagas nas 55 unidades majoritárias e 54 proporcionais; eleito sempre o mais votado nos majoritários. Validados só identificadores, votos nominais válidos e situação final; demais colunas pendentes.",
    "observacoes": "Arquivo fora do git. Uso previsto: confronto de vagas e eleitos por turno (docs/pipeline-dados.md 8.3).",
    "parcelas": [
     {
      "campo_data": "DT_ELEICAO"
     }
-   ]
+   ],
+   "colunas_pendentes": {
+    "NM_CANDIDATO": "não confrontado com outra fonte",
+    "NM_URNA_CANDIDATO": "não confrontado com outra fonte",
+    "NM_SOCIAL_CANDIDATO": "não confrontado com outra fonte",
+    "CD_SITUACAO_CANDIDATURA": "não confrontado com outra fonte",
+    "DS_SITUACAO_CANDIDATURA": "não confrontado com outra fonte",
+    "CD_DETALHE_SITUACAO_CAND": "não confrontado com outra fonte",
+    "DS_DETALHE_SITUACAO_CAND": "não confrontado com outra fonte",
+    "CD_SITUACAO_JULGAMENTO": "não confrontado com outra fonte",
+    "DS_SITUACAO_JULGAMENTO": "não confrontado com outra fonte",
+    "CD_SITUACAO_CASSACAO": "não confrontado com outra fonte",
+    "DS_SITUACAO_CASSACAO": "não confrontado com outra fonte",
+    "CD_SITUACAO_DCONST_DIPLOMA": "não confrontado com outra fonte",
+    "DS_SITUACAO_DCONST_DIPLOMA": "não confrontado com outra fonte",
+    "TP_AGREMIACAO": "não confrontado com outra fonte",
+    "NR_PARTIDO": "não confrontado com outra fonte",
+    "SG_PARTIDO": "não confrontado com outra fonte",
+    "NM_PARTIDO": "não confrontado com outra fonte",
+    "NR_FEDERACAO": "não confrontado com outra fonte",
+    "NM_FEDERACAO": "não confrontado com outra fonte",
+    "SG_FEDERACAO": "não confrontado com outra fonte",
+    "DS_COMPOSICAO_FEDERACAO": "não confrontado com outra fonte",
+    "SQ_COLIGACAO": "não confrontado com outra fonte",
+    "NM_COLIGACAO": "não confrontado com outra fonte",
+    "DS_COMPOSICAO_COLIGACAO": "não confrontado com outra fonte",
+    "QT_VOTOS_NOMINAIS": "não confrontado com outra fonte",
+    "NM_TIPO_DESTINACAO_VOTOS": "não confrontado com outra fonte"
+   }
   },
   {
    "id": "tse_votacao_candidato_2024",
@@ -654,7 +1669,7 @@
    "data_fenomeno": "2024-10-27",
    "temporalidade": "historico_compativel",
    "proveniencia": "integridade_pendente",
-   "evidencia": "Coletado em 17/11/2026; versão regenerada após o corte (datas internas no zip: 2026-11-06, 2026-11-17). Sem controles de conteúdo executados.",
+   "evidencia": "Coletado em 17/11/2026; versão regenerada após o corte (datas internas no zip: 2026-11-06, 2026-11-17). Sem controles de conteúdo executados. Controles executados em 17/11/2026: nominais iguais ao detalhe em 12.410 de 12.449 chaves; nas 39 restantes a fonte não traz linhas da zona (ver docs/pipeline-dados.md 8.4). Continua pendente porque a ausência não tem linhas para segregar e o código ainda não bloqueia unidade incompleta nesta fonte.",
    "observacoes": "Arquivo fora do git. Uso previsto: confronto de vagas e eleitos por turno (docs/pipeline-dados.md 8.3).",
    "parcelas": [
     {

@@ -178,6 +178,8 @@ Unidades esperadas por eleição, cargo e turno, construídas sem usar o conjunt
 
 Achado: em Aracaju (SE), as candidaturas a prefeito de 1º turno estão sem situação final (`#NULO`), embora haja 2º turno; por isso o controle usa a presença de linhas de 2º turno, e não o marcador "2º TURNO".
 
+Ressalva de evidência: a lista de 2º turno vem do arquivo de candidaturas, que continua `integridade_pendente`. Confirmação independente (8.4): a votação por candidato aponta exatamente as mesmas disputas de 2º turno (51 em 2024; 13 em 2022, presidente e 12 governadores), e o teste falha se as duas fontes divergirem. Para 2022 a votação por candidato está validada; para 2024 continua pendente. A completude de 2º turno de 2024 fica, portanto, como controle provisório.
+
 Implementação: `transformacoes.parcelas_d42_d62` (v1) e `completude.avaliar`. Conjuntos de teste na seção 9.
 
 ## 8. Controles de vagas e candidaturas
@@ -208,7 +210,7 @@ Classificação das quatro fontes: continua `integridade_pendente`.
 
 Coletados em 17/11/2026, fora do git, registrados em `data/fontes.json` (`tse_votacao_candidato_2022` e `_2024`, `integridade_pendente`) e no manifesto: `votacao_candidato_munzona_2022.zip` (582.274.907 bytes) e `votacao_candidato_munzona_2024.zip` (48.245.557 bytes), versões de novembro de 2026.
 
-Confronto previsto (não executado nesta etapa):
+Confronto especificado (executado em 17/11/2026, ver 8.4):
 | Grupo | Regra de eleitos | Turnos |
 |---|---|---|
 | Prefeito e vice | chapa vencedora: maioria simples no 1º turno ou maioria absoluta dos válidos; 2º turno acima de 200 mil eleitores (L20) | 1º e 2º, separados por `CD_ELEICAO` (619 e 620) |
@@ -217,7 +219,7 @@ Confronto previsto (não executado nesta etapa):
 | Suplentes de senador | da chapa do titular eleito; não têm votação própria | não se aplica |
 | Vereador; deputados federal, estadual e distrital | quociente, barreira individual e sobras (L1, L2), confrontados com a situação final do candidato | só 1º |
 
-Para cada grupo, confrontar vagas da eleição ordinária (D61) com eleitos derivados da votação e com a situação final do arquivo de candidaturas; registrar divergências por unidade. As 25 divergências de vereador de 2024 ficam abertas até explicação documental. Vagas e candidaturas continuam `integridade_pendente`.
+Para cada grupo, confrontar vagas da eleição ordinária (D61) com eleitos derivados da votação e com a situação final do arquivo de candidaturas; registrar divergências por unidade. Vereador, deputados e majoritários foram confrontados só pela contagem de eleitos declarada pelo TSE; quociente, barreira individual e sobras não foram calculados (L1, L2).
 
 ## 9. Conjuntos intermediários de teste (D42 e D62)
 
@@ -229,3 +231,97 @@ Gerados por `tools/dados/gerar_intermediarios_teste.py` em `data/intermediario/t
 | `d42_d62_geral_2022` | detalhe 2022, ordinária (544 a 547) | 36.132: 1º turno dos cinco cargos, 2º turno de presidente e de governador em 12 UFs, exterior nos dois turnos de presidente | todas `completa` | 36.138 esperadas: 36.132 completas e 6 `ausencia_referencia_historica` (Boa Esperança do Norte, MT, criado depois de 2022: cinco cargos no 1º turno e presidente no 2º), com taxas da UF como estimativa; nenhuma lacuna nem inesperada |
 
 Numeradores e denominadores inteiros por unidade, sem taxa arredondada. Os dois conjuntos passaram pela entrada do mundo inicial, com reexecução da transformação. Hashes de integridade e dos dados reproduzidos em duas gerações independentes (municipal: `fa1dc590...` e `edb24a0a...`; geral: `05977d80...` e `f02bcc6c...`).
+
+### 8.4 Resultado do confronto (17/11/2026)
+
+Script: `tools/dados/auditar_votacao_candidato.py` (só leitura, hash conferido, só eleição ordinária pela D61). O arquivo nacional da votação por candidato reproduz exatamente a soma dos estaduais (linhas e votos) nos dois anos.
+
+| Controle | 2022 | 2024 |
+|---|---|---|
+| Votos nominais válidos por eleição, turno, município, zona e cargo x detalhe da apuração | 39.966 de 39.966 chaves iguais | 12.410 de 12.449; 36 zonas sem nenhuma linha na votação por candidato e 3 com votos parciais (Carapicuíba, SP, zonas 303 e 388; município 64696, SP, zona 48) |
+| Disputas de 2º turno: votação por candidato x candidaturas | 13 e 13, iguais | 51 e 51, iguais |
+| Vagas = eleitos, majoritários (prefeito; governador, senador e presidente) | 55 de 55 | 5.528 de 5.569 |
+| Vagas = eleitos, proporcionais (contagem declarada pelo TSE) | 54 de 54 | 5.545 de 5.569 |
+| Eleito é o mais votado (majoritários) | 55 de 55 | 5.527, mais 1 empate no limite (Inhaúma, MG, 2.434 votos cada; desempate por critério legal, não modelado) |
+| Vices e suplentes | sem votação própria; segregados nas vagas | vice-prefeito acompanha o prefeito |
+
+Correção: as 82 divergências de 2022 e parte das de 2024 relatadas antes vinham da minha contagem, que não associava o 2º turno (545, 547, 620) ao código de vaga da ordinária e misturava vices e suplentes. As "25 divergências de vereador" eram 24 na eleição ordinária; a 25ª era a eleição suplementar de Braga (RS).
+
+Divergências de 2024 entre vagas e eleitos (65 unidades). Vínculos demonstrados nos dados; a causa no TSE não está demonstrada:
+
+| Unidade TSE | UF | Município | Cargo | Vagas | Eleitos (votação por candidato) | Eleitos (candidaturas) | Vínculo |
+|---|---|---|---|---|---|---|---|
+| 04154 | PA | ANANINDEUA | Vereador | 25 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 04448 | PA | BREU BRANCO | Vereador | 13 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 04626 | PA | PLACAS | Vereador | 11 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 04898 | PA | MELGAÇO | Vereador | 11 | 0 | 0 | sem vínculo demonstrado |
+| 05614 | PA | TUCURUÍ | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 03/08/2025 |
+| 05894 | PA | RURÓPOLIS | Vereador | 13 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 07137 | MA | ANAJATUBA | Prefeito | 1 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 07420 | MA | CENTRAL DO MARANHÃO | Vereador | 9 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 07951 | MA | GUIMARÃES | Prefeito | 1 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 08001 | MA | NOVA OLINDA DO MARANHÃO | Vereador | 11 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 08052 | MA | SÃO LUÍS GONZAGA DO MARANHÃO | Vereador | 11 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 08079 | MA | ITAPECURU MIRIM | Vereador | 15 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 08222 | MA | SANTANA DO MARANHÃO | Prefeito | 1 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 08567 | MA | TRIZIDELA DO VALE | Vereador | 11 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 09059 | MA | SÃO BENEDITO DO RIO PRETO | Vereador | 11 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 09539 | MA | VITORINO FREIRE | Vereador | 13 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 12670 | PI | CARAÚBAS DO PIAUÍ | Vereador | 9 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 15571 | CE | SENADOR SÁ | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 06/07/2025 |
+| 16063 | RN | SÃO MIGUEL DO GOSTOSO | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 06/12/2026 |
+| 16675 | RN | EQUADOR | Prefeito | 1 | 0 | 0 | sem vínculo demonstrado |
+| 19658 | PB | CABEDELO | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 12/04/2026 |
+| 24236 | PE | GOIANA | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 04/05/2025 |
+| 31119 | SE | BARRA DOS COQUEIROS | Prefeito | 1 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 31313 | SE | CEDRO DE SÃO JOÃO | Prefeito | 1 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 31917 | SE | NOSSA SENHORA DAS DORES | Vereador | 11 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 31950 | SE | NOSSA SENHORA DO SOCORRO | Prefeito | 1 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 38458 | BA | RUY BARBOSA | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 06/04/2025 |
+| 40495 | MG | AMPARO DO SERRA | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 21/06/2026 |
+| 41041 | MG | MARTINS SOARES | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 07/12/2025 |
+| 41742 | MG | BONITO DE MINAS | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 21/06/2026 |
+| 45616 | MG | GUAPÉ | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 06/07/2025 |
+| 48313 | MG | MERCÊS | Prefeito | 1 | 0 | 0 | sem vínculo demonstrado |
+| 52612 | MG | SÃO JOSÉ DA VARGINHA | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 03/08/2025 |
+| 58394 | RJ | ITAGUAÍ | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 25/10/2026 |
+| 59196 | RJ | TRÊS RIOS | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 05/10/2025 |
+| 61107 | SP | GUATAPARÁ | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 03/08/2025 |
+| 61620 | SP | TUIUTI | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 21/06/2026 |
+| 62081 | SP | BREJO ALEGRE | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 17/05/2026 |
+| 62359 | SP | BOCAINA | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 08/06/2025 |
+| 63975 | SP | ELDORADO | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 06/04/2025 |
+| 64556 | SP | GUARÁ | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 07/12/2025 |
+| 66656 | SP | MACEDÔNIA | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 25/10/2026 |
+| 66850 | SP | MARTINÓPOLIS | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 25/10/2026 |
+| 67237 | SP | MONGAGUÁ | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 08/06/2025 |
+| 67458 | SP | NARANDIBA | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 25/10/2026 |
+| 67512 | SP | NEVES PAULISTA | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 06/04/2025 |
+| 68098 | SP | PANORAMA | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 08/06/2025 |
+| 69515 | SP | REGINÓPOLIS | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 21/06/2026 |
+| 69990 | SP | SALES OLIVEIRA | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 14/09/2025 |
+| 71250 | SP | SARUTAIÁ | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 06/12/2026 |
+| 78972 | PR | SÃO TOMÉ | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 05/10/2025 |
+| 85308 | RS | ARROIO DO SAL | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 25/10/2026 |
+| 90298 | MS | BANDEIRANTES | Prefeito | 1 | 0 | 0 | eleição suplementar de prefeito em 06/07/2025 |
+| 90468 | MT | BRASNORTE | Vereador | 11 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 92770 | GO | BURITI ALEGRE | Vereador | 9 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 93050 | GO | CAVALCANTE | Vereador | 9 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 93300 | GO | VALPARAÍSO DE GOIÁS | Vereador | 13 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 93343 | GO | ÁGUAS LINDAS DE GOIÁS | Vereador | 21 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 93564 | GO | GAMELEIRA DE GOIÁS | Vereador | 9 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 93998 | GO | IPORÁ | Prefeito | 1 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 93998 | GO | IPORÁ | Vereador | 13 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 94331 | GO | JATAÍ | Vereador | 10 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 95915 | GO | SÃO DOMINGOS | Vereador | 9 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 96610 | GO | AMERICANO DO BRASIL | Prefeito | 1 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+| 96776 | GO | SANTO ANTÔNIO DO DESCOBERTO | Vereador | 15 | sem linhas | 0 | unidade entre as 38 exceções da votação por partido; sem linhas na votação por candidato |
+
+Resumo dos vínculos: 23 das 24 de vereador são unidades das 38 exceções da votação por partido, sem linhas na votação por candidato; a 24ª (município 04898, PA) tem linhas, mas nenhum eleito. Em prefeito, 31 das 41 têm eleição suplementar de prefeito registrada; 10 não têm vínculo demonstrado.
+
+Classificação após o confronto (`data/fontes.json`):
+- `tse_votacao_candidato_2022`: `versao_posterior_validada`; validados identificadores, votos nominais válidos e situação final; demais colunas em `colunas_pendentes`.
+- `tse_vagas_2022`: `versao_posterior_validada`; vices e suplentes segregados.
+- `tse_vagas_2024`: `versao_posterior_validada`; 106 linhas segregadas (41 municípios em prefeito e vice-prefeito, 24 em vereador). Teste de regressão confere que as regras são exatamente as divergências.
+- `tse_votacao_candidato_2024`: continua `integridade_pendente` (zonas sem linhas não podem ser segregadas, e o bloqueio de unidade incompleta nesta fonte ainda não está no código).
+- Candidaturas 2022 e 2024: continuam `integridade_pendente`.

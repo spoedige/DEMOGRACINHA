@@ -202,6 +202,6 @@ L33 a L35 permanecem abertas até a verificação documental.
 ### 7.2 Outros itens a confirmar
 - Fator de migração de estado.
 - Lacunas de decisão (não resolvidas por inferência): regra quando o conjunto da base está cheio; conjunto de agentes em UFs com menos de 10 municípios.
-- Complemento da D42 aprovado (seções não instaladas, denominador de brancos e nulos, granularidade, fallback, unidade incompleta); testes automatizados em `tests/test_pipeline_dados.py` (44 testes).
+- Complemento da D42 aprovado (seções não instaladas, denominador de brancos e nulos, granularidade, fallback, unidade incompleta); testes automatizados em `tests/test_pipeline_dados.py` (53 testes).
 - Metas da Câmara 2026 (fonte e data de corte).
 - Todos os parâmetros de calibração e as funções listadas em `motor-eleitoral.md` 11.
