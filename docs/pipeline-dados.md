@@ -190,10 +190,10 @@ Implementação: `transformacoes.parcelas_d42_d62` (v1) e `completude.avaliar`. 
 | Uma linha por eleição, unidade e cargo | não verificado | especificado |
 | Ordinária separada por `CD_ELEICAO` (D61); suplementares fora dos parâmetros | 2024: 5.569 unidades por cargo na ordinária, dezenas de suplementares | executado |
 | Prefeito e vice com 1 vaga; governador, presidente e vices com 1 | a confirmar com o teste completo | especificado |
-| Vagas iguais ao número de eleitos (candidaturas com situação final "ELEITO", "ELEITO POR QP" ou "ELEITO POR MÉDIA") | 2024: 16.581 de 16.818 unidades; diferenças em prefeito (106), vice-prefeito (106) e vereador (25). 2022: 111 de 193; diferenças em governador (13), vice-governador (13), presidente (1), vice-presidente (1) e suplentes de senador (54) | executado com divergências |
+| Vagas iguais ao número de eleitos (candidaturas com situação final "ELEITO", "ELEITO POR QP" ou "ELEITO POR MÉDIA") | 2024: 16.581 de 16.818 unidades; diferenças em prefeito (106), vice-prefeito (106) e vereador (25). 2022: 111 de 193; diferenças em governador (13), vice-governador (13), presidente (1), vice-presidente (1) e suplentes de senador (54) | executado com divergências; resultado histórico, anterior a 8.4, e não constitui validação independente (as duas fontes estão pendentes) |
 | Vagas de vereador conforme a regra legal por faixa de população | pendente de L30 e da regra legal correspondente | especificado |
 
-Leitura das divergências (hipóteses não verificadas): vices e suplentes não recebem situação final no arquivo de candidaturas (`#NULO`); eleitos em 2º turno não aparecem como eleitos no arquivo de candidaturas; as 25 de vereador não têm explicação. Confronto seguinte: resultados por candidato (`votacao_candidato_munzona`), ainda não coletado.
+Leitura das divergências (hipóteses não verificadas): vices e suplentes não recebem situação final no arquivo de candidaturas (`#NULO`); eleitos em 2º turno não aparecem como eleitos no arquivo de candidaturas; as 25 de vereador não têm explicação. Os números desta tabela são históricos; o confronto posterior está em 8.4 e também não valida as vagas (validação circular, ver regra em 8.4).
 
 ### 8.2 Candidaturas (`tse_candidatos_2022`, `tse_candidatos_2024`)
 | Controle | Campos | Situação |
@@ -219,7 +219,7 @@ Confronto especificado (executado em 17/11/2026, ver 8.4):
 | Suplentes de senador | da chapa do titular eleito; não têm votação própria | não se aplica |
 | Vereador; deputados federal, estadual e distrital | quociente, barreira individual e sobras (L1, L2), confrontados com a situação final do candidato | só 1º |
 
-Para cada grupo, confrontar vagas da eleição ordinária (D61) com eleitos derivados da votação e com a situação final do arquivo de candidaturas; registrar divergências por unidade. Vereador, deputados e majoritários foram confrontados só pela contagem de eleitos declarada pelo TSE; quociente, barreira individual e sobras não foram calculados (L1, L2).
+Para cada grupo, confrontar vagas da eleição ordinária (D61) com eleitos derivados da votação e com a situação final do arquivo de candidaturas; registrar divergências por unidade. O confronto só levanta hipóteses de consistência: vagas, candidaturas e situação final continuam pendentes. Vereador, deputados e majoritários foram confrontados só pela contagem de eleitos declarada pelo TSE; quociente, barreira individual e sobras não foram calculados (L1, L2).
 
 ## 9. Conjuntos intermediários de teste (D42 e D62)
 
@@ -322,11 +322,13 @@ Resumo dos vínculos: 23 das 24 de vereador são unidades das 38 exceções da v
 Classificação após o confronto (`data/fontes.json`), revista na rodada de correções de 17/11/2026:
 - `tse_votacao_candidato_2022`: `versao_posterior_validada` só para identificadores e votos nominais válidos (confrontados com o detalhe, validado). `CD_SIT_TOT_TURNO` e `DS_SIT_TOT_TURNO` foram para `colunas_pendentes`: a situação final só foi confrontada com vagas e candidaturas, ambas pendentes.
 - `tse_vagas_2022` e `tse_vagas_2024`: voltaram a `integridade_pendente`. A concordância vagas x eleitos dependia de fontes pendentes (validação circular). As regras de parcela (vices, suplentes, 106 linhas de 2024) continuam registradas.
-- `tse_votacao_candidato_2024`: continua `integridade_pendente`, agora com 34 unidades em `unidades_bloqueadas`, geradas por `pipeline/cobertura.py` contra o detalhe: 36 zonas sem nenhuma linha e 3 com linhas e soma parcial (63134 zonas 303 e 388; 64696 zona 48). A auditoria distingue as duas situações pelo campo `situacao`, não pela soma zero.
+- `tse_votacao_candidato_2024`: continua `integridade_pendente`, agora com 34 unidades em `unidades_bloqueadas`, geradas por `pipeline/cobertura.py` contra o detalhe: 36 zonas sem nenhuma linha cuja referência no detalhe tem votos nominais válidos diferentes de zero, e 3 com linhas e soma parcial. Zona ausente com referência zero não é marcada: a cobertura confere votos, não a presença física de todas as linhas esperadas (63134 zonas 303 e 388; 64696 zona 48). A auditoria distingue as duas situações pelo campo `situacao`, não pela soma zero.
 - Candidaturas 2022 e 2024: continuam `integridade_pendente`.
 
 Bloqueio (`Selecao`): fonte com `unidades_bloqueadas` exige função `chave`; toda linha de unidade bloqueada é segregada (`unidade_bloqueada`) e a unidade entra em `unidades_segregadas` mesmo sem linhas. Nunca se agregam só as zonas restantes.
 
-Arquivo nacional x estaduais (`cobertura.conferir_nacional`): por grupo, contagem de linhas, soma módulo 2^64 dos hashes blake2b de 8 bytes de cada linha sem `DT_GERACAO` e `HH_GERACAO`, e soma de votos nominais válidos. Resultado: iguais em 2024 (717.170 linhas, 241.436.100 votos) e 2022 (9.377.845 linhas, 710.840.707 votos). Coberto por teste.
+Arquivo nacional x estaduais (`cobertura.conferir_nacional`): conferência por impressão digital agregada, não comparação exata de multiconjuntos. Por grupo: contagem de linhas, soma módulo 2^64 dos hashes blake2b de 8 bytes de cada linha sem `DT_GERACAO` e `HH_GERACAO`, e soma de votos nominais válidos. Distribuições diferentes de linhas podem, em princípio, gerar a mesma soma; a probabilidade é desprezível, mas a garantia não é exata. Comparação exata (frequência de cada hash) não implementada: custo de memória a avaliar para os 9,4 milhões de linhas de 2022. Resultado: impressões iguais em 2024 (717.170 linhas, 241.436.100 votos) e 2022 (9.377.845 linhas, 710.840.707 votos). Coberto por teste.
+
+Regra de validação (D64): concordância entre fontes pendentes não promove nenhuma delas; serve só como hipótese de consistência. Promoção exige confronto com referência de integridade já estabelecida e independente da fonte avaliada; sem essa referência, a fonte fica pendente.
 
 2º turno na completude: `segundo_turno_de` aplica D61 (só `CD_ELEICAO` ordinário), com teste sintético.

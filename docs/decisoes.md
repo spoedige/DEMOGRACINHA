@@ -308,3 +308,13 @@ Implementação: `tools/dados/pipeline/transformacoes.py` (`parcelas_d42_d62`) e
 ## Correção factual na aplicação da D61, 17/11/2026
 
 A D61 (separação por `CD_ELEICAO`) não muda. A identificação da eleição ordinária de 2024 como "619" estava incompleta: 619 é o 1º turno e 620 o 2º turno da ordinária municipal; os arquivos de vagas só têm 619 porque vagas não têm turno. Em 2022, a ordinária tem quatro códigos (544 e 545, federal, 1º e 2º turnos; 546 e 547, estadual). Códigos registrados com evidência em `tools/dados/pipeline/eleicoes.py`. O arquivo de 2022 contém também uma eleição suplementar para governador realizada em 2026 (código 6278), classificada como posterior ao corte pela data da linha.
+
+## D64. Validação não circular, 17/11/2026
+
+Aprovada pelo autor na revisão de aa05379.
+1. Uma fonte pode ser usada para levantar hipótese de consistência.
+2. Concordância entre fontes pendentes não promove nenhuma delas.
+3. Promoção exige confronto com referência de integridade já estabelecida que não dependa da fonte avaliada.
+4. Sem referência independente, a classificação permanece pendente.
+
+Aplicação imediata: `tse_vagas_2022`, `tse_vagas_2024` e a situação final da votação por candidato de 2022 seguem pendentes.
