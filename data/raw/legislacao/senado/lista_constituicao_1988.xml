@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ListaDocumento xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+    xsi:noNamespaceSchemaLocation='https://legis.senado.leg.br/dadosabertos/dados/ListaDocumentov3.xsd'>
+    <Metadados>
+    <Versao>17/11/2026 10:15:20</Versao>
+    <VersaoServico>3</VersaoServico>
+    <DataVersaoServico>2017-02-01</DataVersaoServico>
+    <DescricaoDataSet>Obtém a lista de Legislação Federal com base nos parâmetros informados.</DescricaoDataSet>
+    
+</Metadados>
+
+    <documentos><documento id="579494"><tipo>CON-v</tipo><descricao>Constituição Federal Vigente</descricao><norma>CON-1988-10-05</norma><normaNome>Constituição da República Federativa do Brasil</normaNome><dataassinatura>05/10/1988</dataassinatura><anoassinatura>1988</anoassinatura><apelido>CON-1988-10-05</apelido></documento></documentos>
+</ListaDocumento>

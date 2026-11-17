@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ListaDocumento xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+    xsi:noNamespaceSchemaLocation='https://legis.senado.leg.br/dadosabertos/dados/ListaDocumentov3.xsd'>
+    <Metadados>
+    <Versao>17/11/2026 10:15:18</Versao>
+    <VersaoServico>3</VersaoServico>
+    <DataVersaoServico>2017-02-01</DataVersaoServico>
+    <DescricaoDataSet>Obtém a lista de Legislação Federal com base nos parâmetros informados.</DescricaoDataSet>
+    
+</Metadados>
+
+    <documentos><documento id="551380"><tipo>LEI-n</tipo><descricao>Lei Numerada</descricao><numero>9504</numero><norma>LEI-9504-1997-09-30</norma><normaNome>Lei nº 9.504 de 30/09/1997</normaNome><ementa>Estabelece normas para as eleições.</ementa><dataassinatura>30/09/1997</dataassinatura><anoassinatura>1997</anoassinatura><apelido>LEI-9504-1997-09-30 , Lei Geral das Eleições (1997)</apelido></documento></documentos>
+</ListaDocumento>

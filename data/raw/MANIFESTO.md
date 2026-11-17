@@ -17,3 +17,14 @@ Arquivos em `data/raw/tse/grandes/` (acima de 10 MB) não são versionados no gi
 | `tse/votacao_partido_munzona_2024.zip` | TSE | Resultados 2024: votação em partido por município e zona | https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_partido_munzona/votacao_partido_munzona_2024.zip | 2026-11-17T13:08:28Z | Tue, 17 Nov 2026 12:26:09 GMT | ZIP com CSV (latin-1, ;) | 6135093 | `17b3618951de5f51e605914503744dd16eb0494993c20ef25aa1d0aa0f76a89a` | sim |
 | `tse/grandes/votacao_partido_munzona_2022.zip` | TSE | Resultados 2022: votação em partido por município e zona | https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_partido_munzona/votacao_partido_munzona_2022.zip | 2026-11-17T13:08:55Z | Tue, 17 Nov 2026 06:24:29 GMT | ZIP com CSV (latin-1, ;) | 26276253 | `c49c0706d73c646803af26d7415fc4d63403f6487bf0897302585850d97fa6af` | não |
 | `tse/grandes/consulta_cand_2024.zip` | TSE | Candidatos 2024 | https://cdn.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2024.zip | 2026-11-17T13:08:57Z | Tue, 17 Nov 2026 12:26:25 GMT | ZIP com CSV (latin-1, ;) | 64653991 | `14e33e2bd85bd01427dc6b8db4f039874235a13746ea3493c021b6e845df1381` | não |
+
+## Legislação: Senado Federal (metadados)
+
+Fichas da API de dados abertos de legislação do Senado. Contêm identificação, publicações, dispositivos e normas posteriores que alteraram a norma. **Não contêm o texto integral**; o texto está no endereço indicado em `urlDocumento`, em host não aprovado (`normas.leg.br`).
+
+| Arquivo | Órgão | Documento | URL | Acesso (UTC) | Versão (campo `Versao` do serviço) | Formato | Bytes | SHA-256 |
+|---|---|---|---|---|---|---|---|---|
+| `legislacao/senado/lista_lei_9504_1997.xml` | Senado Federal | lista da Lei 9.504/1997 | https://legis.senado.leg.br/dadosabertos/legislacao/lista?tipo=LEI&numero=9504&ano=1997 | 2026-11-17T13:16:06Z | 17/11/2026 10:15:18 | XML | 943 | `ab3495ae58eed9b230caed13ea20ad7738a0f996dee4336b4ec6971294f70456` |
+| `legislacao/senado/lista_constituicao_1988.xml` | Senado Federal | lista da Constituição de 1988 | https://legis.senado.leg.br/dadosabertos/legislacao/lista?tipo=CON&ano=1988 | 2026-11-17T13:16:07Z | 17/11/2026 10:15:20 | XML | 864 | `c2c3f3976aab863b8daf8b50d04b2fed1186485cbe9eddeab92d0d37408ed6d1` |
+| `legislacao/senado/detalhe_551380_lei_9504_1997.xml` | Senado Federal | ficha da Lei 9.504/1997 (id 551380) | https://legis.senado.leg.br/dadosabertos/legislacao/551380 | 2026-11-17T13:16:09Z | 17/11/2026 10:15:36 | XML | 177125 | `9e79ab413b30e5917d7a3604da7d2108eb709f05fd256e40647a28baf8cc69a5` |
+| `legislacao/senado/detalhe_579494_constituicao_1988.xml` | Senado Federal | ficha da Constituição de 1988 (id 579494) | https://legis.senado.leg.br/dadosabertos/legislacao/579494 | 2026-11-17T13:16:11Z | 17/11/2026 10:15:44 | XML | 840578 | `579b012fbd5206b27551f831bb41d789533c13999567bfbd265112fe5c7a2b61` |

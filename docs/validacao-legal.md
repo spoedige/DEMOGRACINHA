@@ -44,6 +44,21 @@ Hosts incluídos na lista de permissões do ambiente pessoal "DEMOGRACINHA", sem
 
 Não foram feitas tentativas de contornar as proteções dos sites. O redirecionamento do Planalto aponta para a página inicial de outro host, não para o documento; incluir esse host não daria acesso à lei, por isso não foi submetido.
 
+## Bases de legislação da Câmara e do Senado, 17/11/2026
+
+Aprovados pelo autor e incluídos na rede do ambiente, sem curingas: `www2.camara.leg.br` (H1) e `legis.senado.leg.br` (H3). Não aprovados: `www.camara.leg.br` (H2), `www.lexml.gov.br` (H4). Os testes foram feitos sem seguir redirecionamentos.
+
+| Host | Teste | Resultado |
+|---|---|---|
+| `www2.camara.leg.br` | página da Lei 9.504/1997 no endereço `legin/fed/lei/1997/lei-9504-30-setembro-1997-366871-norma-pl.html` | 404, sem redirecionamento. O endereço testado não existe; o identificador numérico da página não é conhecido. Teste inconclusivo: o host responde, mas o documento não foi localizado |
+| `legis.senado.leg.br` | Lei 9.504/1997 e Constituição pela API de dados abertos de legislação | 200. A lista identifica as duas normas (ids 551380 e 579494). A ficha de cada uma traz publicações, dispositivos e normas posteriores, mas não o texto integral |
+
+Redirecionamento e referência a host não aprovado: a ficha do Senado indica o texto em `https://normas.leg.br/?urn=...` (URN da Lei 9.504/1997 e da Constituição). Esse host não foi acessado e fica submetido à aprovação do autor.
+
+Evidência guardada: as quatro respostas do Senado, em `data/raw/legislacao/senado/`, registradas em `data/raw/MANIFESTO.md`.
+
+Situação das pendências: nenhuma alterada. As fichas do Senado servem para rastrear alterações da norma, mas não substituem a leitura do texto vigente.
+
 ## Próximo passo
 
-Coleta possível agora: municípios (IBGE) e dados abertos do TSE. Legislação federal e resoluções do TSE seguem sem acesso; dependem de decisão do autor (fonte oficial alternativa ou envio dos arquivos).
+Coleta estatística em `coleta-estatistica.md`. Texto integral da legislação federal ainda sem acesso: depende da aprovação de `normas.leg.br` ou de endereço correto na Câmara. Resoluções do TSE e acórdãos do STF continuam sem fonte acessível.
