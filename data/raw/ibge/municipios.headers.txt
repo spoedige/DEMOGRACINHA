@@ -1,0 +1,15 @@
+HTTP/1.1 200 Connection Established
+
+HTTP/2 200 
+date: Tue, 17 Nov 2026 13:07:26 GMT
+content-type: application/json; charset=utf-8
+cache-control: max-age=2592000
+cf-cache-status: DYNAMIC
+expires: Thu, 17 Dec 2026 13:07:26 GMT
+vary: Accept-Encoding
+access-control-allow-headers: Content-Type
+access-control-allow-methods: GET, POST, OPTIONS
+access-control-allow-origin: *
+server: cloudflare
+cf-ray: a5bef559abcb49d8-ORD
+
