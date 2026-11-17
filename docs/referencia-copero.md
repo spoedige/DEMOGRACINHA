@@ -128,14 +128,14 @@ Resolve C5. Após a posse, o chefe do Executivo (jogador ou agente) monta coaliz
 ## 4. Mapa de dependências e ordem sugerida
 
 ```
-P9 conjuntura ─┐
-agentes ───────┼─ P2 facções ─┬─ P7 nomeação ─┬─ P13 coalizão
-               │              │               └─ P12 valor do cargo
-               ├─ P1 grupo ───┤
-               │              └─ P4 governabilidade
-municípios ────┴─ P3 base
-P6 compromissos ─ P5 credibilidade
-P1+P2+P3+P6 ───── P8 influência
+P9 conjuntura -+
+agentes -------+- P2 facções -+- P7 nomeação -+- P13 coalizão
+               |              |               +- P12 valor do cargo
+               +- P1 grupo ---+
+               |              +- P4 governabilidade
+municípios ----+- P3 base
+P6 compromissos - P5 credibilidade
+P1+P2+P3+P6 ----- P8 influência
 P11 independente (simplifica)
 P10 independente
 ```
