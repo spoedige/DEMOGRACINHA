@@ -77,7 +77,12 @@
    "temporalidade": "historico_compativel",
    "proveniencia": "versao_posterior_validada",
    "evidencia": "Identidades da D59 verificadas em todas as linhas (tools/dados/validar_estatisticos.py); códigos com correspondência na tabela oficial TSE x IBGE; versão regenerada pelo TSE após o corte (DT_GERACAO de novembro de 2026), publicação até o corte não comprovada.",
-   "observacoes": ""
+   "observacoes": "Contém eleição suplementar para governador realizada em 2026 (CD_ELEICAO 6278), marcada como posterior ao corte pela data da linha.",
+   "parcelas": [
+    {
+     "campo_data": "DT_ELEICAO"
+    }
+   ]
   },
   {
    "id": "tse_detalhe_apuracao_2024",
@@ -121,7 +126,12 @@
    "temporalidade": "historico_compativel",
    "proveniencia": "versao_posterior_validada",
    "evidencia": "Nominais mais total de legenda por eleição, turno, município, zona e cargo iguais aos válidos do detalhe da apuração em todas as 39.982 chaves; versão regenerada após o corte.",
-   "observacoes": "Arquivo fora do git. CD_MUNICIPIO sem zeros à esquerda: normalizar para 5 dígitos."
+   "observacoes": "Arquivo fora do git. CD_MUNICIPIO sem zeros à esquerda: normalizar para 5 dígitos. Contém eleição suplementar para governador realizada em 2026 (CD_ELEICAO 6278), marcada como posterior ao corte pela data da linha.",
+   "parcelas": [
+    {
+     "campo_data": "DT_ELEICAO"
+    }
+   ]
   },
   {
    "id": "tse_votacao_partido_2024",
@@ -615,6 +625,42 @@
    "proveniencia": "integridade_pendente",
    "evidencia": "Controles especificados em docs/pipeline-dados.md 7; execução parcial com divergências não explicadas; não validado.",
    "observacoes": "Arquivo fora do git."
+  },
+  {
+   "id": "tse_votacao_candidato_2022",
+   "orgao": "TSE",
+   "arquivo": "data/raw/tse/grandes/votacao_candidato_munzona_2022.zip",
+   "url": "https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2022.zip",
+   "sha256": "67e02fc4f47e26a3777412e46c41aa09c012645fbae9762cafade0ddd203530e",
+   "referencia": "eleição de 2022 e suplementares",
+   "data_fenomeno": "2022-10-30",
+   "temporalidade": "historico_compativel",
+   "proveniencia": "integridade_pendente",
+   "evidencia": "Coletado em 17/11/2026; versão regenerada após o corte (datas internas no zip: 2026-11-06, 2026-11-17). Sem controles de conteúdo executados.",
+   "observacoes": "Arquivo fora do git. Uso previsto: confronto de vagas e eleitos por turno (docs/pipeline-dados.md 8.3).",
+   "parcelas": [
+    {
+     "campo_data": "DT_ELEICAO"
+    }
+   ]
+  },
+  {
+   "id": "tse_votacao_candidato_2024",
+   "orgao": "TSE",
+   "arquivo": "data/raw/tse/grandes/votacao_candidato_munzona_2024.zip",
+   "url": "https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2024.zip",
+   "sha256": "e2dec50d027a7c1136e81f8e0f68f7ddf2bed66380a72a311c93300625bdbf74",
+   "referencia": "eleição de 2024 e suplementares",
+   "data_fenomeno": "2024-10-27",
+   "temporalidade": "historico_compativel",
+   "proveniencia": "integridade_pendente",
+   "evidencia": "Coletado em 17/11/2026; versão regenerada após o corte (datas internas no zip: 2026-11-06, 2026-11-17). Sem controles de conteúdo executados.",
+   "observacoes": "Arquivo fora do git. Uso previsto: confronto de vagas e eleitos por turno (docs/pipeline-dados.md 8.3).",
+   "parcelas": [
+    {
+     "campo_data": "DT_ELEICAO"
+    }
+   ]
   }
  ]
 }

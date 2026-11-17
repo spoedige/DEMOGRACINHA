@@ -19,13 +19,13 @@ Fonte única das regras de admissibilidade: D60 e D63 (`decisoes.md`). Registro 
 
 ## 2. Separação entre calibração e mundo inicial
 
-Verificável por código, não só por convenção. Classificação por parcela efetiva (revisão de 17/11/2026):
+Verificável por código, não só por convenção (revisão de 17/11/2026):
 - `carregar_registro` rejeita estados fora da lista, identificadores duplicados e proveniência inválida nas regras de parcela.
-- `Selecao(fonte, destino, filtro, colunas)` confere o hash do bruto antes de ler (arquivo ausente: `FonteAusente`; hash divergente: `FonteInadmissivel`), recusa colunas pendentes e classifica cada linha. Só linhas admissíveis no destino são entregues. Linhas `integridade_pendente` ou `proveniencia_nao_comprovada` são segregadas; linhas inadmissíveis no destino (por exemplo `posterior_ao_corte` no mundo inicial, ou `temporalidade_nao_comprovada`) são recusadas. Cada caso é contado com o motivo.
-- `intermediario(fonte_id, destino, transformar, filtro, colunas)` só passa ao `transformar` as linhas da `Selecao`, consome a seleção inteira e grava no metadado a contagem de aceitas, recusadas, segregadas e fora do filtro, com o hash do registro.
-- `entrada_mundo_inicial(conjunto)` não confia só no metadado: busca a fonte no registro, compara o hash do conjunto com o registro, reconfere o hash do arquivo, exige destino `mundo_inicial`, rejeita fonte não admissível pelo registro, colunas pendentes e conjunto sem registro de seleção por linha.
-- A eleição ordinária (D61) é um filtro separado (`eleicoes.filtro_ordinaria`, por `CD_ELEICAO`), independente da classificação temporal (D63).
-- Classificação por coluna: `colunas_pendentes` no registro impede o uso dessas colunas em qualquer destino.
+- `fontes.Selecao(fonte, destino, filtro, colunas, chave)` confere o hash do bruto antes de ler (ausente: `FonteAusente`; divergente: `FonteInadmissivel`), recusa colunas pendentes e classifica cada linha. Entrega só linhas admissíveis no destino; segrega `integridade_pendente` e `proveniencia_nao_comprovada`; recusa as inadmissíveis (por exemplo `posterior_ao_corte` no mundo inicial, `temporalidade_nao_comprovada`). Conta cada caso com o motivo e, se `chave` for informada, registra as unidades com linha segregada ou recusada. Não aceita linhas de fora: a única exceção é `Selecao.sintetica`, só para testes, que exige id iniciado por `sintetica_` e ausente do registro.
+- Filtros e transformações têm nome e versão registrados (`eleicoes.FILTROS`, `transformacoes.TRANSFORMACOES`). A eleição ordinária (D61) é filtro separado da classificação temporal (D63).
+- `conjuntos.intermediario(fonte, destino, transformacao, filtro)` grava no metadado: fonte, arquivo, hash do bruto, hash da entrada da fonte no registro, hash do registro, classificação, destino, transformação e versão, colunas, filtro, contagem da seleção, `dados_sha256` (serialização canônica dos dados) e `integridade` (hash do metadado inteiro).
+- `conjuntos.entrada_mundo_inicial(conjunto)` reconfere a integridade do metadado, o hash dos dados, o hash do registro atual, a entrada da fonte, o hash do bruto, o destino, a transformação e a versão, as colunas e o filtro, e **reexecuta a transformação** sobre a seleção validada: o conteúdo só entra se for exatamente o que a seleção produz. Alterar um valor, trocar o conteúdo, mudar filtro, fonte, classificação, destino ou o registro depois da geração faz a entrada recusar.
+- Classificação por coluna: `colunas_pendentes` no registro impede o uso dessas colunas.
 
 Regra:
 | Destino | Temporalidade aceita | Proveniência aceita |
@@ -45,10 +45,10 @@ Regras comuns: leitura direta do zip, sem extrair; CSV latin-1, separador `;`; u
 | `tse_ibge_correspondencia` | TSE, `tse/municipio_tse_ibge.zip` | tabela vigente | TSE e IBGE | município | `CD_MUNICIPIO_TSE`, `CD_MUNICIPIO_IBGE` | dicionário TSE para IBGE | código | código sem par é erro | cobre os 5.571 e todos os códigos de 2022 e 2024 | mundo inicial | idem |
 | `tse_perfil_eleitorado_2024` | TSE, `tse/grandes/perfil_eleitorado_2024.zip` | cadastro da eleição de 2024 | código TSE, depois IBGE | município (soma das zonas) e perfil | `CD_MUNICIPIO`, `QT_ELEITORES`, perfis | soma por município e perfil | eleitores | erro | total por município igual aos aptos da ordinária de 2024 | mundo inicial (eleitorado, D52) | `historico_compativel` / `versao_posterior_validada` |
 | `tse_detalhe_apuracao_2022` | TSE, `tse/detalhe_votacao_munzona_2022.zip` | eleição geral 2022 | código TSE e UF; exterior como unidade própria (D58) | município, zona, cargo, turno | seis parcelas da D59, aptos, comparecimento, abstenções, seções não instaladas | soma das zonas por unidade estatística e cargo; taxas da D62 sobre `comparecimento × votosPorEleitor` | votos, eleitores, taxa | erro | D59 por linha | mundo inicial (taxas fixas D42 e D62) e calibração | idem |
-| `tse_detalhe_apuracao_2024` | TSE, `tse/detalhe_votacao_munzona_2024.zip` | eleição municipal 2024 | código TSE | município, zona, cargo, turno | idem | idem, só `CD_ELEICAO = 619` (D61); suplementares por `DT_ELEICAO` | idem | erro | D59 por linha; 5.569 municípios na ordinária | idem | idem; parcelas pela data da eleição |
+| `tse_detalhe_apuracao_2024` | TSE, `tse/detalhe_votacao_munzona_2024.zip` | eleição municipal 2024 | código TSE | município, zona, cargo, turno | idem | idem, só eleição ordinária, códigos 619 e 620 (D61; `eleicoes.ORDINARIAS`); suplementares classificadas também por `DT_ELEICAO` | idem | erro | D59 por linha; 5.569 municípios na ordinária | idem | idem; parcelas pela data da eleição |
 | `tse_detalhe_apuracao_2026` | TSE, `tse/detalhe_votacao_munzona_2026.zip` | eleição geral 2026 | idem | idem | idem | idem | idem | erro | D59 por linha | só calibração | `posterior_ao_corte` / `versao_posterior_validada` |
 | `tse_votacao_partido_2022` | TSE, `tse/grandes/votacao_partido_munzona_2022.zip` | eleição geral 2022 | código TSE (sem zeros no bruto) e partido ou federação | município, zona, cargo, partido | `QT_VOTOS_NOMINAIS_VALIDOS`, `QT_TOTAL_VOTOS_LEG_VALIDOS` | soma por unidade, cargo e lista; base da identificação partidária inicial (método a definir, `motor-eleitoral.md` 11) | votos | erro | soma igual aos válidos do detalhe em todas as chaves | mundo inicial e calibração | `historico_compativel` / `versao_posterior_validada` |
-| `tse_votacao_partido_2024` | TSE, `tse/votacao_partido_munzona_2024.zip` | eleição municipal 2024 | idem | idem | idem | idem, só `CD_ELEICAO = 619` | votos | erro | soma igual aos válidos em 12.455 de 12.493 chaves; 38 excluídas como parcela pendente | idem | idem; 38 parcelas `integridade_pendente` |
+| `tse_votacao_partido_2024` | TSE, `tse/votacao_partido_munzona_2024.zip` | eleição municipal 2024 | idem | idem | idem | idem, só eleição ordinária (619 e 620) | votos | erro | soma igual aos válidos em 12.455 de 12.493 chaves; 38 excluídas como parcela pendente | idem | idem; 38 parcelas `integridade_pendente` |
 | `tse_vagas_2022`, `tse_vagas_2024` | TSE, `tse/consulta_vagas_*.zip` | 2022; 2024 com suplementares até 2026 | código TSE ou UF | unidade e cargo | `QT_VAGA`, `CD_ELEICAO`, `DT_ELEICAO` | só ordinária (D61) | vagas | erro | a definir (confronto com eleitos e legislação) | mundo inicial | `historico_compativel` / `integridade_pendente` |
 | `tse_candidatos_2022`, `tse_candidatos_2024` | TSE, `tse/consulta_cand_*.zip` | 2022, 2024 | candidatura | candidato | a definir | número de candidaturas por lista (5.3, L21) | candidaturas | erro | a definir | mundo inicial e calibração | `historico_compativel` / `integridade_pendente` |
 
@@ -162,14 +162,16 @@ Fallback da D62: unidade sem referência usa a taxa da UF no mesmo tipo de elei�
 2. `comparecimento × votosPorEleitor` repartido em brancos, nulos, três anulados e válidos por maiores restos; o peso dos válidos é o complemento das cinco taxas não válidas.
 3. Desempate pela chave (D49, D50). A identidade D59 vale por construção.
 
-### 7.4 Pontos bloqueados (escolha metodológica, aguardam aprovação)
+### 7.4 Pontos metodológicos (aprovados em 17/11/2026, ver `decisoes.md`, complemento da D42)
+
+Os itens abaixo foram aprovados como recomendado, com a regra de unidade incompleta definida pelo autor (item 5 do complemento). Texto original da proposta:
 1. **Seções não instaladas.** Recomendação: parâmetro próprio, como na tabela 7.1, porque o TSE as conta separadamente e somá-las à abstenção mudaria o significado da abstenção. A D42 não trata dessa parcela.
 2. **Denominador de brancos e nulos.** Recomendação: `comparecimento × votosPorEleitor`, o mesmo da D62, para que as seis parcelas da D59 tenham base comum. A D42 não define denominador.
 3. **Granularidade por cargo e turno.** Recomendação: por cargo e turno, porque brancos e nulos variam muito entre cargos na mesma unidade. A D42 diz só "por unidade".
 4. **Fallback da D42.** A D62 define fallback pela UF; a D42 não define. Recomendação: o mesmo fallback, marcado como estimativa.
 5. **Unidades com parcela incompleta.** Zonas com seções não instaladas no exterior (2022 e 2026) e municípios com zona segregada em outras fontes: regra de completude da unidade a definir.
 
-Até a aprovação, a transformação D42 e D62 não é implementada.
+Implementação: `transformacoes.parcelas_d42_d62` (v1) e `completude.avaliar`. Conjuntos de teste na seção 9.
 
 ## 8. Controles de vagas e candidaturas
 
@@ -194,3 +196,29 @@ Leitura das divergências (hipóteses não verificadas): vices e suplentes não 
 | Contagem por lista para o motor (5.3) | candidaturas aptas por lista, unidade e cargo, contra o limite legal (L21) | especificado; depende de L21 |
 
 Classificação das quatro fontes: continua `integridade_pendente`.
+
+### 8.3 Votação por candidato: coleta e especificação do confronto com vagas
+
+Coletados em 17/11/2026, fora do git, registrados em `data/fontes.json` (`tse_votacao_candidato_2022` e `_2024`, `integridade_pendente`) e no manifesto: `votacao_candidato_munzona_2022.zip` (582.274.907 bytes) e `votacao_candidato_munzona_2024.zip` (48.245.557 bytes), versões de novembro de 2026.
+
+Confronto previsto (não executado nesta etapa):
+| Grupo | Regra de eleitos | Turnos |
+|---|---|---|
+| Prefeito e vice | chapa vencedora: maioria simples no 1º turno ou maioria absoluta dos válidos; 2º turno acima de 200 mil eleitores (L20) | 1º e 2º, separados por `CD_ELEICAO` (619 e 620) |
+| Governador e vice; presidente e vice | maioria absoluta dos válidos no 1º turno, senão 2º turno | 1º e 2º (544 e 545; 546 e 547) |
+| Senadores titulares | mais votados, tantos quantas as vagas da UF (1 em 2022) | só 1º |
+| Suplentes de senador | da chapa do titular eleito; não têm votação própria | não se aplica |
+| Vereador; deputados federal, estadual e distrital | quociente, barreira individual e sobras (L1, L2), confrontados com a situação final do candidato | só 1º |
+
+Para cada grupo, confrontar vagas da eleição ordinária (D61) com eleitos derivados da votação e com a situação final do arquivo de candidaturas; registrar divergências por unidade. As 25 divergências de vereador de 2024 ficam abertas até explicação documental. Vagas e candidaturas continuam `integridade_pendente`.
+
+## 9. Conjuntos intermediários de teste (D42 e D62)
+
+Gerados por `tools/dados/gerar_intermediarios_teste.py` em `data/intermediario/teste/` (fora do git). Não são parâmetros do mundo inicial.
+
+| Conjunto | Fonte e filtro | Unidades | Status | Completude |
+|---|---|---|---|---|
+| `d42_d62_municipal_2024` | detalhe 2024, ordinária (619 e 620) | 11.189 (prefeito e vereador no 1º turno em 5.569 municípios; prefeito no 2º turno em 51) | todas `completa` | 11.138 completas; 4 `sem_eleicao_propria` (Brasília e Fernando de Noronha, 2 cargos) |
+| `d42_d62_geral_2022` | detalhe 2022, ordinária (544 a 547) | 36.132, inclusive o exterior como unidade própria | todas `completa` | 27.850 completas; 5 `ausencia_referencia_historica` (Boa Esperança do Norte, MT, criado depois de 2022), com estimativa pela UF |
+
+Numeradores e denominadores inteiros por unidade, sem taxa arredondada. Os dois conjuntos passaram pela entrada do mundo inicial, com reexecução da transformação. Hashes de integridade e dos dados: ver saída do gerador.

@@ -1,4 +1,6 @@
-"""Registro de fontes (data/fontes.json), leitura dos brutos, seleção por linha e conjuntos intermediários.
+"""Registro de fontes (data/fontes.json), leitura dos brutos e seleção por linha.
+
+Conjuntos intermediários e porta de entrada do mundo inicial: `conjuntos.py`.
 
 Regras que o código impõe (D61, D63):
 - o hash do bruto é conferido antes de qualquer leitura; arquivo ausente é erro, nunca "validado";
@@ -105,21 +107,41 @@ def colunas_permitidas(fonte, colunas):
 
 
 class Selecao:
-    """Itera só as linhas admissíveis no destino, contando aceitas, recusadas e segregadas com motivo."""
+    """Itera só as linhas admissíveis no destino, contando aceitas, recusadas e segregadas com motivo.
 
-    def __init__(self, fonte, destino, filtro=None, colunas=(), raiz=RAIZ, linhas=None):
+    Sempre lê o bruto oficial depois de conferir o hash. Linhas fornecidas de fora só pela interface de
+    testes `Selecao.sintetica`, que recusa identificadores de fontes do registro.
+    `chave(linha)`, se informada, identifica a unidade de cada linha; as unidades com linha segregada ou
+    recusada ficam em `unidades_segregadas` e `unidades_recusadas`.
+    """
+
+    def __init__(self, fonte, destino, filtro=None, colunas=(), raiz=RAIZ, chave=None, membro_contem="BRASIL", _linhas=None):
         if destino not in adm.DESTINOS:
             raise ValueError(f"destino desconhecido: {destino}")
         colunas_permitidas(fonte, colunas)
-        if linhas is None:
+        if _linhas is None:
             verificar_integridade(fonte, raiz)
-            linhas = linhas_csv(fonte, raiz)
-        self.fonte, self.destino, self.filtro, self._linhas = fonte, destino, filtro, linhas
+            _linhas = linhas_csv(fonte, raiz, membro_contem)
+        self.fonte, self.destino, self.filtro, self.chave, self._linhas = fonte, destino, filtro, chave, _linhas
+        self.sintetica_ = False
         self.aceitas = 0
         self.fora_do_filtro = 0
         self.recusadas = Counter()
         self.segregadas = Counter()
+        self.unidades_segregadas = set()
+        self.unidades_recusadas = set()
         self.consumida = False
+
+    @classmethod
+    def sintetica(cls, fonte, destino, linhas, filtro=None, colunas=(), chave=None):
+        """Só para testes. A fonte precisa ter id iniciado por "sintetica_" e não existir no registro."""
+        if not str(fonte.get("id", "")).startswith("sintetica_"):
+            raise ValueError("fonte sintética precisa de id iniciado por 'sintetica_'")
+        if fonte["id"] in carregar_registro():
+            raise ValueError("id de fonte sintética coincide com fonte do registro")
+        sel = cls(fonte, destino, filtro, colunas, chave=chave, _linhas=iter(linhas))
+        sel.sintetica_ = True
+        return sel
 
     def __iter__(self):
         for linha in self._linhas:
@@ -129,9 +151,13 @@ class Selecao:
             t, p = classificar_parcela(self.fonte, linha)
             if p in _SEGREGAR:
                 self.segregadas[p] += 1
+                if self.chave:
+                    self.unidades_segregadas.add(self.chave(linha))
                 continue
             if not adm.admissivel(t, p, self.destino):
                 self.recusadas[f"{t}/{p}"] += 1
+                if self.chave:
+                    self.unidades_recusadas.add(self.chave(linha))
                 continue
             self.aceitas += 1
             yield linha
@@ -139,58 +165,4 @@ class Selecao:
 
     def contagem(self):
         return {"aceitas": self.aceitas, "fora_do_filtro": self.fora_do_filtro,
-                "recusadas": dict(self.recusadas), "segregadas": dict(self.segregadas)}
-
-
-def sha256_registro(caminho=REGISTRO):
-    return sha256_arquivo(caminho)
-
-
-def intermediario(fonte_id, destino, transformar, filtro=None, colunas=(), raiz=RAIZ, registro=None, nome_filtro=None):
-    """Monta um conjunto intermediário a partir das linhas admissíveis.
-
-    `transformar` recebe o iterador de linhas aceitas e devolve os dados. A seleção é consumida por
-    inteiro; se `transformar` não consumir tudo, o restante é lido para que a contagem seja completa.
-    """
-    reg = registro or carregar_registro()
-    fonte = reg[fonte_id]
-    sel = Selecao(fonte, destino, filtro, colunas, raiz)
-    it = iter(sel)
-    dados = transformar(it)
-    for _ in it:
-        pass
-    return {
-        "meta": {
-            "fonte": fonte["id"], "arquivo": fonte["arquivo"], "sha256": fonte["sha256"],
-            "temporalidade": fonte["temporalidade"], "proveniencia": fonte["proveniencia"],
-            "destino": destino, "colunas_origem": list(colunas), "filtro": nome_filtro,
-            "contagem": sel.contagem(), "registro_sha256": sha256_registro() if registro is None else None,
-        },
-        "dados": dados,
-    }
-
-
-def entrada_mundo_inicial(conjunto, raiz=RAIZ):
-    """Única porta de entrada de dados no gerador do mundo inicial.
-
-    Reconfere contra o registro e o arquivo, sem confiar só nos metadados recebidos:
-    fonte existente, hash do registro igual ao do conjunto, hash do bruto, classificação da fonte,
-    colunas permitidas, destino e seleção por linha efetivamente feita.
-    """
-    m = conjunto.get("meta", {})
-    reg = carregar_registro()
-    fonte = reg.get(m.get("fonte"))
-    if fonte is None:
-        raise adm.FonteInadmissivel(f"fonte desconhecida no registro: {m.get('fonte')}")
-    if m.get("sha256") != fonte["sha256"]:
-        raise adm.FonteInadmissivel(f"{fonte['id']}: hash do conjunto diverge do registro")
-    verificar_integridade(fonte, raiz)
-    if m.get("destino") != "mundo_inicial":
-        raise adm.FonteInadmissivel(f"{fonte['id']}: conjunto preparado para '{m.get('destino')}', não para o mundo inicial")
-    if fonte["proveniencia"] in _SEGREGAR or fonte["temporalidade"] != "historico_compativel" and not fonte.get("parcelas"):
-        raise adm.FonteInadmissivel(f"{fonte['id']}: fonte não admissível no mundo inicial pelo registro")
-    colunas_permitidas(fonte, m.get("colunas_origem", []))
-    contagem = m.get("contagem")
-    if not contagem or "aceitas" not in contagem:
-        raise adm.FonteInadmissivel(f"{fonte['id']}: conjunto sem registro de seleção por linha")
-    return conjunto["dados"]
+                "recusadas": dict(sorted(self.recusadas.items())), "segregadas": dict(sorted(self.segregadas.items()))}

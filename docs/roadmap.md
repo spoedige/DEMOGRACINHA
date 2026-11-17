@@ -148,7 +148,7 @@ Rede: antes de coletar, testar IBGE e TSE com `curl -sI`. Em 403, parar, registr
 92. Afastamento ou licença sem convocação pela regra do cargo não gera suplente.
 93. Identidade de comparecimento (D59) com as seis parcelas e `votosPorEleitor` fecha em toda unidade simulada; se o motor usar `anuladosTotal`, a desagregação reproduz a identidade.
 94. O mundo inicial só usa fontes `historico_compativel` com `publicacao_historica_comprovada` ou `versao_posterior_validada` (D63); dados de 2026 só aparecem em calibração. Implementado em `tests/test_pipeline_dados.py` (testes 01 a 12).
-95. Parâmetros da eleição ordinária de 2024 vêm só de `CD_ELEICAO = 619`; eleições suplementares não alteram vagas nem taxas (D61).
+95. Parâmetros da eleição ordinária vêm só dos códigos registrados em `eleicoes.ORDINARIAS` (2022: 544, 545, 546, 547; 2024: 619 e 620, por turno); eleições suplementares não alteram vagas nem taxas (D61).
 96. O exterior não é atribuído a nenhum município; totais nacionais o incluem como unidade própria (D58).
 97. Parcelas anuladas (D62): taxas vêm da eleição ordinária de referência do mesmo tipo, sobre `comparecimento × votosPorEleitor`; ficam separadas e fora dos candidatos; unidade sem referência usa a taxa da UF marcada como estimativa ou registra lacuna; nenhuma taxa ausente vira zero; situação jurídica simulada não as altera.
 
@@ -202,5 +202,6 @@ L33 a L35 permanecem abertas até a verificação documental.
 ### 7.2 Outros itens a confirmar
 - Fator de migração de estado.
 - Lacunas de decisão (não resolvidas por inferência): regra quando o conjunto da base está cheio; conjunto de agentes em UFs com menos de 10 municípios.
+- Complemento da D42 aprovado (seções não instaladas, denominador de brancos e nulos, granularidade, fallback, unidade incompleta); testes automatizados em `tests/test_pipeline_dados.py` (40 testes).
 - Metas da Câmara 2026 (fonte e data de corte).
 - Todos os parâmetros de calibração e as funções listadas em `motor-eleitoral.md` 11.

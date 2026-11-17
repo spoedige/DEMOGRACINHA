@@ -292,3 +292,19 @@ Regras:
 - Hashes, datas, URLs, órgãos e evidências ficam preservados no manifesto e em `data/fontes.json`.
 
 Relação com os estados da D60 revisada: `admissivel` corresponde a `historico_compativel` com `publicacao_historica_comprovada`; `admissibilidade_temporal_nao_comprovada` se desdobra em `versao_posterior_validada` (quando os controles passaram) ou `integridade_pendente`; `nao_admissivel` corresponde a `posterior_ao_corte` para o mundo inicial; `pendente` corresponde a `integridade_pendente`.
+
+## D42, complemento metodológico aprovado pelo autor, 17/11/2026
+
+Detalha a D42 (comparecimento, abstenção, brancos e nulos como parâmetros fixos no MVP). A D62 não muda.
+
+1. **Seções não instaladas:** `QT_ELEITORES_SECOES_NAO_INSTALADAS` é parcela própria, não somada à abstenção. Identidade: `aptos = comparecimento + abstenção + eleitores de seções não instaladas`.
+2. **Brancos e nulos:** denominador `comparecimento × votosPorEleitor`, o mesmo da D62. Nulos incluem os nulos técnicos (`QT_TOTAL_VOTOS_NULOS`).
+3. **Granularidade:** unidade eleitoral × cargo × turno. Aptos e comparecimento nunca são somados entre cargos (repetem-se nos registros de cargos diferentes); só zonas do mesmo cargo e turno são somadas.
+4. **Fallback:** só quando não existe referência histórica para a unidade, taxa da UF no mesmo tipo de eleição, marcada como estimativa.
+5. **Unidade incompleta:** se a fonte tem registros incompletos, divergentes ou segregados da unidade, a unidade fica bloqueada para aquela parcela. Não se agregam só as zonas restantes, e o fallback estadual não encobre fonte incompleta. Situações distintas: ausência legítima de referência histórica (fallback com estimativa); ausência de dados na fonte (lacuna); dados segregados por inconsistência (bloqueio); unidade sem eleição própria (não se aplica).
+
+Implementação: `tools/dados/pipeline/transformacoes.py` (`parcelas_d42_d62`) e `completude.py`; especificação em `pipeline-dados.md` 7.
+
+## Correção factual na aplicação da D61, 17/11/2026
+
+A D61 (separação por `CD_ELEICAO`) não muda. A identificação da eleição ordinária de 2024 como "619" estava incompleta: 619 é o 1º turno e 620 o 2º turno da ordinária municipal; os arquivos de vagas só têm 619 porque vagas não têm turno. Em 2022, a ordinária tem quatro códigos (544 e 545, federal, 1º e 2º turnos; 546 e 547, estadual). Códigos registrados com evidência em `tools/dados/pipeline/eleicoes.py`. O arquivo de 2022 contém também uma eleição suplementar para governador realizada em 2026 (código 6278), classificada como posterior ao corte pela data da linha.

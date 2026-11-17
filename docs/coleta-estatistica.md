@@ -40,7 +40,7 @@ Nota: a soma só de válidos, brancos e nulos não é identidade do TSE; ela dei
 Explicação das contagens por ano, com códigos verificados na tabela oficial:
 - 2024 não tem Brasília (DF, sem eleição municipal) nem Fernando de Noronha (distrito estadual, código IBGE 2605459), que votam nas eleições gerais.
 - 2022 não tem Boa Esperança do Norte (MT, código IBGE 5101837), cuja primeira eleição foi em 2024.
-- Vagas de 2024: a eleição ordinária (`CD_ELEICAO = 619`) tem 5.569 unidades de prefeito, vice e vereador. O arquivo traz também dezenas de eleições suplementares, quase todas para prefeito e vice e 3 para vereador, algumas realizadas em 2025 e 2026. Correção: o relatório anterior falava em 3 suplementares porque contava só vereador. Tratamento pela D61.
+- Vagas de 2024: a eleição ordinária (`CD_ELEICAO = 619`; nos arquivos com turno, o 2º turno da ordinária é 620) tem 5.569 unidades de prefeito, vice e vereador. O arquivo traz também dezenas de eleições suplementares, quase todas para prefeito e vice e 3 para vereador, algumas realizadas em 2025 e 2026. Correção: o relatório anterior falava em 3 suplementares porque contava só vereador. Tratamento pela D61.
 - Treze municípios têm grafia diferente no TSE e no IBGE (por exemplo, "Boa Saúde" no TSE e "Januário Cicco" no IBGE, mesmo código). O cruzamento usa sempre a tabela oficial, nunca o nome.
 
 ### 2.1 Verificação pelo dicionário oficial

@@ -17,7 +17,8 @@ from tools.dados.pipeline import admissibilidade as adm
 from tools.dados.pipeline import fontes as fx
 from tools.dados.pipeline import votos
 from tools.dados.pipeline.arredondamento import maiores_restos
-from tools.dados.pipeline.eleicoes import filtro_ordinaria
+from tools.dados.pipeline import completude, conjuntos
+from tools.dados.pipeline.eleicoes import FILTROS, filtro_ordinaria
 from tools.dados.validar_estatisticos import IDENTIDADES
 
 REG = fx.carregar_registro()
@@ -118,17 +119,20 @@ class TestSelecaoPorLinha(unittest.TestCase):
         fx.colunas_permitidas(f, ["CD_MUNICIPIO", "QT_ELEITORES"])
 
     def test_contagem_registrada_no_intermediario(self):
-        def municipios(it):
-            return sorted({r["CD_MUNICIPIO"] for r in it})
-        c = fx.intermediario("tse_detalhe_apuracao_2024", "mundo_inicial", municipios, ORD24, ["CD_MUNICIPIO"],
-                             nome_filtro="ordinaria_2024")
+        c = conjuntos.intermediario("tse_detalhe_apuracao_2024", "mundo_inicial", "municipios_distintos", "ordinaria_2024")
         cont = c["meta"]["contagem"]
         self.assertGreater(cont["aceitas"], 0)
         self.assertGreater(cont["fora_do_filtro"], 0)
         self.assertEqual(len(c["dados"]), 5569)
         for campo in ("temporalidade", "proveniencia", "sha256", "arquivo"):
             self.assertEqual(c["meta"][campo], REG["tse_detalhe_apuracao_2024"][campo])
-        self.assertEqual(fx.entrada_mundo_inicial(c), c["dados"])
+        self.assertEqual(conjuntos.entrada_mundo_inicial(c), c["dados"])
+
+    def test_suplementar_de_2026_no_arquivo_de_2022_recusada_sem_filtro(self):
+        sel = fx.Selecao(REG["tse_detalhe_apuracao_2022"], "mundo_inicial")
+        for r in sel:
+            self.assertNotEqual(r["CD_ELEICAO"], "6278")
+        self.assertGreater(sum(v for k, v in sel.recusadas.items() if k.startswith("posterior_ao_corte")), 0)
 
 
 class TestD61(unittest.TestCase):
@@ -136,13 +140,15 @@ class TestD61(unittest.TestCase):
 
     def test_filtro_d61_usa_so_cd_eleicao(self):
         self.assertTrue(ORD24({"CD_ELEICAO": "619", "DT_ELEICAO": "01/01/2030"}))
+        self.assertTrue(ORD24({"CD_ELEICAO": "620", "DT_ELEICAO": "27/10/2024"}))
         self.assertFalse(ORD24({"CD_ELEICAO": "6266", "DT_ELEICAO": "06/10/2024"}))
+        self.assertEqual(set(FILTROS), {"ordinaria_2022", "ordinaria_2024"})
 
     def test_suplementar_anterior_ao_corte_passa_na_d63_mas_nao_na_d61(self):
         f = REG["tse_detalhe_apuracao_2024"]
         supl_antes, supl_depois = 0, 0
         for r in fx.linhas_csv(f):
-            if r["CD_ELEICAO"] == "619":
+            if ORD24(r):
                 continue
             t, _ = fx.classificar_parcela(f, r)
             if t == "historico_compativel":
@@ -156,7 +162,7 @@ class TestD61(unittest.TestCase):
     def test_suplementares_nao_contaminam_a_ordinaria(self):
         sel = fx.Selecao(REG["tse_detalhe_apuracao_2024"], "mundo_inicial", ORD24)
         cods = {r["CD_ELEICAO"] for r in sel}
-        self.assertEqual(cods, {"619"})
+        self.assertEqual(cods, {"619", "620"})
         self.assertGreater(sel.fora_do_filtro, 0)
 
 
@@ -207,36 +213,180 @@ class TestExcecoes2024(unittest.TestCase):
 class TestSeparacaoDeFluxos(unittest.TestCase):
     def test_calibracao_nao_alimenta_o_mundo_inicial(self):
         with self.assertRaises(adm.FonteInadmissivel):
-            fx.entrada_mundo_inicial(fx.intermediario("tse_detalhe_apuracao_2026", "calibracao", lista))
-        cal = fx.intermediario("tse_detalhe_apuracao_2024", "calibracao", lambda it: sum(1 for _ in it))
+            conjuntos.entrada_mundo_inicial(conjuntos.intermediario("tse_detalhe_apuracao_2026", "calibracao", "municipios_distintos"))
+        cal = conjuntos.intermediario("tse_detalhe_apuracao_2024", "calibracao", "municipios_distintos")
         with self.assertRaises(adm.FonteInadmissivel):
-            fx.entrada_mundo_inicial(cal)
+            conjuntos.entrada_mundo_inicial(cal)
 
     def test_2026_sem_linhas_no_mundo_inicial(self):
-        c = fx.intermediario("tse_detalhe_apuracao_2026", "mundo_inicial", lista)
+        c = conjuntos.intermediario("tse_detalhe_apuracao_2026", "mundo_inicial", "municipios_distintos")
         self.assertEqual(c["meta"]["contagem"]["aceitas"], 0)
         with self.assertRaises(adm.FonteInadmissivel):
-            fx.entrada_mundo_inicial(c)
+            conjuntos.entrada_mundo_inicial(c)
 
-    def test_metadados_adulterados_recusados(self):
-        base = fx.intermediario("tse_detalhe_apuracao_2024", "mundo_inicial", lambda it: 1, ORD24)
-        casos = [("destino", "calibracao"), ("sha256", "0" * 64), ("fonte", "inexistente"), ("contagem", None)]
-        for campo, valor in casos:
-            c = copy.deepcopy(base)
+
+class TestIntegridadeDoConjunto(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp = tempfile.TemporaryDirectory()
+        cls.reg = Path(cls.tmp.name) / "fontes.json"
+        cls.reg.write_bytes(fx.REGISTRO.read_bytes())
+        cls.base = conjuntos.intermediario("tse_detalhe_apuracao_2024", "mundo_inicial", "parcelas_d42_d62",
+                                           "ordinaria_2024", registro=cls.reg)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.tmp.cleanup()
+
+    def entrar(self, c):
+        return conjuntos.entrada_mundo_inicial(c, registro=self.reg)
+
+    def recusa(self, c, msg=""):
+        with self.assertRaises(adm.FonteInadmissivel, msg=msg):
+            self.entrar(c)
+
+    def test_1_conjunto_valido_aceito(self):
+        self.assertEqual(self.entrar(copy.deepcopy(self.base)), self.base["dados"])
+
+    def test_2_um_valor_alterado_recusado(self):
+        c = copy.deepcopy(self.base)
+        k = next(iter(c["dados"]["unidades"]))
+        c["dados"]["unidades"][k]["brancos"] += 1
+        self.recusa(c)
+
+    def test_3_conteudo_substituido_com_metadado_preservado_recusado(self):
+        c = copy.deepcopy(self.base)
+        c["dados"] = {"chave": "unidade|cargo|turno", "unidades": {}}
+        self.recusa(c)
+        c["meta"]["dados_sha256"] = conjuntos._sha(conjuntos.canonico(c["dados"]))
+        self.recusa(c, "metadado recalculado à mão sem integridade")
+        m = dict(c["meta"]); m.pop("integridade")
+        c["meta"]["integridade"] = conjuntos._sha(conjuntos.canonico(m))
+        self.recusa(c, "metadado e integridade recalculados: a reexecução da transformação recusa")
+
+    def test_4_hash_do_registro_alterado_recusado(self):
+        c = copy.deepcopy(self.base)
+        c["meta"]["registro_sha256"] = "0" * 64
+        self.recusa(c)
+
+    def test_5_filtro_alterado_recusado(self):
+        for filtro in (None, "ordinaria_2022", "inexistente"):
+            c = copy.deepcopy(self.base)
+            c["meta"]["filtro"] = filtro
+            self.recusa(c, str(filtro))
+
+    def test_6_fonte_alterada_recusada(self):
+        for fonte in ("tse_detalhe_apuracao_2022", "tse_detalhe_apuracao_2026", "inexistente"):
+            c = copy.deepcopy(self.base)
+            c["meta"]["fonte"] = fonte
+            self.recusa(c, fonte)
+
+    def test_7_classificacao_alterada_recusada(self):
+        c = copy.deepcopy(self.base)
+        c["meta"]["proveniencia"] = "publicacao_historica_comprovada"
+        self.recusa(c, "classificação no metadado")
+        c = copy.deepcopy(self.base)
+        c["meta"]["destino"] = "calibracao"
+        self.recusa(c, "destino")
+        original = self.reg.read_bytes()
+        try:
+            d = json.loads(original)
+            f = next(x for x in d["fontes"] if x["id"] == "tse_detalhe_apuracao_2024")
+            f["parcelas"] = []
+            self.reg.write_text(json.dumps(d, ensure_ascii=False, indent=1), encoding="utf-8")
+            self.recusa(copy.deepcopy(self.base), "parcela alterada no registro depois da geração")
+        finally:
+            self.reg.write_bytes(original)
+        self.entrar(copy.deepcopy(self.base))
+
+    def test_8_reproducao_determinista(self):
+        outro = conjuntos.intermediario("tse_detalhe_apuracao_2024", "mundo_inicial", "parcelas_d42_d62",
+                                        "ordinaria_2024", registro=self.reg)
+        self.assertEqual(outro, self.base)
+        self.assertEqual(outro["meta"]["integridade"], self.base["meta"]["integridade"])
+
+    def test_transformacao_e_versao_registradas(self):
+        for campo, valor in (("transformacao", "inexistente"), ("transformacao_versao", 99)):
+            c = copy.deepcopy(self.base)
             c["meta"][campo] = valor
-            with self.assertRaises(adm.FonteInadmissivel, msg=campo):
-                fx.entrada_mundo_inicial(c)
-        if fx.presente(REG["tse_perfil_eleitorado_2024"]):
-            c = copy.deepcopy(base)
-            c["meta"].update(fonte="tse_perfil_eleitorado_2024", sha256=REG["tse_perfil_eleitorado_2024"]["sha256"],
-                             colunas_origem=["CD_MUNICIPIO", "DS_GENERO"])
-            with self.assertRaises(adm.FonteInadmissivel, msg="coluna pendente"):
-                fx.entrada_mundo_inicial(c)
-        c = copy.deepcopy(base)
-        c["meta"]["fonte"] = "tse_detalhe_apuracao_2026"
-        c["meta"]["sha256"] = REG["tse_detalhe_apuracao_2026"]["sha256"]
-        with self.assertRaises(adm.FonteInadmissivel):
-            fx.entrada_mundo_inicial(c)
+            self.recusa(c, campo)
+
+
+class TestInterfaceDeTeste(unittest.TestCase):
+    def test_producao_nao_aceita_linhas_de_fora(self):
+        with self.assertRaises(TypeError):
+            fx.Selecao(REG["tse_detalhe_apuracao_2024"], "calibracao", linhas=[])
+
+    def test_sintetica_exige_id_proprio(self):
+        with self.assertRaises(ValueError):
+            fx.Selecao.sintetica(REG["tse_detalhe_apuracao_2024"], "calibracao", [])
+        falsa = dict(REG["tse_detalhe_apuracao_2024"], id="sintetica_x")
+        sel = fx.Selecao.sintetica(falsa, "mundo_inicial",
+                                   [{"DT_ELEICAO": "01/01/2026", "CD_ELEICAO": "1", "CD_MUNICIPIO": "1"},
+                                    {"DT_ELEICAO": "01/01/2025", "CD_ELEICAO": "1", "CD_MUNICIPIO": "1"}])
+        self.assertEqual(len(list(sel)), 1)
+        self.assertTrue(sel.sintetica_)
+
+
+class TestParcelasD42D62(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.c24 = conjuntos.intermediario("tse_detalhe_apuracao_2024", "mundo_inicial", "parcelas_d42_d62", "ordinaria_2024")
+        cls.c22 = conjuntos.intermediario("tse_detalhe_apuracao_2022", "mundo_inicial", "parcelas_d42_d62", "ordinaria_2022")
+
+    def test_identidades_por_unidade(self):
+        for c in (self.c24, self.c22):
+            for k, u in c["dados"]["unidades"].items():
+                self.assertEqual(u["status"], "completa", k)
+                votos_ = u["validos"] + u["brancos"] + u["nulos"] + u["anulados"] + u["anuladosSubJudice"] + u["anuladosApuracaoSeparada"]
+                self.assertEqual(votos_, u["comparecimento"] * u["votosPorEleitor"], k)
+                self.assertEqual(u["aptos"], u["comparecimento"] + u["abstencoes"] + u["eleitoresSecoesNaoInstaladas"], k)
+                self.assertTrue(all(isinstance(u[x], int) for x in ("aptos", "denominadorVotos", "brancos")))
+
+    def test_aptos_nao_somados_entre_cargos(self):
+        u = self.c24["dados"]["unidades"]
+        for k in u:
+            mun, cargo, turno = k.split("|")
+            if cargo == "Prefeito" and turno == "1":
+                self.assertEqual(u[k]["aptos"], u[f"{mun}|Vereador|1"]["aptos"], mun)
+
+    def test_senado_2022_um_voto_por_eleitor(self):
+        u = [v for k, v in self.c22["dados"]["unidades"].items() if "|Senador|" in k]
+        self.assertTrue(u and all(x["votosPorEleitor"] == 1 for x in u))
+
+    def test_completude_e_quatro_situacoes(self):
+        mun24 = {k.split("|")[0] for k in self.c24["dados"]["unidades"]}
+        r24 = completude.avaliar(self.c24["dados"], "municipal")
+        self.assertEqual(r24["situacoes"], {"completa": 11138, "sem_eleicao_propria": 4})
+        r22 = completude.avaliar(self.c22["dados"], "geral", mun24)
+        self.assertEqual(r22["situacoes"]["ausencia_referencia_historica"], 5)
+        self.assertTrue(all(e["estimativa"] for e in r22["estimativas"].values()))
+        dados = copy.deepcopy(self.c24["dados"])
+        alvo = "01007|Prefeito|1"
+        dados["unidades"][alvo]["status"] = "bloqueada_segregada"
+        del dados["unidades"]["01015|Vereador|1"]
+        r = completude.avaliar(dados, "municipal")
+        self.assertIn(alvo, r["bloqueadas"])
+        self.assertIn("01015|Vereador|1", r["lacunas"])
+        self.assertNotIn(alvo, r["estimativas"])
+        self.assertNotIn("01015|Vereador|1", r["estimativas"])
+        self.assertEqual(r["situacoes"]["ausencia_dados_fonte"], 1)
+
+    def test_unidade_com_linha_segregada_bloqueada(self):
+        falsa = dict(REG["tse_detalhe_apuracao_2024"], id="sintetica_seg", parcelas=[
+            {"excluir": {"NR_ZONA": "2"}, "proveniencia": "integridade_pendente"}])
+        base = {"SG_UF": "AC", "CD_MUNICIPIO": "01007", "DS_CARGO": "Prefeito", "NR_TURNO": "1", "CD_ELEICAO": "619",
+                "ANO_ELEICAO": "2024", "DT_ELEICAO": "06/10/2024", "QT_APTOS": "10", "QT_COMPARECIMENTO": "8",
+                "QT_ABSTENCOES": "2", "QT_ELEITORES_SECOES_NAO_INSTALADAS": "0", "QT_TOTAL_VOTOS_VALIDOS": "7",
+                "QT_VOTOS_BRANCOS": "1", "QT_TOTAL_VOTOS_NULOS": "0", "QT_TOTAL_VOTOS_ANULADOS": "0",
+                "QT_TOTAL_VOTOS_ANUL_SUBJUD": "0", "QT_VOTOS_ANULADOS_APU_SEP": "0"}
+        z1, z2 = dict(base, NR_ZONA="1"), dict(base, NR_ZONA="2")
+        from tools.dados.pipeline.transformacoes import TRANSFORMACOES, unidade_cargo_turno
+        sel = fx.Selecao.sintetica(falsa, "mundo_inicial", [z1, z2], chave=unidade_cargo_turno)
+        out = TRANSFORMACOES["parcelas_d42_d62"]["fn"](sel)
+        u = out["unidades"]["01007|Prefeito|1"]
+        self.assertEqual(u["status"], "bloqueada_segregada")
+        self.assertEqual(u["aptos"], 10, "soma só da zona aceita, mas a unidade fica bloqueada")
 
 
 @precisa("tse_perfil_eleitorado_2024")
