@@ -59,7 +59,7 @@ def disputas_segundo_turno(tipo, raiz=fx.RAIZ):
     return segundo_turno_de(fx.linhas_csv(fonte, raiz), ANO[tipo])
 
 
-LIMITE_L20 = 200_000  # L20: 2º turno de prefeito só acima de 200 mil eleitores (Constituição; dispositivo a confirmar)
+LIMITE_L20 = 200_000  # L20: 2º turno de prefeito só acima de 200 mil eleitores (CF/88, art. 29, II, combinado com art. 77)
 RESSALVA_2T = ("unidades esperadas de 2º turno vêm do arquivo de candidaturas (integridade_pendente): hipótese de "
                "completude, não referência independente (D64)")
 

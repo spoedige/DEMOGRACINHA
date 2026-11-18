@@ -179,7 +179,7 @@ Nenhuma está resolvida. Uma pendência só sai desta lista com fonte oficial ci
 | L17 | Propaganda antecipada e restrições de 30/06 e 04/07 | Lei das Eleições (condutas vedadas e propaganda); resolução de propaganda do TSE | `GDD.md` 3 |
 | L18 | Calendário eleitoral 2026 completo | Resolução do calendário eleitoral do TSE; Constituição (datas de posse) | `GDD.md` 3 |
 | L19 | Senado: dois votos em 2026 e um em 2030; voto em branco ou nulo em cada voto | Constituição; Código Eleitoral; resolução de votação do TSE | `motor-eleitoral.md` 6.2 |
-| L20 | Segundo turno de prefeito acima de 200 mil eleitores | Constituição | `regras-e-mundo.md` 1 |
+| L20 | Segundo turno de prefeito acima de 200 mil eleitores | Constituição, art. 29, II, combinado com art. 77 (dispositivo conferido pelo autor em 18/11/2026; item segue aberto até a validação documental) | `regras-e-mundo.md` 1 |
 | L21 | Limite legal de candidatos por lista em cada cargo proporcional | Lei das Eleições; resolução de registro do TSE | `motor-eleitoral.md` 5.3 |
 | L22 | Hipóteses legais de inelegibilidade: tipos de condenação, órgão colegiado ou trânsito em julgado, prazos | Lei Complementar de inelegibilidades e alterações (Ficha Limpa); jurisprudência do TSE e STF | `eventos-e-risco.md` 6 |
 | L23 | Regras de suplência por cargo: ordem, convocação, licenças que a geram, posse | Constituição; Código Eleitoral; regimentos da Câmara, do Senado, das assembleias e câmaras | `eventos-e-risco.md` 6.1; `carreira-e-poder.md` 9 |
