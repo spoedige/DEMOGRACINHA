@@ -134,7 +134,7 @@ O 2º turno não passa pela distribuição de cadeiras. Proporcional e majoritá
 
 ### 11. Apuração majoritária
 - Responsabilidade: votos por chapa, vencedor no 1º turno ou decisão de 2º turno com os dois finalistas (D69).
-- Entradas: válidos (8), eleitorado da unidade, cargo e vagas, chapas e pontuações, `D` (não modelados).
+- Entradas: válidos (8), eleitorado da unidade, cargo e vagas, chapas e pontuações, `D` (não modelados). Senado só com 1 vaga; com 2 vagas, módulo 13 (D70).
 - Processamento: `motor-eleitoral.md` 6 (pontuação, repartição, maioria e exigência de 2º turno).
 - Saídas: votos por chapa; vencedor ou finalistas.
 - Dependências: 8; 14 sob demanda.
@@ -144,7 +144,7 @@ O 2º turno não passa pela distribuição de cadeiras. Proporcional e majoritá
 
 ### 12. Segundo turno
 - Responsabilidade: disputa entre os dois finalistas.
-- Entradas: resultado do 1º turno, eleitorado, eventos entre turnos.
+- Entradas: resultado do 1º turno (votos por candidato, não modelados, inválidos, abstenção, seções não instaladas), finalistas, eleitorado, pesos de cada origem para A, B, brancoNulo e abstencao (prontos até os módulos 5 a 7), proporções históricas dos inválidos do 2º turno, seções não instaladas do 2º turno (opcional).
 - Processamento: matriz origem e destino, `motor-eleitoral.md` 6.3.
 - Só executa o 2º turno já decidido pelo módulo 11 (finalistas). `CARGOS[cargo].segundoTurno` (6.2) indica só que o cargo admite 2º turno em tese; o piso de mais de 200 mil eleitores para prefeito (CF/88, art. 29, II; L20) e a maioria absoluta são verificados no módulo 11 (D69).
 - Saídas: votos do 2º turno, vencedor.
@@ -155,7 +155,7 @@ O 2º turno não passa pela distribuição de cadeiras. Proporcional e majoritá
 
 ### 13. Senado
 - Responsabilidade: disputa de 1 ou 2 vagas.
-- Entradas: válidos, candidatos, votos por eleitor (1).
+- Entradas: vagas (1 ou 2), eleitorado, chapas e pontuações; 1 vaga: `validos` (delegado ao módulo 11); 2 vagas: `validos1` e `taxaInvalidos2` (D70).
 - Processamento: `motor-eleitoral.md` 6.2 (matriz de segundo voto sem diagonal).
 - Saídas: votos por candidato, eleitos.
 - Dependências: 11 (pontuação); 14 sob demanda.
@@ -271,3 +271,9 @@ Pendência para o módulo 9: a regra "F por último" do segmento livre (5.2) exi
 - Módulo 9, `Proporcional.apurar(estado, dados, rngState)`: `{ disputaId, validos, delta, semIdentificacao, tau, listas: [{ id, identPartidaria, lambda, candidatos: [{ id, S }] }] }`. Segmento fiel: legenda com pontuação `λ_L` concorrendo com os `S_i` da lista (forma 4.2, como na 5.2); lista sem candidatos fica só com a legenda. Segmento livre em dois níveis (D50), só listas com pontuação positiva. `τ` diferente de 1 é recusado. Sem sorteio.
 - Módulo 11, `Majoritaria.apurar(estado, dados, rngState)`: `{ disputaId, cargo, vagas, eleitorado, validos, D, tau, chapas: [{ id, S }] }`; saída com `regra`, `segundoTurno`, `eleitos`, `finalistas`, `votosNaoModelados`, `desempates`. Válidos acima de `eleitorado × vagas` (Senado) ou de `eleitorado` (demais) são recusados. Empates na posição decisiva: resolvedor injetado (`estado.opcoes.resolverDesempateTecnico`, mesmo contrato do módulo 10).
 - Reprodutibilidade: `Math.log`, `Math.exp` e `Math.pow` não têm resultado bit a bit fixado pela especificação do JavaScript. Mesma semente dá o mesmo resultado no mesmo motor JavaScript; entre navegadores diferentes, pontuações podem diferir no último bit e, raramente, mudar um arredondamento. Limitação registrada; sem correção nesta etapa.
+
+### 6.6 Segundo turno e Senado (etapa 4)
+- Módulo 13, `Senado.apurar(estado, dados, rngState)`: `{ disputaId, vagas, eleitorado, chapas: [{ id, S }], validos | validos1, taxaInvalidos2, D, tau }`. 1 vaga: delega a `Majoritaria.apurar` (resultado idêntico). 2 vagas: primeiro voto por maior resto; `validos1` dividido em `validos2` e `invalidos2`; linhas por `v1_c`; cada linha entre os demais candidatos por `S_d`; eleitos e empate na segunda vaga pela mesma rotina do módulo 11 (`Majoritaria.classificar`). Saída com `primeiroVoto`, `segundoVoto` (matriz sem diagonal), `votos`, `validos1`, `validos2`, `invalidos2`, `eleitos`, `desempates`. `D` diferente de 0, `taxaInvalidos2` fora de [0, 1), menos de duas chapas ou linha sem destino com pontuação: erro.
+- Módulo 11 recusa `SENADOR` com 2 vagas e passa a exigir `validos <= eleitorado`.
+- Módulo 12, `SegundoTurno.apurar(estado, dados, rngState)`: `{ disputaId, eleitorado, primeiroTurno, finalistas: [A, B], pesos: { origem: { A, B, brancoNulo, abstencao } }, proporcoesInvalidos2, eleitoresSecoesNaoInstaladas2 }`. Origens: id de cada candidato do 1º turno, `naoModelados:D`, `brancoNuloAnulado`, `abstencao`. Confere que o 1º turno fecha com o eleitorado; pesos positivos nos quatro destinos de toda origem com contingente; origem desconhecida ou sem pesos é erro. Saída com `votos`, `validos`, `comparecimento`, `abstencao`, `eleitoresSecoesNaoInstaladas`, as cinco parcelas não válidas, `eleito`, `transferencias` por origem e `desempates`. Empate entre os finalistas: resolvedor injetado, tipo `segundoTurno`.
+- Mapas internos novos com `Object.create(null)` ou `Map`.

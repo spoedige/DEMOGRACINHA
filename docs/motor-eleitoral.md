@@ -387,6 +387,7 @@ votos_d  = v1_d + Σ_{c ≠ d} v2[c→d]
 - `S_d` no segundo voto é a mesma pontuação do primeiro. Afinidade entre pares (mesma coligação, mesmo campo político) é hipótese de calibração futura, sem fórmula aprovada e sem implementação no MVP.
 - As duas maiores votações vencem. 2030: uma vaga e um voto.
 - Arredondamento: maior resto em `v1` e em cada linha da matriz.
+- Implementação (D70): `validos1` e `taxaInvalidos2` são entradas explícitas (dado separado por voto não confirmado, L19); `validos1` repartido por maior resto entre `validos2` e `invalidos2`; `validos2` repartido entre as linhas em proporção a `v1_c`; cada linha repartida entre os demais candidatos por `S_d`. Senado com 2 vagas tem `D = 0`: um agregado de não modelados permitiria segundo voto de não modelado para não modelado, contornando a exclusão da diagonal. Ao menos duas chapas. Senado com 1 vaga segue a apuração de 6 com um voto por eleitor.
 
 ### 6.3 Segundo turno
 Opera sobre o eleitorado, não sobre válidos.
@@ -401,6 +402,11 @@ absteve                        →   A, B, branco/nulo, abstenção     (perman�
 - Cada origem reparte seu contingente entre os quatro destinos pela forma 4.2, com fatores próprios (calibrar). Nunca transfere integralmente.
 - `validos2 = votos_A + votos_B`; `comparecimento2 = validos2 + brancos2 + nulos2`; `eleitorado` constante.
 - Estados atualizados entre turnos por eventos de apoio e debate. Tempo de TV igual.
+- Composição com a D59 (D70), em três estágios:
+  1. Seções não instaladas do 2º turno: contingente informado ou, sem ele, o do 1º turno. O restante do eleitorado entra na matriz.
+  2. Origens da matriz: votos de cada candidato do 1º turno (finalistas e derrotados), não modelados (`D`, origem própria), brancos, nulos e os três anulados somados, e abstenção ajustada pela diferença de seções não instaladas entre turnos. Cada origem reparte seu inteiro por maior resto entre A, B, branco/nulo e abstenção, com peso positivo nos quatro destinos.
+  3. `validos2 = votos_A + votos_B`; branco/nulo do 2º turno repartido entre brancos, nulos, anulados, anulados sub judice e anulados em apuração separada pelas proporções históricas do 2º turno da unidade (D42, D62). Identidades conferidas: `eleitorado = comparecimento2 + abstencao2 + secoesNaoInstaladas2` e `comparecimento2 = validos2 + as cinco parcelas não válidas`.
+- Vencedor: mais votado; empate vai ao desempate técnico (5.5).
 
 ## 7. Dinheiro e exposição
 

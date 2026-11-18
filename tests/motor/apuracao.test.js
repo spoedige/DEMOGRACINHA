@@ -227,11 +227,10 @@ test("módulo 11: prefeito com até 200 mil eleitores tem maioria simples; acima
   assert.deepEqual([p2.regra, p2.segundoTurno, p2.finalistas], ["maioriaAbsoluta", true, ["A", "B"]]);
 });
 
-test("módulo 11: Senado com uma ou duas vagas, maioria simples, sem 2º turno", () => {
-  const s2 = maj("SENADOR", 5000000, { A: 4, B: 3, C: 2, D: 1 }, { vagas: 2 });
-  assert.deepEqual([s2.regra, s2.segundoTurno, s2.eleitos], ["maioriaSimples", false, ["A", "B"]]);
+test("módulo 11: Senado só com uma vaga, maioria simples, sem 2º turno; duas vagas vão ao módulo 13", () => {
   const s1 = maj("SENADOR", 5000000, { A: 4, B: 3, C: 2, D: 1 });
-  assert.deepEqual(s1.eleitos, ["A"]);
+  assert.deepEqual([s1.regra, s1.segundoTurno, s1.eleitos], ["maioriaSimples", false, ["A"]]);
+  assert.throws(() => maj("SENADOR", 5000000, { A: 4, B: 3, C: 2, D: 1 }, { vagas: 2 }), /módulo 13/);
 });
 
 test("módulo 11: empates na posição decisiva vão ao desempate técnico injetado", () => {
@@ -242,9 +241,6 @@ test("módulo 11: empates na posição decisiva vão ao desempate técnico injet
   assert.deepEqual(g.finalistas, ["A", "C"]);
   assert.deepEqual(ch2, [[["B", "C"], "finalistasMajoritario", 2]]);
   assert.throws(() => maj("GOVERNADOR", 5000000, { A: 4, B: 3, C: 3 }), /desempate técnico necessário/);
-  // Senado, segunda vaga: 400, 300, 300
-  const s = maj("SENADOR", 5000000, { A: 4, B: 3, C: 3 }, { vagas: 2 }, { resolverDesempateTecnico: () => ({ vencedorId: "B" }) });
-  assert.deepEqual([s.eleitos, s.desempates.length], [["A", "B"], 1]);
   // prefeito pequeno com empate no topo
   const p = maj("PREFEITO", 1000, { A: 1, B: 1 }, {}, { resolverDesempateTecnico: () => ({ vencedorId: "B" }) });
   assert.deepEqual(p.eleitos, ["B"]);
@@ -265,15 +261,14 @@ test("módulo 11: validações", () => {
   assert.throws(() => maj("VEREADOR", 1000, { A: 1 }), ERRO);
   assert.throws(() => maj("PREFEITO", 1000, { A: 1, B: 1 }, { vagas: 2 }), ERRO);
   assert.throws(() => maj("SENADOR", 1000, { A: 1, B: 1 }, { vagas: 3 }), ERRO);
-  assert.throws(() => maj("SENADOR", 1000, { A: 1 }, { vagas: 2 }), ERRO);
+  assert.throws(() => maj("SENADOR", 1000, { A: 1, B: 1 }, { vagas: 2 }), /módulo 13/);
   assert.throws(() => maj("PRESIDENTE", 1000, { A: 1 }, { tau: 2 }), ERRO);
   assert.throws(() => maj("PRESIDENTE", 1000, { "naoModelados:D": 1 }), ERRO);
   assert.throws(() => maj("PRESIDENTE", 1000, { A: 1 }, { D: -1 }), ERRO);
-  // válidos acima do máximo possível: eleitorado × vagas no Senado, eleitorado nos demais
+  // válidos acima do eleitorado (1 voto por eleitor; Senado com 2 votos é o módulo 13)
   assert.throws(() => maj("PRESIDENTE", 999, { A: 1 }), ERRO);
   assert.throws(() => maj("PRESIDENTE", 0, { A: 1 }, { validos: 1 }), ERRO);
-  assert.deepEqual(maj("SENADOR", 500, { A: 2, B: 1.5, C: 1 }, { vagas: 2 }).eleitos.length, 2); // 1000 válidos com 500 eleitores e 2 votos
-  assert.throws(() => maj("SENADOR", 499, { A: 2, B: 1, C: 1 }, { vagas: 2 }), ERRO);
+  assert.throws(() => maj("SENADOR", 999, { A: 2, B: 1 }), ERRO);
 });
 
 // ---------- Encadeamento 8 -> 9 -> 10 ----------

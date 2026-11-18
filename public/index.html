@@ -567,10 +567,11 @@ var Majoritaria = (function () {
     var disputaId = Comum.idv(dados.disputaId, "dados.disputaId");
     if (typeof dados.cargo !== "string" || !Object.prototype.hasOwnProperty.call(CARGOS, dados.cargo)) Comum.erro("cargo majoritário desconhecido");
     var vagas = Comum.inteiro(dados.vagas, "dados.vagas", 1);
-    if (vagas > (dados.cargo === "SENADOR" ? 2 : 1)) Comum.erro("vagas incompatíveis com o cargo");
+    if (dados.cargo === "SENADOR" && vagas === 2) Comum.erro("Senado com 2 vagas: use o módulo 13 (Senado.apurar, D70)");
+    if (vagas !== 1) Comum.erro("vagas incompatíveis com o cargo");
     var eleitorado = Comum.inteiro(dados.eleitorado, "dados.eleitorado", 0);
     var validos = Comum.inteiro(dados.validos, "dados.validos", 1);
-    if (validos > eleitorado * (dados.cargo === "SENADOR" ? vagas : 1)) Comum.erro("validos excede o máximo possível para o eleitorado");
+    if (validos > eleitorado) Comum.erro("validos excede o máximo possível para o eleitorado");
     if (dados.tau !== undefined && dados.tau !== 1) Comum.erro("tau: estrutural 1 (4.2)");
     var D = dados.D === undefined ? 0 : Comum.real(dados.D, "D", 0);
     if (!Array.isArray(dados.chapas) || dados.chapas.length === 0) Comum.erro("dados.chapas: ao menos uma chapa");
@@ -581,8 +582,6 @@ var Majoritaria = (function () {
       vistos.add(c.id);
       return { id: c.id, S: Comum.real(c.S, "S de " + c.id, 0) };
     }).sort(Comum.porId);
-    var minimas = dados.cargo === "SENADOR" ? vagas : 1;
-    if (chapas.length < minimas) Comum.erro("chapas insuficientes para as vagas");
     var part = chapas.map(function (c) { return { id: c.id, peso: c.S }; });
     if (D > 0) part.push({ id: NAO_MODELADOS, peso: D });
     var votos = MaiorResto.distribuir(validos, part);
@@ -617,7 +616,166 @@ var Majoritaria = (function () {
     out.desempates = ctx.desempates;
     return { resultado: JSON.parse(JSON.stringify(out)), rngStateNext: ctx.rng };
   }
-  return Object.freeze({ apurar: apurar, ID_NAO_MODELADOS: NAO_MODELADOS, LIMITE_PREFEITO: LIMITE_PREFEITO });
+  return Object.freeze({ apurar: apurar, classificar: primeiros, ID_NAO_MODELADOS: NAO_MODELADOS, LIMITE_PREFEITO: LIMITE_PREFEITO });
+})();
+
+// Módulo 13: Senado (6.2; D70). 1 vaga: turno único do módulo 11, com 1 voto por eleitor. 2 vagas: dois votos por
+// eleitor para candidatos distintos, por distribuição conjunta de pares (matriz sem diagonal), D = 0.
+var Senado = (function () {
+  function apurar(estado, dados, rngState) {
+    var opcoes = (estado && estado.opcoes) || {};
+    var disputaId = Comum.idv(dados.disputaId, "dados.disputaId");
+    var vagas = dados.vagas;
+    if (vagas === 1) {
+      if (dados.validos1 !== undefined || dados.taxaInvalidos2 !== undefined) Comum.erro("Senado com 1 vaga: use validos, sem segundo voto");
+      var r = Majoritaria.apurar(estado, { disputaId: disputaId, cargo: "SENADOR", vagas: 1, eleitorado: dados.eleitorado,
+        validos: dados.validos, D: dados.D, tau: dados.tau, chapas: dados.chapas }, rngState);
+      return r;
+    }
+    if (vagas !== 2) Comum.erro("Senado: 1 ou 2 vagas");
+    if (dados.D !== undefined && dados.D !== 0) Comum.erro("Senado com 2 vagas: D = 0 (D70)");
+    if (dados.tau !== undefined && dados.tau !== 1) Comum.erro("tau: estrutural 1 (4.2)");
+    var eleitorado = Comum.inteiro(dados.eleitorado, "dados.eleitorado", 0);
+    var validos1 = Comum.inteiro(dados.validos1, "dados.validos1", 1);
+    if (validos1 > eleitorado) Comum.erro("validos1 excede o eleitorado");
+    var taxa = Comum.real(dados.taxaInvalidos2, "taxaInvalidos2", 0, 1);
+    if (!(taxa < 1)) Comum.erro("taxaInvalidos2 deve ser menor que 1");
+    if (!Array.isArray(dados.chapas) || dados.chapas.length < 2) Comum.erro("Senado com 2 vagas: ao menos duas chapas");
+    var vistos = new Set();
+    var chapas = dados.chapas.map(function (c) {
+      Comum.idv(c.id, "chapa.id");
+      if (vistos.has(c.id)) Comum.erro("chapa repetida: " + c.id);
+      vistos.add(c.id);
+      return { id: c.id, S: Comum.real(c.S, "S de " + c.id, 0) };
+    }).sort(Comum.porId);
+
+    // primeiro voto (4.2, τ = 1, D = 0)
+    var v1 = MaiorResto.distribuir(validos1, chapas.map(function (c) { return { id: c.id, peso: c.S }; }));
+    // segundo voto: validos1 = validos2 + invalidos2
+    var p2 = MaiorResto.distribuir(validos1, [{ id: "validos2", peso: 1 - taxa }, { id: "invalidos2", peso: taxa }]);
+    var validos2 = p2.validos2, invalidos2 = p2.invalidos2;
+    // linhas reduzidas na mesma proporção: validos2 repartido entre as linhas por v1_c
+    var linhas = validos2 > 0 ? MaiorResto.distribuir(validos2, chapas.map(function (c) { return { id: c.id, peso: v1[c.id] }; })) : null;
+    var segundo = new Map(), matriz = Object.create(null);
+    chapas.forEach(function (c) { segundo.set(c.id, 0); });
+    chapas.forEach(function (c) {
+      var n = linhas ? linhas[c.id] : 0;
+      matriz[c.id] = Object.create(null);
+      if (n === 0) return;
+      var outros = chapas.filter(function (d) { return d.id !== c.id; });
+      if (outros.every(function (d) { return d.S === 0; })) Comum.erro("segundo voto sem outro candidato com pontuação positiva: " + c.id);
+      var row = MaiorResto.distribuir(n, outros.map(function (d) { return { id: d.id, peso: d.S }; }));
+      outros.forEach(function (d) { matriz[c.id][d.id] = row[d.id]; segundo.set(d.id, segundo.get(d.id) + row[d.id]); });
+    });
+    var votos = Object.create(null), soma2 = 0;
+    chapas.forEach(function (c) { votos[c.id] = v1[c.id] + segundo.get(c.id); soma2 += segundo.get(c.id); });
+    if (soma2 !== validos2) throw new Error("soma das segundas escolhas diferente de validos2");
+
+    var ctx = { disputaId: disputaId, resolver: opcoes.resolverDesempateTecnico, rng: rngState, desempates: [] };
+    var eleitos = Majoritaria.classificar(chapas, votos, 2, ctx, "senado");
+    var out = { disputaId: disputaId, cargo: "SENADOR", vagas: 2, validos1: validos1, validos2: validos2, invalidos2: invalidos2,
+      validos: validos1 + validos2, votos: votos, primeiroVoto: v1, segundoVoto: matriz, votosNaoModelados: 0,
+      regra: "maioriaSimples", segundoTurno: false, eleitos: eleitos, finalistas: null, desempates: ctx.desempates };
+    return { resultado: JSON.parse(JSON.stringify(out)), rngStateNext: ctx.rng };
+  }
+  return Object.freeze({ apurar: apurar });
+})();
+
+// Módulo 12: segundo turno (6.3; D70). Executa a disputa entre os finalistas decididos pelo módulo 11.
+// Estágio 1: seções não instaladas do 2º turno (contingente informado, ou o do 1º turno). Estágio 2: matriz origem e
+// destino sobre o eleitorado restante, cada origem repartida por maior resto entre A, B, brancoNulo e abstencao, com
+// peso positivo nos quatro destinos. Estágio 3: brancoNulo2 repartido entre as cinco parcelas não válidas da D59 pelas
+// proporções históricas do 2º turno. Identidades conferidas. Sem sorteio próprio; empate vai ao resolvedor injetado.
+var SegundoTurno = (function () {
+  var DESTINOS = ["A", "B", "brancoNulo", "abstencao"];
+  var INVALIDOS = ["brancos", "nulos", "anulados", "anuladosSubJudice", "anuladosApuracaoSeparada"];
+  var BNA = "brancoNuloAnulado", ABST = "abstencao", NM = "naoModelados:D";
+
+  function proporcoes(p, campo) {
+    if (!p || typeof p !== "object") Comum.erro(campo + ": obrigatórias");
+    if (Object.keys(p).sort().join("|") !== INVALIDOS.slice().sort().join("|")) Comum.erro(campo + ": parcelas esperadas " + INVALIDOS.join(", "));
+    var exatas = INVALIDOS.every(function (n) { return p[n] && typeof p[n] === "object"; });
+    if (exatas) {
+      var den = Comum.inteiro(p[INVALIDOS[0]].denominador, campo + ".denominador", 1);
+      return INVALIDOS.map(function (n) {
+        if (p[n].denominador !== den) Comum.erro(campo + ": denominadores diferentes");
+        return { id: n, peso: Comum.inteiro(p[n].numerador, campo + "." + n + ".numerador", 0) };
+      });
+    }
+    return INVALIDOS.map(function (n) { return { id: n, peso: Comum.real(p[n], campo + "." + n, 0) }; });
+  }
+
+  function apurar(estado, dados, rngState) {
+    var opcoes = (estado && estado.opcoes) || {};
+    var disputaId = Comum.idv(dados.disputaId, "dados.disputaId");
+    var eleitorado = Comum.inteiro(dados.eleitorado, "dados.eleitorado", 1);
+    var t1 = dados.primeiroTurno;
+    if (!t1 || typeof t1 !== "object" || !t1.votos || typeof t1.votos !== "object") Comum.erro("primeiroTurno com votos obrigatório");
+    if (!Array.isArray(dados.finalistas) || dados.finalistas.length !== 2 || dados.finalistas[0] === dados.finalistas[1]) Comum.erro("dois finalistas distintos");
+    var A = dados.finalistas[0], B = dados.finalistas[1];
+    var cands = Object.keys(t1.votos).sort();
+    cands.forEach(function (c) { Comum.idv(c, "candidato do 1º turno"); Comum.inteiro(t1.votos[c], "votos de " + c, 0); });
+    if (!Object.prototype.hasOwnProperty.call(t1.votos, A) || !Object.prototype.hasOwnProperty.call(t1.votos, B)) Comum.erro("finalista sem votos no 1º turno");
+    if (cands.indexOf(BNA) >= 0 || cands.indexOf(ABST) >= 0 || cands.indexOf(NM) >= 0) Comum.erro("candidato com id reservado");
+    var nm1 = t1.votosNaoModelados === undefined ? 0 : Comum.inteiro(t1.votosNaoModelados, "votosNaoModelados", 0);
+    var inval1 = INVALIDOS.reduce(function (a, n) { return a + Comum.inteiro(t1[n], "primeiroTurno." + n, 0); }, 0);
+    var abst1 = Comum.inteiro(t1.abstencao, "primeiroTurno.abstencao", 0);
+    var sec1 = Comum.inteiro(t1.eleitoresSecoesNaoInstaladas, "primeiroTurno.eleitoresSecoesNaoInstaladas", 0);
+    var validos1 = cands.reduce(function (a, c) { return a + t1.votos[c]; }, 0) + nm1;
+    if (validos1 + inval1 + abst1 + sec1 !== eleitorado) Comum.erro("1º turno não fecha com o eleitorado (D59, 1 voto por eleitor)");
+
+    // estágio 1
+    var sec2 = dados.eleitoresSecoesNaoInstaladas2 === undefined ? sec1 : Comum.inteiro(dados.eleitoresSecoesNaoInstaladas2, "eleitoresSecoesNaoInstaladas2", 0);
+    var abstOrigem = abst1 + sec1 - sec2;
+    if (abstOrigem < 0) Comum.erro("seções não instaladas do 2º turno excedem abstenção e seções do 1º turno");
+
+    // estágio 2
+    var origens = cands.map(function (c) { return { id: c, n: t1.votos[c] }; });
+    if (nm1 > 0) origens.push({ id: NM, n: nm1 });
+    origens.push({ id: BNA, n: inval1 }, { id: ABST, n: abstOrigem });
+    var pesos = dados.pesos;
+    if (!pesos || typeof pesos !== "object") Comum.erro("pesos obrigatórios");
+    var conhecidas = new Set(origens.map(function (o) { return o.id; }));
+    Object.keys(pesos).forEach(function (k) { if (!conhecidas.has(k)) Comum.erro("pesos de origem desconhecida: " + k); });
+    var tot = Object.create(null), transf = Object.create(null);
+    DESTINOS.forEach(function (d) { tot[d] = 0; });
+    origens.forEach(function (o) {
+      if (o.n === 0) return;
+      var p = pesos[o.id];
+      if (!p || typeof p !== "object" || Object.keys(p).sort().join("|") !== DESTINOS.slice().sort().join("|")) Comum.erro("pesos da origem " + o.id + ": destinos A, B, brancoNulo, abstencao");
+      DESTINOS.forEach(function (d) {
+        Comum.real(p[d], "peso " + o.id + "→" + d, 0);
+        if (!(p[d] > 0)) Comum.erro("origem " + o.id + " transfere integralmente: peso de " + d + " deve ser positivo");
+      });
+      var r = MaiorResto.distribuir(o.n, DESTINOS.map(function (d) { return { id: d, peso: p[d] }; }));
+      transf[o.id] = r;
+      DESTINOS.forEach(function (d) { tot[d] += r[d]; });
+    });
+
+    // estágio 3
+    var validos2 = tot.A + tot.B;
+    var comparecimento2 = eleitorado - tot.abstencao - sec2;
+    if (comparecimento2 !== validos2 + tot.brancoNulo) throw new Error("matriz não fecha com o eleitorado");
+    var parc = INVALIDOS.reduce(function (o, n) { o[n] = 0; return o; }, Object.create(null));
+    if (tot.brancoNulo > 0) {
+      var pp = proporcoes(dados.proporcoesInvalidos2, "proporcoesInvalidos2");
+      if (pp.every(function (x) { return x.peso === 0; })) Comum.erro("proporcoesInvalidos2 todas nulas com brancoNulo positivo");
+      var r3 = MaiorResto.distribuir(tot.brancoNulo, pp);
+      INVALIDOS.forEach(function (n) { parc[n] = r3[n]; });
+    }
+    if (comparecimento2 + tot.abstencao + sec2 !== eleitorado) throw new Error("identidade do eleitorado violada");
+    if (validos2 + INVALIDOS.reduce(function (a, n) { return a + parc[n]; }, 0) !== comparecimento2) throw new Error("identidade D59 violada");
+
+    var ctx = { disputaId: disputaId, resolver: opcoes.resolverDesempateTecnico, rng: rngState, desempates: [] };
+    var eleito = tot.A > tot.B ? A : tot.B > tot.A ? B : Comum.resolver(ctx, [A, B], { tipo: "segundoTurno", disputaId: disputaId });
+    var votos = {}; votos[A] = tot.A; votos[B] = tot.B;
+    var out = { disputaId: disputaId, finalistas: [A, B], votos: votos, validos: validos2, comparecimento: comparecimento2,
+      abstencao: tot.abstencao, eleitoresSecoesNaoInstaladas: sec2, eleitorado: eleitorado, eleito: eleito,
+      transferencias: transf, desempates: ctx.desempates };
+    INVALIDOS.forEach(function (n) { out[n] = parc[n]; });
+    return { resultado: JSON.parse(JSON.stringify(out)), rngStateNext: ctx.rng };
+  }
+  return Object.freeze({ apurar: apurar, ID_BRANCO_NULO_ANULADO: BNA, ID_ABSTENCAO: ABST, ID_NAO_MODELADOS: NM });
 })();
 
 // Distribuição proporcional de cadeiras (módulo 10; regra: motor-eleitoral.md 5.4; desempates: 5.4 item 7 e 5.5).
@@ -803,7 +961,7 @@ var Cadeiras = (function () {
 })();
 
 return Object.freeze({ RNG: RNG, Dados: Dados, MaiorResto: MaiorResto, Pontuacao: Pontuacao, Comparecimento: Comparecimento,
-  Proporcional: Proporcional, Majoritaria: Majoritaria, Cadeiras: Cadeiras });
+  Proporcional: Proporcional, Majoritaria: Majoritaria, Senado: Senado, SegundoTurno: SegundoTurno, Cadeiras: Cadeiras });
 })();
 </script>
 </body>

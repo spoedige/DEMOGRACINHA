@@ -357,3 +357,11 @@ Aprovada pelo autor antes da etapa 3.
 2. `D` (não modelados) é concorrente reservado na repartição dos válidos; seus votos saem em `votosNaoModelados`, entram no denominador da maioria e não concorrem. Se igualarem ou superarem a última posição decisiva, o resultado é recusado (insuficiência de modelagem).
 3. A decisão de 2º turno é do módulo 11: maioria absoluta (2 × votos > válidos) para presidente, governador e prefeito com mais de 200 mil eleitores; maioria simples para senador e prefeito com até 200 mil. O módulo 12 só executa o 2º turno.
 4. Normal padrão no RNG e ordem de desempate explícita no maior resto ("F por último", 5.2).
+
+## D70. Segundo turno e Senado, 18/11/2026
+
+Aprovada pelo autor antes da etapa 4.
+1. Senado com 2 vagas (módulo 13): `validos1` e `taxaInvalidos2` como entradas explícitas, sem dado separado por voto confirmado (L19); `validos1` dividido em `validos2` e `invalidos2` por maior resto; ao menos duas chapas; `D = 0`.
+2. O módulo 11 trata o Senado só com 1 vaga; o módulo 13 trata 1 vaga (delegando ao 11) e 2 vagas (matriz sem diagonal), com a mesma rotina de eleitos, empates e limite de modelagem.
+3. 2º turno (módulo 12) em três estágios: seções não instaladas do 2º turno (informadas ou as do 1º); matriz origem e destino com abstenção ajustada e peso positivo nos quatro destinos; branco/nulo do 2º turno repartido entre as cinco parcelas não válidas pelas proporções históricas do 2º turno. Identidades do eleitorado e D59 conferidas.
+4. Não modelados do 1º turno entram como origem própria; vencedor é o mais votado, empate ao desempate técnico; pesos da matriz recebidos prontos até os módulos 5 a 7.
