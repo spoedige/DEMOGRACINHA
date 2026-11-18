@@ -102,6 +102,9 @@ Indicação do autor, 18/11/2026 (pista, não evidência; nada lido nem guardado
 - L2: STF, ADIs 7.228 (0125262-02.2022.1.00.0000), 7.263 (0130016-84.2022.1.00.0000) e 7.325. Segundo o autor: embargos julgados em 13/03/2025, com interpretação conforme do art. 109, § 2º, do Código Eleitoral (todos os partidos participam das sobras do art. 109, III, sem as exigências de 80% e 20%), inconstitucionalidade do art. 111 do Código e do art. 13 da Resolução TSE 23.677/2021, aplicação às eleições de 2022; trânsito em julgado em agosto de 2025. A conferir no inteiro teor do acórdão.
 - L1, L2: versão compilada do Código Eleitoral no portal do TSE, com anotação da decisão de 2025 ao art. 109, § 2º. Fonte alternativa ao Planalto, pendente de aprovação do autor. `www.tse.jus.br` recusa acesso automatizado deste ambiente (403, ver acima): o arquivo teria de ser enviado pelo autor.
 
+Decisão do autor, 18/11/2026: aceita a compilação do TSE como fonte alternativa ao Planalto, só para o texto dos arts. 106 a 113 do Código Eleitoral. Acórdão e certidão do STF seguem como documentos próprios, a obter no STF. A decisão não valida L1 nem L2.
+Informado pelo autor (a conferir no documento): trânsito em julgado da ADI 7.228 em 09/08/2025; segundos embargos rejeitados em junho de 2025. O autor preparou uma transcrição dos arts. 106 a 113 (SHA-256 informado f35e9c6b35a1201df76d22c318b9653cfb23ffe5e2155b51f98681621fd6ac8d), que não chegou a este ambiente. Transcrição não é o documento original; se usada, entra como evidência de grau inferior ao HTML ou PDF salvo do próprio TSE.
+
 Arquivos recebidos irão para `data/raw/legislacao/` com SHA-256 no manifesto. Situação: L1 a L36 abertas.
 
 ## Próximo passo
