@@ -148,6 +148,12 @@ Fonte: `data/raw/legislacao/tse/resolucao_23748_2026_e_voto_sistemas.pdf` (origi
 3. Art. 7º, §§ 1º e 2º: vagas de deputado federal pela LC 78/1993; estaduais e distritais pelo triplo da representação federal, acrescido acima de 36 (dado útil para a promoção parcial de `QT_VAGA` 2022, não autorizada).
 4. Art. 6º, § 1º: 2º turno de prefeito acima de 200 mil eleitores (CF, art. 29, II; Lei 9.504/1997, art. 3º, § 2º), coerente com L20.
 
+### Leitura do autor na compilação da Res. 23.677/2021, 18/11/2026 (página oficial aberta no navegador do autor; arquivo não guardado)
+- Arts. 8º a 12 com o conteúdo já descrito em `motor-eleitoral.md` 5.4.
+- Art. 12-A, caput: aplica-se quando nenhum partido ou federação alcança o QE.
+- Art. 11, § 4º: todos os partidos, federações e candidatos participam da 2ª fase, sem afastar expressamente os 10%; o art. 12-A, II, diz "independentemente de votação mínima" e o § 4º não. L2-a segue aberta; não se fecha por inferência.
+Encerramento: L1 e L2 registrados separadamente. L1 pode fechar com o arquivo da compilação guardado; L2 só com L2-a resolvida.
+
 ### Esclarecidas por indicação do autor, sem documento primário guardado
 1. Data do art. 111: inconstitucional em 28/02/2024; eficácia temporal alterada em 13/03/2025.
 2. Empate de médias: Res. 23.677, art. 11, §§ 6º e 7º.

@@ -160,8 +160,8 @@ Nenhuma está resolvida. Uma pendência só sai desta lista com fonte oficial ci
 
 | # | Objeto da verificação | Tipo de fonte oficial necessária | Onde é usada |
 |---|---|---|---|
-| L1 | Votação nominal mínima de 10% do QE e requisitos de 80% e 20% nas sobras | Código Eleitoral (texto vigente, arts. 108 e 109); resolução do TSE para 2026 | `motor-eleitoral.md` 5.4 |
-| L2 | Regra final de distribuição das sobras | Código Eleitoral; resolução do TSE; decisões do STF sobre sobras | 5.4 |
+| L1 | Votação nominal mínima de 10% do QE e requisitos de 80% e 20% nas sobras | Código Eleitoral, arts. 106 a 113; Res. TSE 23.677/2021 compilada, arts. 8º a 12; Res. TSE 23.748/2026 (registro em `validacao-legal.md`) | `motor-eleitoral.md` 5.4 |
+| L2 | Regra final de distribuição das sobras | Código Eleitoral, art. 109; Res. TSE 23.677/2021, arts. 11 e 12-A, com a redação da Res. TSE 23.748/2026; STF, ADIs 7.228, 7.263 e 7.325 | 5.4 |
 | L3 | Tratamento eleitoral das federações: lista única, duração mínima, efeitos em fundo, TV e cláusula | Lei dos Partidos Políticos; resolução do TSE sobre federações; registro das federações no TSE | 5.2, 7.2, 7.3; `regras-e-mundo.md` 3 |
 | L4 | Total do FEFC 2026 e valores por partido | Lei orçamentária anual; publicação do TSE da distribuição | 7.2 |
 | L5 | Distribuição do FEFC entre partidos federados | Resolução do TSE; publicação da distribuição | 7.2 |
