@@ -198,7 +198,7 @@ Nenhuma está resolvida. Uma pendência só sai desta lista com fonte oficial ci
 | L36 | Vagas de vereador por município: limite máximo por faixa populacional (Constituição, art. 29, IV) e número concreto fixado pela lei orgânica de cada município. Estimativa dentro da faixa só como contingência do simulador, nunca como dado oficial | Constituição; leis orgânicas municipais; `tse_vagas_2024` como fonte a validar | `regras-e-mundo.md`; `pipeline-dados.md` 10 |
 | L35 | Fidelidade partidária e perda de mandato proporcional: desfiliação sem justa causa, janela, hipóteses legais, anuência do partido, prazos, legitimidade, efeitos de fusão, incorporação e federação; separação entre proporcionais e majoritários | Constituição; Lei 9.096/1995; Resolução TSE 22.610/2007; ADI 5081 | `regras-e-mundo.md` 1 e 5 |
 
-L33 a L35 permanecem abertas até a verificação documental.
+L33 a L36 permanecem abertas (L36: item aprovado, regra não validada; o número concreto de vagas exige as leis orgânicas municipais) até a verificação documental.
 
 ### 7.2 Outros itens a confirmar
 - Fator de migração de estado.
