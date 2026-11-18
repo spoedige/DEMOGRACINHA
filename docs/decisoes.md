@@ -318,3 +318,24 @@ Aprovada pelo autor na revisão de aa05379.
 4. Sem referência independente, a classificação permanece pendente.
 
 Aplicação imediata: `tse_vagas_2022`, `tse_vagas_2024` e a situação final da votação por candidato de 2022 seguem pendentes.
+
+## D65. Encerramento de L1 e simplificação de L2-a, 18/11/2026
+
+Aprovada pelo autor.
+1. L1 encerrada com: transcrição dos arts. 106 a 113 do Código Eleitoral (limitação explicitada), cópia de consulta da compilação da Res. TSE 23.677/2021 (impressão, não arquivo do servidor) e original da Res. TSE 23.748/2026.
+2. L2-a (10% do QE na 2ª fase ordinária das sobras) continua como dúvida jurídica registrada, sem nova pesquisa. No MVP: parâmetro interno `minimoNominalFase2 = 0`; valor alternativo 0,10 × QE só para teste de sensibilidade; sem exposição ao jogador. Simplificação provisória de gameplay, não interpretação jurídica. Com o alternativo, vaga sem candidato elegível fica não preenchida, sem redistribuição.
+3. A validação legal deixa de bloquear o motor. Regra: `motor-eleitoral.md` 5.4.
+
+## D66. Desempate técnico, 18/11/2026
+
+Aprovada pelo autor. Mecânica de gameplay para empate sem critério confirmado ou com critérios esgotados (majoritário; candidatos da mesma lista após idade; médias de listas após os critérios do art. 11, §§ 6º e 7º, da Res. 23.677). Votação técnica entre os empatados por carisma (capacidade efetiva de Comunicação) e poder financeiro eleitoral (gasto efetivo da candidatura, incluídas despesas pagas com FEFC e Fundo Partidário quando representadas nas alocações de exposição e mobilização; saldos não contam), pesos 0,5 e 0,5 (calibrar), sobre os válidos da disputa, inteiros por maior resto; persistindo, sorteio no fluxo de RNG de eleição. Sintéticos sem dado próprio recebem a mediana dos candidatos reais da disputa; sem referência ou sem diferença, sorteio. Empate de médias: representante é o candidato que efetivamente ocuparia a vaga, pelo requisito da fase, sem critério adicional; regra documentada até o art. 11, § 7º, da Res. 23.677, simplificação depois (ajustes do autor, 18/11/2026). Não altera votos oficiais nem é visível ao jogador. Não é regra legal. Fórmula: `motor-eleitoral.md` 5.5.
+
+## D67. Contrato explícito de RNG e separação de módulos, 18/11/2026
+
+Aprovada pelo autor. Substitui a forma `(estado, dados, rng) => novoEstado` do CLAUDE.md:
+1. Módulos do motor: `(estado, dados, rngState) => { resultado, rngStateNext }`. Estado do RNG explícito, serializável e por domínio (mundo, eleição, eventos, cartas); um módulo só lê e avança o fluxo do seu domínio.
+2. Mesma semente e mesmas entradas produzem os mesmos resultados.
+3. Apuração proporcional, apuração majoritária e 2º turno são módulos distintos; o 2º turno não passa pela distribuição de cadeiras.
+4. Elegibilidade e registro (antes da eleição) separados de substituição, vacância e posse (depois).
+5. Empate residual nunca interrompe a simulação: resolvido por D66 ou devolvido como resultado estruturado.
+Especificação: `especificacao-motor.md`.

@@ -26,6 +26,7 @@ Guia para quem trabalha neste repositório. Leia antes de qualquer alteração.
 | Visão, loop, cartas, UX, visual, ritmos | `GDD.md` |
 | Cargos, lei, partidos, federações, alianças | `docs/regras-e-mundo.md` |
 | Fórmulas de voto, FEFC, TV, cláusula | `docs/motor-eleitoral.md` |
+| Módulos, contratos e testes do motor | `docs/especificacao-motor.md` |
 | Personagem, potencial, platô, vice, legado | `docs/carreira-e-poder.md` |
 | Eventos, crises, corrupção, jurídico, saúde | `docs/eventos-e-risco.md` |
 | Etapas, dados, calibração, testes, pendências | `docs/roadmap.md` |
@@ -41,7 +42,7 @@ Para economizar contexto: leia só o documento da área da tarefa. Fonte única 
 
 - Entrega: `public/index.html` único, Vanilla JS, sem build. Dados consolidados embutidos como JSON em `<script type="application/json">` ou carregados de `public/data/*.json` pelo mesmo domínio (decidir na etapa 2 pelo tamanho).
 - Organização interna do HTML em seções com comentário de cabeçalho fixo, para busca rápida: `/* == RNG == */`, `/* == DADOS == */`, `/* == ESTADO == */`, `/* == MOTOR ELEITORAL == */`, `/* == CARTAS == */`, `/* == EVENTOS == */`, `/* == UI == */`, `/* == PIXEL == */`, `/* == SAVE == */`.
-- Motor separado da UI: funções puras `(estado, dados, rng) => novoEstado`, sem acesso ao DOM. Permite rodar o mesmo código em Node para calibração headless (`tools/sim.js`, fora de `public/`).
+- Motor separado da UI: funções puras `(estado, dados, rngState) => { resultado, rngStateNext }` (D67), sem acesso ao DOM. Módulos e contratos em `docs/especificacao-motor.md`. Permite rodar o mesmo código em Node para calibração headless (`tools/sim.js`, fora de `public/`).
 - RNG: PRNG com semente (ex.: sfc32 ou mulberry32 com hash da semente textual). Nunca `Math.random`. Fluxos separados por domínio (mundo, eleição, eventos, cartas) para que o ritmo não altere a sequência do mundo.
 - Semente textual compartilhável com prefixo de versão (ex.: `v1-ABCD-1234`).
 - Save (decisão D13):

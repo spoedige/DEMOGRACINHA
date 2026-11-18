@@ -278,21 +278,22 @@ maquinaEfetiva_g = capilaridade[L] × r_g
 - Participam de toda a disputa e da apuração: barreira individual, sobras e ordem de eleitos valem para eles como para qualquer candidato. Eleitos sintéticos recebem nome fictício gerado no momento.
 - Lista sem candidatos individualizados: todos os seus candidatos são sintéticos.
 
-### 5.4 Apuração proporcional (regra documentada; L1 e L2 abertas)
+### 5.4 Apuração proporcional (L1 encerrada; L2 aberta só em L2-a, com simplificação provisória)
 
-Fontes: Código Eleitoral, arts. 106 a 113 (transcrição da compilação do TSE, `data/raw/legislacao/tse/`); Resolução TSE 23.677/2021, compilada, com alterações de 2024 e 2026, e Resolução TSE 23.677/2021 compilada (cópia de consulta impressa, `data/raw/legislacao/tse/`; arts. 8º a 14 conferidos no texto, redação vigente pela Res. 23.734/2024 e Res. 23.748/2026); Resolução TSE 23.748/2026 (original; arts. 12-A, I e II, e 15 conferidos). Lista: partido ou federação (Res. 23.677, art. 10). Coligação não existe em proporcional.
+Fontes: Código Eleitoral, arts. 106 a 113 (transcrição da compilação do TSE, `data/raw/legislacao/tse/`); Resolução TSE 23.677/2021 compilada (cópia de consulta impressa da página oficial, não arquivo do servidor; `data/raw/legislacao/tse/`; arts. 8º a 14 conferidos no texto, redação vigente pela Res. 23.734/2024 e Res. 23.748/2026); Resolução TSE 23.748/2026 (original; arts. 12-A, I e II, e 15 conferidos). Lista: partido ou federação (Res. 23.677, art. 10). Coligação não existe em proporcional.
 
 **Regra ordinária**
-1. Votos válidos: definição da Res. 23.677, art. 9º, parágrafo único (texto a confirmar no documento).
+1. Votos válidos: só os dados a candidatos regularmente inscritos e às legendas (Res. 23.677, art. 9º, parágrafo único; Lei 9.504/1997, art. 5º).
 2. Quociente eleitoral: `QE = válidos ÷ vagas`; fração até meio desprezada, acima de meio arredondada para um (Código, art. 106; Res. 23.677, art. 9º).
 3. Quociente partidário por lista: `QP_L = ⌊votosLista_L ÷ QE⌋`, com `votosLista_L` = legenda e nominais somados (Código, art. 107; Res. 23.677, art. 10).
 4. Eleitos pelo QP: até `QP_L` candidatos da lista com votação nominal de ao menos 10% do QE, em ordem de votação (Código, art. 108; Res. 23.677, art. 8º). Vagas não preenchidas por falta do mínimo vão às sobras.
 5. Sobras, 1ª fase: a cada vaga, média `votosLista_L ÷ (vagas já obtidas pela lista + 1)`; vence a maior média entre listas com ao menos 80% do QE que tenham candidato não eleito com ao menos 20% do QE; repete-se por vaga. Na repetição, "vagas já obtidas" inclui as do QP e as sobras já obtidas em cálculos anteriores, ainda que não preenchidas (Código, art. 109, I, II e § 2º; Res. 23.677, art. 11, §§ 1º, 2º, 3º e 5º; ADI 5.420).
-6. Sobras, 2ª fase: quando não houver mais lista com candidato que cumpra as exigências da 1ª fase, todas as listas e candidatos participam pelas maiores médias, sem os patamares de 80% e 20% (Código, art. 109, III, com interpretação conforme do STF; Res. 23.677, art. 11, § 4º). Texto do § 4º (redação da Res. 23.734/2024): "todos os partidos políticos, federações, candidatas e candidatos participarão da distribuição das cadeiras remanescentes". A exigência de 20% está afastada. Questão residual (L2-a), fora do cenário 8: se subsiste exigência autônoma de 10% do QE (art. 8º; Código, art. 108). O § 4º não a afasta expressamente, ao contrário do art. 12-A, II (a confirmar).
+6. Sobras, 2ª fase: quando não houver mais lista com candidato que cumpra as exigências da 1ª fase, todas as listas e candidatos participam pelas maiores médias, sem os patamares de 80% e 20% (Código, art. 109, III, com interpretação conforme do STF; Res. 23.677, art. 11, § 4º). Texto do § 4º (redação da Res. 23.734/2024): "todos os partidos políticos, federações, candidatas e candidatos participarão da distribuição das cadeiras remanescentes". A exigência de 20% está afastada. Questão residual (L2-a), fora do cenário 8: se subsiste exigência autônoma de 10% do QE (art. 8º; Código, art. 108). O § 4º não a afasta expressamente, ao contrário do art. 12-A, II. Dúvida jurídica registrada (L2-a), sem nova pesquisa.
+   **Simplificação provisória de gameplay (D65):** parâmetro interno `minimoNominalFase2`, padrão 0 (sem mínimo); valor alternativo 0,10 × QE só para teste de sensibilidade. Não é interpretação jurídica definitiva. Com o valor alternativo, vaga sem candidato elegível fica registrada como não preenchida, sem redistribuição. A 1ª fase não muda.
 7. Empates:
    - entre médias: maior votação da lista; persistindo, maior votação nominal do candidato que disputa a vaga (Res. 23.677, art. 11, §§ 6º e 7º);
    - entre candidatos da mesma lista: mais idoso (Código, art. 110; Res. 23.677, art. 12);
-   - empate que persista após esses critérios: não coberto pelas fontes lidas; sem regra inventada.
+   - empate que persista após esses critérios: não coberto pelas fontes lidas; resolvido pelo desempate técnico (5.5), simplificação de gameplay, não regra legal.
    Preenchimento das vagas de cada lista na ordem nominal (Código, art. 109, § 1º; Res. 23.677, art. 11, § 8º).
 
 **Cenário próprio: nenhuma lista alcança o QE**
@@ -315,6 +316,36 @@ Fonte: andamento processual e anotações da compilação; inteiro teor dos acó
 
 **Aplicação no jogo:** ciclo de 2026 e seguintes usam esta regra, salvo norma posterior. Federações entram como lista única nos passos 3 a 7; demais efeitos de federação em L3.
 
+### 5.5 Desempate técnico (mecânica de gameplay, D66; não é regra legal)
+
+Aplica-se só quando não há critério confirmado ou os critérios confirmados se esgotam:
+| Caso | Critérios confirmados antes | Concorrentes da votação técnica |
+|---|---|---|
+| Majoritário (6, 6.2, 6.3) | nenhum validado | candidatos empatados |
+| Candidatos da mesma lista | idade (5.4, item 7) | candidatos ainda empatados |
+| Médias de listas | maior votação da lista; votação nominal do candidato que disputa a vaga (5.4, item 7) | o candidato que disputa a vaga por cada lista ainda empatada |
+
+Representante da lista no empate de médias: o candidato que efetivamente ocuparia a vaga, isto é, o mais votado não eleito da lista que cumpre o requisito da fase (1ª fase: ao menos 20% do QE; 2ª fase: `minimoNominalFase2`; Fase II do cenário sem QE: nenhum). Sem critério adicional de elegibilidade. Classificação: o uso desse candidato até a comparação de votos nominais é regra documentada (Res. 23.677, art. 11, § 7º, "candidata ou candidato que disputa a vaga"); a votação técnica entre esses representantes, depois disso, é simplificação de gameplay.
+
+Atributos (reutilizados, sem variável nova):
+- carisma: capacidade efetiva de Comunicação (`carreira-e-poder.md` 4), aproximação registrada.
+- poder financeiro eleitoral: gasto efetivo da candidatura, `Σ_j alocExposicao[j] + Σ_m alocMobilizacao[m]` (4.4). Inclui despesas pagas com qualquer origem do `fundoDisponivel` (repasses de FEFC e Fundo Partidário, doações) quando representadas nessas alocações. Não conta `reserva`, saldos não gastos, fundos do partido não repassados, Caixa Pessoal nem Capital de Entrega.
+- candidato sem dado próprio (sintético): referência neutra derivada dos candidatos da mesma disputa, sem sistema novo de aptidões ou financiamento:
+  - carisma = mediana da Comunicação efetiva dos candidatos reais da disputa;
+  - poder financeiro = mediana do gasto efetivo dos candidatos reais da disputa;
+  - sem candidato real na disputa (referência inexistente) ou sem diferença entre os empatados: decide o sorteio abaixo.
+
+```
+fração de cada atributo entre os empatados E:  f_x(i) = x_i ÷ Σ_{j∈E} x_j     (Σ = 0: f_x(i) = 1 ÷ |E|)
+pontuação técnica:  T_i = pCarisma × f_carisma(i) + pFinanceiro × f_financeiro(i)      (pCarisma = pFinanceiro = 0,5, calibrar; soma 1)
+votos técnicos:     repartição de validos(disputa original) por T_i, inteiros por maior resto (4.3)
+vencedor:           maior número de votos técnicos
+```
+- Persistindo empate: sorteio no fluxo de RNG de eleição com chave (disputa, "desempate", ids ordenados), sem consumir posições de outros domínios.
+- Não altera votos nem totais oficiais; não é eleição visível ao jogador.
+- Registro interno: disputa, empatados, valores de carisma e financeiro, votos técnicos, vencedor, se houve sorteio.
+- Sem concorrente elegível (ex.: vaga não preenchida com `minimoNominalFase2` alternativo): resultado estruturado "não preenchida", sem vencedor.
+
 ## 6. Eleições majoritárias
 
 Cargos: prefeito, governador, senador, presidente. Concorrentes: chapas.
@@ -328,6 +359,8 @@ votos_c = repartição 4.2 com D para candidaturas não modeladas
 - `opiniao` (4.6) com `k` fixo por cargo.
 - `adesao[p,c]`: fração do eleitorado identificado com o partido p que segue a chapa c (calibrar; para o próprio partido ou federação do candidato, maior que para aliados; menor para aliado distante ideologicamente). Candidatura isolada tem `identChapa` igual à do próprio partido.
 - `ruido_c`: dispersão `σ_c` cresce com `alcanceRedes`. Com o ruído normalizado (4.1), a votação esperada não muda; só a variância.
+
+Vencedor: maioria dos válidos (Res. 23.677, art. 5º, § 2º, na redação da Res. 23.748/2026); 2º turno para presidente e governador sem maioria absoluta e para prefeito acima de 200 mil eleitores (art. 6º e § 1º). Empates (vencedor, vaga de finalista do 2º turno, segunda vaga do Senado em 2026): desempate técnico (5.5), simplificação de gameplay; regra legal de desempate majoritário não validada.
 
 ### 6.1 Quatro canais de aliança, sem duplicação
 | Canal | Entra em | Condição |

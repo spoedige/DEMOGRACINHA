@@ -17,6 +17,7 @@ Simulador de carreira política brasileira, só modo carreira, tom sério e sem 
 | `GDD.md` | Visão, loop, UX mobile, visual, acoplamento de cartas, ritmos |
 | `docs/regras-e-mundo.md` | Cargos, regras legais, partidos, federações, municípios, alianças |
 | `docs/motor-eleitoral.md` | Estoques, fórmulas, FEFC, TV, rede social, cláusula, fechamento do ciclo |
+| `docs/especificacao-motor.md` | Módulos, contratos (D67), fluxo, simplificações do MVP e testes do motor; remete às fórmulas do motor |
 | `docs/carreira-e-poder.md` | Personagem, bolsos, relações, talento, potencial, platô, vice, legado, poder entre eleições |
 | `docs/eventos-e-risco.md` | Eventos atrasados, agentes, crises, Pontos de Inflexão, corrupção, jurídico |
 | `docs/roadmap.md` | Etapas, MVP, Fase 2, dados da 1B, calibração, testes, itens a confirmar |

@@ -1,6 +1,6 @@
 # Regras e mundo
 
-**Nenhuma regra legal deste documento está confirmada.** Todas são hipóteses documentais até a verificação da etapa 1B; a pendência correspondente está indicada entre colchetes e detalhada em `roadmap.md` 7.1. O calendário oficial está em `GDD.md` 3.
+**Situação das regras legais:** cada uma traz entre colchetes a pendência de `roadmap.md` 7.1, onde consta se está encerrada, simplificada para o MVP ou aberta; registro das evidências em `validacao-legal.md`. Regras sem pendência encerrada continuam hipóteses documentais. O calendário oficial está em `GDD.md` 3.
 
 ## 1. Cargos
 
@@ -26,7 +26,7 @@ Vereador, prefeito, vice-prefeito, deputado estadual (distrital no DF), deputado
 - Para disputar outro cargo, chefe do Executivo renuncia 6 meses antes da eleição (data em `GDD.md` 3).
 - Legisladores concorrem sem renunciar.
 
-### 2º turno [L20]
+### 2º turno [L20; Res. TSE 23.677, art. 6º, na redação da Res. 23.748/2026, conferido]
 - Governador e presidente: sem maioria absoluta dos válidos.
 - Prefeito: só em municípios com mais de 200 mil eleitores.
 - Senador: nunca.
@@ -37,11 +37,9 @@ Vereador, prefeito, vice-prefeito, deputado estadual (distrital no DF), deputado
 - Filiação e domicílio eleitoral até o prazo de `GDD.md` 3.
 - Domicílio com mandato em curso (a confirmar).
 
-### Barreira individual (só proporcional) [L1, L2]
-- 10% do quociente eleitoral para ser eleito.
-- 20% para disputar sobras; o partido precisa de 80% do quociente.
-- Fonte: Código Eleitoral, arts. 108 e 109 (a confirmar o texto vigente).
-- Em majoritária basta vencer.
+### Barreira individual (só proporcional) [L1 encerrada, L2]
+- Regra completa (quociente, 10% no quociente partidário, sobras em duas fases, cenário sem quociente, empates): fonte única em `motor-eleitoral.md` 5.4. Este documento não a redefine.
+- Em majoritária, vencedor pela maioria dos válidos (`motor-eleitoral.md` 6).
 
 ### Cláusula de desempenho [L10]
 | Eleição | Votos | Ou |

@@ -168,10 +168,10 @@ Encerramento: L1 e L2 registrados separadamente. L1 pode fechar com o arquivo da
 4. Federação como lista: Res. 23.677, art. 10.
 5. Caput do art. 12-A (hipótese de nenhuma lista alcançar o QE): incisos conferidos acima; caput não.
 
-### Pendências documentais
+### Pendências documentais (não condicionam L1)
 1. Inteiro teor dos acórdãos (28/02/2024 e embargos de 13/03/2025) e certidão de trânsito.
-2. Resolução TSE 23.677/2021 compilada: guardada como cópia de consulta; arquivo do servidor, se o autor exigir para L1.
-3. Código Eleitoral: a evidência é transcrição; para encerrar, preferível o HTML ou PDF do TSE.
+2. Código Eleitoral: a evidência é transcrição; o original do TSE fica como reforço formal.
+O arquivo do servidor da Res. 23.677/2021 deixou de ser condição: o autor aceitou a cópia de consulta para L1 (ver encerramento abaixo).
 
 ### Complemento do autor, 18/11/2026
 Resolução TSE 23.677/2021 (arts. 8º a 12) e 23.748/2026 (art. 12-A, II), consultadas pelo autor; documentos não guardados aqui. Resolvem: empate de médias (art. 11, §§ 6º e 7º), definição de votos válidos (art. 9º, parágrafo único), federação como lista (art. 10). Data do art. 111: inconstitucional em 28/02/2024; os embargos de 13/03/2025 trataram só da eficácia temporal (lacuna 2 resolvida pela indicação do autor, a conferir no acórdão).
@@ -182,6 +182,20 @@ Resolução TSE 23.677/2021 (arts. 8º a 12) e 23.748/2026 (art. 12-A, II), cons
 - Falta a regra de nenhum partido atingir o QE (art. 111 inconstitucional; aplica-se o art. 109).
 - Falta o desempate por idade (art. 110) e a lacuna do empate de médias.
 
+## Encerramento da validação legal como etapa bloqueadora, 18/11/2026 (D65, D66)
+
+Decisão do autor: a auditoria legal deixa de bloquear o motor. Incertezas residuais de baixo impacto viram simplificações documentadas e parâmetros internos.
+
+| Item | Situação | Evidência ou tratamento |
+|---|---|---|
+| L1 | **encerrada** | transcrição dos arts. 106 a 113 do Código Eleitoral (grau inferior, explicitado); cópia de consulta da compilação da Res. 23.677/2021 (impressão da página oficial, não arquivo do servidor); original da Res. 23.748/2026. Regra em `motor-eleitoral.md` 5.4 |
+| L2 | aberta só em L2-a | demais pontos de L2 documentados em 5.4. L2-a (10% na 2ª fase ordinária): simplificação provisória de gameplay, `minimoNominalFase2 = 0`, alternativo 0,10 × QE para sensibilidade (D65). Sem nova pesquisa |
+| Empates residuais (proporcional e majoritário) | mecânica de gameplay | desempate técnico, `motor-eleitoral.md` 5.5 (D66); não é regra legal |
+| L3 a L5, L8, L21 | parâmetros ou simplificações do MVP | regra real conhecida e representação em `especificacao-motor.md` |
+| Dados históricos do mundo inicial (vagas, eleitos, bancadas) | pendentes (D64) | não bloqueiam o motor; testes com cenários artificiais |
+
+Não serão buscados nesta etapa: acórdãos do STF, certidão, original do Código Eleitoral. Ficam como reforço formal.
+
 ## Próximo passo
 
-Coleta estatística em `coleta-estatistica.md`. Texto integral da legislação federal ainda sem acesso: `normas.leg.br` só entrega a casca da aplicação, e a busca da Câmara deu 404. Resoluções do TSE e acórdãos do STF continuam sem fonte acessível.
+Implementação do motor pela ordem de `roadmap.md` 1.1, com a especificação em `especificacao-motor.md`. Registro histórico de acesso: seções anteriores deste documento.

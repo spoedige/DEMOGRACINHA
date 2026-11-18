@@ -11,6 +11,21 @@
 
 Cada etapa termina com commit na `main`, que dispara deploy no Cloudflare.
 
+### 1.1 Ordem de implementação do motor (etapa 2; especificação em `especificacao-motor.md`)
+
+| Etapa | Entrega |
+|---|---|
+| 0 | Encerramento documental e especificação |
+| 1 | RNG determinístico, estruturas de dados e operações matemáticas |
+| 2 | Distribuição proporcional de cadeiras |
+| 3 | Apuração de votos proporcionais e majoritários |
+| 4 | Segundo turno e Senado |
+| 5 | Concorrentes, opinião, máquina e campanha |
+| 6 | Elegibilidade, substituição e fechamento do ciclo |
+| 7 | Simulação headless e calibração |
+
+A distribuição de cadeiras vem antes dos modelos probabilísticos: é determinística e testável isoladamente. Dados históricos do mundo inicial não bloqueiam o motor; os primeiros testes usam cenários artificiais controlados (casos normais, limites e extremos).
+
 ## 2. MVP
 
 Cargos de vereador a presidente; motor proporcional, majoritário e 2º turno; 30 partidos com dados básicos e 5 federações; 5.569 municípios com eleição municipal própria, num cadastro de 5.571 (D58), (simulação estatística sem agentes fora do conjunto de agentes; agentes só no conjunto fixo de até 10, `regras-e-mundo.md` 4); potencial, aptidão, experiência, oportunidades contextuais, platô e 3 a 5 cadeias de Ponto de Inflexão; vice; janela partidária simulada; corrupção em 3 níveis; saúde; fase sem cargo básica; resumo, títulos, grau e cartão de conquista; exportar e importar save; visual pixel de Brasília; ritmos Intenso, Normal e Express.
@@ -156,7 +171,7 @@ Rede: antes de coletar, testar IBGE e TSE com `curl -sI`. Em 403, parar, registr
 
 ### 7.1 Regras legais para validação na etapa 1B
 
-Nenhuma está resolvida. Uma pendência só sai desta lista com fonte oficial citada e evidência documental registrada em `data/` na 1B. Os diplomas citados indicam onde procurar, não confirmam o conteúdo.
+Uma pendência só sai desta lista com fonte oficial citada e evidência documental registrada. Os diplomas citados indicam onde procurar, salvo indicação de situação. Situação em 18/11/2026: **L1 encerrada**; L2 aberta só em L2-a, com simplificação provisória (D65); empates residuais por desempate técnico (D66); L3 a L5, L8 e L21 tratados como parâmetros ou simplificações do MVP (`especificacao-motor.md`), sem encerrar a validação; demais abertas. Registro em `validacao-legal.md`.
 
 | # | Objeto da verificação | Tipo de fonte oficial necessária | Onde é usada |
 |---|---|---|---|
