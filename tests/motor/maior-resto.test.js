@@ -102,3 +102,26 @@ test("entradas inválidas", () => {
 test("-0 é tratado como zero", () => {
   assert.deepEqual(d(3, P({ A: -0, B: 1 })), { A: 0, B: 3 });
 });
+
+test("ids iguais a propriedades herdadas funcionam e não contam como repetidos", () => {
+  const r = d(10, P({ constructor: 1, toString: 1, hasOwnProperty: 3 }));
+  assert.deepEqual(r, { constructor: 2, hasOwnProperty: 6, toString: 2 });
+  assert.equal(soma(r), 10);
+});
+
+test("pesos fracionários gerados (diádicos, exatos em binário) conferem com referência inteira", () => {
+  let e = RNG.criar("v1-FRACIONARIOS", "mundo");
+  const sortear = (n) => { const r = RNG.inteiro(e, n); e = r.rngStateNext; return r.valor; };
+  for (let caso = 0; caso < 300; caso++) {
+    const n = 1 + sortear(10), j = sortear(40);
+    const inteiros = {}, fracionarios = [];
+    for (let i = 0; i < n; i++) {
+      const k = sortear(3) === 0 ? 0 : 1 + sortear(1000000);
+      inteiros["P" + i] = k;
+      fracionarios.push({ id: "P" + i, peso: k / 2 ** j }); // k / 2^j é exato em ponto flutuante
+    }
+    if (Object.values(inteiros).every((k) => k === 0)) { inteiros.P0 = 1; fracionarios[0].peso = 1 / 2 ** j; }
+    const total = sortear(100000000);
+    assert.deepEqual(d(total, fracionarios), referencia(total, inteiros));
+  }
+});

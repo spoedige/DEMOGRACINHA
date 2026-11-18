@@ -93,12 +93,13 @@ var RNG = (function () {
     for (var i = 0; i < 4; i++) {
       if (!Number.isInteger(s[i]) || s[i] < 0 || s[i] > 0xFFFFFFFF) throw new TypeError("estado de RNG inválido: palavra fora de 32 bits");
     }
-    return estado;
+    // nova estrutura congelada: um estado restaurado de JSON não fica mutável por referência externa
+    return congelar(estado.dominio, estado.chave, s);
   }
 
   // Inteiro de 32 bits sem sinal, 0 a 2^32 - 1.
   function u32(estado) {
-    validar(estado);
+    estado = validar(estado);
     var r = passo(estado.s);
     return { valor: r.valor, rngStateNext: congelar(estado.dominio, estado.chave, r.s) };
   }
@@ -129,15 +130,18 @@ var RNG = (function () {
 var Dados = (function () {
   var ID = /^[A-Za-z0-9][A-Za-z0-9_.:|-]{0,127}$/;
   var CARGOS = Object.freeze({
-    VEREADOR: Object.freeze({ sistema: "proporcional" }),
-    DEPUTADO_ESTADUAL: Object.freeze({ sistema: "proporcional" }),
-    DEPUTADO_DISTRITAL: Object.freeze({ sistema: "proporcional" }),
-    DEPUTADO_FEDERAL: Object.freeze({ sistema: "proporcional" }),
-    PREFEITO: Object.freeze({ sistema: "majoritario" }),
-    GOVERNADOR: Object.freeze({ sistema: "majoritario" }),
-    SENADOR: Object.freeze({ sistema: "majoritario" }),
-    PRESIDENTE: Object.freeze({ sistema: "majoritario" })
+    VEREADOR: Object.freeze({ sistema: "proporcional", segundoTurno: false, eleicao: "municipal" }),
+    DEPUTADO_ESTADUAL: Object.freeze({ sistema: "proporcional", segundoTurno: false, eleicao: "geral" }),
+    DEPUTADO_DISTRITAL: Object.freeze({ sistema: "proporcional", segundoTurno: false, eleicao: "geral" }),
+    DEPUTADO_FEDERAL: Object.freeze({ sistema: "proporcional", segundoTurno: false, eleicao: "geral" }),
+    PREFEITO: Object.freeze({ sistema: "majoritario", segundoTurno: true, eleicao: "municipal" }),
+    GOVERNADOR: Object.freeze({ sistema: "majoritario", segundoTurno: true, eleicao: "geral" }),
+    SENADOR: Object.freeze({ sistema: "majoritario", segundoTurno: false, eleicao: "geral" }),
+    PRESIDENTE: Object.freeze({ sistema: "majoritario", segundoTurno: true, eleicao: "geral" })
   }); // vices integram a chapa do titular (regras-e-mundo.md 1); não são disputas próprias
+  // segundoTurno: o cargo admite 2º turno (módulo 12); o Senado tem apuração própria (módulo 13), sem 2º turno.
+  // eleicao: calendário ordinário do cargo; gerais a cada 4 anos a partir de 2026, municipais a partir de 2028 (GDD 3).
+  var PRIMEIRO_ANO = Object.freeze({ geral: 2026, municipal: 2028 });
   var TIPOS_UNIDADE = ["municipio", "uf", "pais", "exterior"];
   var FASES = ["preparada", "apurada", "concluida"];
 
@@ -150,8 +154,8 @@ var Dados = (function () {
     return Object.freeze(o);
   }
   function idsUnicos(lista, campo) {
-    var vistos = {};
-    lista.forEach(function (x) { id(x, campo); if (vistos[x]) erro(campo + ": identificador repetido " + x); vistos[x] = true; });
+    var vistos = new Set();
+    lista.forEach(function (x) { id(x, campo); if (vistos.has(x)) erro(campo + ": identificador repetido " + x); vistos.add(x); });
     return lista.slice();
   }
 
@@ -169,16 +173,27 @@ var Dados = (function () {
     return profundo({ id: id(o.id, "federacao.id"), nome: texto(o.nome, "federacao.nome"), partidos: idsUnicos(o.partidos, "federacao.partidos").sort() });
   }
 
-  // Disputa: cargo, unidade, vagas e turno. Vagas vêm como dado (não recalculadas por população).
+  // Disputa de eleição ordinária: cargo, unidade, vagas e turno. Vagas vêm como dado (não recalculadas por população).
+  // Eleição suplementar (qualquer ano) não é representada aqui: fica para estrutura própria do módulo 15.
   function disputa(o) {
+    if (typeof o.cargo !== "string" || !Object.prototype.hasOwnProperty.call(CARGOS, o.cargo)) erro("disputa.cargo desconhecido");
     var cargo = CARGOS[o.cargo];
-    if (!cargo) erro("disputa.cargo desconhecido");
     if (!Number.isSafeInteger(o.vagas) || o.vagas < 1) erro("disputa.vagas: inteiro positivo obrigatório");
     if (o.turno !== 1 && o.turno !== 2) erro("disputa.turno: 1 ou 2");
-    if (o.turno === 2 && cargo.sistema !== "majoritario") erro("disputa.turno: 2º turno só em majoritária");
-    var vpe = o.votosPorEleitor === undefined ? 1 : o.votosPorEleitor;
-    if (vpe !== 1 && !(vpe === 2 && o.cargo === "SENADOR")) erro("disputa.votosPorEleitor: 2 só no Senado");
-    if (!Number.isSafeInteger(o.ano) || o.ano < 2026) erro("disputa.ano inválido");
+    if (o.turno === 2 && !cargo.segundoTurno) erro("disputa.turno: cargo sem 2º turno");
+    var inicio = PRIMEIRO_ANO[cargo.eleicao];
+    if (!Number.isSafeInteger(o.ano) || o.ano < inicio || (o.ano - inicio) % 4 !== 0) erro("disputa.ano: sem eleição ordinária do cargo nesse ano");
+    var vpe;
+    if (o.cargo === "SENADOR") {
+      // motor-eleitoral.md 4.2.1: 2 vagas e 2 votos nas renovações de dois terços ((ano - 2010) múltiplo de 8), senão 1 e 1
+      var doisTercos = (o.ano - 2010) % 8 === 0;
+      if (o.votosPorEleitor === undefined) erro("disputa.votosPorEleitor: obrigatório no Senado");
+      vpe = o.votosPorEleitor;
+      if (vpe !== (doisTercos ? 2 : 1) || o.vagas !== vpe) erro("disputa: vagas e votos por eleitor incompatíveis com o ano do Senado");
+    } else {
+      vpe = o.votosPorEleitor === undefined ? 1 : o.votosPorEleitor;
+      if (vpe !== 1) erro("disputa.votosPorEleitor: 2 só no Senado");
+    }
     return profundo({ id: id(o.id, "disputa.id"), ano: o.ano, cargo: o.cargo, sistema: cargo.sistema,
       unidadeId: id(o.unidadeId, "disputa.unidadeId"), vagas: o.vagas, turno: o.turno, votosPorEleitor: vpe });
   }
@@ -252,11 +267,11 @@ var MaiorResto = (function () {
   function distribuir(total, participantes) {
     if (!Number.isSafeInteger(total) || total < 0) throw new RangeError("total deve ser inteiro não negativo");
     if (!Array.isArray(participantes) || participantes.length === 0) throw new TypeError("participantes obrigatórios");
-    var vistos = {};
+    var vistos = new Set();
     var lista = participantes.map(function (p) {
       if (!p || typeof p.id !== "string" || !ID.test(p.id)) throw new TypeError("participante com id inválido");
-      if (vistos[p.id]) throw new TypeError("id repetido: " + p.id);
-      vistos[p.id] = true;
+      if (vistos.has(p.id)) throw new TypeError("id repetido: " + p.id);
+      vistos.add(p.id);
       if (typeof p.peso !== "number" || !Number.isFinite(p.peso) || p.peso < 0) throw new RangeError("peso inválido para " + p.id);
       return { id: p.id, d: p.peso === 0 ? null : decompor(p.peso) };
     }).sort(function (a, b) { return a.id < b.id ? -1 : 1; });

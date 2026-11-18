@@ -82,3 +82,72 @@ test("compatibilidade com o contrato D67: estado da eleição carrega rngState s
   const e2 = Dados.estadoEleicao(volta);
   assert.equal(RNG.u32(e2.rngState).valor, RNG.u32(est.rngState).valor);
 });
+
+const HERDADOS = ["constructor", "toString", "hasOwnProperty", "valueOf", "isPrototypeOf"];
+
+test("identificadores iguais a propriedades herdadas são aceitos e não contam como repetidos", () => {
+  for (const nome of HERDADOS) {
+    assert.equal(Dados.partido({ id: nome, sigla: "X", nome: "X" }).id, nome);
+  }
+  const fed = Dados.federacao({ id: "FED_H", nome: "F", partidos: ["constructor", "toString", "hasOwnProperty"] });
+  assert.equal(fed.partidos.length, 3);
+  const r = Dados.resultadoCadeiras({ disputaId: "D1", vagas: 3, cadeiras: { constructor: 2, toString: 1 },
+    eleitos: ["hasOwnProperty", "valueOf", "toString"], naoPreenchidas: 0 });
+  assert.deepEqual(plano(r.cadeiras), { constructor: 2, toString: 1 });
+  assert.throws(() => Dados.federacao({ id: "F", nome: "F", partidos: ["toString", "toString"] }), ERRO);
+});
+
+test("cargo com nome de propriedade herdada é recusado", () => {
+  for (const cargo of HERDADOS.concat(["__proto__", "prototype", "vereador", 1, null])) {
+    assert.throws(() => Dados.disputa({ ...DISPUTA, cargo }), ERRO);
+  }
+});
+
+test("estado da eleição restaurado de JSON fica congelado em profundidade e isolado da referência externa", () => {
+  const restaurado = JSON.parse(JSON.stringify(RNG.criar("v1-RESTAURA", "eleicao", "D1")));
+  const est = Dados.estadoEleicao({ disputaId: "D1", fase: "preparada", rngState: restaurado });
+  assert.ok(Object.isFrozen(est) && Object.isFrozen(est.rngState) && Object.isFrozen(est.rngState.s));
+  const antes = RNG.u32(est.rngState).valor;
+  restaurado.s[0] = (restaurado.s[0] + 1) >>> 0; // alterar o objeto de origem não afeta o estado validado
+  restaurado.dominio = "mundo";
+  assert.equal(RNG.u32(est.rngState).valor, antes);
+  assert.equal(est.rngState.dominio, "eleicao");
+  assert.ok(Object.isFrozen(RNG.validar(JSON.parse(JSON.stringify(restaurado))).s));
+});
+
+test("Senado: sem 2º turno; votos por eleitor obrigatórios e coerentes com ano e vagas", () => {
+  const SEN = { id: "2026|SENADOR|SP|1", ano: 2026, cargo: "SENADOR", unidadeId: "SP", vagas: 2, turno: 1, votosPorEleitor: 2 };
+  assert.equal(Dados.disputa(SEN).votosPorEleitor, 2);
+  assert.throws(() => Dados.disputa({ ...SEN, turno: 2 }), ERRO);
+  const { votosPorEleitor, ...semVotos } = SEN;
+  assert.throws(() => Dados.disputa(semVotos), ERRO);
+  assert.throws(() => Dados.disputa({ ...SEN, votosPorEleitor: 1, vagas: 1 }), ERRO); // 2026: renovação de dois terços
+  assert.throws(() => Dados.disputa({ ...SEN, vagas: 1 }), ERRO);
+  const s2030 = { ...SEN, id: "2030|SENADOR|SP|1", ano: 2030, vagas: 1, votosPorEleitor: 1 };
+  assert.equal(Dados.disputa(s2030).vagas, 1);
+  assert.throws(() => Dados.disputa({ ...s2030, vagas: 2, votosPorEleitor: 2 }), ERRO);
+  assert.equal(Dados.disputa({ ...SEN, id: "2034|SENADOR|SP|1", ano: 2034 }).vagas, 2);
+  for (const [cargo, ano] of [["PREFEITO", 2028], ["GOVERNADOR", 2026], ["PRESIDENTE", 2030]]) {
+    assert.equal(Dados.disputa({ id: ano + "|" + cargo + "|X|2", ano, cargo, unidadeId: "X", vagas: 1, turno: 2 }).turno, 2);
+  }
+  // anos municipais não têm eleição ordinária para o Senado
+  for (const ano of [2028, 2032]) {
+    assert.throws(() => Dados.disputa({ ...SEN, id: ano + "|SENADOR|SP|1", ano, vagas: 1, votosPorEleitor: 1 }), ERRO);
+    assert.throws(() => Dados.disputa({ ...SEN, id: ano + "|SENADOR|SP|1", ano }), ERRO);
+  }
+  assert.throws(() => Dados.disputa({ ...DISPUTA, ano: 2027 }), ERRO);
+});
+
+test("calendário ordinário por cargo: gerais desde 2026 e municipais desde 2028, a cada 4 anos", () => {
+  const base = { id: "D", unidadeId: "X", vagas: 1, turno: 1 };
+  const geral = ["DEPUTADO_FEDERAL", "DEPUTADO_ESTADUAL", "DEPUTADO_DISTRITAL", "GOVERNADOR", "PRESIDENTE"];
+  const municipal = ["VEREADOR", "PREFEITO"];
+  for (const cargo of geral) {
+    for (const ano of [2026, 2030, 2034]) assert.equal(Dados.disputa({ ...base, cargo, ano }).ano, ano);
+    for (const ano of [2024, 2027, 2028, 2032]) assert.throws(() => Dados.disputa({ ...base, cargo, ano }), ERRO);
+  }
+  for (const cargo of municipal) {
+    for (const ano of [2028, 2032]) assert.equal(Dados.disputa({ ...base, cargo, ano }).ano, ano);
+    for (const ano of [2024, 2026, 2029, 2030]) assert.throws(() => Dados.disputa({ ...base, cargo, ano }), ERRO);
+  }
+});
