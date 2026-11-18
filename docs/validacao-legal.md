@@ -136,15 +136,23 @@ Evidência: `data/raw/legislacao/tse/codigo_eleitoral_arts_106_a_113_TSE_2026-11
 - 2022: entendimento aplicado por força dos embargos de 2025 (a conferir no acórdão; efeito sobre os eleitos registrados nos arquivos do TSE não verificado).
 - 2026: mesmo regime, salvo lei ou resolução posterior; resolução do TSE de 2026 não lida.
 
-### Lacunas que mantêm L1 e L2 abertas
-1. Inteiro teor dos acórdãos (2024 e embargos de 2025) e certidão de trânsito.
-2. Data do art. 111: 28/02/2024, com eficácia temporal alterada em 13/03/2025 (indicação do autor; conferir no acórdão).
-3. Fase do inciso III: se o candidato precisa de algum mínimo nominal (10% ou nenhum). A anotação diz "partidos e candidatos" sem patamares; confirmar.
-4. Empate de médias: Res. 23.677, art. 11, §§ 6º e 7º (indicação do autor; documento não guardado).
-8. Guardar com SHA-256 as Resoluções 23.677/2021 compilada e 23.748/2026.
-5. Definição de votos válidos para o QE (exclusão de brancos e nulos) está fora destes artigos (Lei 9.504/1997, art. 5º, a confirmar).
-6. Tratamento de federações como partido na apuração (L3).
-7. Grau da evidência: transcrição. Para encerrar, preferível o HTML ou PDF do TSE.
+### Lacunas jurídicas abertas
+1. 2ª fase (art. 109, III; Res. 23.677, art. 11, § 4º), fora do cenário sem QE: 20% afastado; resta saber se subsiste exigência autônoma de 10% do QE.
+2. Empate que persista após os critérios do art. 11, §§ 6º e 7º, e do art. 12: não coberto pelas fontes lidas.
+3. Efeitos de federação além da lista única na apuração (L3).
+
+### Esclarecidas por indicação do autor, sem documento primário guardado
+1. Data do art. 111: inconstitucional em 28/02/2024; eficácia temporal alterada em 13/03/2025.
+2. Empate de médias: Res. 23.677, art. 11, §§ 6º e 7º.
+3. Votos válidos para o QE: Res. 23.677, art. 9º, parágrafo único.
+4. Federação como lista: Res. 23.677, art. 10.
+5. Cenário sem lista que alcance o QE: Res. 23.748/2026, art. 12-A (Fase I com 80% e 20%; Fase II sem votação mínima).
+6. Vacância sem suplente: Res. 23.677, art. 15, na redação da Res. 23.748/2026 (15 meses para deputados; lei orgânica para vereador; art. 113 na falta dela).
+
+### Pendências documentais
+1. Inteiro teor dos acórdãos (28/02/2024 e embargos de 13/03/2025) e certidão de trânsito.
+2. Resoluções TSE 23.677/2021 compilada e 23.748/2026, com SHA-256.
+3. Código Eleitoral: a evidência é transcrição; para encerrar, preferível o HTML ou PDF do TSE.
 
 ### Complemento do autor, 18/11/2026
 Resolução TSE 23.677/2021 (arts. 8º a 12) e 23.748/2026 (art. 12-A, II), consultadas pelo autor; documentos não guardados aqui. Resolvem: empate de médias (art. 11, §§ 6º e 7º), definição de votos válidos (art. 9º, parágrafo único), federação como lista (art. 10). Data do art. 111: inconstitucional em 28/02/2024; os embargos de 13/03/2025 trataram só da eficácia temporal (lacuna 2 resolvida pela indicação do autor, a conferir no acórdão).

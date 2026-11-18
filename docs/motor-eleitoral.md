@@ -280,7 +280,7 @@ maquinaEfetiva_g = capilaridade[L] × r_g
 
 ### 5.4 Apuração proporcional (regra documentada; L1 e L2 abertas)
 
-Fontes: Código Eleitoral, arts. 106 a 113 (transcrição da compilação do TSE, `data/raw/legislacao/tse/`); Resolução TSE 23.677/2021, compilada, com alterações de 2024 e 2026, e Resolução TSE 23.748/2026, art. 12-A (dispositivos informados pelo autor em 18/11/2026; documentos não guardados no repositório, a confirmar). Lista: partido ou federação (Res. 23.677, art. 10). Coligação não existe em proporcional.
+Fontes: Código Eleitoral, arts. 106 a 113 (transcrição da compilação do TSE, `data/raw/legislacao/tse/`); Resolução TSE 23.677/2021, compilada, com alterações de 2024 e 2026, e Resolução TSE 23.748/2026, arts. 12-A e alteração do art. 15 da Res. 23.677 (dispositivos informados pelo autor em 18/11/2026; documentos não guardados no repositório, a confirmar). Lista: partido ou federação (Res. 23.677, art. 10). Coligação não existe em proporcional.
 
 **Regra ordinária**
 1. Votos válidos: definição da Res. 23.677, art. 9º, parágrafo único (texto a confirmar no documento).
@@ -288,7 +288,7 @@ Fontes: Código Eleitoral, arts. 106 a 113 (transcrição da compilação do TSE
 3. Quociente partidário por lista: `QP_L = ⌊votosLista_L ÷ QE⌋`, com `votosLista_L` = legenda e nominais somados (Código, art. 107; Res. 23.677, art. 10).
 4. Eleitos pelo QP: até `QP_L` candidatos da lista com votação nominal de ao menos 10% do QE, em ordem de votação (Código, art. 108; Res. 23.677, art. 8º). Vagas não preenchidas por falta do mínimo vão às sobras.
 5. Sobras, 1ª fase: a cada vaga, média `votosLista_L ÷ (vagas já obtidas pela lista + 1)`; vence a maior média entre listas com ao menos 80% do QE que tenham candidato não eleito com ao menos 20% do QE; repete-se por vaga, contando as vagas já obtidas (Código, art. 109, I, II e § 2º; Res. 23.677, art. 11, §§ 1º, 2º, 3º e 5º).
-6. Sobras, 2ª fase: quando não houver mais lista com candidato que cumpra as exigências da 1ª fase, todas as listas e candidatos participam pelas maiores médias, sem os patamares de 80% e 20% (Código, art. 109, III, com interpretação conforme do STF; Res. 23.677, art. 11, § 4º). Mínimo nominal do candidato nesta fase, fora do cenário 8: a confirmar no texto do § 4º.
+6. Sobras, 2ª fase: quando não houver mais lista com candidato que cumpra as exigências da 1ª fase, todas as listas e candidatos participam pelas maiores médias, sem os patamares de 80% e 20% (Código, art. 109, III, com interpretação conforme do STF; Res. 23.677, art. 11, § 4º). A exigência de 20% está afastada nesta fase. Questão residual, fora do cenário 8: se subsiste exigência autônoma de 10% do QE (art. 108); a redação do § 4º não esclarece (a confirmar).
 7. Empates:
    - entre médias: maior votação da lista; persistindo, maior votação nominal do candidato que disputa a vaga (Res. 23.677, art. 11, §§ 6º e 7º);
    - entre candidatos da mesma lista: mais idoso (Código, art. 110; Res. 23.677, art. 12);
@@ -296,11 +296,17 @@ Fontes: Código Eleitoral, arts. 106 a 113 (transcrição da compilação do TSE
    Preenchimento das vagas de cada lista na ordem nominal (Código, art. 109, § 1º; Res. 23.677, art. 11, § 8º).
 
 **Cenário próprio: nenhuma lista alcança o QE**
-8. O art. 111 do Código (mais votados) não se aplica: inconstitucional. Aplicam-se as fases do art. 109 em sequência, 1ª fase e depois 2ª fase; na fase seguinte as cadeiras são ocupadas independentemente de votação mínima do candidato (Res. 23.748/2026, art. 12-A, II). Como a 1ª fase opera com patamares relativos ao QE sem lista que o alcance, o resultado prático dessa fase nesse cenário fica a confirmar no texto do art. 12-A.
+8. O art. 111 do Código (mais votados) não se aplica: inconstitucional. Res. 23.748/2026, art. 12-A:
+   - Fase I: cadeiras entre listas com ao menos 80% do QE que tenham candidato com ao menos 20% do QE. Não alcançar 100% do QE não impede alcançar 80%.
+   - Fase II: cadeiras restantes a todos os partidos e federações participantes, independentemente de votação mínima do candidato (inciso II).
+   - Se nenhuma lista cumprir os dois requisitos, a Fase I distribui zero cadeiras e todas vão à Fase II.
 
 **Suplentes e vacância**
 9. Suplentes: mais votados não eleitos da lista; empate por idade decrescente; sem votação mínima (Código, art. 112; STF, ADI 6.657, 22/02/2023).
-10. Vaga sem suplente: nova eleição, salvo menos de nove meses para o fim do mandato (Código, art. 113).
+10. Vaga sem suplente (Res. 23.677, art. 15, na redação da Res. 23.748/2026):
+   - deputado federal, estadual e distrital: nova eleição, salvo menos de 15 meses para o fim do mandato;
+   - vereador: prazo da lei orgânica municipal;
+   - vereador, sem regra na lei orgânica: Código, art. 113 (nove meses).
 
 **Decisões do STF (eventos distintos)**
 - 28/02/2024, ADIs 7.228, 7.263 e 7.325: interpretação conforme do art. 109, § 2º (2ª fase sem 80% e 20%); inconstitucionalidade do art. 111 do Código e do art. 13 da Res. 23.677/2021.
