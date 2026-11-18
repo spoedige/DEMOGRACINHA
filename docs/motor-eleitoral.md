@@ -206,11 +206,11 @@ Cargos: vereador, deputado estadual ou distrital, deputado federal.
 Na unidade eleitoral (UF para deputados, município para vereador), todos disputam os mesmos válidos:
 | Concorrente | Quem | Pontuação |
 |---|---|---|
-| Candidato individualizado i | jogador e agentes | `S_i = opiniao_i^v1 × maquinaEfetiva_i^v2 × ruido_i` |
-| Candidato sintético g | demais candidatos da lista, gerados antes da apuração | `S_g = opiniao_g^v1 × maquinaEfetiva_g^v2 × ruido_g` |
+| Candidato individualizado i | jogador e agentes | `S_i = (opiniao_i + ε)^v1 × (maquinaEfetiva_i + ε)^v2 × ruido_i` |
+| Candidato sintético g | demais candidatos da lista, gerados antes da apuração | `S_g = (opiniao_g + ε)^v1 × (maquinaEfetiva_g + ε)^v2 × ruido_g` |
 | Voto de legenda ℓ_L | uma opção por lista L | `S_ℓL = λ_L × ruido_ℓL` |
 
-`v1 + v2 = 1`. `λ_L`: atratividade relativa do voto de legenda frente aos candidatos da própria lista (calibrar por cargo; pode depender de dados de 2022 e 2024 na 1B).
+`v1 + v2 = 1`; ε como em 4.1 (D71, harmonização igual à da D69). `S_ℓL` é a pontuação efetiva da legenda, entregue ao módulo 9 no campo `lambda`. `λ_L`: atratividade relativa do voto de legenda frente aos candidatos da própria lista (calibrar por cargo; pode depender de dados de 2022 e 2024 na 1B).
 
 ### 5.2 Segmentos do eleitorado
 A identificação partidária define o tamanho de segmentos, não entra na pontuação:

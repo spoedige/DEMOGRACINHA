@@ -365,3 +365,12 @@ Aprovada pelo autor antes da etapa 4.
 2. O módulo 11 trata o Senado só com 1 vaga; o módulo 13 trata 1 vaga (delegando ao 11) e 2 vagas (matriz sem diagonal), com a mesma rotina de eleitos, empates e limite de modelagem.
 3. 2º turno (módulo 12) em três estágios: seções não instaladas do 2º turno (informadas ou as do 1º); matriz origem e destino com abstenção ajustada e peso positivo nos quatro destinos; branco/nulo do 2º turno repartido entre as cinco parcelas não válidas pelas proporções históricas do 2º turno. Identidades do eleitorado e D59 conferidas.
 4. Não modelados do 1º turno entram como origem própria; vencedor é o mais votado, empate ao desempate técnico; pesos da matriz recebidos prontos até os módulos 5 a 7.
+
+## D71. Concorrentes, opinião, máquina e campanha, 18/11/2026
+
+Aprovada pelo autor antes da etapa 5.
+1. Escopo da etapa 5: módulos 2, 4, 5, 6 e 7; o módulo 3 é da etapa 6.
+2. Pontuação proporcional com ε, `(x + ε)^v`, como na D69. Pontuação efetiva da legenda `λ_L × ruido` gerada pela pontuação comum e entregue ao `lambda` do módulo 9.
+3. Funções sem fórmula aprovada (`escalaGasto`, distribuições de `q_g` e `r_g`, `estruturaAliada`, conversão da exposição em opinião, decaimento) entram como parâmetros ou funções injetadas, marcadas para calibração, sem forma inventada no núcleo.
+4. Sintéticos e transferência derivam subfluxos da semente com chaves fixas; número de sintéticos por lista é entrada; `mobAliada` entra já debitada do orçamento do aliado.
+5. Agregação estadual e nacional da máquina recebe base detalhada e agregado regional prontos, disjuntos.

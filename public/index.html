@@ -405,7 +405,27 @@ var Pontuacao = (function () {
     });
     return { resultado: out, rngStateNext: e };
   }
-  return Object.freeze({ base: base, calcularLote: calcularLote });
+  // Pontuação efetiva da legenda (5.1; D71): S_ℓL = λ_L × ruido_ℓL. listas: [{ id, lambda, sigma }], Z em ordem de id.
+  // O valor vai ao campo `lambda` do módulo 9.
+  function legendas(listas, rngState) {
+    if (!Array.isArray(listas) || listas.length === 0) Comum.erro("listas obrigatórias");
+    var vistos = new Set();
+    var ls = listas.map(function (l) {
+      Comum.idv(l.id, "lista.id");
+      if (vistos.has(l.id)) Comum.erro("lista repetida: " + l.id);
+      vistos.add(l.id);
+      return { id: l.id, lambda: Comum.real(l.lambda, "lambda de " + l.id, 0), sigma: Comum.real(l.sigma, "sigma de " + l.id, 0) };
+    }).sort(Comum.porId);
+    var e = RNG.validar(rngState);
+    if (e.dominio !== "eleicao") Comum.erro("pontuação usa o fluxo de eleição");
+    var out = {};
+    ls.forEach(function (l) {
+      var z = RNG.normal(e); e = z.rngStateNext;
+      out[l.id] = l.lambda * Math.exp(l.sigma * z.valor - l.sigma * l.sigma / 2);
+    });
+    return { resultado: out, rngStateNext: e };
+  }
+  return Object.freeze({ base: base, calcularLote: calcularLote, legendas: legendas });
 })();
 
 // Módulo 8: comparecimento e votos válidos (4.2.1; D42 e complemento; D59; D62). Sem sorteio.
@@ -778,6 +798,286 @@ var SegundoTurno = (function () {
   return Object.freeze({ apurar: apurar, ID_BRANCO_NULO_ANULADO: BNA, ID_ABSTENCAO: ABST, ID_NAO_MODELADOS: NM });
 })();
 
+// Módulo 2: cadastro de listas proporcionais e chapas majoritárias (5.1, 5.2, 6, 6.1; D71).
+var Cadastro = (function () {
+  function federacoesValidas(lista, partidos) {
+    var dono = new Map(), feds = new Map();
+    (lista || []).forEach(function (f) {
+      var fed = Dados.federacao(f);
+      if (partidos.has(fed.id) || feds.has(fed.id)) Comum.erro("federação com id repetido ou igual a partido: " + fed.id);
+      fed.partidos.forEach(function (p) {
+        if (!partidos.has(p)) Comum.erro("federação " + fed.id + " com partido não cadastrado: " + p);
+        if (dono.has(p)) Comum.erro("partido em duas federações: " + p);
+        dono.set(p, fed.id);
+      });
+      feds.set(fed.id, fed.partidos);
+    });
+    return { dono: dono, feds: feds };
+  }
+  function conjuntoPartidos(ids) {
+    if (!Array.isArray(ids) || ids.length === 0) Comum.erro("partidos obrigatórios");
+    var s = new Set();
+    ids.forEach(function (p) { Comum.idv(p, "partido"); if (s.has(p)) Comum.erro("partido repetido: " + p); s.add(p); });
+    return s;
+  }
+  function identificacao(ident, semId, partidos) {
+    if (!ident || typeof ident !== "object") Comum.erro("identPartidaria obrigatória");
+    var soma = 0;
+    Object.keys(ident).forEach(function (p) {
+      if (!partidos.has(p)) Comum.erro("identificação de partido não cadastrado: " + p);
+      soma += Comum.real(ident[p], "identPartidaria de " + p, 0, 1);
+    });
+    var s = Comum.real(semId, "semIdentificacao", 0, 1);
+    if (Math.abs(soma + s - 1) > Comum.TOL) Comum.erro("identificação partidária e semIdentificacao não somam 1");
+    return function (p) { return Object.prototype.hasOwnProperty.call(ident, p) ? ident[p] : 0; };
+  }
+
+  // Lista = partido não federado ou federação; identificação da federação = soma dos membros; sem coligação proporcional.
+  function montarListasProporcionais(estado, dados, rngState) {
+    if (dados.coligacoes !== undefined) Comum.erro("coligação não existe em proporcional");
+    var partidos = conjuntoPartidos(dados.partidos);
+    var fx = federacoesValidas(dados.federacoes, partidos);
+    var id = identificacao(dados.identPartidaria, dados.semIdentificacao, partidos);
+    var listas = new Map();
+    partidos.forEach(function (p) {
+      var lid = fx.dono.has(p) ? fx.dono.get(p) : p;
+      if (!listas.has(lid)) listas.set(lid, { id: lid, membros: fx.feds.has(lid) ? fx.feds.get(lid).slice() : [p], identPartidaria: 0, candidatos: [] });
+      listas.get(lid).identPartidaria += id(p);
+    });
+    if (dados.listasDeclaradas !== undefined) {
+      if (!Array.isArray(dados.listasDeclaradas)) Comum.erro("listasDeclaradas deve ser lista");
+      dados.listasDeclaradas.forEach(function (l) {
+        if (fx.dono.has(l)) Comum.erro("partido federado não pode ser lista própria: " + l);
+        if (!listas.has(l)) Comum.erro("lista declarada inexistente ou agrupamento sem federação: " + l);
+      });
+    }
+    var vistos = new Set();
+    (dados.candidaturas || []).forEach(function (c) {
+      Comum.idv(c.id, "candidatura.id");
+      if (vistos.has(c.id)) Comum.erro("candidatura repetida: " + c.id);
+      vistos.add(c.id);
+      if (!partidos.has(c.partidoId)) Comum.erro("candidatura de partido não cadastrado: " + c.id);
+      listas.get(fx.dono.has(c.partidoId) ? fx.dono.get(c.partidoId) : c.partidoId).candidatos.push(c.id);
+    });
+    var out = Array.from(listas.values()).sort(Comum.porId);
+    out.forEach(function (l) { l.candidatos.sort(); });
+    return { resultado: JSON.parse(JSON.stringify({ disputaId: Comum.idv(dados.disputaId, "dados.disputaId"), listas: out,
+      semIdentificacao: dados.semIdentificacao })), rngStateNext: rngState };
+  }
+
+  // Chapa: titular (partido ou federação) e coligados; cada ator em no máximo uma chapa;
+  // identChapa = clamp(Σ identPartidaria[p] × adesao[p, c], 0, 1), identificação de federação = soma dos membros.
+  function montarChapasMajoritarias(estado, dados, rngState) {
+    var partidos = conjuntoPartidos(dados.partidos);
+    var fx = federacoesValidas(dados.federacoes, partidos);
+    var id = identificacao(dados.identPartidaria, dados.semIdentificacao, partidos);
+    function identAtor(a) {
+      if (fx.feds.has(a)) return fx.feds.get(a).reduce(function (s, p) { return s + id(p); }, 0);
+      if (!partidos.has(a)) Comum.erro("ator desconhecido: " + a);
+      if (fx.dono.has(a)) Comum.erro("partido federado entra pela federação: " + a);
+      return id(a);
+    }
+    if (!Array.isArray(dados.chapas) || dados.chapas.length === 0) Comum.erro("chapas obrigatórias");
+    var usados = new Set(), ids = new Set();
+    var out = dados.chapas.map(function (c) {
+      Comum.idv(c.id, "chapa.id");
+      if (ids.has(c.id)) Comum.erro("chapa repetida: " + c.id);
+      ids.add(c.id);
+      var atores = [c.titular].concat(Array.isArray(c.coligados) ? c.coligados : []);
+      if (c.coligados !== undefined && !Array.isArray(c.coligados)) Comum.erro("coligados deve ser lista");
+      var soma = 0;
+      atores.forEach(function (a) {
+        Comum.idv(a, "ator da chapa " + c.id);
+        if (usados.has(a)) Comum.erro("ator em mais de uma chapa ou repetido: " + a);
+        usados.add(a);
+        if (!c.adesao || typeof c.adesao !== "object" || !Object.prototype.hasOwnProperty.call(c.adesao, a)) Comum.erro("adesão ausente para " + a + " na chapa " + c.id);
+        soma += identAtor(a) * Comum.real(c.adesao[a], "adesão de " + a, 0, 1);
+      });
+      Object.keys(c.adesao).forEach(function (a) { if (atores.indexOf(a) < 0) Comum.erro("adesão de ator fora da chapa: " + a); });
+      return { id: c.id, titular: c.titular, coligados: atores.slice(1).sort(), identChapa: Math.min(1, Math.max(0, soma)) };
+    }).sort(Comum.porId);
+    return { resultado: JSON.parse(JSON.stringify({ disputaId: Comum.idv(dados.disputaId, "dados.disputaId"), chapas: out })), rngStateNext: rngState };
+  }
+  return Object.freeze({ montarListasProporcionais: montarListasProporcionais, montarChapasMajoritarias: montarChapasMajoritarias });
+})();
+
+// Módulo 4: candidatos sintéticos (5.3; D71). Subfluxo próprio derivado da semente e das chaves (unidade, lista, eleição):
+// a mesma semente recria os mesmos sintéticos, sem guardá-los no save. q_g e r_g por sorteadores injetados (calibrar),
+// que recebem o estado do subfluxo e devolvem { valor >= 0, rngStateNext }.
+var Sinteticos = (function () {
+  function sorteio(f, e, nome) {
+    if (typeof f !== "function") Comum.erro(nome + ": sorteador injetado obrigatório (forma a calibrar)");
+    var r = f(e);
+    if (!r || typeof r.valor !== "number" || !Number.isFinite(r.valor) || r.valor < 0) Comum.erro(nome + ": valor sorteado inválido");
+    RNG.validar(r.rngStateNext);
+    if (r.rngStateNext.chave !== e.chave) Comum.erro(nome + ": sorteador trocou de fluxo");
+    return r;
+  }
+  function gerar(estado, dados) {
+    var opcoes = (estado && estado.opcoes) || {};
+    var listaId = Comum.idv(dados.listaId, "dados.listaId");
+    var n = Comum.inteiro(dados.quantidadeSinteticos, "quantidadeSinteticos", 0);
+    var quadros = Comum.real(dados.quadros, "quadros", 0, 1), cap = Comum.real(dados.capilaridade, "capilaridade", 0, 1);
+    var e = RNG.criar(dados.semente, "eleicao", "sinteticos", Comum.idv(dados.unidadeId, "unidadeId"), listaId, Comum.idv(dados.eleicaoId, "eleicaoId"));
+    var out = [];
+    for (var i = 0; i < n; i++) {
+      var q = sorteio(opcoes.sortearQ, e, "q_g"); e = q.rngStateNext;
+      var r = sorteio(opcoes.sortearR, e, "r_g"); e = r.rngStateNext;
+      out.push({ id: Comum.idv("sint:" + listaId + ":" + i, "id do sintético"), listaId: listaId, indice: i,
+        opiniao: Math.min(1, quadros * q.valor), maquinaEfetiva: Math.min(1, cap * r.valor) });
+    }
+    return { resultado: JSON.parse(JSON.stringify(out)), rngStateNext: e };
+  }
+  // Designação fictícia para sintético eleito: rótulo determinístico, sem nome de pessoa (regra 3 do projeto).
+  function designacao(sintetico) {
+    return "Candidatura sintética " + (sintetico.indice + 1) + " (" + sintetico.listaId + ")";
+  }
+  return Object.freeze({ gerar: gerar, designacao: designacao });
+})();
+
+// Módulo 5: opinião (4.6; D71). opiniao_c = clamp(popularidade + α × semOpiniao − k × rejeicao, 0, 1).
+// A identificação partidária não entra aqui (só no segmento fiel do módulo 9 e em identChapa do módulo 2).
+var Opiniao = (function () {
+  var PARTES = ["desconhecimento", "popularidade", "rejeicao", "semOpiniao"];
+  function validarParticao(c, campo) {
+    var s = 0;
+    PARTES.forEach(function (p) { s += Comum.real(c[p], campo + "." + p, 0, 1); });
+    if (Math.abs(s - 1) > Comum.TOL) Comum.erro(campo + ": desconhecimento, popularidade, rejeição e sem opinião não somam 1");
+  }
+  function calcular(estado, dados, rngState) {
+    var alpha = Comum.real(dados.alpha, "alpha", 0, 1), k = Comum.real(dados.k, "k", 0);
+    if (!Array.isArray(dados.candidatos) || dados.candidatos.length === 0) Comum.erro("candidatos obrigatórios");
+    var vistos = new Set(), out = {};
+    dados.candidatos.forEach(function (c) {
+      Comum.idv(c.id, "candidato.id");
+      if (vistos.has(c.id)) Comum.erro("candidato repetido: " + c.id);
+      vistos.add(c.id);
+      if (c.identPartidaria !== undefined) Comum.erro("identificação partidária não entra na opinião (4.6, 5.2)");
+      validarParticao(c, "candidato " + c.id);
+      out[c.id] = Math.min(1, Math.max(0, c.popularidade + alpha * c.semOpiniao - k * c.rejeicao));
+    });
+    return { resultado: out, rngStateNext: rngState };
+  }
+  return Object.freeze({ calcular: calcular, validarParticao: validarParticao, PARTES: PARTES });
+})();
+
+// Módulo 7: campanha e alocações (4.4, 7.1 a 7.5; D71). Valores monetários em inteiros (centavos).
+var Campanha = (function () {
+  function efeitoMobilizacao(R, escalaGasto) {
+    Comum.real(R, "recurso de mobilização", 0);
+    Comum.real(escalaGasto, "escalaGasto", 0);
+    if (!(escalaGasto > 0)) Comum.erro("escalaGasto deve ser positiva");
+    return R === 0 ? 0 : 1 - Math.exp(-R / escalaGasto);
+  }
+  function mapaValores(m, campo) {
+    var out = Object.create(null), soma = 0;
+    if (!m || typeof m !== "object" || Array.isArray(m)) Comum.erro(campo + ": objeto obrigatório");
+    Object.keys(m).sort().forEach(function (k) { Comum.idv(k, campo); out[k] = Comum.inteiro(m[k], campo + "." + k, 0); soma += m[k]; });
+    return { mapa: out, soma: soma };
+  }
+  // fundoDisponivel = Σ alocExposicao + Σ alocMobilizacao + reserva; reserva negativa é erro. Sem alocMobilizacao e com
+  // totalMobilizacao, o padrão reparte esse total entre os municípios da base em proporção ao eleitorado (maior resto).
+  function alocarRecursos(estado, dados, rngState) {
+    var fundo = Comum.inteiro(dados.fundoDisponivel, "fundoDisponivel", 0);
+    var exp = mapaValores(dados.alocExposicao || {}, "alocExposicao");
+    var mob;
+    if (dados.alocMobilizacao !== undefined) {
+      if (dados.totalMobilizacao !== undefined) Comum.erro("informe alocMobilizacao ou totalMobilizacao, não os dois");
+      mob = mapaValores(dados.alocMobilizacao, "alocMobilizacao");
+    } else if (dados.totalMobilizacao !== undefined) {
+      var total = Comum.inteiro(dados.totalMobilizacao, "totalMobilizacao", 0);
+      if (!Array.isArray(dados.municipiosBase) || dados.municipiosBase.length === 0) Comum.erro("padrão proporcional exige municipiosBase");
+      var pesos = dados.municipiosBase.map(function (m) { return { id: Comum.idv(m.id, "municipio.id"), peso: Comum.inteiro(m.eleitorado, "eleitorado de " + m.id, 0) }; });
+      mob = mapaValores(MaiorResto.distribuir(total, pesos), "alocMobilizacao");
+    } else {
+      mob = { mapa: Object.create(null), soma: 0 };
+    }
+    var reserva = fundo - exp.soma - mob.soma;
+    if (reserva < 0) Comum.erro("alocações excedem o fundo disponível");
+    var out = { fundoDisponivel: fundo, alocExposicao: exp.mapa, alocMobilizacao: mob.mapa, reserva: reserva,
+      gastoEfetivo: exp.soma + mob.soma };
+    return { resultado: JSON.parse(JSON.stringify(out)), rngStateNext: rngState };
+  }
+  // Conversão de exposição (TV, redes, gasto) em notoriedade e opinião: função injetada (calibrar, 7.3 e 7.4).
+  // O módulo só garante a partição de saída: as quatro parcelas em [0, 1] e somando 1.
+  function aplicarExposicao(estado, dados, rngState) {
+    var opcoes = (estado && estado.opcoes) || {};
+    if (typeof opcoes.conversorExposicao !== "function") Comum.erro("conversorExposicao injetado obrigatório (calibrar)");
+    Opiniao.validarParticao(dados.opiniao, "opinião de entrada");
+    var r = opcoes.conversorExposicao(JSON.parse(JSON.stringify(dados.opiniao)), dados.entradas, dados.parametros, rngState);
+    if (!r || !r.opiniao) Comum.erro("conversor deve devolver { opiniao, rngStateNext }");
+    Opiniao.validarParticao(r.opiniao, "opinião convertida");
+    var saida = {};
+    Opiniao.PARTES.forEach(function (p) { saida[p] = r.opiniao[p]; });
+    return { resultado: saida, rngStateNext: r.rngStateNext === undefined ? rngState : r.rngStateNext };
+  }
+  return Object.freeze({ efeitoMobilizacao: efeitoMobilizacao, alocarRecursos: alocarRecursos, aplicarExposicao: aplicarExposicao });
+})();
+
+// Módulo 6: máquina efetiva (4.5, 6.1; D71). Quatro componentes combinados por complemento, cada ator em cada canal
+// uma vez. estruturaAliada recebida como valor (função a calibrar). Transferência: um sorteio por par (liderança,
+// candidato, eleição) num subfluxo derivado da semente.
+var Maquina = (function () {
+  function unicos(lista, campo) {
+    var s = new Set();
+    (lista || []).forEach(function (x) { Comum.idv(x, campo); if (s.has(x)) Comum.erro(campo + ": ator repetido no canal: " + x); s.add(x); });
+    return s;
+  }
+  function calcularMunicipal(estado, dados, rngState) {
+    var candidatoId = Comum.idv(dados.candidatoId, "candidatoId"), eleicaoId = Comum.idv(dados.eleicaoId, "eleicaoId");
+    var municipioId = Comum.idv(dados.municipioId, "municipioId");
+    var base = Comum.real(dados.baseTerritorial, "baseTerritorial", 0, 1);
+    if (!dados.naBase && base !== 0) Comum.erro("baseTerritorial deve ser 0 fora do conjunto da base (D56)");
+    var estrutura = Comum.real(dados.estruturaAliada, "estruturaAliada", 0, 1);
+    var aliadosEstrutura = unicos(dados.aliadosEstrutura, "aliadosEstrutura");
+    unicos(dados.aliadosMobilizacao, "aliadosMobilizacao");
+    if (estrutura > 0 && !dados.aliancaFormal) Comum.erro("estruturaAliada só com coligação registrada ou federação");
+    if (dados.titularId !== undefined && aliadosEstrutura.has(dados.titularId)) Comum.erro("partido da própria lista ou chapa não conta como aliado");
+    var aloc = Comum.real(dados.alocMobilizacao, "alocMobilizacao", 0), mobAliada = Comum.real(dados.mobAliada, "mobAliada", 0);
+    var efeitoMob = Campanha.efeitoMobilizacao(aloc + mobAliada, dados.escalaGasto);
+    var sigmaT = Comum.real(dados.sigmaT, "sigmaT", 0);
+    var lids = new Set(), t = {}, prodT = 1;
+    var lides = (dados.liderancas || []).map(function (l) {
+      Comum.idv(l.id, "lideranca.id");
+      if (l.tipo !== "pessoa") Comum.erro("só pessoas geram transferência (6.1): " + l.id);
+      if (lids.has(l.id)) Comum.erro("liderança repetida no canal de transferência: " + l.id);
+      lids.add(l.id);
+      return { id: l.id, forca: Comum.real(l.forca, "forca de " + l.id, 0, 1), aderencia: Comum.real(l.aderencia, "aderencia de " + l.id, 0, 1) };
+    }).sort(Comum.porId);
+    lides.forEach(function (l) {
+      var z = RNG.normal(RNG.criar(dados.semente, "eleicao", "transferencia", municipioId, l.id, candidatoId, eleicaoId)).valor;
+      var T = Math.exp(sigmaT * z - sigmaT * sigmaT / 2);
+      t[l.id] = Math.min(l.forca, Math.max(0, l.forca * l.aderencia * T));
+      prodT *= 1 - t[l.id];
+    });
+    var transferencia = 1 - prodT;
+    var maquina = 1 - (1 - base) * (1 - estrutura) * (1 - efeitoMob) * (1 - transferencia);
+    return { resultado: { municipioId: municipioId, baseTerritorial: base, estruturaAliada: estrutura, efeitoMob: efeitoMob,
+      transferencia: transferencia, t: t, maquinaEfetiva: maquina }, rngStateNext: rngState }; // subfluxos próprios; fluxo recebido intacto
+  }
+  // Média ponderada pelo eleitorado: municípios da base detalhada mais o agregado regional, que os exclui.
+  function agregarEstadualOuNacional(estado, dados, rngState) {
+    var total = Comum.inteiro(dados.eleitoradoTotal, "eleitoradoTotal", 1);
+    var base = new Set(), soma = 0, num = 0;
+    (dados.municipiosBase || []).forEach(function (m) {
+      Comum.idv(m.id, "municipio.id");
+      if (base.has(m.id)) Comum.erro("município repetido na base: " + m.id);
+      base.add(m.id);
+      var el = Comum.inteiro(m.eleitorado, "eleitorado de " + m.id, 0);
+      soma += el; num += el * Comum.real(m.maquinaEfetiva, "maquinaEfetiva de " + m.id, 0, 1);
+    });
+    var r = dados.regional;
+    if (!r || typeof r !== "object") Comum.erro("agregado regional obrigatório");
+    (r.municipios || []).forEach(function (m) { if (base.has(m)) Comum.erro("agregado regional inclui município da base detalhada: " + m); });
+    var elR = Comum.inteiro(r.eleitorado, "eleitorado regional", 0);
+    soma += elR; num += elR * Comum.real(r.maquina, "maquina regional", 0, 1);
+    if (soma > total) Comum.erro("eleitorado da base e do agregado regional excede o total da circunscrição");
+    if (soma === 0) Comum.erro("eleitorado nulo na agregação");
+    return { resultado: { maquinaEfetiva: num / soma, eleitoradoConsiderado: soma }, rngStateNext: rngState };
+  }
+  return Object.freeze({ calcularMunicipal: calcularMunicipal, agregarEstadualOuNacional: agregarEstadualOuNacional });
+})();
+
 // Distribuição proporcional de cadeiras (módulo 10; regra: motor-eleitoral.md 5.4; desempates: 5.4 item 7 e 5.5).
 // Contrato D67: distribuir(estado, dados, rngState) => { resultado, rngStateNext }. Sem RNG próprio: o estado de RNG
 // só é repassado ao resolvedor de desempate técnico injetado (módulo 14) e devolvido como ele o deixar.
@@ -961,7 +1261,8 @@ var Cadeiras = (function () {
 })();
 
 return Object.freeze({ RNG: RNG, Dados: Dados, MaiorResto: MaiorResto, Pontuacao: Pontuacao, Comparecimento: Comparecimento,
-  Proporcional: Proporcional, Majoritaria: Majoritaria, Senado: Senado, SegundoTurno: SegundoTurno, Cadeiras: Cadeiras });
+  Proporcional: Proporcional, Majoritaria: Majoritaria, Senado: Senado, SegundoTurno: SegundoTurno, Cadeiras: Cadeiras,
+  Cadastro: Cadastro, Sinteticos: Sinteticos, Opiniao: Opiniao, Maquina: Maquina, Campanha: Campanha });
 })();
 </script>
 </body>

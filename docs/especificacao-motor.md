@@ -44,7 +44,7 @@ O 2º turno não passa pela distribuição de cadeiras. Proporcional e majoritá
 - Responsabilidade: definir listas e chapas.
 - Entradas: partidos, federações, candidaturas individualizadas, coligações majoritárias.
 - Processamento: lista proporcional = partido ou federação (5.1; Res. 23.677, art. 10); chapas majoritárias e coligação (6, 6.1).
-- Saídas: listas por disputa; chapas.
+- Saídas: listas por disputa (federação como lista única, identificação somada dos membros); chapas com `identChapa` (D71).
 - Dependências: 1.
 - Parâmetros: nenhum.
 - Simplificações: efeitos de federação além da lista única fora do MVP (L3).
@@ -64,7 +64,7 @@ O 2º turno não passa pela distribuição de cadeiras. Proporcional e majoritá
 - Responsabilidade: completar listas sem candidatos individualizados.
 - Entradas: vagas de lista restantes (3), `quadros`, `capilaridade`.
 - Processamento: `motor-eleitoral.md` 5.3, subfluxo de eleição com chave (unidade, lista, eleição).
-- Saídas: candidatos sintéticos com atributos; não vão ao save.
+- Saídas: candidatos sintéticos com atributos; não vão ao save. Número por lista e sorteadores de `q_g` e `r_g` recebidos como entrada (D71).
 - Dependências: 3.
 - Parâmetros: distribuições de `q_g` e `r_g` (calibrar), número por lista.
 - Simplificações: atributos agregados, nome fictício só se eleito.
@@ -74,7 +74,7 @@ O 2º turno não passa pela distribuição de cadeiras. Proporcional e majoritá
 - Responsabilidade: estado de opinião de cada concorrente.
 - Entradas: notoriedade, popularidade, rejeição, `identPartidaria`, conjuntura.
 - Processamento: `motor-eleitoral.md` 2, 4.6; identificação só no tamanho do segmento fiel (5.2) e em `identChapa` (6).
-- Saídas: termos de opinião para a pontuação.
+- Saídas: termos de opinião para a pontuação. Recusa `identPartidaria` como entrada (D71).
 - Dependências: 2, 4.
 - Parâmetros: `α`, `k` por cargo (calibrar).
 - Simplificações: conjuntura simplificada (P9).
@@ -84,7 +84,7 @@ O 2º turno não passa pela distribuição de cadeiras. Proporcional e majoritá
 - Responsabilidade: mobilização disponível no dia.
 - Entradas: base territorial, lideranças, coligados, `alocMobilizacao`.
 - Processamento: `motor-eleitoral.md` 4.5 e 6.1 (quatro canais, cada ator uma vez).
-- Saídas: `maquinaEfetiva` por município.
+- Saídas: `maquinaEfetiva` por município; agregação estadual ou nacional por média ponderada pelo eleitorado (D71).
 - Dependências: 2, 7.
 - Parâmetros: `estruturaAliada`, `σt` (calibrar).
 - Simplificações: base territorial agregada (P3).
@@ -94,7 +94,7 @@ O 2º turno não passa pela distribuição de cadeiras. Proporcional e majoritá
 - Responsabilidade: aplicar alocações do fundo e fluxos de exposição por janela.
 - Entradas: `fundoDisponivel`, cartas de campanha, `tempoTV`, `alcanceRedes`.
 - Processamento: `motor-eleitoral.md` 4.4, 7.1 a 7.4.
-- Saídas: estoques de opinião atualizados; `alocMobilizacao` reservado.
+- Saídas: estoques de opinião atualizados; `alocMobilizacao` reservado. Conversão da exposição em opinião por função injetada (calibrar, D71).
 - Dependências: 5.
 - Parâmetros: `escalaGasto`, conversões de TV e redes (calibrar); FEFC e TV (simplificações 4.1 e 4.2 abaixo).
 - Simplificações: L3 a L5 e L8.
@@ -227,7 +227,7 @@ O 2º turno não passa pela distribuição de cadeiras. Proporcional e majoritá
 | 2 | todos os cenários do módulo 10 passam, com os dois valores de `minimoNominalFase2` |
 | 3 | módulos 8, 9 e 11 conservam votos e cumprem D59 em todas as unidades de teste |
 | 4 | testes dos módulos 12 e 13 passam |
-| 5 | testes dos módulos 2 a 7 passam, sem dupla contagem |
+| 5 | testes dos módulos 2, 4, 5, 6 e 7 passam, sem dupla contagem (o módulo 3 é da etapa 6) |
 | 6 | testes dos módulos 3, 15 e 16 passam |
 | 7 | simulação headless reproduz resultados com a mesma semente; metas de calibração medidas |
 
@@ -268,7 +268,7 @@ Pendência para o módulo 9: a regra "F por último" do segmento livre (5.2) exi
 - `MaiorResto.distribuir(total, itens, { ordemDesempate })`: ids listados desempatam restos iguais pela posição; os demais depois, em ordem UTF-16. Sem a opção, comportamento da etapa 1.
 - `Pontuacao.base(fatores, pesos, epsilon)` e `Pontuacao.calcularLote(concorrentes, rngState)` (4.1; seção 6 com ε, D69): soma dos pesos 1 (tolerância 1e-9), fatores em [0, 1], ε positivo, σ não negativo; um Z por concorrente, em ordem de id, inclusive com σ = 0; só fluxo de eleição.
 - Módulo 8, `Comparecimento.calcular(estado, dados, rngState)`: `{ disputaId, eleitorado, votosPorEleitor, taxasEleitorado, taxasVotos, origem }`; taxas exatas (`{ numerador, denominador }`, denominador comum por nível, como o pipeline produz) ou numéricas (soma 1 com tolerância); dois níveis de maior resto; identidades conferidas. Sem sorteio.
-- Módulo 9, `Proporcional.apurar(estado, dados, rngState)`: `{ disputaId, validos, delta, semIdentificacao, tau, listas: [{ id, identPartidaria, lambda, candidatos: [{ id, S }] }] }`. Segmento fiel: legenda com pontuação `λ_L` concorrendo com os `S_i` da lista (forma 4.2, como na 5.2); lista sem candidatos fica só com a legenda. Segmento livre em dois níveis (D50), só listas com pontuação positiva. `τ` diferente de 1 é recusado. Sem sorteio.
+- Módulo 9, `Proporcional.apurar(estado, dados, rngState)`: `{ disputaId, validos, delta, semIdentificacao, tau, listas: [{ id, identPartidaria, lambda, candidatos: [{ id, S }] }] }`; `lambda` é a pontuação efetiva da legenda, `λ_L × ruido` (D71, `Pontuacao.legendas`). Segmento fiel: legenda com pontuação `λ_L` concorrendo com os `S_i` da lista (forma 4.2, como na 5.2); lista sem candidatos fica só com a legenda. Segmento livre em dois níveis (D50), só listas com pontuação positiva. `τ` diferente de 1 é recusado. Sem sorteio.
 - Módulo 11, `Majoritaria.apurar(estado, dados, rngState)`: `{ disputaId, cargo, vagas, eleitorado, validos, D, tau, chapas: [{ id, S }] }`; saída com `regra`, `segundoTurno`, `eleitos`, `finalistas`, `votosNaoModelados`, `desempates`. Válidos acima de `eleitorado × vagas` (Senado) ou de `eleitorado` (demais) são recusados. Empates na posição decisiva: resolvedor injetado (`estado.opcoes.resolverDesempateTecnico`, mesmo contrato do módulo 10).
 - Reprodutibilidade: `Math.log`, `Math.exp` e `Math.pow` não têm resultado bit a bit fixado pela especificação do JavaScript. Mesma semente dá o mesmo resultado no mesmo motor JavaScript; entre navegadores diferentes, pontuações podem diferir no último bit e, raramente, mudar um arredondamento. Limitação registrada; sem correção nesta etapa.
 
@@ -277,3 +277,12 @@ Pendência para o módulo 9: a regra "F por último" do segmento livre (5.2) exi
 - Módulo 11 recusa `SENADOR` com 2 vagas e passa a exigir `validos <= eleitorado`.
 - Módulo 12, `SegundoTurno.apurar(estado, dados, rngState)`: `{ disputaId, eleitorado, primeiroTurno, finalistas: [A, B], pesos: { origem: { A, B, brancoNulo, abstencao } }, proporcoesInvalidos2, eleitoresSecoesNaoInstaladas2 }`. Origens: id de cada candidato do 1º turno, `naoModelados:D`, `brancoNuloAnulado`, `abstencao`. Confere que o 1º turno fecha com o eleitorado; pesos positivos nos quatro destinos de toda origem com contingente; origem desconhecida ou sem pesos é erro. Saída com `votos`, `validos`, `comparecimento`, `abstencao`, `eleitoresSecoesNaoInstaladas`, as cinco parcelas não válidas, `eleito`, `transferencias` por origem e `desempates`. Empate entre os finalistas: resolvedor injetado, tipo `segundoTurno`.
 - Mapas internos novos com `Object.create(null)` ou `Map`.
+
+### 6.7 Concorrentes, opinião, máquina e campanha (etapa 5)
+- `Pontuacao.legendas(listas, rngState)`: `λ_L × exp(σ Z - σ²/2)`, Z em ordem de id; valor vai ao `lambda` do módulo 9.
+- Módulo 2, `Cadastro.montarListasProporcionais` e `Cadastro.montarChapasMajoritarias`: listas derivadas (federação ou partido isolado); `listasDeclaradas` opcional só para conferência; `coligacoes` em proporcional é erro; cada ator (partido isolado ou federação) em no máximo uma chapa; partido federado entra pela federação; adesão obrigatória e só para atores da chapa.
+- Módulo 4, `Sinteticos.gerar(estado, dados)`: `{ semente, unidadeId, listaId, eleicaoId, quantidadeSinteticos, quadros, capilaridade }` com `estado.opcoes.sortearQ` e `sortearR` (recebem o estado do subfluxo, devolvem `{ valor >= 0, rngStateNext }` no mesmo fluxo). Subfluxo `RNG.criar(semente, "eleicao", "sinteticos", unidade, lista, eleição)`; ids `sint:<lista>:<índice>`; `opiniao_g = min(1, quadros × q_g)`, `maquinaEfetiva_g = min(1, capilaridade × r_g)`. `Sinteticos.designacao`: rótulo "Candidatura sintética n (lista)", sem nome de pessoa (regra 3); nome fictício pendente de decisão.
+- Módulo 5, `Opiniao.calcular`: partição das quatro parcelas somando 1 (tolerância 1e-9), `α` em [0, 1], `k >= 0`.
+- Módulo 6, `Maquina.calcularMunicipal`: canais sem ator repetido; `estruturaAliada > 0` só com `aliancaFormal`; titular fora dos aliados; só `tipo: "pessoa"` gera transferência; `baseTerritorial = 0` fora da base (D56). Transferência: um Z por par no subfluxo `RNG.criar(semente, "eleicao", "transferencia", município, liderança, candidato, eleição)`. `Maquina.agregarEstadualOuNacional`: base detalhada mais agregado regional disjunto, eleitorado somado sem exceder o total.
+- Módulo 7, `Campanha.alocarRecursos`: valores monetários em inteiros (centavos); `reserva = fundo - Σ exposição - Σ mobilização`, negativa é erro; padrão proporcional ao eleitorado por maior resto com `totalMobilizacao`. `Campanha.efeitoMobilizacao(R, escalaGasto)`: `1 - exp(-R ÷ escalaGasto)`, zero exato com R = 0. `Campanha.aplicarExposicao`: `estado.opcoes.conversorExposicao` injetado; partição de saída conferida.
+- Funções sem fórmula aprovada continuam injetadas ou recebidas como valor (calibrar): `escalaGasto`, `q_g` e `r_g`, `estruturaAliada`, conversão da exposição, decaimento.
