@@ -349,3 +349,11 @@ Aprovada pelo autor antes da etapa 2.
 4. Empate de médias: média, votação da lista, votação nominal do candidato que disputa a vaga (art. 11, §§ 6º e 7º), idade desse candidato (simplificação), desempate técnico.
 5. Suplentes: todos os não eleitos da lista que obteve vaga, sem mínimo de votos; lista sem vaga não gera suplência (Res. 23.677, art. 14).
 6. Módulo 10 recebe votos prontos e idade inteira; desempate técnico só como interface injetável até o módulo 14.
+
+## D69. Apuração majoritária e harmonização de fórmulas, 18/11/2026
+
+Aprovada pelo autor antes da etapa 3.
+1. Pontuação majoritária com ε, como na 4.1: `(x + ε)^m` em cada fator, para que um fator zero não zere a chapa (`motor-eleitoral.md` 6).
+2. `D` (não modelados) é concorrente reservado na repartição dos válidos; seus votos saem em `votosNaoModelados`, entram no denominador da maioria e não concorrem. Se igualarem ou superarem a última posição decisiva, o resultado é recusado (insuficiência de modelagem).
+3. A decisão de 2º turno é do módulo 11: maioria absoluta (2 × votos > válidos) para presidente, governador e prefeito com mais de 200 mil eleitores; maioria simples para senador e prefeito com até 200 mil. O módulo 12 só executa o 2º turno.
+4. Normal padrão no RNG e ordem de desempate explícita no maior resto ("F por último", 5.2).

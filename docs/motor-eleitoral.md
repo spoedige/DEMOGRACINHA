@@ -352,7 +352,7 @@ vencedor:           maior número de votos técnicos
 Cargos: prefeito, governador, senador, presidente. Concorrentes: chapas.
 
 ```
-S_c = opiniao_c^(m1) × identChapa_c^(m2) × maquinaEfetiva_c^(m3) × ruido_c       (m1 + m2 + m3 = 1, m1 maior que no proporcional)
+S_c = (opiniao_c + ε)^(m1) × (identChapa_c + ε)^(m2) × (maquinaEfetiva_c + ε)^(m3) × ruido_c       (m1 + m2 + m3 = 1, m1 maior que no proporcional; ε como em 4.1, D69)
 identChapa_c = clamp( Σ_{p em chapa(c)} identPartidaria[p] × adesao[p,c],  0,  1 )
 chapa(c) = partido ou federação do candidato + partidos formalmente coligados
 votos_c = repartição 4.2 com D para candidaturas não modeladas
@@ -361,7 +361,7 @@ votos_c = repartição 4.2 com D para candidaturas não modeladas
 - `adesao[p,c]`: fração do eleitorado identificado com o partido p que segue a chapa c (calibrar; para o próprio partido ou federação do candidato, maior que para aliados; menor para aliado distante ideologicamente). Candidatura isolada tem `identChapa` igual à do próprio partido.
 - `ruido_c`: dispersão `σ_c` cresce com `alcanceRedes`. Com o ruído normalizado (4.1), a votação esperada não muda; só a variância.
 
-Vencedor: maioria dos válidos (Res. 23.677, art. 5º, § 2º, na redação da Res. 23.748/2026); 2º turno para presidente e governador sem maioria absoluta e para prefeito acima de 200 mil eleitores (art. 6º e § 1º). Empates (vencedor, vaga de finalista do 2º turno, segunda vaga do Senado em 2026): desempate técnico (5.5), simplificação de gameplay; regra legal de desempate majoritário não validada.
+Vencedor (D69): maioria absoluta dos válidos (2 × votos > válidos) para presidente, governador e prefeito em município com mais de 200 mil eleitores; sem ela, 2º turno entre os dois mais votados (Res. 23.677, art. 6º e § 1º). Maioria simples, turno único, para senador (as vagas da UF) e prefeito em município com até 200 mil eleitores (art. 5º, § 2º, na redação da Res. 23.748/2026). Votos dados a `D` ficam num agregado próprio de não modelados, entram no denominador dos válidos e não concorrem; se alcançarem a última posição decisiva, o resultado é recusado por insuficiência de modelagem. Empates (vencedor, vaga de finalista do 2º turno, segunda vaga do Senado em 2026): desempate técnico (5.5), simplificação de gameplay; regra legal de desempate majoritário não validada.
 
 ### 6.1 Quatro canais de aliança, sem duplicação
 | Canal | Entra em | Condição |

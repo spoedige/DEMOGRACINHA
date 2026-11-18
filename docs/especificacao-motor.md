@@ -118,7 +118,7 @@ O 2º turno não passa pela distribuição de cadeiras. Proporcional e majoritá
 - Dependências: 8.
 - Parâmetros: `w`, `v`, `m`, `ε`, `D`, `λ`, `δ` (calibrar).
 - Simplificações: dispersão `D` para candidaturas não modeladas.
-- Testes: soma de legendas e nominais igual aos válidos; sem distribuição em dois níveis.
+- Testes: soma de legendas e nominais igual aos válidos; frações reais iguais às da competição única, com dois níveis só no arredondamento (D50); erro do total da lista menor que `2 + s_L`.
 
 ### 10. Distribuição proporcional de cadeiras
 - Responsabilidade: eleitos e suplentes das disputas proporcionais.
@@ -133,8 +133,8 @@ O 2º turno não passa pela distribuição de cadeiras. Proporcional e majoritá
 - Testes (cenários artificiais montados à mão): arredondamento do QE em 0,5 e acima; lista abaixo de 80%; candidato abaixo de 20%; vaga de sobra não preenchida contando na média seguinte; nenhuma lista no QE (Fase I com zero cadeiras); empate de médias e de candidatos; parâmetro alternativo gerando vaga não preenchida; soma de cadeiras igual às vagas no padrão.
 
 ### 11. Apuração majoritária
-- Responsabilidade: votos por chapa e vencedor no 1º turno.
-- Entradas: válidos (8), chapas e pontuações.
+- Responsabilidade: votos por chapa, vencedor no 1º turno ou decisão de 2º turno com os dois finalistas (D69).
+- Entradas: válidos (8), eleitorado da unidade, cargo e vagas, chapas e pontuações, `D` (não modelados).
 - Processamento: `motor-eleitoral.md` 6 (pontuação, repartição, maioria e exigência de 2º turno).
 - Saídas: votos por chapa; vencedor ou finalistas.
 - Dependências: 8; 14 sob demanda.
@@ -146,7 +146,7 @@ O 2º turno não passa pela distribuição de cadeiras. Proporcional e majoritá
 - Responsabilidade: disputa entre os dois finalistas.
 - Entradas: resultado do 1º turno, eleitorado, eventos entre turnos.
 - Processamento: matriz origem e destino, `motor-eleitoral.md` 6.3.
-- Exigência do 2º turno: `CARGOS[cargo].segundoTurno` (6.2) indica só que o cargo admite 2º turno em tese. Para prefeito, o piso de mais de 200 mil eleitores (CF/88, art. 29, II; L20) é regra territorial verificada neste módulo, com o eleitorado da unidade; `Dados.disputa` não a verifica.
+- Só executa o 2º turno já decidido pelo módulo 11 (finalistas). `CARGOS[cargo].segundoTurno` (6.2) indica só que o cargo admite 2º turno em tese; o piso de mais de 200 mil eleitores para prefeito (CF/88, art. 29, II; L20) e a maioria absoluta são verificados no módulo 11 (D69).
 - Saídas: votos do 2º turno, vencedor.
 - Dependências: 11; 14 sob demanda.
 - Parâmetros: fatores da matriz (calibrar).
@@ -262,3 +262,12 @@ Pendência para o módulo 9: a regra "F por último" do segmento livre (5.2) exi
 - Saída: `{ resultado: { cadeiras: Dados.resultadoCadeiras, auditoria }, rngStateNext }`; sem desempate técnico, `rngStateNext` é o estado recebido.
 - `Dados.resultadoCadeiras` passou a ter `cadeiras` = cadeiras ocupadas (soma igual ao número de eleitos; ocupadas mais não preenchidas igual às vagas) e `suplentes` por lista.
 - Erro explícito, sem regra inventada: eleitos pelo quociente partidário acima das vagas (possível só com QE muito pequeno arredondado para baixo; caso sem regra nas fontes lidas); votos válidos zero.
+
+### 6.5 Apuração (etapa 3)
+- `RNG.normal(rngState)`: método polar de Marsaglia, sem cache; cada chamada devolve `{ valor, rngStateNext }`.
+- `MaiorResto.distribuir(total, itens, { ordemDesempate })`: ids listados desempatam restos iguais pela posição; os demais depois, em ordem UTF-16. Sem a opção, comportamento da etapa 1.
+- `Pontuacao.base(fatores, pesos, epsilon)` e `Pontuacao.calcularLote(concorrentes, rngState)` (4.1; seção 6 com ε, D69): soma dos pesos 1 (tolerância 1e-9), fatores em [0, 1], ε positivo, σ não negativo; um Z por concorrente, em ordem de id, inclusive com σ = 0; só fluxo de eleição.
+- Módulo 8, `Comparecimento.calcular(estado, dados, rngState)`: `{ disputaId, eleitorado, votosPorEleitor, taxasEleitorado, taxasVotos, origem }`; taxas exatas (`{ numerador, denominador }`, denominador comum por nível, como o pipeline produz) ou numéricas (soma 1 com tolerância); dois níveis de maior resto; identidades conferidas. Sem sorteio.
+- Módulo 9, `Proporcional.apurar(estado, dados, rngState)`: `{ disputaId, validos, delta, semIdentificacao, tau, listas: [{ id, identPartidaria, lambda, candidatos: [{ id, S }] }] }`. Segmento fiel: legenda com pontuação `λ_L` concorrendo com os `S_i` da lista (forma 4.2, como na 5.2); lista sem candidatos fica só com a legenda. Segmento livre em dois níveis (D50), só listas com pontuação positiva. `τ` diferente de 1 é recusado. Sem sorteio.
+- Módulo 11, `Majoritaria.apurar(estado, dados, rngState)`: `{ disputaId, cargo, vagas, eleitorado, validos, D, tau, chapas: [{ id, S }] }`; saída com `regra`, `segundoTurno`, `eleitos`, `finalistas`, `votosNaoModelados`, `desempates`. Válidos acima de `eleitorado × vagas` (Senado) ou de `eleitorado` (demais) são recusados. Empates na posição decisiva: resolvedor injetado (`estado.opcoes.resolverDesempateTecnico`, mesmo contrato do módulo 10).
+- Reprodutibilidade: `Math.log`, `Math.exp` e `Math.pow` não têm resultado bit a bit fixado pela especificação do JavaScript. Mesma semente dá o mesmo resultado no mesmo motor JavaScript; entre navegadores diferentes, pontuações podem diferir no último bit e, raramente, mudar um arredondamento. Limitação registrada; sem correção nesta etapa.

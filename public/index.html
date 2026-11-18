@@ -120,8 +120,22 @@ var RNG = (function () {
     return { valor: v, rngStateNext: r2.rngStateNext };
   }
 
+  // Normal padrão pelo método polar de Marsaglia, sem cache: cada chamada usa só um dos dois valores do par, e
+  // nenhum estado fica fora de rngState. Consome um número variável de uniformes (rejeição fora do círculo unitário).
+  // Usa Math.log e Math.sqrt: reproduzível no mesmo motor JavaScript; igualdade bit a bit entre motores diferentes
+  // não é garantida pela especificação da linguagem para Math.log.
+  function normal(estado) {
+    var e = estado, u, v, q;
+    do {
+      var a = decimal(e); e = a.rngStateNext;
+      var b = decimal(e); e = b.rngStateNext;
+      u = 2 * a.valor - 1; v = 2 * b.valor - 1; q = u * u + v * v;
+    } while (q >= 1 || q === 0);
+    return { valor: u * Math.sqrt(-2 * Math.log(q) / q), rngStateNext: e };
+  }
+
   return Object.freeze({ VERSAO: VERSAO, ALGORITMO: ALGORITMO, DOMINIOS: DOMINIOS,
-    normalizarSemente: normalizarSemente, criar: criar, validar: validar, u32: u32, inteiro: inteiro, decimal: decimal });
+    normalizarSemente: normalizarSemente, criar: criar, validar: validar, u32: u32, inteiro: inteiro, decimal: decimal, normal: normal });
 })();
 
 /* == DADOS == */
@@ -273,9 +287,28 @@ var MaiorResto = (function () {
     return { m: m | (1n << 52n), e: exp - 1075 };
   }
 
-  // participantes: [{ id, peso }]. Retorna { id: inteiro }. Empate de restos: id em ordem crescente de código UTF-16.
+  // participantes: [{ id, peso }]. Retorna { id: inteiro }. Empate de restos: id em ordem crescente de código UTF-16,
+  // ou, com opcoes.ordemDesempate (lista de ids sem repetição), pela posição nessa lista; ids fora dela vêm depois,
+  // em ordem UTF-16. Ex.: "F por último" da seção 5.2.
   // Soma dos pesos zero: total 0 devolve zeros; total positivo é erro (o chamador decide a regra, ex.: 5.5).
-  function distribuir(total, participantes) {
+  function distribuir(total, participantes, opcoes) {
+    var posicao = new Map();
+    if (opcoes !== undefined && opcoes !== null) {
+      if (typeof opcoes !== "object") throw new TypeError("opções inválidas");
+      if (opcoes.ordemDesempate !== undefined) {
+        if (!Array.isArray(opcoes.ordemDesempate)) throw new TypeError("ordemDesempate deve ser lista de ids");
+        opcoes.ordemDesempate.forEach(function (x, i) {
+          if (typeof x !== "string" || !ID.test(x)) throw new TypeError("ordemDesempate com id inválido");
+          if (posicao.has(x)) throw new TypeError("ordemDesempate com id repetido: " + x);
+          posicao.set(x, i);
+        });
+      }
+    }
+    function antes(a, b) {
+      var pa = posicao.has(a.id) ? posicao.get(a.id) : Infinity, pb = posicao.has(b.id) ? posicao.get(b.id) : Infinity;
+      if (pa !== pb) return pa < pb ? -1 : 1;
+      return a.id < b.id ? -1 : 1;
+    }
     if (!Number.isSafeInteger(total) || total < 0) throw new RangeError("total deve ser inteiro não negativo");
     if (!Array.isArray(participantes) || participantes.length === 0) throw new TypeError("participantes obrigatórios");
     var vistos = new Set();
@@ -298,7 +331,7 @@ var MaiorResto = (function () {
     var sobra = Number(T - distribuido); // menor que o número de participantes com resto positivo
     var ordem = lista.slice().sort(function (a, b) {
       if (a.resto !== b.resto) return a.resto > b.resto ? -1 : 1;
-      return a.id < b.id ? -1 : 1;
+      return antes(a, b);
     });
     for (var i = 0; i < sobra; i++) ordem[i].piso += 1n;
     lista.forEach(function (p) { out[p.id] = Number(p.piso); });
@@ -306,6 +339,285 @@ var MaiorResto = (function () {
   }
 
   return Object.freeze({ distribuir: distribuir });
+})();
+
+// Funções comuns dos módulos 8, 9 e 11.
+var Comum = (function () {
+  var ID = /^[A-Za-z0-9][A-Za-z0-9_.:|-]{0,127}$/;
+  var TOL = 1e-9;
+  function erro(msg) { throw new TypeError(msg); }
+  function idv(v, campo) { if (typeof v !== "string" || !ID.test(v)) erro(campo + ": identificador inválido"); return v; }
+  function inteiro(v, campo, min) { if (!Number.isSafeInteger(v) || v < min) erro(campo + ": inteiro maior ou igual a " + min); return v; }
+  function real(v, campo, min, max) {
+    if (typeof v !== "number" || !Number.isFinite(v) || v < min || (max !== undefined && v > max)) erro(campo + ": número fora da faixa");
+    return v;
+  }
+  function porId(a, b) { return a.id < b.id ? -1 : 1; }
+  // resolvedor de desempate técnico injetado (módulo 14), mesmo contrato do módulo 10
+  function resolver(ctx, empatados, contexto) {
+    if (typeof ctx.resolver !== "function") throw new Error("desempate técnico necessário e nenhum resolvedor informado (módulo 14)");
+    var ids = empatados.slice().sort();
+    var r = ctx.resolver(ids, contexto, ctx.rng);
+    if (!r || ids.indexOf(r.vencedorId) < 0) throw new Error("resolvedor de desempate devolveu vencedor fora dos empatados");
+    ctx.rng = r.rngStateNext === undefined ? ctx.rng : r.rngStateNext;
+    ctx.desempates.push({ tipo: contexto.tipo, empatados: ids, vencedorId: r.vencedorId });
+    return r.vencedorId;
+  }
+  return Object.freeze({ TOL: TOL, erro: erro, idv: idv, inteiro: inteiro, real: real, porId: porId, resolver: resolver });
+})();
+
+// Pontuação com ruído (motor-eleitoral.md 4.1; na majoritária, seção 6 com ε, D69).
+// S_c = Π_k (x_ck + ε)^(w_k) × exp(σ_c Z_c - σ_c²/2). Z_c sorteado em ordem de id, um por concorrente, mesmo com σ_c = 0,
+// para que a sequência não dependa dos valores de σ. Math.pow e Math.exp: mesma observação de RNG.normal.
+var Pontuacao = (function () {
+  function base(fatores, pesos, epsilon) {
+    Comum.real(epsilon, "epsilon", 0);
+    if (!(epsilon > 0)) Comum.erro("epsilon deve ser positivo");
+    if (!fatores || typeof fatores !== "object" || !pesos || typeof pesos !== "object") Comum.erro("fatores e pesos obrigatórios");
+    var nomes = Object.keys(pesos).sort();
+    if (nomes.length === 0) Comum.erro("ao menos um peso");
+    if (Object.keys(fatores).sort().join("|") !== nomes.join("|")) Comum.erro("fatores e pesos com nomes diferentes");
+    var soma = 0, prod = 1;
+    nomes.forEach(function (k) {
+      var w = Comum.real(pesos[k], "peso " + k, 0), x = Comum.real(fatores[k], "fator " + k, 0, 1);
+      soma += w; prod *= Math.pow(x + epsilon, w);
+    });
+    if (Math.abs(soma - 1) > Comum.TOL) Comum.erro("soma dos pesos diferente de 1");
+    return prod;
+  }
+  // concorrentes: [{ id, fatores, pesos, epsilon, sigma }]. Retorna { resultado: { id: S }, rngStateNext }.
+  function calcularLote(concorrentes, rngState) {
+    if (!Array.isArray(concorrentes) || concorrentes.length === 0) Comum.erro("concorrentes obrigatórios");
+    var vistos = new Set();
+    var lista = concorrentes.map(function (c) {
+      Comum.idv(c.id, "concorrente.id");
+      if (vistos.has(c.id)) Comum.erro("concorrente repetido: " + c.id);
+      vistos.add(c.id);
+      return c;
+    }).sort(Comum.porId);
+    var e = RNG.validar(rngState);
+    if (e.dominio !== "eleicao") Comum.erro("pontuação usa o fluxo de eleição");
+    var out = {};
+    lista.forEach(function (c) {
+      var sigma = Comum.real(c.sigma, "sigma de " + c.id, 0);
+      var z = RNG.normal(e); e = z.rngStateNext;
+      out[c.id] = base(c.fatores, c.pesos, c.epsilon) * Math.exp(sigma * z.valor - sigma * sigma / 2);
+    });
+    return { resultado: out, rngStateNext: e };
+  }
+  return Object.freeze({ base: base, calcularLote: calcularLote });
+})();
+
+// Módulo 8: comparecimento e votos válidos (4.2.1; D42 e complemento; D59; D62). Sem sorteio.
+// Dois níveis de maior resto: eleitorado entre comparecimento, abstenção e seções não instaladas; depois
+// comparecimento × votosPorEleitor entre as seis parcelas da D59. Taxas em uma de duas formas, uniforme por nível:
+// { numerador, denominador } inteiros com denominador comum e numeradores somando o denominador (exato, como o
+// pipeline produz), ou números somando 1 com tolerância de 1e-9.
+var Comparecimento = (function () {
+  var NIVEL1 = ["comparecimento", "abstencao", "eleitoresSecoesNaoInstaladas"];
+  var NIVEL2 = ["validos", "brancos", "nulos", "anulados", "anuladosSubJudice", "anuladosApuracaoSeparada"];
+  function pesos(taxas, nomes, campo) {
+    if (!taxas || typeof taxas !== "object") Comum.erro(campo + ": taxas obrigatórias");
+    if (Object.keys(taxas).sort().join("|") !== nomes.slice().sort().join("|")) Comum.erro(campo + ": parcelas esperadas " + nomes.join(", "));
+    var exatas = nomes.every(function (n) { return taxas[n] && typeof taxas[n] === "object"; });
+    var numeros = nomes.every(function (n) { return typeof taxas[n] === "number"; });
+    if (exatas) {
+      var den = Comum.inteiro(taxas[nomes[0]].denominador, campo + ".denominador", 1), soma = 0;
+      nomes.forEach(function (n) {
+        if (taxas[n].denominador !== den) Comum.erro(campo + ": denominadores diferentes no mesmo nível");
+        soma += Comum.inteiro(taxas[n].numerador, campo + "." + n + ".numerador", 0);
+      });
+      if (soma !== den) Comum.erro(campo + ": numeradores não somam o denominador");
+      return nomes.map(function (n) { return { id: n, peso: taxas[n].numerador }; });
+    }
+    if (!numeros) Comum.erro(campo + ": taxas todas exatas ou todas numéricas");
+    var s = 0;
+    nomes.forEach(function (n) { s += Comum.real(taxas[n], campo + "." + n, 0, 1); });
+    if (Math.abs(s - 1) > Comum.TOL) Comum.erro(campo + ": taxas não somam 1");
+    return nomes.map(function (n) { return { id: n, peso: taxas[n] }; });
+  }
+  function calcular(estado, dados, rngState) {
+    var disputaId = Comum.idv(dados.disputaId, "dados.disputaId");
+    var eleitorado = Comum.inteiro(dados.eleitorado, "dados.eleitorado", 0);
+    var vpe = dados.votosPorEleitor;
+    if (vpe !== 1 && vpe !== 2) Comum.erro("votosPorEleitor: 1 ou 2");
+    var n1 = MaiorResto.distribuir(eleitorado, pesos(dados.taxasEleitorado, NIVEL1, "taxasEleitorado"));
+    var possiveis = n1.comparecimento * vpe;
+    var n2 = MaiorResto.distribuir(possiveis, pesos(dados.taxasVotos, NIVEL2, "taxasVotos"));
+    var out = { disputaId: disputaId, eleitorado: eleitorado, votosPorEleitor: vpe, votosPossiveis: possiveis,
+      origem: dados.origem === undefined ? null : JSON.parse(JSON.stringify(dados.origem)) };
+    NIVEL1.forEach(function (n) { out[n] = n1[n]; });
+    NIVEL2.forEach(function (n) { out[n] = n2[n]; });
+    // conferência das identidades (D42, complemento item 1; D59)
+    if (out.comparecimento + out.abstencao + out.eleitoresSecoesNaoInstaladas !== eleitorado) throw new Error("identidade do eleitorado violada");
+    if (NIVEL2.reduce(function (a, n) { return a + out[n]; }, 0) !== possiveis) throw new Error("identidade D59 violada");
+    return { resultado: Object.freeze(out), rngStateNext: rngState };
+  }
+  return Object.freeze({ calcular: calcular });
+})();
+
+// Módulo 9: apuração proporcional (5.2; D35, D49, D50). Pontuações S_i recebidas prontas (Pontuacao.calcularLote).
+// Segmento fiel I_L: legenda (pontuação λ_L) e candidatos da lista (S_i) na forma 4.2, τ = 1 e D = 0.
+// Segmento livre F: dois níveis só no arredondamento (listas por S_L = Σ S_i, depois candidatos), D50.
+var Proporcional = (function () {
+  var LIVRE = "segmento:livre", LEGENDA = "legenda:L"; // ids reservados internos
+  function apurar(estado, dados, rngState) {
+    var disputaId = Comum.idv(dados.disputaId, "dados.disputaId");
+    var validos = Comum.inteiro(dados.validos, "dados.validos", 0);
+    var delta = Comum.real(dados.delta, "delta", 0, 1);
+    if (dados.tau !== undefined && dados.tau !== 1) Comum.erro("tau: estrutural 1 (4.2); outro valor só por calibração aprovada");
+    var semId = Comum.real(dados.semIdentificacao, "semIdentificacao", 0, 1);
+    if (!Array.isArray(dados.listas) || dados.listas.length === 0) Comum.erro("dados.listas: ao menos uma lista");
+    var ids = new Set(), cands = new Set();
+    var listas = dados.listas.map(function (l) {
+      Comum.idv(l.id, "lista.id");
+      if (l.id === LIVRE || l.id === LEGENDA) Comum.erro("lista.id reservado");
+      if (ids.has(l.id)) Comum.erro("lista repetida: " + l.id);
+      ids.add(l.id);
+      if (!Array.isArray(l.candidatos)) Comum.erro("lista." + l.id + ".candidatos: lista obrigatória");
+      var cs = l.candidatos.map(function (c) {
+        Comum.idv(c.id, "candidato.id");
+        if (cands.has(c.id) || ids.has(c.id) || c.id === LIVRE || c.id === LEGENDA) Comum.erro("candidato repetido ou com id de lista: " + c.id);
+        cands.add(c.id);
+        return { id: c.id, S: Comum.real(c.S, "S de " + c.id, 0) };
+      }).sort(Comum.porId);
+      return { id: l.id, ident: Comum.real(l.identPartidaria, "identPartidaria de " + l.id, 0, 1),
+        lambda: Comum.real(l.lambda, "lambda de " + l.id, 0), candidatos: cs };
+    }).sort(Comum.porId);
+    listas.forEach(function (l) { if (cands.has(l.id)) Comum.erro("lista com id de candidato: " + l.id); });
+    var somaId = listas.reduce(function (a, l) { return a + l.ident; }, 0);
+    if (Math.abs(somaId + semId - 1) > Comum.TOL) Comum.erro("identificação partidária e semIdentificacao não somam 1");
+
+    // passo 2: segmentos inteiros; F por último no desempate. Peso de F = semIdentificacao + δ × Σ ident (= 1 - Σ peso_L)
+    var pesosSeg = listas.map(function (l) { return { id: l.id, peso: l.ident * (1 - delta) }; });
+    pesosSeg.push({ id: LIVRE, peso: semId + delta * somaId });
+    var seg = MaiorResto.distribuir(validos, pesosSeg, { ordemDesempate: listas.map(function (l) { return l.id; }).concat([LIVRE]) });
+    var F = seg[LIVRE];
+    var votos = {}, legenda = {}, fiel = {}, livrePorLista = {};
+    listas.forEach(function (l) { l.candidatos.forEach(function (c) { votos[c.id] = 0; }); legenda[l.id] = 0; livrePorLista[l.id] = 0; });
+
+    // passo 3: segmento fiel
+    listas.forEach(function (l) {
+      var I = seg[l.id]; fiel[l.id] = I;
+      if (I === 0) return;
+      var legId = LEGENDA;
+      var part = [{ id: legId, peso: l.candidatos.length === 0 ? 1 : l.lambda }].concat(l.candidatos.map(function (c) { return { id: c.id, peso: c.S }; }));
+      if (part.every(function (x) { return x.peso === 0; })) Comum.erro("segmento fiel positivo sem legenda nem candidato com pontuação: " + l.id);
+      var r = MaiorResto.distribuir(I, part);
+      legenda[l.id] += r[legId];
+      l.candidatos.forEach(function (c) { votos[c.id] += r[c.id]; });
+    });
+
+    // passo 4: segmento livre em dois níveis
+    if (F > 0) {
+      var comS = listas.filter(function (l) { return l.candidatos.some(function (c) { return c.S > 0; }); });
+      if (comS.length === 0) Comum.erro("segmento livre positivo sem candidato com pontuação positiva");
+      var FL = MaiorResto.distribuir(F, comS.map(function (l) {
+        return { id: l.id, peso: l.candidatos.reduce(function (a, c) { return a + c.S; }, 0) };
+      }));
+      comS.forEach(function (l) {
+        livrePorLista[l.id] = FL[l.id];
+        if (FL[l.id] === 0) return;
+        var r = MaiorResto.distribuir(FL[l.id], l.candidatos.map(function (c) { return { id: c.id, peso: c.S }; }));
+        l.candidatos.forEach(function (c) { votos[c.id] += r[c.id]; });
+      });
+    }
+    var votosLista = {};
+    listas.forEach(function (l) { votosLista[l.id] = legenda[l.id] + l.candidatos.reduce(function (a, c) { return a + votos[c.id]; }, 0); });
+    var total = listas.reduce(function (a, l) { return a + votosLista[l.id]; }, 0);
+    if (total !== validos) throw new Error("conservação dos válidos violada");
+    var out = { disputaId: disputaId, validos: validos, votos: votos, legenda: legenda, votosLista: votosLista,
+      segmentos: { fiel: fiel, livre: F, livrePorLista: livrePorLista } };
+    return { resultado: JSON.parse(JSON.stringify(out)), rngStateNext: rngState };
+  }
+  return Object.freeze({ apurar: apurar, ID_SEGMENTO_LIVRE: LIVRE });
+})();
+
+// Módulo 11: apuração majoritária e decisão de 2º turno (6; Res. TSE 23.677, arts. 5º e 6º; D69).
+// Votos por chapa na forma 4.2 (τ = 1) sobre os válidos, com a alternativa D (candidaturas não modeladas) como
+// concorrente reservado. Senado e prefeito até 200 mil eleitores: maioria simples, turno único. Presidente,
+// governador e prefeito acima de 200 mil: maioria absoluta (2 × votos > válidos) ou 2º turno com dois finalistas.
+var Majoritaria = (function () {
+  var NAO_MODELADOS = "naoModelados:D";
+  var CARGOS = { PREFEITO: true, GOVERNADOR: true, PRESIDENTE: true, SENADOR: true };
+  var LIMITE_PREFEITO = 200000; // CF/88, art. 29, II (L20): 2º turno só acima de 200 mil eleitores
+
+  // primeiros k concorrentes por votos; empate que atravessa a posição k vai ao desempate técnico
+  function primeiros(chapas, votos, k, ctx, tipo) {
+    var ord = chapas.slice().sort(function (a, b) { return votos[b.id] - votos[a.id] || (a.id < b.id ? -1 : 1); });
+    var escolhidos = [];
+    var i = 0;
+    while (escolhidos.length < k && i < ord.length) {
+      var j = i;
+      while (j < ord.length && votos[ord[j].id] === votos[ord[i].id]) j++;
+      var grupo = ord.slice(i, j).map(function (c) { return c.id; });
+      while (grupo.length > 0 && escolhidos.length < k) {
+        if (grupo.length <= k - escolhidos.length) { escolhidos = escolhidos.concat(grupo); grupo = []; break; }
+        var v = Comum.resolver(ctx, grupo, { tipo: tipo, disputaId: ctx.disputaId, posicao: escolhidos.length + 1 });
+        escolhidos.push(v);
+        grupo = grupo.filter(function (x) { return x !== v; });
+      }
+      i = j;
+    }
+    return escolhidos;
+  }
+
+  function apurar(estado, dados, rngState) {
+    var opcoes = (estado && estado.opcoes) || {};
+    var disputaId = Comum.idv(dados.disputaId, "dados.disputaId");
+    if (typeof dados.cargo !== "string" || !Object.prototype.hasOwnProperty.call(CARGOS, dados.cargo)) Comum.erro("cargo majoritário desconhecido");
+    var vagas = Comum.inteiro(dados.vagas, "dados.vagas", 1);
+    if (vagas > (dados.cargo === "SENADOR" ? 2 : 1)) Comum.erro("vagas incompatíveis com o cargo");
+    var eleitorado = Comum.inteiro(dados.eleitorado, "dados.eleitorado", 0);
+    var validos = Comum.inteiro(dados.validos, "dados.validos", 1);
+    if (validos > eleitorado * (dados.cargo === "SENADOR" ? vagas : 1)) Comum.erro("validos excede o máximo possível para o eleitorado");
+    if (dados.tau !== undefined && dados.tau !== 1) Comum.erro("tau: estrutural 1 (4.2)");
+    var D = dados.D === undefined ? 0 : Comum.real(dados.D, "D", 0);
+    if (!Array.isArray(dados.chapas) || dados.chapas.length === 0) Comum.erro("dados.chapas: ao menos uma chapa");
+    var vistos = new Set();
+    var chapas = dados.chapas.map(function (c) {
+      Comum.idv(c.id, "chapa.id");
+      if (c.id === NAO_MODELADOS || vistos.has(c.id)) Comum.erro("chapa repetida ou reservada: " + c.id);
+      vistos.add(c.id);
+      return { id: c.id, S: Comum.real(c.S, "S de " + c.id, 0) };
+    }).sort(Comum.porId);
+    var minimas = dados.cargo === "SENADOR" ? vagas : 1;
+    if (chapas.length < minimas) Comum.erro("chapas insuficientes para as vagas");
+    var part = chapas.map(function (c) { return { id: c.id, peso: c.S }; });
+    if (D > 0) part.push({ id: NAO_MODELADOS, peso: D });
+    var votos = MaiorResto.distribuir(validos, part);
+    var naoModelados = D > 0 ? votos[NAO_MODELADOS] : 0;
+    delete votos[NAO_MODELADOS];
+
+    var ctx = { disputaId: disputaId, resolver: opcoes.resolverDesempateTecnico, rng: rngState, desempates: [] };
+    var absoluta = dados.cargo !== "SENADOR" && !(dados.cargo === "PREFEITO" && eleitorado <= LIMITE_PREFEITO);
+    var out = { disputaId: disputaId, cargo: dados.cargo, validos: validos, votos: votos, votosNaoModelados: naoModelados,
+      regra: absoluta ? "maioriaAbsoluta" : "maioriaSimples", segundoTurno: false, eleitos: [], finalistas: null };
+
+    function exigirModelagem(posicoes) {
+      // os não modelados não podem igualar ou superar a última posição decisiva: o resultado ficaria indefinido
+      var ultimo = votos[posicoes[posicoes.length - 1]];
+      if (naoModelados > 0 && naoModelados >= ultimo) throw new Error("insuficiência de modelagem: votos não modelados alcançam posição decisiva");
+    }
+    if (absoluta) {
+      var lider = chapas.filter(function (c) { return 2 * votos[c.id] > validos; });
+      if (lider.length === 1) {
+        out.eleitos = [lider[0].id];
+      } else {
+        if (chapas.length < 2) throw new Error("2º turno exigido com uma só chapa");
+        var fin = primeiros(chapas, votos, 2, ctx, "finalistasMajoritario");
+        exigirModelagem(fin);
+        out.segundoTurno = true; out.finalistas = fin;
+      }
+    } else {
+      var el = primeiros(chapas, votos, vagas, ctx, "majoritario");
+      exigirModelagem(el);
+      out.eleitos = el;
+    }
+    out.desempates = ctx.desempates;
+    return { resultado: JSON.parse(JSON.stringify(out)), rngStateNext: ctx.rng };
+  }
+  return Object.freeze({ apurar: apurar, ID_NAO_MODELADOS: NAO_MODELADOS, LIMITE_PREFEITO: LIMITE_PREFEITO });
 })();
 
 // Distribuição proporcional de cadeiras (módulo 10; regra: motor-eleitoral.md 5.4; desempates: 5.4 item 7 e 5.5).
@@ -490,7 +802,8 @@ var Cadeiras = (function () {
   return Object.freeze({ quocienteEleitoral: quocienteEleitoral, distribuir: distribuir });
 })();
 
-return Object.freeze({ RNG: RNG, Dados: Dados, MaiorResto: MaiorResto, Cadeiras: Cadeiras });
+return Object.freeze({ RNG: RNG, Dados: Dados, MaiorResto: MaiorResto, Pontuacao: Pontuacao, Comparecimento: Comparecimento,
+  Proporcional: Proporcional, Majoritaria: Majoritaria, Cadeiras: Cadeiras });
 })();
 </script>
 </body>
