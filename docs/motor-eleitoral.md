@@ -280,7 +280,7 @@ maquinaEfetiva_g = capilaridade[L] × r_g
 
 ### 5.4 Apuração proporcional (regra documentada; L1 e L2 abertas)
 
-Fontes: Código Eleitoral, arts. 106 a 113 (transcrição da compilação do TSE, `data/raw/legislacao/tse/`); Resolução TSE 23.677/2021, compilada, com alterações de 2024 e 2026, e Resolução TSE 23.748/2026, arts. 12-A e alteração do art. 15 da Res. 23.677 (dispositivos informados pelo autor em 18/11/2026; documentos não guardados no repositório, a confirmar). Lista: partido ou federação (Res. 23.677, art. 10). Coligação não existe em proporcional.
+Fontes: Código Eleitoral, arts. 106 a 113 (transcrição da compilação do TSE, `data/raw/legislacao/tse/`); Resolução TSE 23.677/2021, compilada, com alterações de 2024 e 2026, e Resolução TSE 23.748/2026 (original em `data/raw/legislacao/tse/`; conferidos art. 12-A, I e II, e art. 15). Dispositivos da Res. 23.677 não alterados em 2026 e o caput do art. 12-A: indicação do autor, a confirmar na compilação. Lista: partido ou federação (Res. 23.677, art. 10). Coligação não existe em proporcional.
 
 **Regra ordinária**
 1. Votos válidos: definição da Res. 23.677, art. 9º, parágrafo único (texto a confirmar no documento).

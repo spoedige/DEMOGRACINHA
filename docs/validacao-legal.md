@@ -141,17 +141,23 @@ Evidência: `data/raw/legislacao/tse/codigo_eleitoral_arts_106_a_113_TSE_2026-11
 2. Empate que persista após os critérios do art. 11, §§ 6º e 7º, e do art. 12: não coberto pelas fontes lidas.
 3. Efeitos de federação além da lista única na apuração (L3).
 
+### Conferido em documento primário, 18/11/2026
+Fonte: `data/raw/legislacao/tse/resolucao_23748_2026_e_voto_sistemas.pdf` (original do TSE, SHA-256 no manifesto). A resolução traz só os dispositivos alterados; o restante da Res. 23.677 aparece como linha pontilhada.
+1. Art. 12-A, I e II: Fase I com listas de ao menos 80% do QE e candidato com ao menos 20% do QE; Fase II com todas as listas, cadeiras ocupadas independentemente de votação mínima. **O caput do art. 12-A não está no documento** (só pontilhado): a hipótese de aplicação (nenhuma lista alcança o QE) segue como indicação do autor, a conferir na Res. 23.677 compilada.
+2. Art. 15: nova eleição salvo menos de 15 meses para o fim do mandato na Câmara, nas Assembleias e na Câmara Legislativa; vereador pelo prazo da lei orgânica (§ 1º); na falta, Código Eleitoral, art. 113 (§ 2º). O voto do relator menciona os 15 meses também para vereador, mas o texto normativo remete à lei orgânica; vale o texto normativo.
+3. Art. 7º, §§ 1º e 2º: vagas de deputado federal pela LC 78/1993; estaduais e distritais pelo triplo da representação federal, acrescido acima de 36 (dado útil para a promoção parcial de `QT_VAGA` 2022, não autorizada).
+4. Art. 6º, § 1º: 2º turno de prefeito acima de 200 mil eleitores (CF, art. 29, II; Lei 9.504/1997, art. 3º, § 2º), coerente com L20.
+
 ### Esclarecidas por indicação do autor, sem documento primário guardado
 1. Data do art. 111: inconstitucional em 28/02/2024; eficácia temporal alterada em 13/03/2025.
 2. Empate de médias: Res. 23.677, art. 11, §§ 6º e 7º.
 3. Votos válidos para o QE: Res. 23.677, art. 9º, parágrafo único.
 4. Federação como lista: Res. 23.677, art. 10.
-5. Cenário sem lista que alcance o QE: Res. 23.748/2026, art. 12-A (Fase I com 80% e 20%; Fase II sem votação mínima).
-6. Vacância sem suplente: Res. 23.677, art. 15, na redação da Res. 23.748/2026 (15 meses para deputados; lei orgânica para vereador; art. 113 na falta dela).
+5. Caput do art. 12-A (hipótese de nenhuma lista alcançar o QE): incisos conferidos acima; caput não.
 
 ### Pendências documentais
 1. Inteiro teor dos acórdãos (28/02/2024 e embargos de 13/03/2025) e certidão de trânsito.
-2. Resoluções TSE 23.677/2021 compilada e 23.748/2026, com SHA-256.
+2. Resolução TSE 23.677/2021 compilada, com SHA-256 (23.748/2026 guardada).
 3. Código Eleitoral: a evidência é transcrição; para encerrar, preferível o HTML ou PDF do TSE.
 
 ### Complemento do autor, 18/11/2026
