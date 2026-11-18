@@ -285,3 +285,11 @@ Evidências usadas: catálogo CKAN do TSE (`CATALOGO_TSE_RECURSOS.json`, sem his
 |---|---|---|
 | `ibge/municipios.json` | `admissibilidade_temporal_nao_comprovada` | API do IBGE sem data de versão (`Last-Modified` ausente); retrata o cadastro vigente na consulta |
 | `legislacao/...` | fora do escopo do mundo inicial estatístico | ver `docs/validacao-legal.md` |
+
+## Legislação: TSE (enviado pelo autor), 18/11/2026
+
+Transcrição organizada pelo autor da compilação do Código Eleitoral no portal do TSE, arts. 106 a 113, com anotações jurisprudenciais resumidas à parte. Não é cópia do HTML original: evidência de grau inferior ao documento do próprio TSE. Fonte aceita pelo autor como alternativa ao Planalto, só para esses artigos.
+
+| Arquivo | Órgão | Documento | URL | Consulta | Formato | Bytes | SHA-256 |
+|---|---|---|---|---|---|---|---|
+| `legislacao/tse/codigo_eleitoral_arts_106_a_113_TSE_2026-11-17.txt` | TSE (transcrição do autor) | Código Eleitoral, arts. 106 a 113 | https://www.tse.jus.br/legislacao/codigo-eleitoral/codigo-eleitoral-1/codigo-eleitoral-lei-nb0-4.737-de-15-de-julho-de-1965 | 17/11/2026 | texto UTF-8 | 5325 | `f35e9c6b35a1201df76d22c318b9653cfb23ffe5e2155b51f98681621fd6ac8d` (conferido) |

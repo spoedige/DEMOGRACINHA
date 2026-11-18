@@ -107,6 +107,50 @@ Informado pelo autor (a conferir no documento): trânsito em julgado da ADI 7.22
 
 Arquivos recebidos irão para `data/raw/legislacao/` com SHA-256 no manifesto. Situação: L1 a L36 abertas.
 
+## L1 e L2: leitura dos arts. 106 a 113, 18/11/2026
+
+Evidência: `data/raw/legislacao/tse/codigo_eleitoral_arts_106_a_113_TSE_2026-11-17.txt`, SHA-256 conferido (manifesto). Transcrição do autor, não o HTML do TSE. Acórdãos do STF não obtidos. Três camadas separadas.
+
+### Texto legal (transcrição)
+| Etapa | Dispositivo | Regra |
+|---|---|---|
+| Quociente eleitoral (QE) | art. 106 | votos válidos ÷ lugares; fração até meio desprezada, acima de meio arredonda para um |
+| Quociente partidário (QP) | art. 107 | votos válidos da legenda ÷ QE, fração desprezada |
+| Eleitos pelo QP | art. 108 | até QP candidatos com votação nominal de ao menos 10% do QE, em ordem de votação; lugares não preenchidos vão ao art. 109 |
+| Sobras, 1ª fase | art. 109, I e II, com § 2º | maior média (votos ÷ lugares obtidos + 1), repetida por lugar; partido com ao menos 80% do QE e candidato com ao menos 20% do QE |
+| Sobras, 2ª fase | art. 109, III | sem partido que cumpra as exigências do inciso I, cadeiras às maiores médias |
+| Preenchimento | art. 109, § 1º | ordem de votação dos candidatos do partido |
+| Empate entre candidatos | art. 110 | mais idoso |
+| Nenhum partido atinge o QE | art. 111 | mais votados (ver camada judicial) |
+| Suplentes | art. 112 | mais votados não eleitos; empate por idade decrescente; sem votação mínima |
+| Vaga sem suplente | art. 113 | nova eleição, salvo menos de nove meses para o fim do mandato |
+
+### Interpretação judicial (só pelas anotações da compilação; acórdão não lido)
+- 10% do QE vale no QP e nas sobras do inciso I.
+- ADIs 7.228, 7.263 e 7.325, 28/02/2024: interpretação conforme do § 2º; na fase do inciso III, todos os partidos e candidatos participam, sem 80% e 20%.
+- Art. 111 declarado inconstitucional (anotação data 28/02/2024); aplicação sucessiva: inciso I com § 2º, depois inciso III.
+- Embargos de 13/03/2025 (ADIs 7.228 e 7.263): aplicação às eleições de 2022.
+- ADI 6.657, 22/02/2023: suplentes sem votação mínima, constitucional.
+
+### Aplicação temporal
+- 2022: entendimento aplicado por força dos embargos de 2025 (a conferir no acórdão; efeito sobre os eleitos registrados nos arquivos do TSE não verificado).
+- 2026: mesmo regime, salvo lei ou resolução posterior; resolução do TSE de 2026 não lida.
+
+### Lacunas que mantêm L1 e L2 abertas
+1. Inteiro teor dos acórdãos (2024 e embargos de 2025) e certidão de trânsito.
+2. Data da inconstitucionalidade do art. 111: a anotação diz 28/02/2024; a mensagem do autor de 18/11/2026 a atribuía aos embargos de 2025. Resolver pelo acórdão.
+3. Fase do inciso III: se o candidato precisa de algum mínimo nominal (10% ou nenhum). A anotação diz "partidos e candidatos" sem patamares; confirmar.
+4. Empate de médias entre partidos: a transcrição não traz regra (art. 110 trata de candidatos).
+5. Definição de votos válidos para o QE (exclusão de brancos e nulos) está fora destes artigos (Lei 9.504/1997, art. 5º, a confirmar).
+6. Tratamento de federações como partido na apuração (L3).
+7. Grau da evidência: transcrição. Para encerrar, preferível o HTML ou PDF do TSE.
+
+### Divergências com `motor-eleitoral.md` 5.4 (não alterado; correção depende de autorização)
+- Passo 1 não traz o arredondamento do art. 106.
+- Passo 4 descreve só a 1ª fase das sobras (80% e 20%); falta a 2ª fase (inciso III, sem patamares) e a aplicação sucessiva.
+- Falta a regra de nenhum partido atingir o QE (art. 111 inconstitucional; aplica-se o art. 109).
+- Falta o desempate por idade (art. 110) e a lacuna do empate de médias.
+
 ## Próximo passo
 
 Coleta estatística em `coleta-estatistica.md`. Texto integral da legislação federal ainda sem acesso: `normas.leg.br` só entrega a casca da aplicação, e a busca da Câmara deu 404. Resoluções do TSE e acórdãos do STF continuam sem fonte acessível.

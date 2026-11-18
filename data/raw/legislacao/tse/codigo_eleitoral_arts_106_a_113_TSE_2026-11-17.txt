@@ -1,0 +1,58 @@
+CÓDIGO ELEITORAL — EXTRATO DOS ARTS. 106 A 113
+Fonte: Tribunal Superior Eleitoral (TSE), Código Eleitoral — Lei nº 4.737, de 15 de julho de 1965, compilação institucional.
+URL de origem: https://www.tse.jus.br/legislacao/codigo-eleitoral/codigo-eleitoral-1/codigo-eleitoral-lei-nb0-4.737-de-15-de-julho-de-1965
+Data da consulta: 17/11/2026
+Escopo: transcrição do texto legal dos arts. 106 a 113. As anotações jurisprudenciais da página do TSE estão resumidas separadamente ao final. Este arquivo é um extrato organizado, não uma cópia integral do HTML original da página.
+
+CAPÍTULO IV
+DA REPRESENTAÇÃO PROPORCIONAL
+
+Art. 106. Determina-se o quociente eleitoral dividindo-se o número de votos válidos apurados pelo de lugares a preencher em cada circunscrição eleitoral, desprezada a fração se igual ou inferior a meio, equivalente a um, se superior.
+
+Art. 107. Determina-se para cada partido o quociente partidário dividindo-se pelo quociente eleitoral o número de votos válidos dados sob a mesma legenda, desprezada a fração.
+
+Art. 108. Estarão eleitos, entre os candidatos registrados por um partido que tenham obtido votos em número igual ou superior a 10% (dez por cento) do quociente eleitoral, tantos quantos o respectivo quociente partidário indicar, na ordem da votação nominal que cada um tenha recebido.
+
+Parágrafo único. Os lugares não preenchidos em razão da exigência de votação nominal mínima a que se refere o caput serão distribuídos de acordo com as regras do art. 109.
+
+Art. 109. Os lugares não preenchidos com a aplicação dos quocientes partidários e em razão da exigência de votação nominal mínima a que se refere o art. 108 serão distribuídos de acordo com as seguintes regras:
+
+I – dividir-se-á o número de votos válidos atribuídos a cada partido pelo número de lugares por ele obtido mais 1 (um), cabendo ao partido que apresentar a maior média um dos lugares a preencher, desde que tenha candidato que atenda à exigência de votação nominal mínima;
+
+II – repetir-se-á a operação para cada um dos lugares a preencher;
+
+III – quando não houver mais partidos com candidatos que atendam às duas exigências do inciso I deste caput, as cadeiras serão distribuídas aos partidos que apresentarem as maiores médias.
+
+§ 1º O preenchimento dos lugares com que cada partido for contemplado far-se-á segundo a ordem de votação recebida por seus candidatos.
+
+§ 2º Poderão concorrer à distribuição dos lugares todos os partidos que participaram do pleito, desde que tenham obtido pelo menos 80% (oitenta por cento) do quociente eleitoral, e os candidatos que tenham obtido votos em número igual ou superior a 20% (vinte por cento) desse quociente.
+
+Art. 110. Em caso de empate, haver-se-á por eleito o candidato mais idoso.
+
+Art. 111. Se nenhum partido alcançar o quociente eleitoral, considerar-se-ão eleitos, até serem preenchidos todos os lugares, os candidatos mais votados.
+
+Art. 112. Considerar-se-ão suplentes da representação partidária:
+
+I – os mais votados sob a mesma legenda e não eleitos efetivos das listas dos respectivos partidos;
+
+II – em caso de empate na votação, na ordem decrescente da idade.
+
+Parágrafo único. Na definição dos suplentes da representação partidária, não há exigência de votação nominal mínima prevista pelo art. 108.
+
+Art. 113. Na ocorrência de vaga, não havendo suplente para preenchê-la, far-se-á eleição, salvo se faltarem menos de nove meses para findar o período de mandato.
+
+ANOTAÇÕES JURISPRUDENCIAIS RELEVANTES CONSTANTES DA COMPILAÇÃO DO TSE
+
+1. Art. 108: a anotação do TSE registra que a cláusula de desempenho individual de 10% do quociente eleitoral deve ser observada tanto no preenchimento pelo quociente partidário quanto na distribuição dos lugares remanescentes, conforme art. 109, I.
+
+2. Art. 109, § 2º: a compilação registra a interpretação conforme fixada pelo STF nas ADIs 7.228, 7.263 e 7.325, em 28/02/2024, para permitir que todas as legendas e seus candidatos participem da distribuição prevista no art. 109, III, independentemente dos patamares de 80% e 20%.
+
+3. Art. 109, § 2º: a compilação registra que, nos embargos julgados em 13/03/2025 nas ADIs 7.228 e 7.263, o STF determinou a aplicação desse entendimento às eleições de 2022.
+
+4. Art. 111: a compilação registra a declaração de inconstitucionalidade do dispositivo pelo STF em 28/02/2024, com determinação de aplicação sucessiva das etapas do art. 109: primeiro o inciso I combinado com o § 2º e, depois, o inciso III.
+
+5. Art. 112, parágrafo único: a compilação registra que o STF, na ADI 6.657, em 22/02/2023, declarou constitucional a ausência de exigência de votação nominal mínima para a definição de suplentes.
+
+NOTA DE USO DOCUMENTAL
+
+O texto legal acima foi separado das anotações jurisprudenciais para evitar confundir redação legislativa com interpretação judicial. O art. 111 permanece reproduzido no texto compilado, mas a própria compilação registra sua declaração de inconstitucionalidade. A aplicação concreta das regras de distribuição de sobras exige leitura conjunta dos arts. 107 a 109 e dos julgados do STF, especialmente quanto à sequência das etapas e à eficácia temporal.
