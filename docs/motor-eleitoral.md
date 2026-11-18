@@ -361,11 +361,11 @@ Total de referência: R$ 4.961.519.777.
 | Critério | Peso |
 |---|---|
 | Igual entre os 30 partidos | 2% |
-| Votos para deputado federal | 35% |
-| Bancada da Câmara | 48% |
-| Bancada do Senado | 15% |
+| Votos para deputado federal na última eleição geral | 35% |
+| Representantes eleitos para a Câmara na última eleição geral | 48% |
+| Senadores eleitos na última eleição geral, mais os que estavam no 1º quadriênio do mandato na data daquela eleição | 15% |
 
-Bancadas contadas no primeiro dia útil de junho. Cálculo por partido; tratamento de federações (a confirmar).
+Fonte: Resolução TSE 23.605/2019, art. 5º (conferida pelo autor em 17/11/2026). O primeiro dia útil de junho do ano eleitoral é o limite das retotalizações consideradas no critério de 35%; não define a composição dos critérios de 48% e 15%. No de 48%, há exceção para migrações decorrentes do não cumprimento da cláusula de desempenho. Nas eleições de 2022 a 2030, votos dados a candidatos negros para deputado federal contam em dobro no critério de 35%, o que exige votos individuais, não só o total por partido. Cálculo por partido; tratamento de federações (a confirmar).
 
 Valores por partido em R$ milhões, de fonte secundária. **Não são parâmetros do motor**; servem só para conferir o cálculo pela regra: PL 881,7; PT 615,4; União 526,2; PSD 421; PP 417,1; MDB 400; Republicanos 348,6; Podemos 246; PDT 169,3; PSB 152,3; PSDB 147,9; PSOL 131,5; Solidariedade 88,5; Avante 72,5; PRD 71,8; PCdoB 60,5; Cidadania 60,2; PV 45,2; Novo 37; Rede 35,8; demais na cota mínima.
 
