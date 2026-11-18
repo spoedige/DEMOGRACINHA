@@ -278,14 +278,36 @@ maquinaEfetiva_g = capilaridade[L] × r_g
 - Participam de toda a disputa e da apuração: barreira individual, sobras e ordem de eleitos valem para eles como para qualquer candidato. Eleitos sintéticos recebem nome fictício gerado no momento.
 - Lista sem candidatos individualizados: todos os seus candidatos são sintéticos.
 
-### 5.4 Apuração (hipótese documental, a confirmar)
-1. Quociente eleitoral: válidos ÷ vagas.
-2. Quociente partidário por lista sobre `votosLista_L` (legenda e nominais somados).
-3. Eleitos pelo quociente exigem votação nominal mínima de 10% do QE.
-4. Sobras: lista com 80% do QE e candidato com 20% do QE.
-5. Distribuição final das sobras conforme Código Eleitoral vigente.
+### 5.4 Apuração proporcional (regra documentada; L1 e L2 abertas)
 
-Fonte: Código Eleitoral, arts. 108 e 109 (a confirmar o texto vigente). Percentuais não definitivos até a 1B. Coligação não existe em proporcional.
+Fontes: Código Eleitoral, arts. 106 a 113 (transcrição da compilação do TSE, `data/raw/legislacao/tse/`); Resolução TSE 23.677/2021, compilada, com alterações de 2024 e 2026, e Resolução TSE 23.748/2026, art. 12-A (dispositivos informados pelo autor em 18/11/2026; documentos não guardados no repositório, a confirmar). Lista: partido ou federação (Res. 23.677, art. 10). Coligação não existe em proporcional.
+
+**Regra ordinária**
+1. Votos válidos: definição da Res. 23.677, art. 9º, parágrafo único (texto a confirmar no documento).
+2. Quociente eleitoral: `QE = válidos ÷ vagas`; fração até meio desprezada, acima de meio arredondada para um (Código, art. 106; Res. 23.677, art. 9º).
+3. Quociente partidário por lista: `QP_L = ⌊votosLista_L ÷ QE⌋`, com `votosLista_L` = legenda e nominais somados (Código, art. 107; Res. 23.677, art. 10).
+4. Eleitos pelo QP: até `QP_L` candidatos da lista com votação nominal de ao menos 10% do QE, em ordem de votação (Código, art. 108; Res. 23.677, art. 8º). Vagas não preenchidas por falta do mínimo vão às sobras.
+5. Sobras, 1ª fase: a cada vaga, média `votosLista_L ÷ (vagas já obtidas pela lista + 1)`; vence a maior média entre listas com ao menos 80% do QE que tenham candidato não eleito com ao menos 20% do QE; repete-se por vaga, contando as vagas já obtidas (Código, art. 109, I, II e § 2º; Res. 23.677, art. 11, §§ 1º, 2º, 3º e 5º).
+6. Sobras, 2ª fase: quando não houver mais lista com candidato que cumpra as exigências da 1ª fase, todas as listas e candidatos participam pelas maiores médias, sem os patamares de 80% e 20% (Código, art. 109, III, com interpretação conforme do STF; Res. 23.677, art. 11, § 4º). Mínimo nominal do candidato nesta fase, fora do cenário 8: a confirmar no texto do § 4º.
+7. Empates:
+   - entre médias: maior votação da lista; persistindo, maior votação nominal do candidato que disputa a vaga (Res. 23.677, art. 11, §§ 6º e 7º);
+   - entre candidatos da mesma lista: mais idoso (Código, art. 110; Res. 23.677, art. 12);
+   - empate que persista após esses critérios: não coberto pelas fontes lidas; sem regra inventada.
+   Preenchimento das vagas de cada lista na ordem nominal (Código, art. 109, § 1º; Res. 23.677, art. 11, § 8º).
+
+**Cenário próprio: nenhuma lista alcança o QE**
+8. O art. 111 do Código (mais votados) não se aplica: inconstitucional. Aplicam-se as fases do art. 109 em sequência, 1ª fase e depois 2ª fase; na fase seguinte as cadeiras são ocupadas independentemente de votação mínima do candidato (Res. 23.748/2026, art. 12-A, II). Como a 1ª fase opera com patamares relativos ao QE sem lista que o alcance, o resultado prático dessa fase nesse cenário fica a confirmar no texto do art. 12-A.
+
+**Suplentes e vacância**
+9. Suplentes: mais votados não eleitos da lista; empate por idade decrescente; sem votação mínima (Código, art. 112; STF, ADI 6.657, 22/02/2023).
+10. Vaga sem suplente: nova eleição, salvo menos de nove meses para o fim do mandato (Código, art. 113).
+
+**Decisões do STF (eventos distintos)**
+- 28/02/2024, ADIs 7.228, 7.263 e 7.325: interpretação conforme do art. 109, § 2º (2ª fase sem 80% e 20%); inconstitucionalidade do art. 111 do Código e do art. 13 da Res. 23.677/2021.
+- 13/03/2025, embargos nas ADIs 7.228 e 7.263: alteração da eficácia temporal, com aplicação também às eleições de 2022.
+Fonte: andamento processual e anotações da compilação; inteiro teor dos acórdãos não guardado (a confirmar).
+
+**Aplicação no jogo:** ciclo de 2026 e seguintes usam esta regra, salvo norma posterior. Federações entram como lista única nos passos 3 a 7; demais efeitos de federação em L3.
 
 ## 6. Eleições majoritárias
 

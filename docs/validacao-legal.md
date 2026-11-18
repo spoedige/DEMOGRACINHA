@@ -138,14 +138,18 @@ Evidência: `data/raw/legislacao/tse/codigo_eleitoral_arts_106_a_113_TSE_2026-11
 
 ### Lacunas que mantêm L1 e L2 abertas
 1. Inteiro teor dos acórdãos (2024 e embargos de 2025) e certidão de trânsito.
-2. Data da inconstitucionalidade do art. 111: a anotação diz 28/02/2024; a mensagem do autor de 18/11/2026 a atribuía aos embargos de 2025. Resolver pelo acórdão.
+2. Data do art. 111: 28/02/2024, com eficácia temporal alterada em 13/03/2025 (indicação do autor; conferir no acórdão).
 3. Fase do inciso III: se o candidato precisa de algum mínimo nominal (10% ou nenhum). A anotação diz "partidos e candidatos" sem patamares; confirmar.
-4. Empate de médias entre partidos: a transcrição não traz regra (art. 110 trata de candidatos).
+4. Empate de médias: Res. 23.677, art. 11, §§ 6º e 7º (indicação do autor; documento não guardado).
+8. Guardar com SHA-256 as Resoluções 23.677/2021 compilada e 23.748/2026.
 5. Definição de votos válidos para o QE (exclusão de brancos e nulos) está fora destes artigos (Lei 9.504/1997, art. 5º, a confirmar).
 6. Tratamento de federações como partido na apuração (L3).
 7. Grau da evidência: transcrição. Para encerrar, preferível o HTML ou PDF do TSE.
 
-### Divergências com `motor-eleitoral.md` 5.4 (não alterado; correção depende de autorização)
+### Complemento do autor, 18/11/2026
+Resolução TSE 23.677/2021 (arts. 8º a 12) e 23.748/2026 (art. 12-A, II), consultadas pelo autor; documentos não guardados aqui. Resolvem: empate de médias (art. 11, §§ 6º e 7º), definição de votos válidos (art. 9º, parágrafo único), federação como lista (art. 10). Data do art. 111: inconstitucional em 28/02/2024; os embargos de 13/03/2025 trataram só da eficácia temporal (lacuna 2 resolvida pela indicação do autor, a conferir no acórdão).
+
+### Divergências com `motor-eleitoral.md` 5.4 (corrigidas em 18/11/2026 com autorização do autor; ver `motor-eleitoral.md` 5.4)
 - Passo 1 não traz o arredondamento do art. 106.
 - Passo 4 descreve só a 1ª fase das sobras (80% e 20%); falta a 2ª fase (inciso III, sem patamares) e a aplicação sucessiva.
 - Falta a regra de nenhum partido atingir o QE (art. 111 inconstitucional; aplica-se o art. 109).
