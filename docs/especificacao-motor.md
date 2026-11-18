@@ -52,9 +52,9 @@ O 2º turno não passa pela distribuição de cadeiras. Proporcional e majoritá
 
 ### 3. Elegibilidade e composição das listas
 - Responsabilidade: decidir quem pode concorrer, antes da eleição.
-- Entradas: personagens e agentes (idade, filiação, desincompatibilização), regras de `regras-e-mundo.md` 1.
+- Entradas: candidatos por lista com `dataNascimento`, `dataFiliacao`, `mandatoAtual` (cargo, unidade, mandatos consecutivos) e `renuncia` (data), recebidos prontos; calendário do ano (registro, posse, prazo de filiação, prazo de desincompatibilização; datas de 2028 a confirmar); `limiteLista` (L21) (D72).
 - Processamento: idade na data de referência por cargo; filiação e janela; tamanho máximo da lista.
-- Saídas: candidaturas aptas; vagas de lista restantes para sintéticos.
+- Saídas: candidaturas aptas; inelegíveis com motivo (`idadeMinima`, `filiacaoForaDoPrazo`, `reeleicaoEsgotada`, `semDesincompatibilizacao`); `vagasRestantesSinteticos` para o módulo 4. Aptos acima do limite: erro, sem critério de corte documentado.
 - Dependências: 2.
 - Parâmetros: limite por lista (L21, simplificação 4.3 abaixo).
 - Simplificações: L21 estimado.
@@ -175,7 +175,7 @@ O 2º turno não passa pela distribuição de cadeiras. Proporcional e majoritá
 
 ### 15. Substituição, vacância e posse
 - Responsabilidade: depois da apuração, transformar eleitos em ocupantes.
-- Entradas: eleitos, suplentes, eventos (morte, renúncia, cassação), datas de posse (GDD 3).
+- Entradas: eleitos, suplentes ordenados (módulo 10 ou chapa do Senado), evento de vacância recebido pronto (`convocacao` ou `definitiva`, com data), fim do mandato, datas de posse (GDD 3). Vacância de prefeito, governador e presidente (vice e dupla vacância) fica fora da etapa 6 e é recusada com erro (D72).
 - Processamento: suplência (`motor-eleitoral.md` 5.4, item 9); vacância sem suplente (item 10); suplência mínima do MVP (D55).
 - Saídas: ocupantes por cargo; eleições suplementares agendadas, quando aplicável.
 - Dependências: 10 a 13.
@@ -185,7 +185,7 @@ O 2º turno não passa pela distribuição de cadeiras. Proporcional e majoritá
 
 ### 16. Fechamento do ciclo e atualização da carreira
 - Responsabilidade: consequências da eleição.
-- Entradas: ocupantes (15), estado político.
+- Entradas: ocupantes (15), estado político; os cinco passos de `motor-eleitoral.md` 8 como funções injetadas; na governabilidade, blocos, cadeiras, maioria exigida, Capital de Entrega e custo de manutenção, com `estabilidade`, `negociacao` e `faixa` injetadas (calibrar, D72).
 - Processamento: ordem obrigatória de `motor-eleitoral.md` 8; governabilidade 10; carreira em `carreira-e-poder.md`.
 - Saídas: bancadas, governos, bases parlamentares, recursos do próximo ciclo, oportunidades.
 - Dependências: 15.
@@ -286,3 +286,9 @@ Pendência para o módulo 9: a regra "F por último" do segmento livre (5.2) exi
 - Módulo 6, `Maquina.calcularMunicipal`: canais sem ator repetido; `estruturaAliada > 0` só com `aliancaFormal`; titular fora dos aliados; só `tipo: "pessoa"` gera transferência; `baseTerritorial = 0` fora da base (D56). Transferência: um Z por par no subfluxo `RNG.criar(semente, "eleicao", "transferencia", município, liderança, candidato, eleição)`. `Maquina.agregarEstadualOuNacional`: base detalhada mais agregado regional disjunto, eleitorado somado sem exceder o total.
 - Módulo 7, `Campanha.alocarRecursos`: valores monetários em inteiros (centavos); `reserva = fundo - Σ exposição - Σ mobilização`, negativa é erro; padrão proporcional ao eleitorado por maior resto com `totalMobilizacao`. `Campanha.efeitoMobilizacao(R, escalaGasto)`: `1 - exp(-R ÷ escalaGasto)`, zero exato com R = 0. `Campanha.aplicarExposicao`: `estado.opcoes.conversorExposicao` injetado; partição de saída conferida.
 - Funções sem fórmula aprovada continuam injetadas ou recebidas como valor (calibrar): `escalaGasto`, `q_g` e `r_g`, `estruturaAliada`, conversão da exposição, decaimento.
+
+### 6.8 Elegibilidade, posse e fechamento (etapa 6)
+- `Datas`: datas `AAAA-MM-DD` validadas, sem fuso nem relógio; `idade` civil completa (aniversário conta no dia; nascido em 29/02 completa ano em 01/03 nos anos não bissextos); `somarMeses` com dia ajustado ao último dia do mês curto.
+- Módulo 3, `Elegibilidade.avaliar`: idade mínima na data de referência do cargo (vereador no registro, demais na posse); filiação até o prazo; uma reeleição consecutiva no mesmo cargo executivo e unidade (dois mandatos consecutivos impedem o terceiro); chefe do Executivo que disputa outro cargo, ou o mesmo cargo em outra unidade, precisa de renúncia até o prazo de desincompatibilização. Janela partidária não é condição de elegibilidade e fica para a regra de perda de mandato (L35).
+- Módulo 15, `Posse.empossar` e `Posse.vacancia`: convocação põe o primeiro suplente em exercício e preserva o mandato; vaga definitiva efetiva o primeiro suplente; sem suplente na vaga definitiva, eleição suplementar salvo se faltarem menos de 15 meses (deputados) ou do prazo da lei orgânica ou, sem ela, 9 meses (vereador). Afastamento sem suplente, Senado sem suplente e vacância com vice: erro, sem regra documentada.
+- Módulo 16, `Fechamento.executar` e `Fechamento.governabilidade`: passos em ordem fixa (`apuracaoEPosse`, `atualizarMatrizes`, `recalcularRecursos`, `aplicarClausula`, `abrirProximoCiclo`), cada um recebe o estado do anterior e a lista dos já concluídos; `apoioEfetivo = Σ cadeiras aliadas × coesão`, `folgaDeCusto = Capital de Entrega ÷ custo`, `razaoApoio = apoioEfetivo ÷ maioriaExigida`; estabilidade e negociação injetadas em [0, 1]; faixa injetada entre crítica, frágil, funcional e sólida.

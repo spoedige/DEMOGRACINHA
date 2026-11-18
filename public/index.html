@@ -1078,6 +1078,197 @@ var Maquina = (function () {
   return Object.freeze({ calcularMunicipal: calcularMunicipal, agregarEstadualOuNacional: agregarEstadualOuNacional });
 })();
 
+// Datas no formato AAAA-MM-DD, sem fuso nem relógio: comparações por (ano, mês, dia).
+var Datas = (function () {
+  var RE = /^(\d{4})-(\d{2})-(\d{2})$/;
+  function ler(s, campo) {
+    var m = typeof s === "string" ? RE.exec(s) : null;
+    if (!m) Comum.erro(campo + ": data AAAA-MM-DD obrigatória");
+    var a = +m[1], mes = +m[2], d = +m[3];
+    var dim = [31, (a % 4 === 0 && a % 100 !== 0) || a % 400 === 0 ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    if (mes < 1 || mes > 12 || d < 1 || d > dim[mes - 1]) Comum.erro(campo + ": data inexistente");
+    return { a: a, m: mes, d: d };
+  }
+  function cmp(x, y) { return x.a - y.a || x.m - y.m || x.d - y.d; }
+  // idade civil completa na data: aniversário só conta no próprio dia (nascido em 29/02: conta a partir de 01/03 em ano não bissexto)
+  function idade(nasc, ref) {
+    var n = ref.a - nasc.a;
+    if (ref.m < nasc.m || (ref.m === nasc.m && ref.d < nasc.d)) n--;
+    return n;
+  }
+  // data + meses de calendário; dia além do fim do mês vai ao último dia do mês
+  function somarMeses(x, meses) {
+    var t = x.m - 1 + meses, a = x.a + Math.floor(t / 12), m = t - Math.floor(t / 12) * 12 + 1;
+    var dim = [31, (a % 4 === 0 && a % 100 !== 0) || a % 400 === 0 ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m - 1];
+    return { a: a, m: m, d: Math.min(x.d, dim) };
+  }
+  return Object.freeze({ ler: ler, cmp: cmp, idade: idade, somarMeses: somarMeses });
+})();
+
+// Módulo 3: elegibilidade e composição das listas (regras-e-mundo.md 1; GDD 3; D72). Antes da eleição.
+var Elegibilidade = (function () {
+  var IDADE = { VEREADOR: [18, "registro"], DEPUTADO_ESTADUAL: [21, "posse"], DEPUTADO_DISTRITAL: [21, "posse"],
+    DEPUTADO_FEDERAL: [21, "posse"], PREFEITO: [21, "posse"], GOVERNADOR: [30, "posse"], SENADOR: [35, "posse"], PRESIDENTE: [35, "posse"] };
+  var EXECUTIVO = { PREFEITO: true, GOVERNADOR: true, PRESIDENTE: true };
+  function avaliar(estado, dados, rngState) {
+    var cargo = dados.cargo;
+    if (typeof cargo !== "string" || !Object.prototype.hasOwnProperty.call(IDADE, cargo)) Comum.erro("cargo desconhecido");
+    var cal = dados.calendario || {};
+    var ref = Datas.ler(IDADE[cargo][1] === "registro" ? cal.dataRegistro : cal.dataPosse, "calendario.data" + (IDADE[cargo][1] === "registro" ? "Registro" : "Posse"));
+    var prazoFiliacao = Datas.ler(cal.prazoFiliacao, "calendario.prazoFiliacao");
+    var prazoDesinc = Datas.ler(cal.prazoDesincompatibilizacao, "calendario.prazoDesincompatibilizacao");
+    var limite = Comum.inteiro(dados.limiteLista, "limiteLista", 0);
+    if (!Array.isArray(dados.listas) || dados.listas.length === 0) Comum.erro("listas obrigatórias");
+    var vistas = new Set(), cands = new Set();
+    var out = dados.listas.map(function (l) {
+      Comum.idv(l.id, "lista.id");
+      if (vistas.has(l.id)) Comum.erro("lista repetida: " + l.id);
+      vistas.add(l.id);
+      var membros = new Set(Array.isArray(l.membros) ? l.membros : Comum.erro("lista " + l.id + ": membros obrigatórios"));
+      var aptos = [], inelegiveis = [];
+      (l.candidatos || []).forEach(function (c) {
+        Comum.idv(c.id, "candidato.id");
+        if (cands.has(c.id)) Comum.erro("candidato repetido: " + c.id);
+        cands.add(c.id);
+        var motivos = [];
+        if (Datas.idade(Datas.ler(c.dataNascimento, "dataNascimento de " + c.id), ref) < IDADE[cargo][0]) motivos.push("idadeMinima");
+        if (!membros.has(c.partidoId)) Comum.erro("candidato " + c.id + " de partido fora da lista " + l.id);
+        if (Datas.cmp(Datas.ler(c.dataFiliacao, "dataFiliacao de " + c.id), prazoFiliacao) > 0) motivos.push("filiacaoForaDoPrazo");
+        var m = c.mandatoAtual;
+        if (m) {
+          if (typeof m.cargo !== "string" || !Object.prototype.hasOwnProperty.call(IDADE, m.cargo)) Comum.erro("mandatoAtual.cargo inválido: " + c.id);
+          if (EXECUTIVO[m.cargo] && m.cargo === cargo && m.unidadeId === dados.unidadeId) {
+            // uma reeleição consecutiva: com dois mandatos consecutivos no mesmo cargo, não concorre ao terceiro
+            if (Comum.inteiro(m.consecutivos, "mandatoAtual.consecutivos de " + c.id, 1) >= 2) motivos.push("reeleicaoEsgotada");
+          } else if (EXECUTIVO[m.cargo]) {
+            // chefe do Executivo que disputa outro cargo renuncia até o prazo
+            if (!c.renuncia || Datas.cmp(Datas.ler(c.renuncia.data, "renuncia.data de " + c.id), prazoDesinc) > 0) motivos.push("semDesincompatibilizacao");
+          }
+        }
+        if (motivos.length) inelegiveis.push({ id: c.id, motivos: motivos }); else aptos.push(c.id);
+      });
+      if (aptos.length > limite) Comum.erro("lista " + l.id + " com aptos acima do limite: sem critério documentado para cortar");
+      return { id: l.id, aptos: aptos.sort(), inelegiveis: inelegiveis.sort(Comum.porId), vagasRestantesSinteticos: limite - aptos.length };
+    }).sort(Comum.porId);
+    return { resultado: JSON.parse(JSON.stringify({ cargo: cargo, listas: out })), rngStateNext: rngState };
+  }
+  return Object.freeze({ avaliar: avaliar, IDADE_MINIMA: IDADE });
+})();
+
+// Módulo 15: posse, suplência e vacância (5.4 itens 9 e 10; D55; D72). Depois da apuração.
+var Posse = (function () {
+  var PROPORCIONAIS = { VEREADOR: true, DEPUTADO_ESTADUAL: true, DEPUTADO_DISTRITAL: true, DEPUTADO_FEDERAL: true };
+  var VICE = { PREFEITO: true, GOVERNADOR: true, PRESIDENTE: true };
+  function empossar(estado, dados, rngState) {
+    var cargo = dados.cargo;
+    if (typeof cargo !== "string" || !Object.prototype.hasOwnProperty.call(Dados.CARGOS, cargo)) Comum.erro("cargo desconhecido");
+    var inicio = Datas.ler(dados.dataPosse, "dataPosse"), fim = Datas.ler(dados.fimMandato, "fimMandato");
+    if (Datas.cmp(inicio, fim) >= 0) Comum.erro("fim do mandato deve ser posterior à posse");
+    if (!Array.isArray(dados.eleitos) || dados.eleitos.length === 0) Comum.erro("eleitos obrigatórios");
+    var vistos = new Set();
+    var ocupantes = dados.eleitos.map(function (e) {
+      Comum.idv(e, "eleito");
+      if (vistos.has(e)) Comum.erro("eleito repetido: " + e);
+      vistos.add(e);
+      return { cargo: cargo, titularId: e, emExercicio: e, inicio: dados.dataPosse, fim: dados.fimMandato };
+    });
+    return { resultado: JSON.parse(JSON.stringify({ disputaId: Comum.idv(dados.disputaId, "disputaId"), ocupantes: ocupantes })), rngStateNext: rngState };
+  }
+  // tipo "convocacao": suplente assume o exercício e o titular mantém o mandato (D55); "definitiva": vaga aberta.
+  // Sem suplente, só na vaga definitiva: nova eleição, salvo se faltarem menos de N meses para o fim do mandato
+  // (deputados 15, Res. 23.677, art. 15; vereador: lei orgânica ou, sem ela, 9, Código Eleitoral, art. 113).
+  function vacancia(estado, dados, rngState) {
+    var cargo = dados.cargo;
+    if (typeof cargo !== "string" || !Object.prototype.hasOwnProperty.call(Dados.CARGOS, cargo)) Comum.erro("cargo desconhecido");
+    if (VICE[cargo]) Comum.erro("vacância de cargo majoritário com vice fora da etapa 6 (D72): linha sucessória não documentada");
+    if (!PROPORCIONAIS[cargo] && cargo !== "SENADOR") Comum.erro("cargo sem regra de vacância nesta etapa");
+    if (dados.tipo !== "convocacao" && dados.tipo !== "definitiva") Comum.erro("tipo: convocacao ou definitiva");
+    var titular = Comum.idv(dados.titularId, "titularId");
+    var data = Datas.ler(dados.dataEvento, "dataEvento"), fim = Datas.ler(dados.fimMandato, "fimMandato");
+    if (Datas.cmp(data, fim) >= 0) Comum.erro("evento depois do fim do mandato");
+    if (!Array.isArray(dados.suplentes)) Comum.erro("suplentes: lista ordenada obrigatória (módulo 10 ou chapa do Senado)");
+    dados.suplentes.forEach(function (s) { Comum.idv(s, "suplente"); if (s === titular) Comum.erro("titular na lista de suplentes"); });
+    var out = { cargo: cargo, titularId: titular, tipo: dados.tipo, dataEvento: dados.dataEvento };
+    if (dados.suplentes.length > 0) {
+      out.acao = dados.tipo === "convocacao" ? "suplenteConvocado" : "suplenteEfetivado";
+      out.emExercicio = dados.suplentes[0];
+      out.suplentesRestantes = dados.suplentes.slice(1);
+      out.mandatoDoTitular = dados.tipo === "convocacao" ? "preservado" : "extinto";
+    } else {
+      if (cargo === "SENADOR") Comum.erro("Senado sem suplente: regra não documentada nesta etapa");
+      if (dados.tipo === "convocacao") Comum.erro("afastamento sem suplente: sem regra documentada");
+      var meses;
+      if (cargo === "VEREADOR") {
+        meses = dados.mesesLeiOrganica === undefined ? 9 : Comum.inteiro(dados.mesesLeiOrganica, "mesesLeiOrganica", 0);
+        out.fonteDoPrazo = dados.mesesLeiOrganica === undefined ? "Código Eleitoral, art. 113 (simplificação do MVP, sem lei orgânica)" : "lei orgânica municipal";
+      } else {
+        meses = 15;
+        out.fonteDoPrazo = "Res. TSE 23.677, art. 15";
+      }
+      // "faltarem menos de N meses": sem eleição quando evento + N meses ultrapassa o fim do mandato
+      var semEleicao = Datas.cmp(Datas.somarMeses(data, meses), fim) > 0;
+      out.acao = semEleicao ? "vagaSemPreenchimento" : "eleicaoSuplementar";
+      out.eleicaoSuplementar = !semEleicao;
+      out.prazoMeses = meses;
+      out.emExercicio = null;
+    }
+    return { resultado: JSON.parse(JSON.stringify(out)), rngStateNext: rngState };
+  }
+  return Object.freeze({ empossar: empossar, vacancia: vacancia });
+})();
+
+// Módulo 16: fechamento do ciclo (8; 10; D72). Ordem obrigatória dos cinco passos, cada um por função injetada que
+// recebe e devolve o estado político; a governabilidade calcula apoioEfetivo e folgaDeCusto e recebe as funções
+// estabilidade, negociação e faixa injetadas (calibrar).
+var Fechamento = (function () {
+  var PASSOS = ["apuracaoEPosse", "atualizarMatrizes", "recalcularRecursos", "aplicarClausula", "abrirProximoCiclo"];
+  var FAIXAS = ["critica", "fragil", "funcional", "solida"];
+  var ALINH = { aliado: true, independente: true, oposicao: true };
+  function governabilidade(estado, dados, rngState) {
+    var opcoes = (estado && estado.opcoes) || {};
+    ["estabilidade", "negociacao", "faixa"].forEach(function (f) { if (typeof opcoes[f] !== "function") Comum.erro(f + ": função injetada obrigatória (calibrar)"); });
+    var total = Comum.inteiro(dados.totalCadeiras, "totalCadeiras", 1);
+    var maioria = Comum.inteiro(dados.maioriaExigida, "maioriaExigida", 1);
+    if (maioria > total) Comum.erro("maioriaExigida acima do total de cadeiras");
+    var vistos = new Set(), soma = 0, apoio = 0;
+    (dados.blocos || []).forEach(function (b) {
+      Comum.idv(b.id, "bloco.id");
+      if (vistos.has(b.id)) Comum.erro("bloco repetido: " + b.id);
+      vistos.add(b.id);
+      var c = Comum.inteiro(b.cadeiras, "cadeiras de " + b.id, 0);
+      if (!Object.prototype.hasOwnProperty.call(ALINH, b.alinhamento)) Comum.erro("alinhamento inválido em " + b.id);
+      var coesao = Comum.real(b.coesao, "coesao de " + b.id, 0, 1);
+      soma += c;
+      if (b.alinhamento === "aliado") apoio += c * coesao;
+    });
+    if (soma !== total) Comum.erro("cadeiras dos blocos diferentes do total");
+    var custo = Comum.real(dados.custoManutencao, "custoManutencao", 0);
+    if (!(custo > 0)) Comum.erro("custoManutencao deve ser positivo");
+    var folga = Comum.real(dados.capitalEntrega, "capitalEntrega", 0) / custo;
+    var ctx = { apoioEfetivo: apoio, razaoApoio: apoio / maioria, folgaDeCusto: folga, contexto: dados.contexto };
+    var est = Comum.real(opcoes.estabilidade(ctx), "estabilidade injetada", 0, 1);
+    var neg = Comum.real(opcoes.negociacao(ctx), "negociacao injetada", 0, 1);
+    var faixa = opcoes.faixa({ apoioEfetivo: apoio, razaoApoio: apoio / maioria, folgaDeCusto: folga, estabilidade: est, negociacao: neg });
+    if (FAIXAS.indexOf(faixa) < 0) Comum.erro("faixa injetada inválida: " + faixa);
+    return { resultado: { apoioEfetivo: apoio, razaoApoio: apoio / maioria, folgaDeCusto: folga, estabilidade: est, negociacao: neg, faixa: faixa }, rngStateNext: rngState };
+  }
+  function executar(estado, dados, rngState) {
+    var opcoes = (estado && estado.opcoes) || {};
+    var passos = opcoes.passos || {};
+    PASSOS.forEach(function (p) { if (typeof passos[p] !== "function") Comum.erro("passo " + p + ": função injetada obrigatória"); });
+    var atual = dados.estadoPolitico, rng = rngState, registro = [];
+    PASSOS.forEach(function (p, i) {
+      var r = passos[p](atual, { ordem: i + 1, passosConcluidos: registro.slice(), dados: dados.contexto }, rng);
+      if (!r || r.estadoPolitico === undefined) Comum.erro("passo " + p + " deve devolver { estadoPolitico, rngStateNext }");
+      atual = r.estadoPolitico;
+      if (r.rngStateNext !== undefined) rng = r.rngStateNext;
+      registro.push(p);
+    });
+    return { resultado: { estadoPolitico: atual, passos: registro }, rngStateNext: rng };
+  }
+  return Object.freeze({ executar: executar, governabilidade: governabilidade, PASSOS: PASSOS, FAIXAS: FAIXAS });
+})();
+
 // Distribuição proporcional de cadeiras (módulo 10; regra: motor-eleitoral.md 5.4; desempates: 5.4 item 7 e 5.5).
 // Contrato D67: distribuir(estado, dados, rngState) => { resultado, rngStateNext }. Sem RNG próprio: o estado de RNG
 // só é repassado ao resolvedor de desempate técnico injetado (módulo 14) e devolvido como ele o deixar.
@@ -1262,7 +1453,8 @@ var Cadeiras = (function () {
 
 return Object.freeze({ RNG: RNG, Dados: Dados, MaiorResto: MaiorResto, Pontuacao: Pontuacao, Comparecimento: Comparecimento,
   Proporcional: Proporcional, Majoritaria: Majoritaria, Senado: Senado, SegundoTurno: SegundoTurno, Cadeiras: Cadeiras,
-  Cadastro: Cadastro, Sinteticos: Sinteticos, Opiniao: Opiniao, Maquina: Maquina, Campanha: Campanha });
+  Cadastro: Cadastro, Sinteticos: Sinteticos, Opiniao: Opiniao, Maquina: Maquina, Campanha: Campanha,
+  Datas: Datas, Elegibilidade: Elegibilidade, Posse: Posse, Fechamento: Fechamento });
 })();
 </script>
 </body>

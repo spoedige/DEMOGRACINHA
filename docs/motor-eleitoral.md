@@ -309,6 +309,7 @@ Fontes: Código Eleitoral, arts. 106 a 113 (transcrição da compilação do TSE
    - deputado federal, estadual e distrital: nova eleição, salvo menos de 15 meses para o fim do mandato;
    - vereador: prazo da lei orgânica municipal;
    - vereador, sem regra na lei orgânica: Código, art. 113 (nove meses).
+   Fronteira (texto literal, "salvo se faltarem menos de"): com exatamente 15 (ou 9) meses até o fim do mandato, há eleição; com menos, não. Meses de calendário a partir da data da vaga (D72).
 
 **Decisões do STF (eventos distintos)**
 - 28/02/2024, ADIs 7.228, 7.263 e 7.325: interpretação conforme do art. 109, § 2º (2ª fase sem 80% e 20%); inconstitucionalidade do art. 111 do Código e do art. 13 da Res. 23.677/2021.

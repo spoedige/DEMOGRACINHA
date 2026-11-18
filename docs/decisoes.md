@@ -374,3 +374,11 @@ Aprovada pelo autor antes da etapa 5.
 3. Funções sem fórmula aprovada (`escalaGasto`, distribuições de `q_g` e `r_g`, `estruturaAliada`, conversão da exposição em opinião, decaimento) entram como parâmetros ou funções injetadas, marcadas para calibração, sem forma inventada no núcleo.
 4. Sintéticos e transferência derivam subfluxos da semente com chaves fixas; número de sintéticos por lista é entrada; `mobAliada` entra já debitada do orçamento do aliado.
 5. Agregação estadual e nacional da máquina recebe base detalhada e agregado regional prontos, disjuntos.
+
+## D72. Elegibilidade, posse e fechamento do ciclo, 18/11/2026
+
+Aprovada pelo autor antes da etapa 6.
+1. Módulo 3: data de nascimento como entrada e idade civil na data de referência do cargo; histórico de mandatos, renúncia e filiação recebidos prontos; calendário de 2028 como parâmetro (a confirmar); `limiteLista` como parâmetro (L21).
+2. Módulo 15: evento de vacância recebido pronto; primeiro suplente da lista ordenada; prazos da vaga sem suplente pelo texto literal ("salvo se faltarem menos de"). Vacância de cargo majoritário com vice fica fora da etapa e é recusada com erro.
+3. Módulo 16: ordem obrigatória dos cinco passos por funções injetadas; `apoioEfetivo` e `folgaDeCusto` calculados; `estabilidade`, `negociacao` e faixa injetadas (calibrar).
+4. Conflito com a D55 resolvido pelo autor: no módulo 15 (motor eleitoral), a vaga definitiva com suplente efetiva o primeiro suplente da lista ordenada do módulo 10 (Código Eleitoral, art. 112). A D55 (`eventos-e-risco.md` 6.1) continua valendo para os gatilhos políticos e as negociações de abertura de vaga no sistema de eventos, na Fase 2.
