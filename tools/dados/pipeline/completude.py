@@ -4,6 +4,8 @@ Unidades esperadas por eleição, cargo e turno, construídas sem depender do pr
 - municípios: tabela oficial TSE x IBGE;
 - 2º turno: candidaturas com linha de 2º turno no arquivo de candidaturas (controle independente; o arquivo
   é `integridade_pendente`, por isso é lido só aqui, para conferência, com hash verificado, e nunca alimenta dados);
+  Pela D64 essa lista é hipótese de completude; o relatório leva a ressalva. Em 2024 há teste de sanidade
+  contra L20 (`sanidade_l20`), só para prefeito; em 2022 L20 não se aplica;
 - exterior: unidade estatística própria nas eleições gerais, só para presidente (D58).
 
 Situações, nunca tratadas igual:
@@ -57,6 +59,33 @@ def disputas_segundo_turno(tipo, raiz=fx.RAIZ):
     return segundo_turno_de(fx.linhas_csv(fonte, raiz), ANO[tipo])
 
 
+LIMITE_L20 = 200_000  # L20: 2º turno de prefeito só acima de 200 mil eleitores (Constituição; dispositivo a confirmar)
+RESSALVA_2T = ("unidades esperadas de 2º turno vêm do arquivo de candidaturas (integridade_pendente): hipótese de "
+               "completude, não referência independente (D64)")
+
+
+def sanidade_l20(segundo, aptos):
+    """Só eleição municipal (prefeito). Municípios com 2º turno fora do conjunto elegível por L20.
+
+    `aptos`: código TSE -> eleitores aptos no 1º turno de prefeito da ordinária. L20 dá elegíveis, não disputas
+    realizadas: o teste só detecta 2º turno impossível; nunca cria nem remove unidade esperada.
+    """
+    fora = sorted(ue for c, ue in segundo if c == "Prefeito" and aptos.get(ue.zfill(5), 0) <= LIMITE_L20)
+    elegiveis = {m for m, a in aptos.items() if a > LIMITE_L20}
+    return {"fora_do_elegivel": fora, "elegiveis": len(elegiveis),
+            "com_2t": sum(1 for c, _ in segundo if c == "Prefeito")}
+
+
+def aptos_prefeito_2024(raiz=fx.RAIZ):
+    """Eleitores aptos por município no 1º turno de prefeito da ordinária de 2024, pelo detalhe da apuração."""
+    det = fx.carregar_registro()["tse_detalhe_apuracao_2024"]
+    aptos = defaultdict(int)
+    for r in fx.Selecao(det, "calibracao", lambda x: x["CD_ELEICAO"] == "619" and x["NR_TURNO"] == "1"
+                        and x["DS_CARGO"].upper() == "PREFEITO", raiz=raiz):
+        aptos[r["CD_MUNICIPIO"].zfill(5)] += int(r["QT_APTOS"])
+    return dict(aptos)
+
+
 def _cargo(cargo, uf):
     return "Deputado Distrital" if cargo == "Deputado Estadual" and uf == "DF" else cargo
 
@@ -103,7 +132,7 @@ def taxas(u):
 def avaliar(dados, tipo, municipios_municipais_2024=None, raiz=fx.RAIZ, esperadas=None):
     esperadas = esperadas if esperadas is not None else unidades_esperadas(tipo, raiz)
     unidades = dados["unidades"]
-    rel = {"tipo": tipo, "situacoes": defaultdict(int), "estimativas": {}, "lacunas": {}, "bloqueadas": [], "inesperadas": []}
+    rel = {"tipo": tipo, "ressalvas": [RESSALVA_2T], "situacoes": defaultdict(int), "estimativas": {}, "lacunas": {}, "bloqueadas": [], "inesperadas": []}
     agregados = defaultdict(lambda: defaultdict(int))
     incompletos = set()
     situacao = {}

@@ -615,3 +615,25 @@ class TestVagas2022(unittest.TestCase):
         self.assertEqual(sum(1 for _ in sel), 0)
         sit = REG["tse_votacao_candidato_2022"]["colunas_pendentes"]
         self.assertIn("DS_SIT_TOT_TURNO", sit)
+
+
+class TestSanidadeL20(unittest.TestCase):
+    def test_sintetico(self):
+        from tools.dados.pipeline.completude import sanidade_l20
+        seg = {("Prefeito", "00001"), ("Prefeito", "00002"), ("Governador", "SP")}
+        aptos = {"00001": 200_001, "00002": 200_000, "00003": 900_000}
+        r = sanidade_l20(seg, aptos)
+        self.assertEqual(r, {"fora_do_elegivel": ["00002"], "elegiveis": 2, "com_2t": 2})
+
+    def test_ressalva_no_relatorio(self):
+        from tools.dados.pipeline.completude import RESSALVA_2T, avaliar
+        rel = avaliar({"unidades": {}}, "municipal", esperadas={})
+        self.assertIn(RESSALVA_2T, rel["ressalvas"])
+
+
+@precisa("tse_candidatos_2024")
+class TestSanidadeL20Real(unittest.TestCase):
+    def test_2024_dentro_do_elegivel(self):
+        from tools.dados.pipeline import completude as c
+        r = c.sanidade_l20(c.disputas_segundo_turno("municipal"), c.aptos_prefeito_2024())
+        self.assertEqual((r["fora_do_elegivel"], r["com_2t"], r["elegiveis"]), ([], 51, 103))
