@@ -134,7 +134,7 @@ Evidência: `data/raw/legislacao/tse/codigo_eleitoral_arts_106_a_113_TSE_2026-11
 
 ### Aplicação temporal
 - 2022: entendimento aplicado por força dos embargos de 2025 (a conferir no acórdão; efeito sobre os eleitos registrados nos arquivos do TSE não verificado).
-- 2026: mesmo regime, salvo lei ou resolução posterior; resolução do TSE de 2026 não lida.
+- 2026: mesmo regime, salvo lei ou resolução posterior; Resolução TSE 23.748/2026 consultada pelo autor (arts. 12-A e alteração do art. 15 da Res. 23.677, ver abaixo); texto ainda não guardado no repositório.
 
 ### Lacunas jurídicas abertas
 1. 2ª fase (art. 109, III; Res. 23.677, art. 11, § 4º), fora do cenário sem QE: 20% afastado; resta saber se subsiste exigência autônoma de 10% do QE.
