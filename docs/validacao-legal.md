@@ -148,6 +148,13 @@ Fonte: `data/raw/legislacao/tse/resolucao_23748_2026_e_voto_sistemas.pdf` (origi
 3. Art. 7º, §§ 1º e 2º: vagas de deputado federal pela LC 78/1993; estaduais e distritais pelo triplo da representação federal, acrescido acima de 36 (dado útil para a promoção parcial de `QT_VAGA` 2022, não autorizada).
 4. Art. 6º, § 1º: 2º turno de prefeito acima de 200 mil eleitores (CF, art. 29, II; Lei 9.504/1997, art. 3º, § 2º), coerente com L20.
 
+### Res. 23.677/2021 compilada conferida no texto, 18/11/2026
+Fonte: `data/raw/legislacao/tse/resolucao_23677_2021_compilada_impressao_2026-11-18.pdf`, SHA-256 no manifesto. Impressão da página do TSE pelo navegador do autor: cópia de consulta, não o arquivo do servidor. A compilação mostra redação original e vigente; vale a marcada "Redação dada pela Resolução nº 23.734/2024" ou "nº 23.748/2026".
+Conferido: art. 8º (10% no QP); art. 9º e parágrafo único (QE com arredondamento; válidos = votos a candidatos e legendas, Lei 9.504/1997, art. 5º); art. 10 (QP por partido ou federação); art. 11, §§ 1º a 8º (1ª fase com 80% e 20%; 2ª fase com todos; médias contando sobras já obtidas ainda que não preenchidas, § 5º; empates §§ 6º e 7º; ordem nominal § 8º); art. 12 (idade); art. 12-A, caput (nenhuma lista alcança o QE; incluído pela Res. 23.734/2024) e incisos; art. 13 revogado pela Res. 23.734/2024; art. 14 (suplentes).
+Novo em relação ao motor: o § 5º conta sobras obtidas e não preenchidas; a origem do art. 12-A é a Res. 23.734/2024 (a 23.748 só deu nova redação aos incisos). Ambos incorporados ao 5.4.
+L2-a: o texto do § 4º confirma a dúvida; continua aberta.
+Decisão pendente do autor: encerrar L1 com esta cópia de consulta somada ao original da Res. 23.748/2026, ou exigir arquivo do servidor.
+
 ### Leitura do autor na compilação da Res. 23.677/2021, 18/11/2026 (página oficial aberta no navegador do autor; arquivo não guardado)
 - Arts. 8º a 12 com o conteúdo já descrito em `motor-eleitoral.md` 5.4.
 - Art. 12-A, caput: aplica-se quando nenhum partido ou federação alcança o QE.
@@ -163,7 +170,7 @@ Encerramento: L1 e L2 registrados separadamente. L1 pode fechar com o arquivo da
 
 ### Pendências documentais
 1. Inteiro teor dos acórdãos (28/02/2024 e embargos de 13/03/2025) e certidão de trânsito.
-2. Resolução TSE 23.677/2021 compilada, com SHA-256 (23.748/2026 guardada).
+2. Resolução TSE 23.677/2021 compilada: guardada como cópia de consulta; arquivo do servidor, se o autor exigir para L1.
 3. Código Eleitoral: a evidência é transcrição; para encerrar, preferível o HTML ou PDF do TSE.
 
 ### Complemento do autor, 18/11/2026

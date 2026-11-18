@@ -280,15 +280,15 @@ maquinaEfetiva_g = capilaridade[L] × r_g
 
 ### 5.4 Apuração proporcional (regra documentada; L1 e L2 abertas)
 
-Fontes: Código Eleitoral, arts. 106 a 113 (transcrição da compilação do TSE, `data/raw/legislacao/tse/`); Resolução TSE 23.677/2021, compilada, com alterações de 2024 e 2026, e Resolução TSE 23.748/2026 (original em `data/raw/legislacao/tse/`; conferidos art. 12-A, I e II, e art. 15). Dispositivos da Res. 23.677 não alterados em 2026 e o caput do art. 12-A: indicação do autor, a confirmar na compilação. Lista: partido ou federação (Res. 23.677, art. 10). Coligação não existe em proporcional.
+Fontes: Código Eleitoral, arts. 106 a 113 (transcrição da compilação do TSE, `data/raw/legislacao/tse/`); Resolução TSE 23.677/2021, compilada, com alterações de 2024 e 2026, e Resolução TSE 23.677/2021 compilada (cópia de consulta impressa, `data/raw/legislacao/tse/`; arts. 8º a 14 conferidos no texto, redação vigente pela Res. 23.734/2024 e Res. 23.748/2026); Resolução TSE 23.748/2026 (original; arts. 12-A, I e II, e 15 conferidos). Lista: partido ou federação (Res. 23.677, art. 10). Coligação não existe em proporcional.
 
 **Regra ordinária**
 1. Votos válidos: definição da Res. 23.677, art. 9º, parágrafo único (texto a confirmar no documento).
 2. Quociente eleitoral: `QE = válidos ÷ vagas`; fração até meio desprezada, acima de meio arredondada para um (Código, art. 106; Res. 23.677, art. 9º).
 3. Quociente partidário por lista: `QP_L = ⌊votosLista_L ÷ QE⌋`, com `votosLista_L` = legenda e nominais somados (Código, art. 107; Res. 23.677, art. 10).
 4. Eleitos pelo QP: até `QP_L` candidatos da lista com votação nominal de ao menos 10% do QE, em ordem de votação (Código, art. 108; Res. 23.677, art. 8º). Vagas não preenchidas por falta do mínimo vão às sobras.
-5. Sobras, 1ª fase: a cada vaga, média `votosLista_L ÷ (vagas já obtidas pela lista + 1)`; vence a maior média entre listas com ao menos 80% do QE que tenham candidato não eleito com ao menos 20% do QE; repete-se por vaga, contando as vagas já obtidas (Código, art. 109, I, II e § 2º; Res. 23.677, art. 11, §§ 1º, 2º, 3º e 5º).
-6. Sobras, 2ª fase: quando não houver mais lista com candidato que cumpra as exigências da 1ª fase, todas as listas e candidatos participam pelas maiores médias, sem os patamares de 80% e 20% (Código, art. 109, III, com interpretação conforme do STF; Res. 23.677, art. 11, § 4º). A exigência de 20% está afastada nesta fase. Questão residual, fora do cenário 8: se subsiste exigência autônoma de 10% do QE (art. 108); a redação do § 4º não esclarece (a confirmar).
+5. Sobras, 1ª fase: a cada vaga, média `votosLista_L ÷ (vagas já obtidas pela lista + 1)`; vence a maior média entre listas com ao menos 80% do QE que tenham candidato não eleito com ao menos 20% do QE; repete-se por vaga. Na repetição, "vagas já obtidas" inclui as do QP e as sobras já obtidas em cálculos anteriores, ainda que não preenchidas (Código, art. 109, I, II e § 2º; Res. 23.677, art. 11, §§ 1º, 2º, 3º e 5º; ADI 5.420).
+6. Sobras, 2ª fase: quando não houver mais lista com candidato que cumpra as exigências da 1ª fase, todas as listas e candidatos participam pelas maiores médias, sem os patamares de 80% e 20% (Código, art. 109, III, com interpretação conforme do STF; Res. 23.677, art. 11, § 4º). Texto do § 4º (redação da Res. 23.734/2024): "todos os partidos políticos, federações, candidatas e candidatos participarão da distribuição das cadeiras remanescentes". A exigência de 20% está afastada. Questão residual (L2-a), fora do cenário 8: se subsiste exigência autônoma de 10% do QE (art. 8º; Código, art. 108). O § 4º não a afasta expressamente, ao contrário do art. 12-A, II (a confirmar).
 7. Empates:
    - entre médias: maior votação da lista; persistindo, maior votação nominal do candidato que disputa a vaga (Res. 23.677, art. 11, §§ 6º e 7º);
    - entre candidatos da mesma lista: mais idoso (Código, art. 110; Res. 23.677, art. 12);
@@ -296,7 +296,7 @@ Fontes: Código Eleitoral, arts. 106 a 113 (transcrição da compilação do TSE
    Preenchimento das vagas de cada lista na ordem nominal (Código, art. 109, § 1º; Res. 23.677, art. 11, § 8º).
 
 **Cenário próprio: nenhuma lista alcança o QE**
-8. O art. 111 do Código (mais votados) não se aplica: inconstitucional. Res. 23.748/2026, art. 12-A:
+8. O art. 111 do Código (mais votados) não se aplica: inconstitucional (STF, 2024); o art. 13 da Res. 23.677, que o reproduzia, foi revogado pela Res. 23.734/2024. Res. 23.677, art. 12-A (incluído pela Res. 23.734/2024; incisos na redação da Res. 23.748/2026): se nenhum partido ou federação alcançar o QE, todas as cadeiras seguem o art. 11, calculadas as maiores médias:
    - Fase I: cadeiras entre listas com ao menos 80% do QE que tenham candidato com ao menos 20% do QE. Não alcançar 100% do QE não impede alcançar 80%.
    - Fase II: cadeiras restantes a todos os partidos e federações participantes, independentemente de votação mínima do candidato (inciso II).
    - Se nenhuma lista cumprir os dois requisitos, a Fase I distribui zero cadeiras e todas vão à Fase II.
