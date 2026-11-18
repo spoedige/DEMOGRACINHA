@@ -74,6 +74,32 @@ Conclusões:
 
 Situação das pendências: nenhuma alterada; L1 a L36 abertas.
 
+## Abertura da validação de L1, L2, L21, L8, L3 a L5, 18/11/2026
+
+Escopo aprovado: pesquisa, validação e documentação. Sem motor, sem promoção de `QT_VAGA`, sem alteração de dados eleitorais, sem merge. Critério de encerramento de cada item: fonte oficial, dispositivo identificado, interpretação aplicável ao jogo e registro documental. Lacunas ficam abertas; nenhuma regra é presumida.
+
+Teste de acesso ao texto do Código Eleitoral (Lei 4.737/1965, compilada):
+| Endereço | Resultado |
+|---|---|
+| `www.planalto.gov.br/ccivil_03/leis/l4737compilado.htm` | CONNECT aceito pelo gateway; falha na negociação TLS com o site (curl, código 35), sem conteúdo |
+| cópia em `web.archive.org` | túnel fechado antes da resposta, sem conteúdo |
+
+Coleta interrompida conforme a regra do projeto. Nenhuma tentativa de contornar a falha. Textos a pedir ao autor (versão vigente, com data de consulta e endereço de origem):
+
+| Item | Documento | Trecho |
+|---|---|---|
+| L1, L2 | Código Eleitoral, compilado | arts. 106 a 113 (quocientes, barreira, sobras, preenchimento) |
+| L2 | STF, decisão sobre a distribuição das sobras após a Lei 14.211/2021 (número do processo e acórdão a identificar pelo autor) | dispositivo e modulação temporal |
+| L1, L2, L21 | Resolução do TSE de atos gerais do processo eleitoral e de registro de candidaturas aplicáveis a 2026 | artigos de totalização proporcional e limite de candidaturas |
+| L21 | Lei 9.504/1997, compilada | art. 10 |
+| L8 | Lei 9.504/1997, compilada | arts. 44 a 57 (propaganda gratuita) |
+| L8 | Resolução do TSE de propaganda aplicável a 2026 e plano de mídia de 2026, se publicado | distribuição do tempo |
+| L3 a L5 | Lei 9.504/1997, arts. 16-C e 16-D; Lei 9.096/1995, art. 41-A e dispositivos de federação (art. 11-A) | critérios do FEFC e do Fundo Partidário |
+| L4, L5 | Resolução TSE 23.605/2019, compilada; publicação do TSE da distribuição do FEFC de 2026 | art. 5º e anexos |
+| L3 a L5 | dispositivo que prevê a contagem em dobro dos votos de candidatos negros (2022 a 2030) | texto e alcance |
+
+Arquivos recebidos irão para `data/raw/legislacao/` com SHA-256 no manifesto. Situação: L1 a L36 abertas.
+
 ## Próximo passo
 
 Coleta estatística em `coleta-estatistica.md`. Texto integral da legislação federal ainda sem acesso: `normas.leg.br` só entrega a casca da aplicação, e a busca da Câmara deu 404. Resoluções do TSE e acórdãos do STF continuam sem fonte acessível.
