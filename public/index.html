@@ -229,16 +229,27 @@ var Dados = (function () {
     return profundo({ disputaId: id(o.disputaId, "resultadoApuracao.disputaId"), validos: o.validos, votos: v.mapa });
   }
 
-  // Resultado da distribuição de cadeiras: cadeiras obtidas por lista somam as vagas; eleitos mais não preenchidas também.
+  // Resultado da distribuição de cadeiras. cadeiras: cadeiras ocupadas por lista (soma igual ao número de eleitos);
+  // ocupadas mais não preenchidas somam as vagas. suplentes: por lista, ids em ordem de suplência.
   function resultadoCadeiras(o) {
     if (!Number.isSafeInteger(o.vagas) || o.vagas < 1) erro("resultadoCadeiras.vagas inválido");
     var c = mapaInteiros(o.cadeiras, "resultadoCadeiras.cadeiras");
-    if (c.soma !== o.vagas) erro("resultadoCadeiras: cadeiras diferentes das vagas");
     var eleitos = idsUnicos(Array.isArray(o.eleitos) ? o.eleitos : erro("resultadoCadeiras.eleitos: lista obrigatória"), "resultadoCadeiras.eleitos");
     inteiroNaoNeg(o.naoPreenchidas, "resultadoCadeiras.naoPreenchidas");
+    if (c.soma !== eleitos.length) erro("resultadoCadeiras: cadeiras ocupadas diferentes do número de eleitos");
     if (eleitos.length + o.naoPreenchidas !== o.vagas) erro("resultadoCadeiras: eleitos mais não preenchidas diferente das vagas");
+    var sup = {};
+    var todos = new Set(eleitos);
+    var fonte = o.suplentes === undefined ? {} : o.suplentes;
+    if (!fonte || typeof fonte !== "object" || Array.isArray(fonte)) erro("resultadoCadeiras.suplentes: objeto obrigatório");
+    Object.keys(fonte).sort().forEach(function (k) {
+      id(k, "resultadoCadeiras.suplentes");
+      sup[k] = idsUnicos(Array.isArray(fonte[k]) ? fonte[k] : erro("resultadoCadeiras.suplentes." + k + ": lista obrigatória"), "resultadoCadeiras.suplentes." + k);
+      sup[k].forEach(function (x) { if (todos.has(x)) erro("resultadoCadeiras: candidato eleito ou repetido na suplência " + x); todos.add(x); });
+    });
     return profundo({ disputaId: id(o.disputaId, "resultadoCadeiras.disputaId"), vagas: o.vagas, cadeiras: c.mapa,
-      eleitos: eleitos, naoPreenchidas: o.naoPreenchidas, desempates: Array.isArray(o.desempates) ? o.desempates.slice() : [] });
+      eleitos: eleitos, naoPreenchidas: o.naoPreenchidas, suplentes: sup,
+      desempates: Array.isArray(o.desempates) ? o.desempates.slice() : [] });
   }
 
   return Object.freeze({ CARGOS: CARGOS, unidade: unidade, partido: partido, federacao: federacao, disputa: disputa,
@@ -297,7 +308,189 @@ var MaiorResto = (function () {
   return Object.freeze({ distribuir: distribuir });
 })();
 
-return Object.freeze({ RNG: RNG, Dados: Dados, MaiorResto: MaiorResto });
+// Distribuição proporcional de cadeiras (módulo 10; regra: motor-eleitoral.md 5.4; desempates: 5.4 item 7 e 5.5).
+// Contrato D67: distribuir(estado, dados, rngState) => { resultado, rngStateNext }. Sem RNG próprio: o estado de RNG
+// só é repassado ao resolvedor de desempate técnico injetado (módulo 14) e devolvido como ele o deixar.
+// Toda comparação de patamar e de média é exata em inteiros (BigInt); nenhuma divisão em ponto flutuante.
+var Cadeiras = (function () {
+  var ID = /^[A-Za-z0-9][A-Za-z0-9_.:|-]{0,127}$/;
+  var MINIMOS_FASE2 = Object.freeze({ "0": 0n, "0.1": 1n }); // décimos do QE (D65)
+
+  function erro(msg) { throw new TypeError(msg); }
+  function inteiro(v, campo, min) { if (!Number.isSafeInteger(v) || v < min) erro(campo + ": inteiro maior ou igual a " + min); return v; }
+  function idv(v, campo) { if (typeof v !== "string" || !ID.test(v)) erro(campo + ": identificador inválido"); return v; }
+
+  // Código Eleitoral, art. 106: fração até meio desprezada, acima de meio arredondada para um.
+  function quocienteEleitoral(validos, vagas) {
+    inteiro(validos, "validos", 1); inteiro(vagas, "vagas", 1);
+    var q = Math.floor(validos / vagas), r = validos - q * vagas;
+    return 2 * r > vagas ? q + 1 : q;
+  }
+
+  // votos >= fração × QE, com fração em décimos (1 = 10%, 2 = 20%, 8 = 80%), exato.
+  function atinge(votos, decimos, QE) { return 10n * BigInt(votos) >= decimos * BigInt(QE); }
+
+  function validarEntrada(dados) {
+    if (!dados || typeof dados !== "object") erro("dados obrigatórios");
+    var disputaId = idv(dados.disputaId, "dados.disputaId");
+    var vagas = inteiro(dados.vagas, "dados.vagas", 1);
+    if (!Array.isArray(dados.listas) || dados.listas.length === 0) erro("dados.listas: ao menos uma lista");
+    var ids = new Set(), cands = new Set();
+    var listas = dados.listas.map(function (l) {
+      var lid = idv(l.id, "lista.id");
+      if (ids.has(lid)) erro("lista repetida: " + lid);
+      ids.add(lid);
+      var legenda = inteiro(l.votosLegenda, "lista." + lid + ".votosLegenda", 0);
+      if (!Array.isArray(l.candidatos)) erro("lista." + lid + ".candidatos: lista obrigatória");
+      var nominais = 0;
+      var cs = l.candidatos.map(function (c) {
+        var cid = idv(c.id, "candidato.id");
+        if (cands.has(cid)) erro("candidato repetido: " + cid);
+        cands.add(cid);
+        nominais += inteiro(c.votos, "candidato." + cid + ".votos", 0);
+        return { id: cid, votos: c.votos, idade: inteiro(c.idade, "candidato." + cid + ".idade", 0), listaId: lid };
+      });
+      var total = legenda + nominais;
+      if (!Number.isSafeInteger(total)) erro("lista." + lid + ": votos fora do limite");
+      return { id: lid, votosLegenda: legenda, votosLista: total, candidatos: cs };
+    }).sort(function (a, b) { return a.id < b.id ? -1 : 1; });
+    return { disputaId: disputaId, vagas: vagas, listas: listas };
+  }
+
+  function chamarResolvedor(ctx, empatados, contexto) {
+    if (typeof ctx.resolver !== "function") throw new Error("desempate técnico necessário e nenhum resolvedor informado (módulo 14)");
+    var ids = empatados.slice().sort();
+    var r = ctx.resolver(ids, contexto, ctx.rng);
+    if (!r || ids.indexOf(r.vencedorId) < 0) throw new Error("resolvedor de desempate devolveu vencedor fora dos empatados");
+    ctx.rng = r.rngStateNext === undefined ? ctx.rng : r.rngStateNext;
+    ctx.desempates.push({ tipo: contexto.tipo, empatados: ids, vencedorId: r.vencedorId });
+    return r.vencedorId;
+  }
+
+  // Ordem única da lista: votos decrescentes, idade decrescente; persistindo, desempate técnico (5.4 item 7; 5.5).
+  function ordenar(lista, ctx) {
+    var cs = lista.candidatos.slice().sort(function (a, b) {
+      if (a.votos !== b.votos) return b.votos - a.votos;
+      if (a.idade !== b.idade) return b.idade - a.idade;
+      return a.id < b.id ? -1 : 1;
+    });
+    var out = [];
+    for (var i = 0; i < cs.length;) {
+      var j = i;
+      while (j < cs.length && cs[j].votos === cs[i].votos && cs[j].idade === cs[i].idade) j++;
+      var grupo = cs.slice(i, j);
+      while (grupo.length > 1) {
+        var v = chamarResolvedor(ctx, grupo.map(function (c) { return c.id; }),
+          { tipo: "candidatosLista", disputaId: ctx.disputaId, listaId: lista.id });
+        out.push(grupo.filter(function (c) { return c.id === v; })[0]);
+        grupo = grupo.filter(function (c) { return c.id !== v; });
+      }
+      out.push(grupo[0]);
+      i = j;
+    }
+    return out;
+  }
+
+  // a/b comparado com c/d, exato.
+  function cmpFracao(a, b, c, d) { var x = BigInt(a) * BigInt(d), y = BigInt(c) * BigInt(b); return x > y ? 1 : x < y ? -1 : 0; }
+
+  function distribuir(estado, dados, rngState) {
+    var opcoes = (estado && estado.opcoes) || {};
+    var chaveMin = opcoes.minimoNominalFase2 === undefined ? "0" : String(opcoes.minimoNominalFase2);
+    if (!Object.prototype.hasOwnProperty.call(MINIMOS_FASE2, chaveMin)) erro("minimoNominalFase2: 0 ou 0.1 (D65)");
+    var d = validarEntrada(dados);
+    var ctx = { disputaId: d.disputaId, resolver: opcoes.resolverDesempateTecnico, rng: rngState, desempates: [] };
+    var validos = d.listas.reduce(function (a, l) { return a + l.votosLista; }, 0);
+    if (!Number.isSafeInteger(validos)) erro("votos válidos fora do limite");
+    var QE = quocienteEleitoral(validos, d.vagas);
+    var algumaNoQE = d.listas.some(function (l) { return l.votosLista >= QE; });
+    // cenário sem quociente (5.4 item 8; Res. 23.677, art. 12-A, II): fase seguinte sem votação mínima
+    var minimo2 = algumaNoQE ? MINIMOS_FASE2[chaveMin] : 0n;
+
+    var est = {};
+    d.listas.forEach(function (l) {
+      est[l.id] = { lista: l, ordem: ordenar(l, ctx), prox: 0, eleitos: [], QP: Math.floor(l.votosLista / QE), obtidas: 0 };
+    });
+    var eleitos = [];
+    // Quociente partidário com 10% do QE (5.4 itens 3 e 4). A vaga do QP sem candidato com 10% conta como obtida
+    // no denominador da média (nota de implementação: Res. 23.677, art. 11, §§ 1º e 5º) e vai às sobras.
+    d.listas.forEach(function (l) {
+      var e = est[l.id];
+      e.obtidas = e.QP;
+      while (e.eleitos.length < e.QP && e.prox < e.ordem.length && atinge(e.ordem[e.prox].votos, 1n, QE)) {
+        e.eleitos.push(e.ordem[e.prox].id); eleitos.push(e.ordem[e.prox].id); e.prox++;
+      }
+    });
+    if (eleitos.length > d.vagas) throw new RangeError("eleitos pelo quociente partidário excedem as vagas; caso sem regra nas fontes lidas");
+
+    var fases = [];
+    var naoPreenchidas = 0;
+    while (eleitos.length + naoPreenchidas < d.vagas) {
+      // candidato que disputa a vaga: o próximo da ordem única ainda não eleito, se cumprir o piso da fase
+      var fase1 = d.listas.filter(function (l) {
+        var e = est[l.id];
+        return atinge(l.votosLista, 8n, QE) && e.prox < e.ordem.length && atinge(e.ordem[e.prox].votos, 2n, QE);
+      });
+      var fase = 1, aptas = fase1;
+      if (aptas.length === 0) {
+        fase = 2;
+        aptas = d.listas.filter(function (l) {
+          var e = est[l.id];
+          return e.prox < e.ordem.length && atinge(e.ordem[e.prox].votos, minimo2, QE);
+        });
+      }
+      if (aptas.length === 0) { // nenhuma lista com candidato elegível: vagas restantes ficam não preenchidas
+        naoPreenchidas = d.vagas - eleitos.length;
+        fases.push({ fase: 2, vencedor: null, naoPreenchidas: naoPreenchidas });
+        break;
+      }
+      // maior média; empate: votação da lista, votação nominal e idade do candidato que disputa a vaga, desempate técnico
+      var melhor = [aptas[0]];
+      for (var i = 1; i < aptas.length; i++) {
+        var a = aptas[i], b = melhor[0], ea = est[a.id], eb = est[b.id];
+        var c = cmpFracao(a.votosLista, ea.obtidas + 1, b.votosLista, eb.obtidas + 1);
+        if (c === 0) c = a.votosLista - b.votosLista;
+        if (c === 0) c = ea.ordem[ea.prox].votos - eb.ordem[eb.prox].votos;
+        if (c === 0) c = ea.ordem[ea.prox].idade - eb.ordem[eb.prox].idade;
+        if (c > 0) melhor = [a]; else if (c === 0) melhor.push(a);
+      }
+      var vencedora = melhor[0];
+      if (melhor.length > 1) {
+        var reps = melhor.map(function (l) { return est[l.id].ordem[est[l.id].prox].id; });
+        var vId = chamarResolvedor(ctx, reps, { tipo: "mediasListas", disputaId: d.disputaId, fase: fase,
+          listas: melhor.map(function (l) { return l.id; }).sort() });
+        vencedora = melhor.filter(function (l) { return est[l.id].ordem[est[l.id].prox].id === vId; })[0];
+      }
+      var ev = est[vencedora.id], eleito = ev.ordem[ev.prox];
+      fases.push({ fase: fase, vencedor: vencedora.id, candidato: eleito.id, media: [vencedora.votosLista, ev.obtidas + 1] });
+      ev.eleitos.push(eleito.id); eleitos.push(eleito.id); ev.prox++; ev.obtidas++;
+    }
+
+    var cadeiras = {}, suplentes = {};
+    d.listas.forEach(function (l) {
+      var e = est[l.id];
+      if (e.eleitos.length > 0) {
+        cadeiras[l.id] = e.eleitos.length;
+        // suplentes só de lista que obteve vaga (Res. 23.677, art. 14), sem votação mínima (5.4 item 9)
+        suplentes[l.id] = e.ordem.slice(e.prox).map(function (c) { return c.id; });
+      }
+    });
+    var resultado = Dados.resultadoCadeiras({ disputaId: d.disputaId, vagas: d.vagas, cadeiras: cadeiras, eleitos: eleitos,
+      naoPreenchidas: naoPreenchidas, suplentes: suplentes, desempates: ctx.desempates });
+    var auditoria = {
+      validos: validos, quocienteEleitoral: QE, cenarioSemQuociente: !algumaNoQE,
+      minimoNominalFase2: !algumaNoQE ? "0 (art. 12-A, II)" : chaveMin,
+      listas: d.listas.map(function (l) { var e = est[l.id]; return { id: l.id, votos: l.votosLista, quocientePartidario: e.QP,
+        vagasObtidasDenominador: e.obtidas, eleitos: e.eleitos.slice() }; }),
+      sobras: fases
+    };
+    return { resultado: { cadeiras: resultado, auditoria: JSON.parse(JSON.stringify(auditoria)) }, rngStateNext: ctx.rng };
+  }
+
+  return Object.freeze({ quocienteEleitoral: quocienteEleitoral, distribuir: distribuir });
+})();
+
+return Object.freeze({ RNG: RNG, Dados: Dados, MaiorResto: MaiorResto, Cadeiras: Cadeiras });
 })();
 </script>
 </body>

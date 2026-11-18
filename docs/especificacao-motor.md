@@ -122,9 +122,11 @@ O 2º turno não passa pela distribuição de cadeiras. Proporcional e majoritá
 
 ### 10. Distribuição proporcional de cadeiras
 - Responsabilidade: eleitos e suplentes das disputas proporcionais.
-- Entradas: votos (9), vagas (1), idades dos candidatos.
+- Entradas: vagas (1); por lista, votos de legenda e candidatos com votação nominal e idade inteira (9; até o módulo 9 existir, montados nos testes). Idade inteira: a conversão de data de nascimento, se houver, é do módulo 9.
 - Processamento: `motor-eleitoral.md` 5.4 inteira (quociente eleitoral, quociente partidário, 10%, sobras em duas fases, médias com sobras não preenchidas, cenário sem quociente, empates, suplentes).
-- Saídas: cadeiras por lista, eleitos, suplentes, vagas não preenchidas, registro de desempates.
+- Saídas: cadeiras ocupadas por lista, eleitos na ordem de eleição, suplentes por lista, vagas não preenchidas, registro de desempates; auditoria (QE, QP, denominadores, fase e média de cada sobra).
+- Regras de implementação (D68): ordem única por lista (votos, idade, desempate técnico) para QP, sobras e suplência; denominador da média `QP_L + sobras obtidas`, contando vaga do QP não preenchida; lista sem candidato elegível na fase sai da disputa da vaga; empate de médias por média, votação da lista, votação nominal e idade do candidato que disputa a vaga, depois desempate técnico; suplentes só de lista que obteve vaga (Res. 23.677, art. 14), todos os não eleitos, sem mínimo; lista sem vaga não gera suplência.
+- Desempate técnico nesta etapa: só a interface. `opcoes.resolverDesempateTecnico(empatadosIds, contexto, rngState) => { vencedorId, rngStateNext }`, chamado só quando os critérios se esgotam; sem resolvedor, empate residual é erro de configuração. O cálculo real (5.5) entra com o módulo 14.
 - Dependências: 9; 14 sob demanda.
 - Parâmetros: `minimoNominalFase2` (D65; padrão 0, alternativo 0,10 × QE).
 - Simplificações: L2-a (D65).
@@ -144,6 +146,7 @@ O 2º turno não passa pela distribuição de cadeiras. Proporcional e majoritá
 - Responsabilidade: disputa entre os dois finalistas.
 - Entradas: resultado do 1º turno, eleitorado, eventos entre turnos.
 - Processamento: matriz origem e destino, `motor-eleitoral.md` 6.3.
+- Exigência do 2º turno: `CARGOS[cargo].segundoTurno` (6.2) indica só que o cargo admite 2º turno em tese. Para prefeito, o piso de mais de 200 mil eleitores (CF/88, art. 29, II; L20) é regra territorial verificada neste módulo, com o eleitorado da unidade; `Dados.disputa` não a verifica.
 - Saídas: votos do 2º turno, vencedor.
 - Dependências: 11; 14 sob demanda.
 - Parâmetros: fatores da matriz (calibrar).
@@ -249,3 +252,13 @@ Código: `public/index.html`, bloco `<script id="motor">`, seções `/* == RNG =
 `MaiorResto.distribuir(total, [{ id, peso }])` devolve `{ id: inteiro }`. Cada peso (número finito não negativo) é convertido sem perda em inteiro escalado por potência de 2; quotas e restos são inteiros BigInt sobre o mesmo denominador, sem arredondamento. Empate de restos: id em ordem de código UTF-16, independente da ordem de entrada. Total zero: zeros. Soma dos pesos zero com total positivo: erro (o chamador aplica a regra própria, ex.: 5.5). Pesos negativos, não finitos ou não numéricos, ids repetidos ou inválidos: erro. Soma sempre igual ao total.
 
 Pendência para o módulo 9: a regra "F por último" do segmento livre (5.2) exige ordem de desempate explícita; a função atual desempata só por id.
+
+### 6.4 Distribuição proporcional de cadeiras (etapa 2)
+`Motor.Cadeiras.distribuir(estado, dados, rngState)`, contrato D67.
+- `estado.opcoes`: `minimoNominalFase2` (0 padrão ou 0.1; D65) e `resolverDesempateTecnico` (opcional).
+- `dados`: `{ disputaId, vagas, listas: [{ id, votosLegenda, candidatos: [{ id, votos, idade }] }] }`. Votos válidos = soma de legendas e nominais.
+- `Motor.Cadeiras.quocienteEleitoral(validos, vagas)`: art. 106, em inteiros.
+- Patamares (10%, 20%, 80%) e médias comparados em inteiros BigInt, sem divisão em ponto flutuante.
+- Saída: `{ resultado: { cadeiras: Dados.resultadoCadeiras, auditoria }, rngStateNext }`; sem desempate técnico, `rngStateNext` é o estado recebido.
+- `Dados.resultadoCadeiras` passou a ter `cadeiras` = cadeiras ocupadas (soma igual ao número de eleitos; ocupadas mais não preenchidas igual às vagas) e `suplentes` por lista.
+- Erro explícito, sem regra inventada: eleitos pelo quociente partidário acima das vagas (possível só com QE muito pequeno arredondado para baixo; caso sem regra nas fontes lidas); votos válidos zero.

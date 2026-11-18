@@ -66,13 +66,20 @@ test("resultado da apuração conserva os válidos", () => {
   assert.throws(() => Dados.resultadoApuracao({ disputaId: DISPUTA.id, validos: 10, votos: { A: 9.5, B: 0.5 } }), ERRO);
 });
 
-test("resultado de cadeiras: cadeiras somam vagas; eleitos mais não preenchidas também", () => {
-  const ok = Dados.resultadoCadeiras({ disputaId: DISPUTA.id, vagas: 3, cadeiras: { PT: 2, PL: 1 }, eleitos: ["C1", "C2"], naoPreenchidas: 1 });
+test("resultado de cadeiras: ocupadas somam os eleitos; ocupadas mais não preenchidas somam as vagas", () => {
+  const ok = Dados.resultadoCadeiras({ disputaId: DISPUTA.id, vagas: 3, cadeiras: { PT: 1, PL: 1 }, eleitos: ["C1", "C2"], naoPreenchidas: 1,
+    suplentes: { PT: ["C3", "C4"], PL: [] } });
   assert.equal(ok.naoPreenchidas, 1);
   assert.deepEqual(plano(ok.desempates), []);
+  assert.deepEqual(plano(ok.suplentes), { PL: [], PT: ["C3", "C4"] });
+  assert.ok(congeladoProfundo(ok));
+  assert.throws(() => Dados.resultadoCadeiras({ disputaId: DISPUTA.id, vagas: 3, cadeiras: { PT: 2, PL: 1 }, eleitos: ["C1", "C2"], naoPreenchidas: 1 }), ERRO);
   assert.throws(() => Dados.resultadoCadeiras({ disputaId: DISPUTA.id, vagas: 3, cadeiras: { PT: 2 }, eleitos: ["C1", "C2"], naoPreenchidas: 0 }), ERRO);
-  assert.throws(() => Dados.resultadoCadeiras({ disputaId: DISPUTA.id, vagas: 3, cadeiras: { PT: 3 }, eleitos: ["C1", "C2"], naoPreenchidas: 0 }), ERRO);
   assert.throws(() => Dados.resultadoCadeiras({ disputaId: DISPUTA.id, vagas: 3, cadeiras: { PT: 3 }, eleitos: ["C1", "C1", "C2"], naoPreenchidas: 0 }), ERRO);
+  assert.throws(() => Dados.resultadoCadeiras({ disputaId: DISPUTA.id, vagas: 2, cadeiras: { PT: 2 }, eleitos: ["C1", "C2"], naoPreenchidas: 0,
+    suplentes: { PT: ["C2"] } }), ERRO); // eleito não pode ser suplente
+  assert.throws(() => Dados.resultadoCadeiras({ disputaId: DISPUTA.id, vagas: 2, cadeiras: { PT: 2 }, eleitos: ["C1", "C2"], naoPreenchidas: 0,
+    suplentes: { PT: "C3" } }), ERRO);
 });
 
 test("compatibilidade com o contrato D67: estado da eleição carrega rngState serializável", () => {

@@ -339,3 +339,13 @@ Aprovada pelo autor. Substitui a forma `(estado, dados, rng) => novoEstado` do C
 4. Elegibilidade e registro (antes da eleição) separados de substituição, vacância e posse (depois).
 5. Empate residual nunca interrompe a simulação: resolvido por D66 ou devolvido como resultado estruturado.
 Especificação: `especificacao-motor.md`.
+
+## D68. Regras de implementação da distribuição de cadeiras, 18/11/2026
+
+Aprovada pelo autor antes da etapa 2.
+1. Denominador da média: `QP_L + sobras obtidas`, contando todas as vagas obtidas, inclusive a do QP não preenchida por falta de candidato com 10% (Código Eleitoral, art. 109, § 2º; Res. TSE 23.677, art. 11, § 5º). Interpretação registrada como nota de implementação.
+2. Lista sem candidato não eleito que cumpra o piso da fase sai da disputa da vaga; a vaga só fica não preenchida se nenhuma lista tiver candidato elegível.
+3. Ordem única por lista: votos decrescentes, idade decrescente, desempate técnico; usada para QP, sobras e suplência.
+4. Empate de médias: média, votação da lista, votação nominal do candidato que disputa a vaga (art. 11, §§ 6º e 7º), idade desse candidato (simplificação), desempate técnico.
+5. Suplentes: todos os não eleitos da lista que obteve vaga, sem mínimo de votos; lista sem vaga não gera suplência (Res. 23.677, art. 14).
+6. Módulo 10 recebe votos prontos e idade inteira; desempate técnico só como interface injetável até o módulo 14.
