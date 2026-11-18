@@ -227,3 +227,25 @@ O 2º turno não passa pela distribuição de cadeiras. Proporcional e majoritá
 | 5 | testes dos módulos 2 a 7 passam, sem dupla contagem |
 | 6 | testes dos módulos 3, 15 e 16 passam |
 | 7 | simulação headless reproduz resultados com a mesma semente; metas de calibração medidas |
+
+## 6. Implementação da etapa 1 (fundação)
+
+Código: `public/index.html`, bloco `<script id="motor">`, seções `/* == RNG == */`, `/* == DADOS == */` e `/* == MOTOR ELEITORAL == */`. Expõe `Motor.RNG`, `Motor.Dados` e `Motor.MaiorResto`. Sem acesso ao DOM. Testes: `node --test tests/motor/*.test.js`, da raiz; carregam o bloco em contexto isolado com `Math.random` bloqueado.
+
+### 6.1 RNG
+- Algoritmo: sfc32 (128 bits de estado com contador interno; sem estado proibido; só operações de 32 bits exatas em JavaScript). Escolhido pela qualidade estatística superior à do mulberry32 (32 bits de estado), pela simplicidade e por permitir conferência com implementação de referência independente nos testes.
+- Normalização da semente: texto em NFC, sem espaços nas pontas, em maiúsculas; vazio é erro.
+- Semeadura: hash de 128 bits de `JSON.stringify([semente, domínio, ...chaves])`, seguido do descarte de 15 saídas. O JSON evita colisão entre chaves concatenadas.
+- Estado: `{ versao: 1, algoritmo: "sfc32", dominio, chave, s: [4 palavras de 32 bits] }`, congelado e serializável.
+- Fluxos independentes: cada fluxo nasce de `criar(semente, dominio, ...chaves)`, derivado só da semente, do domínio (mundo, eleição, eventos, cartas) e das chaves (ex.: unidade, lista, eleição). Consumir um fluxo nunca muda outro.
+- Funções puras: `u32(estado)`, `inteiro(estado, n)` (uniforme em [0, n), sem viés, por rejeição), `decimal(estado)` (53 bits, [0, 1)); todas devolvem `{ valor, rngStateNext }` e não alteram o estado recebido.
+- Estado inválido (versão, algoritmo, domínio, chave, palavras fora de 32 bits): erro explícito, nunca correção silenciosa.
+- Não implementado ainda: normal padrão para o `ruido` (4.1), quando o módulo que o usa for construído.
+
+### 6.2 Estruturas
+`Dados.unidade`, `partido`, `federacao`, `disputa`, `candidatura` (estáticos, congelados em profundidade); `estadoEleicao` (único estado mutável: fase e `rngState` do domínio eleição, substituído por novo objeto); `resultadoApuracao` (soma dos votos igual aos válidos); `resultadoCadeiras` (cadeiras por lista somam as vagas; eleitos mais não preenchidas somam as vagas; registro de desempates). Identificadores: texto de 1 a 128 caracteres, `[A-Za-z0-9][A-Za-z0-9_.:|-]*`, nunca gerados. Cargos: oito disputas próprias; vices integram a chapa do titular.
+
+### 6.3 Maior resto (4.3)
+`MaiorResto.distribuir(total, [{ id, peso }])` devolve `{ id: inteiro }`. Cada peso (número finito não negativo) é convertido sem perda em inteiro escalado por potência de 2; quotas e restos são inteiros BigInt sobre o mesmo denominador, sem arredondamento. Empate de restos: id em ordem de código UTF-16, independente da ordem de entrada. Total zero: zeros. Soma dos pesos zero com total positivo: erro (o chamador aplica a regra própria, ex.: 5.5). Pesos negativos, não finitos ou não numéricos, ids repetidos ou inválidos: erro. Soma sempre igual ao total.
+
+Pendência para o módulo 9: a regra "F por último" do segmento livre (5.2) exige ordem de desempate explícita; a função atual desempata só por id.

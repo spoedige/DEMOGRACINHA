@@ -1,1 +1,289 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DEMOGRACINHA</title>
+</head>
+<body>
 <h1>DEMOGRACINHA</h1>
+<script id="motor">
+"use strict";
+/* Motor do jogo, sem acesso ao DOM. Roda no navegador e em Node (tests/motor, tools/sim.js).
+   Contrato dos módulos (D67): (estado, dados, rngState) => { resultado, rngStateNext }.
+   Especificação: docs/especificacao-motor.md. Fórmulas: docs/motor-eleitoral.md. */
+var Motor = (function () {
+
+/* == RNG == */
+// Gerador sfc32 (Small Fast Counter, 128 bits de estado, contador interno, sem estado proibido).
+// Estado explícito e imutável; nenhuma função altera o estado recebido. Sem Math.random, relógio ou estado global.
+var RNG = (function () {
+  var VERSAO = 1;
+  var ALGORITMO = "sfc32";
+  var DOMINIOS = Object.freeze(["mundo", "eleicao", "eventos", "cartas"]);
+  var DESCARTE = 15; // saídas descartadas após a semeadura, para afastar o estado inicial do hash
+
+  function normalizarSemente(texto) {
+    if (typeof texto !== "string") throw new TypeError("semente deve ser texto");
+    var s = texto.normalize("NFC").trim().toUpperCase();
+    if (s.length === 0) throw new RangeError("semente vazia");
+    return s;
+  }
+
+  // Hash de 128 bits (quatro faixas de 32 bits com multiplicação e mistura final). Só para semear: não é criptográfico.
+  function hash128(str) {
+    var h1 = 1779033703, h2 = 3144134277, h3 = 1013904242, h4 = 2773480762;
+    for (var i = 0, k; i < str.length; i++) {
+      k = str.charCodeAt(i);
+      h1 = h2 ^ Math.imul(h1 ^ k, 597399067);
+      h2 = h3 ^ Math.imul(h2 ^ k, 2869860233);
+      h3 = h4 ^ Math.imul(h3 ^ k, 951274213);
+      h4 = h1 ^ Math.imul(h4 ^ k, 2716044179);
+    }
+    h1 = Math.imul(h3 ^ (h1 >>> 18), 597399067);
+    h2 = Math.imul(h4 ^ (h2 >>> 22), 2869860233);
+    h3 = Math.imul(h1 ^ (h3 >>> 17), 951274213);
+    h4 = Math.imul(h2 ^ (h4 >>> 19), 2716044179);
+    h1 ^= (h2 ^ h3 ^ h4); h2 ^= h1; h3 ^= h1; h4 ^= h1;
+    return [h1 >>> 0, h2 >>> 0, h3 >>> 0, h4 >>> 0];
+  }
+
+  function passo(s) {
+    var a = s[0], b = s[1], c = s[2], d = s[3];
+    var t = (((a + b) >>> 0) + d) >>> 0;
+    d = (d + 1) >>> 0;
+    a = (b ^ (b >>> 9)) >>> 0;
+    b = (c + (c << 3)) >>> 0;
+    c = ((c << 21) | (c >>> 11)) >>> 0;
+    c = (c + t) >>> 0;
+    return { valor: t, s: [a, b, c, d] };
+  }
+
+  function congelar(dominio, chave, s) {
+    return Object.freeze({ versao: VERSAO, algoritmo: ALGORITMO, dominio: dominio, chave: chave, s: Object.freeze(s.slice()) });
+  }
+
+  function validarChaves(chaves) {
+    for (var i = 0; i < chaves.length; i++) {
+      var c = chaves[i];
+      if (!(typeof c === "string" || (typeof c === "number" && Number.isSafeInteger(c)))) {
+        throw new TypeError("chave de fluxo deve ser texto ou inteiro");
+      }
+    }
+  }
+
+  // Fluxo independente: derivado só da semente, do domínio e das chaves, nunca do consumo de outro fluxo.
+  function criar(semente, dominio) {
+    if (DOMINIOS.indexOf(dominio) < 0) throw new RangeError("domínio desconhecido: " + dominio);
+    var chaves = Array.prototype.slice.call(arguments, 2);
+    validarChaves(chaves);
+    var chave = JSON.stringify([normalizarSemente(semente), dominio].concat(chaves));
+    var s = hash128(chave);
+    for (var i = 0; i < DESCARTE; i++) s = passo(s).s;
+    return congelar(dominio, chave, s);
+  }
+
+  function validar(estado) {
+    if (!estado || typeof estado !== "object") throw new TypeError("estado de RNG inválido: ausente");
+    if (estado.versao !== VERSAO || estado.algoritmo !== ALGORITMO) throw new TypeError("estado de RNG inválido: versão ou algoritmo");
+    if (DOMINIOS.indexOf(estado.dominio) < 0) throw new TypeError("estado de RNG inválido: domínio");
+    if (typeof estado.chave !== "string") throw new TypeError("estado de RNG inválido: chave");
+    var s = estado.s;
+    if (!Array.isArray(s) || s.length !== 4) throw new TypeError("estado de RNG inválido: palavras");
+    for (var i = 0; i < 4; i++) {
+      if (!Number.isInteger(s[i]) || s[i] < 0 || s[i] > 0xFFFFFFFF) throw new TypeError("estado de RNG inválido: palavra fora de 32 bits");
+    }
+    return estado;
+  }
+
+  // Inteiro de 32 bits sem sinal, 0 a 2^32 - 1.
+  function u32(estado) {
+    validar(estado);
+    var r = passo(estado.s);
+    return { valor: r.valor, rngStateNext: congelar(estado.dominio, estado.chave, r.s) };
+  }
+
+  // Inteiro uniforme em [0, n), sem viés (rejeição). n inteiro de 1 a 2^32.
+  function inteiro(estado, n) {
+    if (!Number.isInteger(n) || n < 1 || n > 4294967296) throw new RangeError("n deve ser inteiro de 1 a 2^32");
+    var limite = 4294967296 - (4294967296 % n);
+    var e = estado, r;
+    do { r = u32(e); e = r.rngStateNext; } while (r.valor >= limite);
+    return { valor: r.valor % n, rngStateNext: e };
+  }
+
+  // Decimal uniforme em [0, 1), com 53 bits (duas palavras).
+  function decimal(estado) {
+    var r1 = u32(estado), r2 = u32(r1.rngStateNext);
+    var v = ((r1.valor >>> 5) * 67108864 + (r2.valor >>> 6)) / 9007199254740992;
+    return { valor: v, rngStateNext: r2.rngStateNext };
+  }
+
+  return Object.freeze({ VERSAO: VERSAO, ALGORITMO: ALGORITMO, DOMINIOS: DOMINIOS,
+    normalizarSemente: normalizarSemente, criar: criar, validar: validar, u32: u32, inteiro: inteiro, decimal: decimal });
+})();
+
+/* == DADOS == */
+// Estruturas fundamentais. Dados estáticos: congelados, sem estado de RNG nem campos mutáveis.
+// Estado mutável: só em EstadoEleicao, sempre substituído por um novo objeto (nunca alterado no lugar).
+var Dados = (function () {
+  var ID = /^[A-Za-z0-9][A-Za-z0-9_.:|-]{0,127}$/;
+  var CARGOS = Object.freeze({
+    VEREADOR: Object.freeze({ sistema: "proporcional" }),
+    DEPUTADO_ESTADUAL: Object.freeze({ sistema: "proporcional" }),
+    DEPUTADO_DISTRITAL: Object.freeze({ sistema: "proporcional" }),
+    DEPUTADO_FEDERAL: Object.freeze({ sistema: "proporcional" }),
+    PREFEITO: Object.freeze({ sistema: "majoritario" }),
+    GOVERNADOR: Object.freeze({ sistema: "majoritario" }),
+    SENADOR: Object.freeze({ sistema: "majoritario" }),
+    PRESIDENTE: Object.freeze({ sistema: "majoritario" })
+  }); // vices integram a chapa do titular (regras-e-mundo.md 1); não são disputas próprias
+  var TIPOS_UNIDADE = ["municipio", "uf", "pais", "exterior"];
+  var FASES = ["preparada", "apurada", "concluida"];
+
+  function erro(msg) { throw new TypeError(msg); }
+  function id(v, campo) { if (typeof v !== "string" || !ID.test(v)) erro(campo + ": identificador inválido"); return v; }
+  function texto(v, campo) { if (typeof v !== "string" || v.trim() === "") erro(campo + ": texto obrigatório"); return v; }
+  function inteiroNaoNeg(v, campo) { if (!Number.isSafeInteger(v) || v < 0) erro(campo + ": inteiro não negativo obrigatório"); return v; }
+  function profundo(o) {
+    Object.keys(o).forEach(function (k) { if (o[k] && typeof o[k] === "object") profundo(o[k]); });
+    return Object.freeze(o);
+  }
+  function idsUnicos(lista, campo) {
+    var vistos = {};
+    lista.forEach(function (x) { id(x, campo); if (vistos[x]) erro(campo + ": identificador repetido " + x); vistos[x] = true; });
+    return lista.slice();
+  }
+
+  function unidade(o) {
+    if (TIPOS_UNIDADE.indexOf(o.tipo) < 0) erro("unidade.tipo inválido");
+    return profundo({ id: id(o.id, "unidade.id"), tipo: o.tipo, uf: o.tipo === "pais" ? null : texto(o.uf, "unidade.uf") });
+  }
+
+  function partido(o) {
+    return profundo({ id: id(o.id, "partido.id"), sigla: texto(o.sigla, "partido.sigla"), nome: texto(o.nome, "partido.nome") });
+  }
+
+  function federacao(o) {
+    if (!Array.isArray(o.partidos) || o.partidos.length < 2) erro("federacao.partidos: ao menos dois partidos");
+    return profundo({ id: id(o.id, "federacao.id"), nome: texto(o.nome, "federacao.nome"), partidos: idsUnicos(o.partidos, "federacao.partidos").sort() });
+  }
+
+  // Disputa: cargo, unidade, vagas e turno. Vagas vêm como dado (não recalculadas por população).
+  function disputa(o) {
+    var cargo = CARGOS[o.cargo];
+    if (!cargo) erro("disputa.cargo desconhecido");
+    if (!Number.isSafeInteger(o.vagas) || o.vagas < 1) erro("disputa.vagas: inteiro positivo obrigatório");
+    if (o.turno !== 1 && o.turno !== 2) erro("disputa.turno: 1 ou 2");
+    if (o.turno === 2 && cargo.sistema !== "majoritario") erro("disputa.turno: 2º turno só em majoritária");
+    var vpe = o.votosPorEleitor === undefined ? 1 : o.votosPorEleitor;
+    if (vpe !== 1 && !(vpe === 2 && o.cargo === "SENADOR")) erro("disputa.votosPorEleitor: 2 só no Senado");
+    if (!Number.isSafeInteger(o.ano) || o.ano < 2026) erro("disputa.ano inválido");
+    return profundo({ id: id(o.id, "disputa.id"), ano: o.ano, cargo: o.cargo, sistema: cargo.sistema,
+      unidadeId: id(o.unidadeId, "disputa.unidadeId"), vagas: o.vagas, turno: o.turno, votosPorEleitor: vpe });
+  }
+
+  // Candidatura individual (pessoa do jogo) ou sintética (motor-eleitoral.md 5.3). listaId: partido ou federação.
+  function candidatura(o) {
+    if (o.tipo !== "individual" && o.tipo !== "sintetica") erro("candidatura.tipo inválido");
+    if (o.tipo === "individual") id(o.pessoaId, "candidatura.pessoaId");
+    return profundo({ id: id(o.id, "candidatura.id"), disputaId: id(o.disputaId, "candidatura.disputaId"),
+      listaId: id(o.listaId, "candidatura.listaId"), tipo: o.tipo, pessoaId: o.tipo === "individual" ? o.pessoaId : null });
+  }
+
+  // Estado mutável da eleição: fase e estado do fluxo de RNG do domínio eleição.
+  function estadoEleicao(o) {
+    if (FASES.indexOf(o.fase) < 0) erro("estadoEleicao.fase inválida");
+    var rng = RNG.validar(o.rngState);
+    if (rng.dominio !== "eleicao") erro("estadoEleicao.rngState: fluxo de outro domínio");
+    return Object.freeze({ disputaId: id(o.disputaId, "estadoEleicao.disputaId"), fase: o.fase, rngState: rng });
+  }
+
+  function mapaInteiros(m, campo) {
+    if (!m || typeof m !== "object" || Array.isArray(m)) erro(campo + ": objeto obrigatório");
+    var out = {}, soma = 0;
+    Object.keys(m).sort().forEach(function (k) { id(k, campo); out[k] = inteiroNaoNeg(m[k], campo + "." + k); soma += m[k]; });
+    return { mapa: out, soma: soma };
+  }
+
+  // Resultado da apuração: votos por concorrente; soma exatamente igual aos válidos.
+  function resultadoApuracao(o) {
+    var v = mapaInteiros(o.votos, "resultadoApuracao.votos");
+    inteiroNaoNeg(o.validos, "resultadoApuracao.validos");
+    if (v.soma !== o.validos) erro("resultadoApuracao: soma dos votos diferente dos válidos");
+    return profundo({ disputaId: id(o.disputaId, "resultadoApuracao.disputaId"), validos: o.validos, votos: v.mapa });
+  }
+
+  // Resultado da distribuição de cadeiras: cadeiras obtidas por lista somam as vagas; eleitos mais não preenchidas também.
+  function resultadoCadeiras(o) {
+    if (!Number.isSafeInteger(o.vagas) || o.vagas < 1) erro("resultadoCadeiras.vagas inválido");
+    var c = mapaInteiros(o.cadeiras, "resultadoCadeiras.cadeiras");
+    if (c.soma !== o.vagas) erro("resultadoCadeiras: cadeiras diferentes das vagas");
+    var eleitos = idsUnicos(Array.isArray(o.eleitos) ? o.eleitos : erro("resultadoCadeiras.eleitos: lista obrigatória"), "resultadoCadeiras.eleitos");
+    inteiroNaoNeg(o.naoPreenchidas, "resultadoCadeiras.naoPreenchidas");
+    if (eleitos.length + o.naoPreenchidas !== o.vagas) erro("resultadoCadeiras: eleitos mais não preenchidas diferente das vagas");
+    return profundo({ disputaId: id(o.disputaId, "resultadoCadeiras.disputaId"), vagas: o.vagas, cadeiras: c.mapa,
+      eleitos: eleitos, naoPreenchidas: o.naoPreenchidas, desempates: Array.isArray(o.desempates) ? o.desempates.slice() : [] });
+  }
+
+  return Object.freeze({ CARGOS: CARGOS, unidade: unidade, partido: partido, federacao: federacao, disputa: disputa,
+    candidatura: candidatura, estadoEleicao: estadoEleicao, resultadoApuracao: resultadoApuracao, resultadoCadeiras: resultadoCadeiras });
+})();
+
+/* == MOTOR ELEITORAL == */
+// Maior resto genérico (motor-eleitoral.md 4.3). Aritmética exata com BigInt: cada peso (número finito) é convertido
+// sem perda para inteiro escalado por potência de 2; quotas e restos são comparados como frações de mesmo denominador.
+// Não contém regra eleitoral: a distribuição de cadeiras é a seção 5.4.
+var MaiorResto = (function () {
+  var ID = /^[A-Za-z0-9][A-Za-z0-9_.:|-]{0,127}$/;
+
+  function decompor(x) { // x = m × 2^e, exato
+    var dv = new DataView(new ArrayBuffer(8));
+    dv.setFloat64(0, x);
+    var hi = dv.getUint32(0), lo = dv.getUint32(4);
+    var exp = (hi >>> 20) & 0x7ff;
+    var m = (BigInt(hi & 0xfffff) << 32n) | BigInt(lo);
+    if (exp === 0) return { m: m, e: -1074 };
+    return { m: m | (1n << 52n), e: exp - 1075 };
+  }
+
+  // participantes: [{ id, peso }]. Retorna { id: inteiro }. Empate de restos: id em ordem crescente de código UTF-16.
+  // Soma dos pesos zero: total 0 devolve zeros; total positivo é erro (o chamador decide a regra, ex.: 5.5).
+  function distribuir(total, participantes) {
+    if (!Number.isSafeInteger(total) || total < 0) throw new RangeError("total deve ser inteiro não negativo");
+    if (!Array.isArray(participantes) || participantes.length === 0) throw new TypeError("participantes obrigatórios");
+    var vistos = {};
+    var lista = participantes.map(function (p) {
+      if (!p || typeof p.id !== "string" || !ID.test(p.id)) throw new TypeError("participante com id inválido");
+      if (vistos[p.id]) throw new TypeError("id repetido: " + p.id);
+      vistos[p.id] = true;
+      if (typeof p.peso !== "number" || !Number.isFinite(p.peso) || p.peso < 0) throw new RangeError("peso inválido para " + p.id);
+      return { id: p.id, d: p.peso === 0 ? null : decompor(p.peso) };
+    }).sort(function (a, b) { return a.id < b.id ? -1 : 1; });
+    var eMin = Infinity;
+    lista.forEach(function (p) { if (p.d && p.d.e < eMin) eMin = p.d.e; });
+    var soma = 0n;
+    lista.forEach(function (p) { p.w = p.d ? p.d.m << BigInt(p.d.e - eMin) : 0n; soma += p.w; });
+    var out = {};
+    if (total === 0) { lista.forEach(function (p) { out[p.id] = 0; }); return out; }
+    if (soma === 0n) throw new RangeError("soma dos pesos igual a zero com total positivo");
+    var T = BigInt(total), distribuido = 0n;
+    lista.forEach(function (p) { var q = T * p.w; p.piso = q / soma; p.resto = q % soma; distribuido += p.piso; });
+    var sobra = Number(T - distribuido); // menor que o número de participantes com resto positivo
+    var ordem = lista.slice().sort(function (a, b) {
+      if (a.resto !== b.resto) return a.resto > b.resto ? -1 : 1;
+      return a.id < b.id ? -1 : 1;
+    });
+    for (var i = 0; i < sobra; i++) ordem[i].piso += 1n;
+    lista.forEach(function (p) { out[p.id] = Number(p.piso); });
+    return out;
+  }
+
+  return Object.freeze({ distribuir: distribuir });
+})();
+
+return Object.freeze({ RNG: RNG, Dados: Dados, MaiorResto: MaiorResto });
+})();
+</script>
+</body>
+</html>
