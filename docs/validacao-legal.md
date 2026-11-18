@@ -98,6 +98,10 @@ Coleta interrompida conforme a regra do projeto. Nenhuma tentativa de contornar 
 | L4, L5 | Resolução TSE 23.605/2019, compilada; publicação do TSE da distribuição do FEFC de 2026 | art. 5º e anexos |
 | L3 a L5 | dispositivo que prevê a contagem em dobro dos votos de candidatos negros (2022 a 2030) | texto e alcance |
 
+Indicação do autor, 18/11/2026 (pista, não evidência; nada lido nem guardado neste ambiente):
+- L2: STF, ADIs 7.228 (0125262-02.2022.1.00.0000), 7.263 (0130016-84.2022.1.00.0000) e 7.325. Segundo o autor: embargos julgados em 13/03/2025, com interpretação conforme do art. 109, § 2º, do Código Eleitoral (todos os partidos participam das sobras do art. 109, III, sem as exigências de 80% e 20%), inconstitucionalidade do art. 111 do Código e do art. 13 da Resolução TSE 23.677/2021, aplicação às eleições de 2022; trânsito em julgado em agosto de 2025. A conferir no inteiro teor do acórdão.
+- L1, L2: versão compilada do Código Eleitoral no portal do TSE, com anotação da decisão de 2025 ao art. 109, § 2º. Fonte alternativa ao Planalto, pendente de aprovação do autor. `www.tse.jus.br` recusa acesso automatizado deste ambiente (403, ver acima): o arquivo teria de ser enviado pelo autor.
+
 Arquivos recebidos irão para `data/raw/legislacao/` com SHA-256 no manifesto. Situação: L1 a L36 abertas.
 
 ## Próximo passo
