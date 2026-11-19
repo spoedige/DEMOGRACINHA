@@ -1,0 +1,239 @@
+{
+ "_fonte": "votação por partido 2024 (TSE), eleições realizadas em 2024",
+ "_nota": "Registro de 2024 dentro do corte da D60; mudanças de 2025 (a confirmar contra o registro oficial do TSE).",
+ "partidos": [
+  {
+   "id": "REPUBLICANOS",
+   "sigla": "REPUBLICANOS",
+   "numero": 10,
+   "nome": "REPUBLICANOS",
+   "cor": "#4A5568"
+  },
+  {
+   "id": "PP",
+   "sigla": "PP",
+   "numero": 11,
+   "nome": "PROGRESSISTAS",
+   "cor": "#2C5282"
+  },
+  {
+   "id": "PDT",
+   "sigla": "PDT",
+   "numero": 12,
+   "nome": "Partido Democrático Trabalhista",
+   "cor": "#285E61"
+  },
+  {
+   "id": "PT",
+   "sigla": "PT",
+   "numero": 13,
+   "nome": "Partido dos Trabalhadores",
+   "cor": "#744210"
+  },
+  {
+   "id": "MDB",
+   "sigla": "MDB",
+   "numero": 15,
+   "nome": "Movimento Democrático Brasileiro",
+   "cor": "#553C9A"
+  },
+  {
+   "id": "PSTU",
+   "sigla": "PSTU",
+   "numero": 16,
+   "nome": "Partido Socialista dos Trabalhadores Unificado",
+   "cor": "#2F855A"
+  },
+  {
+   "id": "REDE",
+   "sigla": "REDE",
+   "numero": 18,
+   "nome": "Rede Sustentabilidade",
+   "cor": "#9B2C2C"
+  },
+  {
+   "id": "PODE",
+   "sigla": "PODE",
+   "numero": 20,
+   "nome": "Podemos",
+   "cor": "#2B6CB0"
+  },
+  {
+   "id": "PCB",
+   "sigla": "PCB",
+   "numero": 21,
+   "nome": "Partido Comunista Brasileiro",
+   "cor": "#4A5568"
+  },
+  {
+   "id": "PL",
+   "sigla": "PL",
+   "numero": 22,
+   "nome": "Partido Liberal",
+   "cor": "#2C5282"
+  },
+  {
+   "id": "CIDADANIA",
+   "sigla": "CIDADANIA",
+   "numero": 23,
+   "nome": "Cidadania",
+   "cor": "#285E61"
+  },
+  {
+   "id": "PRD",
+   "sigla": "PRD",
+   "numero": 25,
+   "nome": "Partido Renovação Democrática",
+   "cor": "#744210"
+  },
+  {
+   "id": "DC",
+   "sigla": "DC",
+   "numero": 27,
+   "nome": "Democracia Cristã",
+   "cor": "#553C9A"
+  },
+  {
+   "id": "PRTB",
+   "sigla": "PRTB",
+   "numero": 28,
+   "nome": "Partido Renovador Trabalhista Brasileiro",
+   "cor": "#2F855A"
+  },
+  {
+   "id": "PCO",
+   "sigla": "PCO",
+   "numero": 29,
+   "nome": "Partido da Causa Operária",
+   "cor": "#9B2C2C"
+  },
+  {
+   "id": "NOVO",
+   "sigla": "NOVO",
+   "numero": 30,
+   "nome": "Partido Novo",
+   "cor": "#2B6CB0"
+  },
+  {
+   "id": "MOBILIZA",
+   "sigla": "MOBILIZA",
+   "numero": 33,
+   "nome": "Mobilização Nacional",
+   "cor": "#4A5568"
+  },
+  {
+   "id": "PMB",
+   "sigla": "PMB",
+   "numero": 35,
+   "nome": "Partido da Mulher Brasileira",
+   "cor": "#2C5282"
+  },
+  {
+   "id": "AGIR",
+   "sigla": "AGIR",
+   "numero": 36,
+   "nome": "AGIR",
+   "cor": "#285E61"
+  },
+  {
+   "id": "PSB",
+   "sigla": "PSB",
+   "numero": 40,
+   "nome": "Partido Socialista Brasileiro",
+   "cor": "#744210"
+  },
+  {
+   "id": "PV",
+   "sigla": "PV",
+   "numero": 43,
+   "nome": "Partido Verde",
+   "cor": "#553C9A"
+  },
+  {
+   "id": "UNIAO",
+   "sigla": "UNIÃO",
+   "numero": 44,
+   "nome": "União Brasil",
+   "cor": "#2F855A"
+  },
+  {
+   "id": "PSDB",
+   "sigla": "PSDB",
+   "numero": 45,
+   "nome": "Partido da Social Democracia Brasileira",
+   "cor": "#9B2C2C"
+  },
+  {
+   "id": "PSOL",
+   "sigla": "PSOL",
+   "numero": 50,
+   "nome": "Partido Socialismo e Liberdade",
+   "cor": "#2B6CB0"
+  },
+  {
+   "id": "PSD",
+   "sigla": "PSD",
+   "numero": 55,
+   "nome": "Partido Social Democrático",
+   "cor": "#4A5568"
+  },
+  {
+   "id": "PCDOB",
+   "sigla": "PC do B",
+   "numero": 65,
+   "nome": "Partido Comunista do Brasil",
+   "cor": "#2C5282"
+  },
+  {
+   "id": "AVANTE",
+   "sigla": "AVANTE",
+   "numero": 70,
+   "nome": "AVANTE",
+   "cor": "#285E61"
+  },
+  {
+   "id": "SOLIDARIEDADE",
+   "sigla": "SOLIDARIEDADE",
+   "numero": 77,
+   "nome": "Solidariedade",
+   "cor": "#744210"
+  },
+  {
+   "id": "UP",
+   "sigla": "UP",
+   "numero": 80,
+   "nome": "Unidade Popular",
+   "cor": "#553C9A"
+  }
+ ],
+ "federacoes": [
+  {
+   "id": "FED_CIDADANIA_PSDB",
+   "sigla": "PSDB/CIDADANIA",
+   "nome": "Federação PSDB CIDADANIA",
+   "partidos": [
+    "CIDADANIA",
+    "PSDB"
+   ]
+  },
+  {
+   "id": "FED_PCDOB_PT_PV",
+   "sigla": "PT/PC do B/PV",
+   "nome": "Federação BRASIL DA ESPERANÇA - FE BRASIL",
+   "partidos": [
+    "PCDOB",
+    "PT",
+    "PV"
+   ]
+  },
+  {
+   "id": "FED_PSOL_REDE",
+   "sigla": "PSOL/REDE",
+   "nome": "Federação PSOL REDE",
+   "partidos": [
+    "PSOL",
+    "REDE"
+   ]
+  }
+ ]
+}

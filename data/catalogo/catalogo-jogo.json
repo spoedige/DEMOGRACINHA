@@ -2617,6 +2617,51 @@
      "sucederTitular": true
     }
    ]
+  },
+  {
+   "id": "partido-abaixo-da-clausula",
+   "familia": "clausula",
+   "titulo": "Partido abaixo da cláusula",
+   "texto": "O seu partido não atingiu a cláusula de desempenho: perde o Fundo Partidário e a propaganda gratuita no rádio e na TV.",
+   "tipo": "atrasado",
+   "opcoes": [
+    {
+     "id": "buscar-federacao",
+     "texto": "Defender uma federação com outro partido",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "relacoes.cupula",
+       "delta": 0.03
+      }
+     ]
+    },
+    {
+     "id": "apoiar-fusao",
+     "texto": "Apoiar a fusão ou incorporação do partido",
+     "efeitos": [
+      {
+       "alvo": "relacoes.cupula",
+       "delta": 0.02
+      },
+      {
+       "alvo": "grupo.influencia",
+       "delta": -0.01
+      }
+     ]
+    },
+    {
+     "id": "sair-por-justa-causa",
+     "texto": "Preparar a saída do partido sem perda do mandato",
+     "efeitos": [
+      {
+       "alvo": "relacoes.cupula",
+       "delta": -0.05
+      }
+     ],
+     "adicionarTag": "justaCausaClausula"
+    }
+   ]
   }
  ],
  "posicoes": [

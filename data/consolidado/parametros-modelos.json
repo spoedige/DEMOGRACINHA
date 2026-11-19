@@ -1,0 +1,224 @@
+{
+ "_nota": "Parâmetros para montar modelos de disputa a partir das bases reais (D86). Todos (calibrar); datas de calendário e posse (a confirmar contra as resoluções do TSE e a Constituição).",
+ "semIdentificacao": 0.6,
+ "chapasMajoritarias": 3,
+ "fatorSinteticos": 2,
+ "sintetico": {
+  "quadros": 0.45,
+  "capilaridade": 0.45,
+  "lambda": 0.3
+ },
+ "opiniaoSintetico": {
+  "desconhecimento": 0.3,
+  "popularidade": 0.3,
+  "rejeicao": 0.2,
+  "semOpiniao": 0.2
+ },
+ "maquinaSintetico": 0.4,
+ "dataSintetico": {
+  "nascimento": "1975-01-01",
+  "filiacao": "2020-01-01"
+ },
+ "parametros": {
+  "epsilon": 0.01,
+  "sigma": 0.3,
+  "sigmaLegenda": 0.2,
+  "alpha": 0.4,
+  "k": 0.8,
+  "v1": 0.6,
+  "v2": 0.4,
+  "m1": 0.6,
+  "m2": 0.25,
+  "m3": 0.15,
+  "delta": 0.2,
+  "D": 0,
+  "escalaGasto": 500000,
+  "sigmaT": 0.3,
+  "minimoNominalFase2": 0,
+  "idadeSinteticos": 40,
+  "taxaInvalidos2": 0.1
+ },
+ "segundoTurno": {
+  "proprio": [
+   85,
+   5,
+   5,
+   5
+  ],
+  "eliminado": [
+   40,
+   40,
+   10,
+   10
+  ],
+  "brancoNuloAnulado": [
+   10,
+   10,
+   70,
+   10
+  ],
+  "abstencao": [
+   5,
+   5,
+   5,
+   85
+  ]
+ },
+ "distribuicoes": {
+  "q": {
+   "forma": "exponencialTruncada",
+   "media": 0.2,
+   "max": 1
+  },
+  "r": {
+   "forma": "uniforme",
+   "min": 0.1,
+   "max": 0.6
+  }
+ },
+ "maquinaMunicipal": {
+  "estruturaAliada": 0,
+  "aliancaFormal": false,
+  "aliadosEstrutura": [],
+  "aliadosMobilizacao": [],
+  "alocMobilizacao": 200000,
+  "mobAliada": 0,
+  "liderancas": [
+   {
+    "id": "L1",
+    "tipo": "pessoa",
+    "forca": 0.3,
+    "aderencia": 0.6
+   }
+  ]
+ },
+ "maquinaSemBase": 0.3,
+ "calendario": {
+  "2026": {
+   "dataRegistro": "2026-08-15",
+   "prazoFiliacao": "2026-04-04",
+   "prazoDesincompatibilizacao": "2026-04-04"
+  },
+  "2028": {
+   "dataRegistro": "2028-08-15",
+   "prazoFiliacao": "2028-04-07",
+   "prazoDesincompatibilizacao": "2028-04-07"
+  },
+  "2030": {
+   "dataRegistro": "2030-08-15",
+   "prazoFiliacao": "2030-04-06",
+   "prazoDesincompatibilizacao": "2030-04-06"
+  },
+  "2032": {
+   "dataRegistro": "2032-08-15",
+   "prazoFiliacao": "2032-04-03",
+   "prazoDesincompatibilizacao": "2032-04-03"
+  }
+ },
+ "posse": {
+  "municipal": {
+   "posse": "01-01",
+   "anos": 4,
+   "fim": "12-31"
+  },
+  "PRESIDENTE": {
+   "posse": "01-05",
+   "anos": 4,
+   "fim": "01-04"
+  },
+  "GOVERNADOR": {
+   "posse": "01-06",
+   "anos": 4,
+   "fim": "01-05"
+  },
+  "SENADOR": {
+   "posse": "02-01",
+   "anos": 8,
+   "fim": "01-31"
+  },
+  "legislativo": {
+   "posse": "02-01",
+   "anos": 4,
+   "fim": "01-31"
+  }
+ },
+ "regrasCargo": {
+  "VEREADOR": {
+   "exposicao": 0.02,
+   "capitalEntregaPorCiclo": 4,
+   "notoriedadeProtagonista": 0.3
+  },
+  "PREFEITO": {
+   "exposicao": 0.06,
+   "capitalEntregaPorCiclo": 20,
+   "notoriedadeProtagonista": 0.5
+  },
+  "VICE_PREFEITO": {
+   "exposicao": 0.03,
+   "capitalEntregaPorCiclo": 6,
+   "notoriedadeProtagonista": 1
+  },
+  "DEPUTADO_ESTADUAL": {
+   "exposicao": 0.03,
+   "capitalEntregaPorCiclo": 8,
+   "notoriedadeProtagonista": 0.2
+  },
+  "DEPUTADO_DISTRITAL": {
+   "exposicao": 0.03,
+   "capitalEntregaPorCiclo": 8,
+   "notoriedadeProtagonista": 0.2
+  },
+  "DEPUTADO_FEDERAL": {
+   "exposicao": 0.04,
+   "capitalEntregaPorCiclo": 10,
+   "notoriedadeProtagonista": 0.25
+  },
+  "SENADOR": {
+   "exposicao": 0.05,
+   "capitalEntregaPorCiclo": 12,
+   "notoriedadeProtagonista": 0.4
+  },
+  "GOVERNADOR": {
+   "exposicao": 0.08,
+   "capitalEntregaPorCiclo": 30,
+   "notoriedadeProtagonista": 0.5
+  },
+  "VICE_GOVERNADOR": {
+   "exposicao": 0.04,
+   "capitalEntregaPorCiclo": 8,
+   "notoriedadeProtagonista": 1
+  },
+  "PRESIDENTE": {
+   "exposicao": 0.1,
+   "capitalEntregaPorCiclo": 50,
+   "notoriedadeProtagonista": 0.5
+  },
+  "VICE_PRESIDENTE": {
+   "exposicao": 0.05,
+   "capitalEntregaPorCiclo": 10,
+   "notoriedadeProtagonista": 1
+  }
+ },
+ "clausula": {
+  "_nota": "EC 97/2017, art. 3º (regras-e-mundo L10). Patamares de 2030 e arredondamento (a confirmar); sigma e fatorExposicao (calibrar).",
+  "regras": {
+   "2026": {
+    "votosPct": 2.5,
+    "ufsPct": 1.5,
+    "ufsMin": 9,
+    "deputados": 13,
+    "deputadosUfs": 9
+   },
+   "2030": {
+    "votosPct": 3,
+    "ufsPct": 2,
+    "ufsMin": 9,
+    "deputados": 15,
+    "deputadosUfs": 9
+   }
+  },
+  "sigma": 0.25,
+  "fatorExposicao": 0.8,
+  "eventoReacao": "partido-abaixo-da-clausula"
+ }
+}

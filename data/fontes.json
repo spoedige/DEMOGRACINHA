@@ -1816,6 +1816,32 @@
      "motivo": "zonas sem linhas: 24"
     }
    ]
+  },
+  {
+   "id": "tse_fefc_fp_2022",
+   "orgao": "TSE",
+   "arquivo": "data/raw/tse/fefc_fp_2022.zip",
+   "url": "https://cdn.tse.jus.br/estatistica/sead/odsele/fefc_fp/fefc_fp_2022.zip",
+   "sha256": "9e7dac01a042ade7f8c3cd2859feb66a72a4e26445799bc3a953136f35f6648b",
+   "referencia": "distribuição do FEFC e do Fundo Partidário por partido, eleição de 2022",
+   "data_fenomeno": "2022-10-02",
+   "temporalidade": "historico_compativel",
+   "proveniencia": "integridade_pendente",
+   "evidencia": "Coletado em 2026-11-19T20:58:09Z. Total do FEFC por partido somado em data/consolidado/fefc.json; sem confronto independente com a portaria de distribuição (a confirmar). Não alimenta o motor: referência para calibração.",
+   "observacoes": "Valor do partido em VR_PARTIDO_FEFC de fefc_genero_ANO.csv, um por sigla; convertido em centavos."
+  },
+  {
+   "id": "tse_fefc_fp_2024",
+   "orgao": "TSE",
+   "arquivo": "data/raw/tse/fefc_fp_2024.zip",
+   "url": "https://cdn.tse.jus.br/estatistica/sead/odsele/fefc_fp/fefc_fp_2024.zip",
+   "sha256": "acba49ee613ce25ba974842777a585c1bcc1f2569c38fda43872c1e2726cd155",
+   "referencia": "distribuição do FEFC e do Fundo Partidário por partido, eleição de 2024",
+   "data_fenomeno": "2024-10-06",
+   "temporalidade": "historico_compativel",
+   "proveniencia": "integridade_pendente",
+   "evidencia": "Coletado em 2026-11-19T20:58:14Z. Total do FEFC por partido somado em data/consolidado/fefc.json; sem confronto independente com a portaria de distribuição (a confirmar). Não alimenta o motor: referência para calibração.",
+   "observacoes": "Valor do partido em VR_PARTIDO_FEFC de fefc_genero_ANO.csv, um por sigla; convertido em centavos."
   }
  ]
 }
