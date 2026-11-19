@@ -553,3 +553,11 @@ Aprovada pelo autor antes da implementação.
 3. Indicadores locais iniciais escalados pelo eleitorado do município (`escalaPorte`, calibrar): começar em município pequeno é mais acessível.
 4. `tools/sim.js --lote` (`tools/lote.js`): 300 carreiras de 12 anos com dados reais por rodada, sementes fixas; ajustes e resultados em `docs/roadmap.md`.
 5. Correções encontradas pelo lote: ano calmo sem modelos; Senado de uma vaga com votos por eleitor; limite de lista no majoritário; município sem votos válidos na base fica sem modelo; a perda de identificação pela cláusula passa a sem identificação (soma 1).
+
+## D88. Acabamento do MVP, 22/11/2026
+
+Aprovada pelo autor antes da implementação.
+1. Guia rápido opcional: aparece logo após criar a primeira carreira (preferência local `guiaVisto`) e fica no Menu. Quatro pontos: janelas e prazo de 04/04, opinião do eleitorado, ações e riscos, caminhos (lista, indicação e nomeação).
+2. Textos: ocorrências de cláusula de desempenho, filiação e domicílio com nomes reais; domicílio na aba Carreira; aba Partido com a situação na cláusula e a nota do registro de 2024. Varredura sem travessões nem termos internos visíveis.
+3. Acessibilidade conferida nos testes: guia fechado só com teclado (Tab e Enter), setas no grupo de ações, folha de detalhe com foco preso e Esc, movimento reduzido, contraste de texto e bordas.
+4. Link privado com os dados reais publicados junto da página (`data/municipios.json` e `data/eleicoes/*.json`).

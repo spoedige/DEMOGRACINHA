@@ -4140,8 +4140,10 @@ function textoOcorrencia(o, e) {
     case "carta": var c = cartaPorId(o.id);
       return (c ? c.titulo : o.id) + (c && c.segura ? "." : o.sucesso ? ": saiu como esperado." : ": não saiu como esperado.") + (o.risco ? " O risco se confirmou." : "");
     case "candidatura": return "Candidatura registrada na convenção.";
-    case "trocaPartido": return "Filiação ao " + partido(o.para).sigla + ".";
-    case "domicilio": return "Domicílio eleitoral transferido para " + o.para + (o.outraUf ? ", em outro estado." : ".");
+    case "trocaPartido": return "Nova filiação partidária: " + partido(o.para).sigla + ".";
+    case "domicilio": return "Domicílio eleitoral transferido para " + nomeUnidade(o.para) + (o.outraUf ? ", em outro estado." : ".");
+    case "clausula": return o.atingido ? "O seu partido ficou abaixo da cláusula de desempenho. A partir do próximo ano, perde o Fundo Partidário e a propaganda gratuita no rádio e na TV."
+      : "Cláusula de desempenho apurada: o seu partido manteve o acesso ao Fundo Partidário e à propaganda gratuita.";
     case "indicacaoConcedida": return "O partido confirmou a sua indicação.";
     case "indicacaoNegada": return "O partido negou a indicação para a cabeça de chapa.";
     case "viceConfirmado": return "A chapa confirmou o seu nome para vice.";
@@ -4353,7 +4355,7 @@ function painelMudancas(m) {
     dica(m.dentroDaJanela ? "Na janela partidária, a troca de partido custa menos e não tira mandato proporcional. Mudar de domicílio para outro estado começa do zero lá." : "Fora da janela, a troca de partido custa mais credibilidade.") +
     sel("troca-partido", "Partido", "Manter " + pa.sigla, m.partidos.map(function (x) { var q = partido(x); return [x, q.sigla + " (" + q.nome + ")"]; }), m.bloqueioPartido) +
     (REAL && m.municipios.length ? campoMunicipio("troca-domicilio", "Domicílio eleitoral (manter " + nomeUnidade(e.personagem.municipioLocal) + ")", null, m.bloqueioDomicilio) :
-    m.municipios.length || m.dentroDaJanela ? sel("troca-domicilio", "Domicílio eleitoral", "Manter " + e.personagem.municipioLocal, m.municipios.map(function (x) { return [x.id, x.id + " (" + x.uf + ")"]; }), m.bloqueioDomicilio) : "") +
+    m.municipios.length || m.dentroDaJanela ? sel("troca-domicilio", "Domicílio eleitoral", "Manter " + nomeUnidade(e.personagem.municipioLocal), m.municipios.map(function (x) { return [x.id, nomeUnidade(x.id) + (REAL ? "" : " (" + x.uf + ")")]; }), m.bloqueioDomicilio) : "") +
     "</article>";
 }
 function telaMao(mao, mudancas) {
@@ -4377,7 +4379,18 @@ function telaAutomatica() {
   return '<article class="dossier-card">' + cabecalho("Período automático", "Janela automática", selo(), true) +
     dica("No ritmo escolhido, esta janela segue a opção segura, com os mesmos sorteios de uma decisão sua.") + "</article>" + botao("avancar", "Avançar", "btn-primary");
 }
+// Guia rápido (acabamento do MVP): opcional, aparece no primeiro período da partida e fica no Menu.
+function telaGuia() {
+  var item = function (t, x) { return '<h2 class="secao">' + esc(t) + '</h2><p class="card-desc">' + esc(x) + "</p>"; };
+  return '<article class="dossier-card">' + cabecalho("Antes de começar", "Guia rápido", "4 pontos", true) +
+    item("Janelas", "Anos pares têm eleição e seis janelas: filiação até 04/04, convenção em julho, campanha e votação em outubro. Anos ímpares têm quatro janelas, para governar, articular e preparar o próximo ciclo.") +
+    item("Opinião do eleitorado", "Notoriedade é quantos conhecem você. Popularidade e rejeição são partes de quem conhece. Crescer em notoriedade sem cuidar da rejeição pode custar a eleição.") +
+    item("Ações e riscos", "Em cada janela você escolhe uma ação. A opção segura não arrisca nada e rende pouco. As demais podem dar errado e voltar mais tarde como evento.") +
+    item("Caminhos", "Na convenção, a vaga na lista proporcional é garantida; para prefeito, governador, senador ou presidente, o partido decide. Nomeações dão experiência e capacidade de entrega, mas exigem sair do cargo até 04/04 para disputar eleição.") +
+    "</article>" + botao("fechar-guia", "Entendi", "btn-primary");
+}
 function telaJanela() {
+  if (app.guia) { app.faseNome = "guia"; return telaGuia(); }
   var f = faseAtual();
   app.faseNome = f.nome;
   return ({ resumo: telaResumo, automatica: telaAutomatica, compromissos: function () { return telaCompromissos(f.lista); }, eventos: function () { return telaEventos(f.lista); },
@@ -4412,7 +4425,7 @@ function telaCarreira() {
   var periodos = e.historico.filter(function (x) { return x.tipo === "carta"; }).slice(-6).reverse().map(function (x) {
     var c = cartaPorId(x.cartaId); return kv(x.ano + " " + x.janela, c ? c.titulo : x.cartaId); }).join("");
   return trajetoria(e) + '<article class="dossier-card">' + cabecalho("Registro biográfico", "Carreira", JURIDICO[p.statusJuridico], false) +
-    '<p class="card-desc"><strong>' + esc(p.nome || "Sem nome") + "</strong>, " + idade(e) + " anos. Situação jurídica: " + esc(JURIDICO[p.statusJuridico]) + ".</p>" +
+    '<p class="card-desc"><strong>' + esc(p.nome || "Sem nome") + "</strong>, " + idade(e) + " anos. Domicílio eleitoral: " + esc(nomeUnidade(p.municipioLocal)) + ". Situação jurídica: " + esc(JURIDICO[p.statusJuridico]) + ".</p>" +
     '<h2 class="secao">Mandatos</h2>' + (mandatos ? '<ul class="kv-list">' + mandatos + "</ul>" : '<p class="vazio">Nenhum mandato exercido ainda.</p>') +
     '<h2 class="secao">Nomeações</h2>' + (e.cargos.nomeacoes.length ? '<ul class="kv-list">' + e.cargos.nomeacoes.map(function (n) {
       return kv(n.inicio.ano + " - " + (n.fim ? n.fim.ano : "atual") + " - " + (posicaoPorId(n.posicaoId) || { titulo: n.posicaoId }).titulo, n.situacao === "exercicio" ? "Em exercício" : "Encerrada"); }).join("") + "</ul>" : '<p class="vazio">Nenhuma nomeação ainda.</p>') +
@@ -4425,8 +4438,9 @@ function telaPartido() {
   var linha = function (k, v, badge) { return '<li class="kv-row"><span class="kv-k">' + esc(k) + '</span><span class="' + (badge ? "qual-badge" : "kv-v") + '">' + esc(v) + "</span></li>"; };
   return '<article class="dossier-card">' + cabecalho("Filiação e coalizão", "Partido", pa.sigla, false) + '<ul class="kv-list">' +
     linha("Sigla atual", pa.sigla + " (" + pa.nome + ")") + linha("Federação", fed ? fed.nome : "Nenhuma") +
-    ["local", "estadual", "nacional"].map(function (s) { var g = DADOS.governos[s] || {}; return linha("Governo " + s, POSICAO[g[pid] || "semInformacao"], true); }).join("") +
-    '</ul><p class="fiction-notice">Partidos, federações e bancadas reais entram com os dados da etapa 1B.</p></article>';
+    ["local", "estadual", "nacional"].map(function (s) { var g = DADOS.governos[s] || {}; return linha("Governo " + ({ local: "municipal", estadual: "estadual", nacional: "federal" })[s], POSICAO[g[pid] || "semInformacao"], true); }).join("") +
+    (function () { var cl = e.conjuntura && e.conjuntura.clausula; return cl ? linha("Cláusula de desempenho (" + cl.ano + ")", cl.partidosAbaixo.indexOf(pid) >= 0 ? "Abaixo do patamar desde " + cl.valeDe : "Patamar atingido", true) : ""; })() +
+    '</ul><p class="fiction-notice">' + (REAL ? "Registro de partidos de 2024; mudanças de 2025 (a confirmar). Posição de cada partido nos governos ainda sem dados." : "Cenário de exemplo, com partidos fictícios.") + "</p></article>";
 }
 function telaIndicadores() {
   var e = app.estado, r = e.relacoes, es = ["local", "estadual", "nacional"];
@@ -4450,7 +4464,7 @@ function telaMenu() {
     '</select><span class="dossier-subtitle">O ritmo muda só quantas decisões são suas. A simulação é a mesma.</span></div><div class="btn-stack">' +
     botao("exportar", "Exportar save", "btn-primary") +
     (app.exportado ? '<div class="field-group"><label class="field-label" for="codigo-export">Código do save</label><textarea class="field-textarea" id="codigo-export" readonly>' + esc(app.exportado) + "</textarea></div>" : "") +
-    botao("abrir-import", "Importar save") + botao("movimento", pref.reduzirMovimento ? "Ativar animações" : "Reduzir movimento", "btn-secondary", ' aria-pressed="' + !!pref.reduzirMovimento + '"') +
+    botao("abrir-import", "Importar save") + botao("abrir-guia", "Guia rápido") + botao("movimento", pref.reduzirMovimento ? "Ativar animações" : "Reduzir movimento", "btn-secondary", ' aria-pressed="' + !!pref.reduzirMovimento + '"') +
     botao("nova", app.confirmarNova ? "Confirmar: apagar e começar outra" : "Nova carreira") + "</div>" +
     '<p class="dossier-subtitle">Semente desta carreira: <code>' + esc(e.semente) + "</code></p></article>";
 }
@@ -4649,6 +4663,8 @@ var ACOES = {
   "movimento": function () { pref.reduzirMovimento = !pref.reduzirMovimento; salvarPref(); document.body.classList.toggle("reduce-motion", pref.reduzirMovimento); ceu.animar(); render(false); },
   "detalhe-escolher": function () { fecharDetalhe(true); },
   "detalhe-cancelar": function () { fecharDetalhe(false); },
+  "fechar-guia": function () { pref.guiaVisto = true; salvarPref(); app.guia = false; render(true); },
+  "abrir-guia": function () { app.guia = true; app.aba = "janela"; render(true); },
   "nova": function () { if (app.confirmarNova) { app.confirmarNova = false; app.estado = null; app.tela = "criacao"; app.form = null; render(true); } else { app.confirmarNova = true; render(false); } }
 };
 document.addEventListener("click", function (ev) {
@@ -4726,6 +4742,7 @@ document.addEventListener("submit", function (ev) {
     }
     var e = M.Carreira.criar({}, { semente: f.semente.value.trim() || semente(), gameVersion: BRUTO.gameVersion, ritmo: f.ritmo.value, inicio: ini }, null).resultado;
     app.form = null; iniciarJogo(e); salvar();
+    if (!pref.guiaVisto) app.guia = true; // primeira carreira: guia rápido antes do primeiro período
   } catch (x) { app.erro = x.message; }
   render(true);
 });

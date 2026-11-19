@@ -81,6 +81,9 @@ test("fluxo completo a 360 px: criação, janelas, eventos, candidatura, eleiç�
     await pg.fill("#nascimento", "1990-05-10");
     await layout(); await capturar("02-criacao");
     await pg.click("button[type=submit]");
+    assert.equal(await titulo(pg), "Guia rápido");                                 // guia na primeira carreira (acabamento)
+    await layout(); await capturar("02b-guia");
+    await pg.click("[data-acao=fechar-guia]");
 
     const vistos = new Set(); let viuEleicao = false;
     for (let i = 0; i < 90 && !viuEleicao; i++) {
@@ -177,6 +180,7 @@ test("teclado e movimento reduzido: setas no grupo de ações, sem animação de
     await pg.goto(URL_);
     await pg.click("[data-acao=criar-tela]"); await pg.fill("#nome", "Teclado"); await pg.fill("#semente", "v1-TECLADO-01");
     await pg.click("button[type=submit]");
+    await pg.keyboard.press("Tab"); await pg.keyboard.press("Enter");                // o foco vai ao título; Tab chega ao "Entendi"
     assert.equal(await titulo(pg), "Ações disponíveis");
     assert.equal(await pg.locator(".phase-enter").count(), 0);
     const primeiro = pg.locator("[data-grupo=carta]").first();

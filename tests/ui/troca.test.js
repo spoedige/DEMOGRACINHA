@@ -39,7 +39,7 @@ test("J1 do ano eleitoral: troca de partido e de domicílio junto com a ação; 
     await pg.locator("[data-grupo=carta]").first().click(); await pg.click("[data-acao=confirmar]");
     await pg.waitForFunction(() => document.querySelector("h1.dossier-title").textContent === "O que aconteceu");
     const txt = await pg.textContent("main");
-    assert.match(txt, /Filiação ao P2\./); assert.match(txt, /transferido para EY001, em outro estado/);
+    assert.match(txt, /Nova filiação partidária: P2\./); assert.match(txt, /transferido para EY001, em outro estado/);
     await pg.click("[data-aba=carreira]");
     const marcas = await pg.locator(".pt-item").evaluateAll((els) => els.map((x) => x.querySelector(".pt-sigla").textContent + "|" + x.querySelector(".pt-chip").textContent));
     assert.deepEqual(marcas, ["P2|Mudança de partido", "P1|Filiação"]);
