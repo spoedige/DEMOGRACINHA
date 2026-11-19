@@ -1,0 +1,39 @@
+{
+  "_cenario": "Catálogo artificial de eventos para teste do mecanismo (D77). Não é o catálogo do jogo; textos provisórios.",
+  "_parametros": "Todas as probabilidades, prazos, escalas e magnitudes (calibrar). Enquadramento legal da inelegibilidade (a confirmar).",
+  "eventos": [
+    { "id": "convite-oposicao", "familia": "convite", "titulo": "Convite da oposição", "texto": "Lideranças de oposição procuram você.", "tipo": "atrasado",
+      "opcoes": [{ "id": "ouvir", "texto": "Ouvir a proposta", "efeitos": [{ "alvo": "relacoes.executivo", "delta": -0.02 }, { "alvo": "indicadores.local.notoriedade", "delta": 0.01 }] }] },
+    { "id": "demanda-bairro", "familia": "demanda", "titulo": "Cobrança do bairro", "texto": "Moradores cobram a continuidade do mutirão.", "tipo": "atrasado",
+      "opcoes": [{ "id": "registrar", "texto": "Registrar a cobrança", "efeitos": [{ "alvo": "base.local.forca", "delta": -0.01 }] }] },
+    { "id": "cobranca-acordo", "familia": "retaliacao", "titulo": "Cobrança do acordo", "texto": "A liderança lembra o que foi combinado.", "tipo": "atrasado",
+      "opcoes": [{ "id": "registrar", "texto": "Registrar a cobrança", "efeitos": [{ "alvo": "relacoes.cupula", "delta": -0.02 }] }] },
+    { "id": "denuncia-propaganda", "familia": "conformidade", "titulo": "Questionamento da propaganda", "texto": "Adversários questionam a panfletagem.", "tipo": "atrasado",
+      "opcoes": [{ "id": "registrar", "texto": "Registrar o questionamento", "efeitos": [{ "alvo": "indicadores.local.rejeicao", "delta": 0.01 }] }] },
+    { "id": "exposicao-favor", "familia": "exposicao", "titulo": "Reportagem sobre a emenda", "texto": "A imprensa liga a emenda a um favor.", "tipo": "atrasado",
+      "condicao": [{ "alvo": "personagem.statusJuridico", "op": "==", "valor": "regular" }],
+      "reagendar": { "emJanelas": 2, "incrementoProb": 0.1, "probMax": 0.8 },
+      "opcoes": [{ "id": "investigacao", "texto": "Investigação aberta", "efeitos": [{ "alvo": "indicadores.local.rejeicao", "delta": 0.03 }],
+        "juridico": "investigar", "estadoTemporario": { "tipo": "investigado", "duracaoJanelas": 8 },
+        "agendar": { "eventoId": "denuncia-mp", "emJanelas": 3, "prob": 0.5 } }] },
+    { "id": "denuncia-mp", "familia": "juridico", "titulo": "Denúncia oferecida", "texto": "A investigação vira denúncia.", "tipo": "atrasado",
+      "condicao": [{ "alvo": "personagem.statusJuridico", "op": "==", "valor": "investigado" }, { "alvo": "personagem.denunciaRegistrada", "op": "==", "valor": false }],
+      "opcoes": [{ "id": "denuncia", "texto": "Denúncia registrada", "efeitos": [{ "alvo": "relacoes.cupula", "delta": -0.05 }],
+        "juridico": "denunciar", "agendar": { "eventoId": "julgamento", "emJanelas": 4, "prob": 0.6 } }] },
+    { "id": "julgamento", "familia": "juridico", "titulo": "Julgamento", "texto": "O colegiado julga a denúncia.", "tipo": "atrasado",
+      "enquadramentoInelegibilidade": true,
+      "condicao": [{ "alvo": "personagem.statusJuridico", "op": "==", "valor": "investigado" }, { "alvo": "personagem.denunciaRegistrada", "op": "==", "valor": true }],
+      "opcoes": [{ "id": "condenacao", "texto": "Condenação", "efeitos": [{ "alvo": "indicadores.local.rejeicao", "delta": 0.05 }],
+        "juridico": "condenar", "agendar": { "eventoId": "reconhecimento-inelegibilidade", "emJanelas": 1, "prob": 1 } }] },
+    { "id": "reconhecimento-inelegibilidade", "familia": "juridico", "titulo": "Inelegibilidade reconhecida", "texto": "A condenação se enquadra em hipótese de inelegibilidade (a confirmar).", "tipo": "atrasado",
+      "condicao": [{ "alvo": "personagem.statusJuridico", "op": "==", "valor": "condenado" }, { "alvo": "personagem.condenacaoEnquadrada", "op": "==", "valor": true }],
+      "opcoes": [{ "id": "reconhecida", "texto": "Inelegibilidade registrada", "efeitos": [], "juridico": "reconhecerInelegibilidade" }] },
+    { "id": "crise-gestao", "familia": "crise", "titulo": "Crise de imagem", "texto": "A rejeição cresce e a imprensa pede explicações.", "tipo": "gatilho",
+      "limiar": { "alvo": "indicadores.local.rejeicao", "op": ">=", "valor": 0.04, "escala": 0.1 }, "probBase": 0.6, "bloqueioJanelas": 4,
+      "opcoes": [
+        { "id": "nota", "texto": "Divulgar nota de esclarecimento", "contencao": true, "efeitos": [{ "alvo": "indicadores.local.rejeicao", "delta": -0.005 }] },
+        { "id": "enfrentar", "texto": "Enfrentar a imprensa", "efeitos": [{ "alvo": "indicadores.local.notoriedade", "delta": 0.02 }, { "alvo": "indicadores.local.rejeicao", "delta": 0.01 }] },
+        { "id": "culpar-aliado", "texto": "Atribuir a culpa a um aliado", "efeitos": [{ "alvo": "indicadores.local.rejeicao", "delta": -0.01 }, { "alvo": "relacoes.bancada", "delta": -0.05 }] }
+      ] }
+  ]
+}

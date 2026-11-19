@@ -1134,6 +1134,9 @@ var Elegibilidade = (function () {
         if (Datas.idade(Datas.ler(c.dataNascimento, "dataNascimento de " + c.id), ref) < IDADE[cargo][0]) motivos.push("idadeMinima");
         if (!membros.has(c.partidoId)) Comum.erro("candidato " + c.id + " de partido fora da lista " + l.id);
         if (Datas.cmp(Datas.ler(c.dataFiliacao, "dataFiliacao de " + c.id), prazoFiliacao) > 0) motivos.push("filiacaoForaDoPrazo");
+        // inelegibilidade reconhecida na escada jurídica da carreira (D77; eventos-e-risco 6)
+        if (c.inelegibilidadeReconhecida !== undefined && typeof c.inelegibilidadeReconhecida !== "boolean") Comum.erro("inelegibilidadeReconhecida de " + c.id + ": booleano");
+        if (c.inelegibilidadeReconhecida === true) motivos.push("inelegibilidadeReconhecida");
         var m = c.mandatoAtual;
         if (m) {
           if (typeof m.cargo !== "string" || !Object.prototype.hasOwnProperty.call(IDADE, m.cargo)) Comum.erro("mandatoAtual.cargo inválido: " + c.id);
@@ -1716,7 +1719,7 @@ var Eleicao = (function () {
 // altera o estado recebido. Nenhum valor inicial ou taxa nasce aqui: valores vêm de dados.inicio (calibrar) e regras
 // sem fórmula documentada (decisão automática, desfecho de compromisso, evento, manutenção) vêm injetadas em entrada.opcoes.
 var Carreira = (function () {
-  var SAVE_VERSION = 1;
+  var SAVE_VERSION = 2; // D77: estados temporários, escada jurídica e bloqueio de famílias de evento
   var RITMOS = ["intenso", "normal", "express"];
   var ESCOPOS = ["local", "estadual", "nacional"];
   var APTIDOES = ["articulacao", "comunicacao", "mobilizacao", "gestao", "estrategia", "resiliencia"];
@@ -1724,6 +1727,8 @@ var Carreira = (function () {
   var TIPOS_COMPROMISSO = ["apoioEleitoral", "cargoOuEspaco", "votoEmProposta", "repasseInstitucional"];
   // recurso de cumprimento verificável no MVP: Capital de Entrega (inteiro) ou relação (real em [0, 1])
   var RECURSOS = ["capitalEntrega", "cupula", "bancada", "executivo"];
+  var STATUS_JURIDICO = ["regular", "investigado", "condenado", "inelegibilidadeReconhecida"]; // eventos-e-risco 6
+  var TEMPORARIOS = ["investigado", "afastamentoCautelar", "licencaSaude", "licencaNomeacao"];     // eventos-e-risco 6.1
   var LIMITE_ATIVOS = 5, LIMITE_BASE = 10; // D12; carreira-e-poder 10.2 (11º município: lacuna, erro)
   // início de cada janela (GDD 3; limites de J2 e J6 e trimestres do ano calmo são convenção do jogo, D75; a confirmar)
   var JANELAS = {
@@ -1764,6 +1769,17 @@ var Carreira = (function () {
     else unit(c.custo.quantidade, campo + ".custo.quantidade");
     Comum.real(c.custoPoliticoDeRomper, campo + ".custoPoliticoDeRomper", 0);
     if (["ativo", "cumprido", "rompido"].indexOf(c.estado) < 0) erro(campo + ".estado inválido");
+    // desfecho em dados (D77), opcional: sem eles, vale entrada.opcoes.aplicarDesfecho (D75)
+    if (c.efeitosCumprir !== undefined) lista(c.efeitosCumprir, campo + ".efeitosCumprir");
+    if (c.efeitosRomper !== undefined) lista(c.efeitosRomper, campo + ".efeitosRomper");
+    if (c.retaliacao !== undefined && c.retaliacao !== null) {
+      obj(c.retaliacao, campo + ".retaliacao"); Comum.idv(c.retaliacao.eventoId, campo + ".retaliacao.eventoId");
+      Comum.inteiro(c.retaliacao.emJanelas, campo + ".retaliacao.emJanelas", 1); unit(c.retaliacao.prob, campo + ".retaliacao.prob");
+    }
+  }
+  function validarTempo(x, campo) {
+    obj(x, campo); Comum.inteiro(x.ano, campo + ".ano", 2026);
+    if (janelasDo(x.ano).indexOf(x.janela) < 0) erro(campo + ".janela inválida para o ano");
   }
 
   function validar(e) {
@@ -1786,7 +1802,14 @@ var Carreira = (function () {
     Comum.inteiro(p.potencial, "personagem.potencial", 0); if (p.potencial > 100) erro("personagem.potencial: inteiro em [0, 100]");
     ["aptidoes", "capacidade"].forEach(function (k) { obj(p[k], "personagem." + k); APTIDOES.forEach(function (a) { unit(p[k][a], "personagem." + k + "." + a); }); });
     Comum.real(p.experiencia, "personagem.experiencia", 0); unit(p.saude, "personagem.saude");
-    if (typeof p.statusJuridico !== "string") erro("personagem.statusJuridico: texto");
+    if (STATUS_JURIDICO.indexOf(p.statusJuridico) < 0) erro("personagem.statusJuridico fora da lista fechada: " + p.statusJuridico);
+    if (typeof p.denunciaRegistrada !== "boolean" || typeof p.condenacaoEnquadrada !== "boolean") erro("personagem.denunciaRegistrada e condenacaoEnquadrada: booleanos");
+    lista(p.estadosTemporarios, "personagem.estadosTemporarios").forEach(function (x, i) {
+      Comum.idv(x.id, "estadoTemporario " + i + ".id");
+      if (TEMPORARIOS.indexOf(x.tipo) < 0) erro("estadoTemporario " + x.id + ".tipo inválido");
+      Comum.idv(x.origem, "estadoTemporario " + x.id + ".origem");
+      validarTempo(x.inicio, "estadoTemporario " + x.id + ".inicio"); validarTempo(x.fim, "estadoTemporario " + x.id + ".fim");
+    });
     ["tags", "arquivoVermelho", "ambicao"].forEach(function (k) { lista(p[k], "personagem." + k); });
     obj(p.mandatosConsecutivos, "personagem.mandatosConsecutivos");
     obj(e.indicadores, "indicadores");
@@ -1827,6 +1850,8 @@ var Carreira = (function () {
       if (janelasDo(x.janelaAlvo.ano).indexOf(x.janelaAlvo.janela) < 0) erro("evento " + x.id + ": janelaAlvo inválida");
     });
     lista(e.historico, "historico");
+    obj(e.eventosRecentes, "eventosRecentes");
+    Object.keys(e.eventosRecentes).forEach(function (f) { Comum.idv(f, "eventosRecentes"); validarTempo(e.eventosRecentes[f], "eventosRecentes." + f); });
     return e;
   }
 
@@ -1843,9 +1868,14 @@ var Carreira = (function () {
       personagem: copia(obj(ini.personagem, "inicio.personagem")),
       indicadores: copia(ini.indicadores), bolsos: copia(ini.bolsos), relacoes: copia(ini.relacoes), grupo: copia(ini.grupo),
       base: copia(ini.base), compromissos: { ativos: [], historico: [] }, cargos: { mandatos: [], nomeacoes: [] },
-      basesParlamentares: [], conjuntura: copia(ini.conjuntura || {}), filaEventos: copia(ini.filaEventos || []), historico: []
+      basesParlamentares: [], conjuntura: copia(ini.conjuntura || {}), filaEventos: copia(ini.filaEventos || []), historico: [],
+      eventosRecentes: {}
     };
-    e.personagem.municipioLocal = e.personagem.municipioLocal || e.personagem.municipioInicial;
+    var pp = e.personagem;
+    pp.municipioLocal = pp.municipioLocal || pp.municipioInicial;
+    if (pp.estadosTemporarios === undefined) pp.estadosTemporarios = [];
+    if (pp.denunciaRegistrada === undefined) pp.denunciaRegistrada = false;
+    if (pp.condenacaoEnquadrada === undefined) pp.condenacaoEnquadrada = false;
     validar(e);
     return { resultado: e, rngStateNext: rngState };
   }
@@ -1869,7 +1899,9 @@ var Carreira = (function () {
     var t = e.tempo;
     var vencidos = e.compromissos.ativos.filter(function (c) { return c.prazo.ano === t.ano && c.prazo.janela === t.janela; });
     if (vencidos.length === 0) return;
-    if (typeof opcoes.aplicarDesfecho !== "function") erro("aplicarDesfecho necessário para compromisso vencido (calibrar)");
+    var emDados = function (c) { return c.efeitosCumprir !== undefined || c.efeitosRomper !== undefined; };
+    if (vencidos.some(function (c) { return !emDados(c); }) && typeof opcoes.aplicarDesfecho !== "function")
+      erro("aplicarDesfecho necessário para compromisso vencido sem desfecho em dados (calibrar)");
     var ordem;
     var escolha = Object.create(null);
     if (manual) {
@@ -1892,8 +1924,12 @@ var Carreira = (function () {
       e.compromissos.ativos = e.compromissos.ativos.filter(function (x) { return x.id !== c.id; });
       var fechado = copia(c); fechado.estado = desfecho; fechado.encerradoEm = { ano: t.ano, janela: t.janela };
       e.compromissos.historico.push(fechado);
-      var r = opcoes.aplicarDesfecho(copia(e), copia(fechado), desfecho);
-      Object.keys(r).forEach(function (k) { e[k] = r[k]; });
+      if (emDados(c)) Cartas.aplicarEfeitos(e, (desfecho === "cumprido" ? c.efeitosCumprir : c.efeitosRomper) || []);
+      else { var r = opcoes.aplicarDesfecho(copia(e), copia(fechado), desfecho); Object.keys(r).forEach(function (k) { e[k] = r[k]; }); }
+      if (desfecho === "rompido" && c.retaliacao) {
+        e.filaEventos.push({ id: c.id + ":retaliacao", janelaAlvo: deslocar(t, c.retaliacao.emJanelas),
+          dados: { eventoId: c.retaliacao.eventoId, origemCompromissoId: c.id, prob: c.retaliacao.prob, condicao: null, nivelCorrupcao: null } });
+      }
       oc.push({ tipo: "compromisso", id: c.id, desfecho: desfecho });
     });
   }
@@ -1915,9 +1951,23 @@ var Carreira = (function () {
       if (m.situacao === "eleito" && m.inicio <= hoje) { m.situacao = "exercicio"; oc.push({ tipo: "posse", disputaId: m.disputaId }); }
       if (m.situacao === "exercicio" && m.fim < hoje) { m.situacao = "encerrado"; oc.push({ tipo: "fimMandato", disputaId: m.disputaId }); }
     });
+    // estados temporários que chegaram ao fim (6.1); investigado vencido sem denúncia: arquivamento automático
+    var pe = e.personagem;
+    pe.estadosTemporarios = pe.estadosTemporarios.filter(function (x) {
+      if (cmpPrazo({ prazo: t }, { prazo: x.fim }) < 0) return true;
+      if (x.tipo === "investigado" && pe.statusJuridico === "investigado" && !pe.denunciaRegistrada) {
+        pe.statusJuridico = "regular"; oc.push({ tipo: "arquivamento", origem: x.origem });
+      }
+      oc.push({ tipo: "fimEstadoTemporario", id: x.id }); return false;
+    });
     // 2. compromissos
     vencerCompromissos(e, manual, en.decisoes, opcoes, oc);
-    // 3. eventos da janela, em ordem de id
+    // 3. eventos da janela: com catálogo, módulo Eventos (D77); sem catálogo, resolvedor injetado (D75)
+    if (dados && dados.eventos !== undefined) {
+      var ev = Eventos.resolverJanela(e, dados, { manual: manual, decisoes: en.decisoes, previa: !!en.previa });
+      e = ev.estado; ev.ocorrencias.forEach(function (o) { oc.push(o); });
+      return { e: e, oc: oc, manual: manual, t: t, en: en, opcoes: opcoes, pendentes: ev.pendentes };
+    }
     var agora = e.filaEventos.filter(function (x) { return x.janelaAlvo.ano === t.ano && x.janelaAlvo.janela === t.janela; }).sort(Comum.porId);
     if (agora.length && typeof opcoes.resolverEvento !== "function") erro("resolverEvento necessário para evento na janela (sistema de eventos)");
     e.filaEventos = e.filaEventos.filter(function (x) { return agora.indexOf(x) < 0; });
@@ -1925,13 +1975,15 @@ var Carreira = (function () {
       var r = opcoes.resolverEvento(copia(e), copia(x), e.rng.eventos);
       e = r.estado; e.rng.eventos = r.rngStateNext; oc.push({ tipo: "evento", id: x.id });
     });
-    return { e: e, oc: oc, manual: manual, t: t, en: en, opcoes: opcoes };
+    return { e: e, oc: oc, manual: manual, t: t, en: en, opcoes: opcoes, pendentes: [] };
   }
   // Prévia da mão da janela, após os passos 1 a 3, sem alterar nada: o que a interface mostra antes da escolha.
+  // Duas fases (D77): primeiro os eventos que pedem escolha; a mão só vem quando todas as escolhas foram informadas.
   function previa(estado, dados, entrada) {
     if (!dados || dados.cartas === undefined) erro("previa exige catálogo de cartas");
-    var a = abrir(estado, dados, entrada);
-    return Cartas.montarMao(a.e, dados, a.e.rng.cartas).resultado;
+    var en = copia(entrada || {}); en.opcoes = (entrada || {}).opcoes; en.previa = true;
+    var a = abrir(estado, dados, en);
+    return { eventos: a.pendentes, mao: a.pendentes.length ? null : Cartas.montarMao(a.e, dados, a.e.rng.cartas).resultado };
   }
   function avancar(estado, dados, entrada) {
     var a = abrir(estado, dados, entrada);
@@ -1954,6 +2006,7 @@ var Carreira = (function () {
       ((dados && dados.eleicoes && Comum.proprio(dados.eleicoes, String(t.ano))) || []).forEach(function (cen) {
         var op = typeof opcoes.opcoesEleicao === "function" ? opcoes.opcoesEleicao(cen) : {};
         var dd = copia(cen); dd.semente = e.semente;
+        (dd.candidatos || []).forEach(function (c) { if (c.id === e.personagem.id && e.personagem.statusJuridico === "inelegibilidadeReconhecida") c.inelegibilidadeReconhecida = true; });
         var r = Eleicao.executar({ opcoes: op }, dd, RNG.criar(e.semente, "eleicao", cen.eleicaoId, cen.disputa.id)).resultado;
         var eleito = r.eleitos.indexOf(e.personagem.id) >= 0;
         if (eleito) e.cargos.mandatos.push({ disputaId: r.disputaId, cargo: r.cargo, inicio: cen.posse.dataPosse, fim: cen.posse.fimMandato, situacao: "eleito" });
@@ -1978,14 +2031,31 @@ var Carreira = (function () {
 
   return Object.freeze({ SAVE_VERSION: SAVE_VERSION, JANELAS: JANELAS, MANUAIS: MANUAIS, criar: criar, avancar: avancar,
     validar: validar, ehManual: ehManual, inicioJanela: inicioJanela, previa: previa, deslocar: deslocar,
-    tipoAno: tipoAno, janelasDo: janelasDo, RECURSOS: RECURSOS, TIPOS_COMPROMISSO: TIPOS_COMPROMISSO, LIMITE_ATIVOS: LIMITE_ATIVOS });
+    tipoAno: tipoAno, janelasDo: janelasDo, cmpTempo: function (a, b) { return cmpPrazo({ prazo: a }, { prazo: b }); },
+    STATUS_JURIDICO: STATUS_JURIDICO, TEMPORARIOS: TEMPORARIOS, RECURSOS: RECURSOS, TIPOS_COMPROMISSO: TIPOS_COMPROMISSO, LIMITE_ATIVOS: LIMITE_ATIVOS });
 })();
 
 /* == SAVE == */
 // Save (D13, D75): JSON canônico (chaves em ordem), migração em cadeia, export síncrono "DG1:" + base64 do UTF-8.
 var Save = (function () {
   var PREFIXO = "DG1:";
-  var MIGRAR = {}; // MIGRAR[n]: estado na versão n => estado na versão n + 1. Vazio na versão 1.
+  // MIGRAR[n]: estado na versão n => estado na versão n + 1.
+  var MIGRAR = Object.freeze({
+    // 1 -> 2 (D77): estados temporários, marcas da escada jurídica, bloqueio de famílias, desfecho de compromisso em dados
+    1: function (v) {
+      var e = JSON.parse(JSON.stringify(v)), p = e.personagem || {};
+      if (p.statusJuridico !== "regular") Comum.erro("migração 1: statusJuridico sem correspondência na lista fechada: " + p.statusJuridico);
+      p.estadosTemporarios = []; p.denunciaRegistrada = false; p.condenacaoEnquadrada = false;
+      e.eventosRecentes = {};
+      var cs = e.compromissos || {};
+      (cs.ativos || []).concat(cs.historico || []).forEach(function (c) {
+        if (c.efeitosCumprir === undefined && c.efeitosRomper === undefined) { c.efeitosCumprir = []; c.efeitosRomper = []; }
+        if (c.retaliacao === undefined) c.retaliacao = null;
+      });
+      e.saveVersion = 2;
+      return e;
+    }
+  });
   function canonico(x) {
     if (Array.isArray(x)) return "[" + x.map(canonico).join(",") + "]";
     if (x && typeof x === "object") return "{" + Object.keys(x).sort().map(function (k) { return JSON.stringify(k) + ":" + canonico(x[k]); }).join(",") + "}";
@@ -2103,6 +2173,9 @@ var Cartas = (function () {
       if (Carreira.RECURSOS.indexOf(k.custo && k.custo.recurso) < 0) erro(campo + ": recurso do compromisso sem verificação de saldo");
       if (k.tipo === "repasseInstitucional" && k.custo.recurso !== "capitalEntrega") erro(campo + ": repasse só com Capital de Entrega (10.3)");
       Comum.real(k.custoPoliticoDeRomper, campo + ".compromisso.custoPoliticoDeRomper", 0);
+      efeitosValidos(k.efeitosCumprir || [], campo + ".compromisso.efeitosCumprir");
+      efeitosValidos(k.efeitosRomper || [], campo + ".compromisso.efeitosRomper");
+      if (k.retaliacao) { Comum.idv(k.retaliacao.eventoId, campo + ".retaliacao.eventoId"); Comum.inteiro(k.retaliacao.emJanelas, campo + ".retaliacao.emJanelas", 1); Comum.real(k.retaliacao.prob, campo + ".retaliacao.prob", 0, 1); }
     } else {
       if (CUSTOS.indexOf(cu.recurso) < 0) erro(campo + ": moeda de custo inválida " + cu.recurso);
       if (/^(caixaPessoal|fundoCampanha|capitalEntrega)$/.test(cu.recurso)) Comum.inteiro(cu.quantidade, campo + ".custo.quantidade", 1);
@@ -2160,6 +2233,11 @@ var Cartas = (function () {
     var usaBase = (c.efeitos || []).concat(c.efeitosFalha || [], (c.risco && c.risco.efeitos) || []).some(function (x) { return x.alvo === "base.local.forca"; });
     if (usaBase && !Comum.proprio(e.base.municipios, e.personagem.municipioLocal)) return false; // sem base local, sem alvo
     if (c.segura) return true;
+    // estados temporários (6.1): licença de saúde, só a segura; afastamento cautelar, nada com Capital de Entrega
+    var tipos = e.personagem.estadosTemporarios.map(function (x) { return x.tipo; });
+    if (tipos.indexOf("licencaSaude") >= 0) return false;
+    if (tipos.indexOf("afastamentoCautelar") >= 0 && ((c.custo.recurso === "capitalEntrega") ||
+      (c.efeitos || []).concat(c.efeitosFalha || []).some(function (x) { return x.alvo === "bolsos.capitalEntrega"; }))) return false;
     var cu = c.custo;
     if (cu.compromisso) return e.compromissos.ativos.length < Carreira.LIMITE_ATIVOS;
     return saldoDe(e, cu.recurso) + Comum.TOL >= cu.quantidade; // talento nunca bloqueia; saldo sim
@@ -2234,7 +2312,8 @@ var Cartas = (function () {
       var k = c.custo.compromisso;
       e.compromissos.ativos.push({ id: marca, tipo: k.tipo, ator: k.ator, objeto: k.objeto, prazo: Carreira.deslocar(t, k.prazoEmJanelas),
         custo: k.custo, contrapartida: k.contrapartida, seCumprir: k.seCumprir, seRomper: k.seRomper,
-        custoPoliticoDeRomper: k.custoPoliticoDeRomper, estado: "ativo", origemCartaId: c.id });
+        custoPoliticoDeRomper: k.custoPoliticoDeRomper, estado: "ativo", origemCartaId: c.id,
+        efeitosCumprir: k.efeitosCumprir || [], efeitosRomper: k.efeitosRomper || [], retaliacao: k.retaliacao || null });
     } else if (c.custo) {
       var rec = c.custo.recurso;
       if (saldoDe(e, rec) + Comum.TOL < c.custo.quantidade) erro("saldo insuficiente para a carta " + c.id);
@@ -2258,14 +2337,207 @@ var Cartas = (function () {
     return { resultado: { estado: e, sucesso: sucesso, risco: risco }, rngStateNext: r };
   }
 
-  return Object.freeze({ validarCatalogo: validarCatalogo, montarMao: montarMao, jogar: jogar, ajustarIndicadores: ajustarIndicadores });
+  return Object.freeze({ validarCatalogo: validarCatalogo, montarMao: montarMao, jogar: jogar, ajustarIndicadores: ajustarIndicadores,
+    aplicarEfeitos: aplicar, efeitosValidos: efeitosValidos, ESTOQUES: ESTOQUES, RELACOES: RELACOES });
+})();
+
+/* == EVENTOS == */
+// Eventos e risco (eventos-e-risco 1, 3, 5, 6 e 6.1; D77). Evento é dado: catálogo com condições declarativas,
+// opções e magnitudes (calibrar). Fluxo eventos: um sorteio por item vencido da fila e um por gatilho, dispare ou não.
+var Eventos = (function () {
+  var erro = Comum.erro;
+  var OPS = ["<", "<=", ">", ">=", "==", "!=", "contem"];
+  var JURIDICO = { // transição: estado de partida exigido na condição do evento (6)
+    investigar: { de: "regular" }, arquivar: { de: "investigado" }, denunciar: { de: "investigado", denuncia: false },
+    condenar: { de: "investigado", denuncia: true }, reconhecerInelegibilidade: { de: "condenado", enquadrada: true }
+  };
+  var ESPECIAIS = { "personagem.statusJuridico": "texto", "personagem.denunciaRegistrada": "bool", "personagem.condenacaoEnquadrada": "bool",
+    "personagem.tags": "lista", "personagem.arquivoVermelho.length": "num", "cargos.exercicio": "lista" };
+
+  function tipoAlvo(alvo) {
+    if (ESPECIAIS[alvo]) return ESPECIAIS[alvo];
+    if (Cartas.ESTOQUES[alvo] || Cartas.RELACOES[alvo]) return "num";
+    return null;
+  }
+  function ler(e, alvo) {
+    var p = e.personagem;
+    switch (alvo) {
+      case "personagem.statusJuridico": return p.statusJuridico;
+      case "personagem.denunciaRegistrada": return p.denunciaRegistrada;
+      case "personagem.condenacaoEnquadrada": return p.condenacaoEnquadrada;
+      case "personagem.tags": return p.tags;
+      case "personagem.arquivoVermelho.length": return p.arquivoVermelho.length;
+      case "cargos.exercicio": return e.cargos.mandatos.filter(function (m) { return m.situacao === "exercicio"; }).map(function (m) { return m.cargo; });
+      case "base.local.forca": var b = Comum.proprio(e.base.municipios, p.municipioLocal); return b ? b.forca : 0;
+    }
+    var o = e, ps = alvo.split(".");
+    for (var i = 0; i < ps.length; i++) o = o[ps[i]];
+    return o;
+  }
+  function testa(x, op, v) {
+    switch (op) {
+      case "<": return x < v; case "<=": return x <= v; case ">": return x > v; case ">=": return x >= v;
+      case "==": return x === v; case "!=": return x !== v; case "contem": return Array.isArray(x) && x.indexOf(v) >= 0;
+    }
+  }
+  function validarCondicao(lista, campo) {
+    if (lista === undefined || lista === null) return [];
+    if (!Array.isArray(lista)) erro(campo + ": lista de testes");
+    lista.forEach(function (c, i) {
+      var t = tipoAlvo(c.alvo);
+      if (!t) erro(campo + "[" + i + "]: alvo desconhecido " + c.alvo);
+      if (OPS.indexOf(c.op) < 0) erro(campo + "[" + i + "]: operador inválido " + c.op);
+      if ((c.op === "contem") !== (t === "lista")) erro(campo + "[" + i + "]: contem só em lista, e lista só com contem");
+      if (t === "num" && (typeof c.valor !== "number" || !Number.isFinite(c.valor))) erro(campo + "[" + i + "]: valor numérico");
+      if ((t === "texto" || t === "bool") && c.op !== "==" && c.op !== "!=") erro(campo + "[" + i + "]: só == e != em " + c.alvo);
+      if (t === "bool" && typeof c.valor !== "boolean") erro(campo + "[" + i + "]: valor booleano");
+    });
+    return lista;
+  }
+  function vale(e, lista) { return (lista || []).every(function (c) { return testa(ler(e, c.alvo), c.op, c.valor); }); }
+  function exige(cond, alvo, valor) { return cond.some(function (c) { return c.alvo === alvo && c.op === "==" && c.valor === valor; }); }
+
+  function validarEvento(ev, ids) {
+    var campo = "evento " + Comum.idv(ev && ev.id, "evento.id");
+    Comum.idv(ev.familia, campo + ".familia");
+    if (typeof ev.titulo !== "string" || ev.titulo === "" || typeof ev.texto !== "string") erro(campo + ": titulo e texto obrigatórios");
+    if (ev.tipo !== "atrasado" && ev.tipo !== "gatilho") erro(campo + ".tipo: atrasado ou gatilho");
+    var cond = validarCondicao(ev.condicao, campo + ".condicao");
+    if (ev.tipo === "gatilho") {
+      var l = ev.limiar || erro(campo + ": gatilho exige limiar");
+      if (tipoAlvo(l.alvo) !== "num" || ["<", "<=", ">", ">="].indexOf(l.op) < 0) erro(campo + ".limiar: alvo numérico e comparação de ordem");
+      Comum.real(l.valor, campo + ".limiar.valor", -Infinity); Comum.real(l.escala, campo + ".limiar.escala", Number.MIN_VALUE);
+      Comum.real(ev.probBase, campo + ".probBase", 0, 1);
+    } else if (ev.limiar !== undefined || ev.probBase !== undefined) erro(campo + ": atrasado sem limiar nem probBase (a prob vem do agendamento)");
+    if (ev.bloqueioJanelas !== undefined) Comum.inteiro(ev.bloqueioJanelas, campo + ".bloqueioJanelas", 0);
+    if (ev.reagendar) {
+      Comum.inteiro(ev.reagendar.emJanelas, campo + ".reagendar.emJanelas", 1);
+      Comum.real(ev.reagendar.incrementoProb, campo + ".reagendar.incrementoProb", 0, 1); Comum.real(ev.reagendar.probMax, campo + ".reagendar.probMax", 0, 1);
+      if (ev.tipo !== "atrasado") erro(campo + ": reagendar só em evento atrasado");
+    }
+    if (ev.enquadramentoInelegibilidade !== undefined && typeof ev.enquadramentoInelegibilidade !== "boolean") erro(campo + ".enquadramentoInelegibilidade: booleano");
+    var ops = ev.opcoes;
+    if (!Array.isArray(ops) || ops.length < 1 || ops.length > 4) erro(campo + ": de 1 a 4 opções (eventos-e-risco 3)");
+    var oids = new Set(), alvos = new Set(), conten = 0;
+    ops.forEach(function (o) {
+      var c2 = campo + ".opcao " + Comum.idv(o.id, campo + ".opcao.id");
+      if (oids.has(o.id)) erro(c2 + " repetida"); oids.add(o.id);
+      if (typeof o.texto !== "string" || o.texto === "") erro(c2 + ": texto obrigatório");
+      if (o.contencao === true) conten++;
+      Cartas.efeitosValidos(o.efeitos || [], c2 + ".efeitos").forEach(function (x) { alvos.add(x.alvo); });
+      if (o.juridico) {
+        var j = JURIDICO[o.juridico] || erro(c2 + ".juridico inválido: " + o.juridico);
+        // a condição do evento precisa garantir o estado de partida: transição fora da tabela nunca ocorre (6)
+        if (!exige(cond, "personagem.statusJuridico", j.de)) erro(c2 + ": " + o.juridico + " exige condição statusJuridico == " + j.de);
+        if (j.denuncia !== undefined && !exige(cond, "personagem.denunciaRegistrada", j.denuncia)) erro(c2 + ": " + o.juridico + " exige condição denunciaRegistrada == " + j.denuncia);
+        if (j.enquadrada && !exige(cond, "personagem.condenacaoEnquadrada", true)) erro(c2 + ": reconhecer inelegibilidade exige condenação com enquadramento");
+        if (o.juridico === "investigar" && !(o.estadoTemporario && o.estadoTemporario.tipo === "investigado")) erro(c2 + ": investigar exige estado temporário investigado (prazo máximo, calibrar)");
+      }
+      if (o.estadoTemporario) {
+        if (Carreira.TEMPORARIOS.indexOf(o.estadoTemporario.tipo) < 0) erro(c2 + ".estadoTemporario.tipo inválido");
+        Comum.inteiro(o.estadoTemporario.duracaoJanelas, c2 + ".estadoTemporario.duracaoJanelas", 1);
+      }
+      if (o.agendar) {
+        if (!ids.has(o.agendar.eventoId)) erro(c2 + ": cadeia para evento desconhecido " + o.agendar.eventoId);
+        Comum.inteiro(o.agendar.emJanelas, c2 + ".agendar.emJanelas", 1); Comum.real(o.agendar.prob, c2 + ".agendar.prob", 0, 1);
+      }
+    });
+    if (alvos.size > 3) erro(campo + ": efeitos em mais de 3 variáveis (GDD 4)");
+    if (ops.length > 1 && conten !== 1) erro(campo + ": crise exige exatamente uma saída de contenção");
+  }
+  function validarCatalogo(dados) {
+    var evs = dados.eventos;
+    if (!Array.isArray(evs) || evs.length === 0) erro("eventos: catálogo não vazio");
+    var ids = new Set();
+    evs.forEach(function (ev) { Comum.idv(ev && ev.id, "evento.id"); if (ids.has(ev.id)) erro("evento repetido: " + ev.id); ids.add(ev.id); });
+    evs.forEach(function (ev) { validarEvento(ev, ids); });
+    // referências cruzadas: atrasos e retaliações das cartas
+    (dados.cartas || []).forEach(function (c) {
+      if (c.atraso && !ids.has(c.atraso.eventoId)) erro("carta " + c.id + ": atraso para evento desconhecido " + c.atraso.eventoId);
+      var k = c.custo && c.custo.compromisso;
+      if (k && k.retaliacao && !ids.has(k.retaliacao.eventoId)) erro("carta " + c.id + ": retaliação para evento desconhecido " + k.retaliacao.eventoId);
+    });
+    var m = new Map(); evs.forEach(function (ev) { m.set(ev.id, ev); });
+    return m;
+  }
+
+  function transicao(e, ev, j) {
+    var p = e.personagem;
+    if (j === "investigar") { p.statusJuridico = "investigado"; p.denunciaRegistrada = false; }
+    else if (j === "arquivar") { p.statusJuridico = "regular"; p.denunciaRegistrada = false; }
+    else if (j === "denunciar") p.denunciaRegistrada = true;
+    else if (j === "condenar") { p.statusJuridico = "condenado"; p.denunciaRegistrada = false; p.condenacaoEnquadrada = ev.enquadramentoInelegibilidade === true; }
+    else if (j === "reconhecerInelegibilidade") p.statusJuridico = "inelegibilidadeReconhecida";
+    if (j === "arquivar" || j === "condenar") p.estadosTemporarios = p.estadosTemporarios.filter(function (x) { return x.tipo !== "investigado"; });
+  }
+
+  // Passo 3 da janela. Primeiro todos os sorteios e disparos sobre o estado de abertura; depois as opções, em ordem
+  // (fila por id, depois gatilhos por id). Assim a lista de pendências da prévia não depende das escolhas.
+  function resolverJanela(estado, dados, ctx) {
+    var cat = validarCatalogo(dados);
+    var e = JSON.parse(JSON.stringify(estado)), t = e.tempo, rng = RNG.validar(e.rng.eventos), oc = [], pend = [];
+    var disparados = [];
+    var vencidos = e.filaEventos.filter(function (x) { return x.janelaAlvo.ano === t.ano && x.janelaAlvo.janela === t.janela; }).sort(Comum.porId);
+    e.filaEventos = e.filaEventos.filter(function (x) { return !(x.janelaAlvo.ano === t.ano && x.janelaAlvo.janela === t.janela); });
+    vencidos.forEach(function (it) {
+      var ev = cat.get(it.dados && it.dados.eventoId) || erro("evento desconhecido na fila: " + (it.dados && it.dados.eventoId));
+      var u = RNG.decimal(rng); rng = u.rngStateNext;
+      var cond = vale(e, ev.condicao) && vale(e, validarCondicao(it.dados.condicao, "condicao do item " + it.id));
+      if (cond && u.valor < it.dados.prob) disparados.push({ id: it.id, ev: ev, item: it });
+      else {
+        oc.push({ tipo: "eventoNaoDisparou", id: it.id });
+        if (ev.reagendar) {
+          var n = (it.dados.reagendamentos || 0) + 1, base = it.dados.idBase || it.id;
+          e.filaEventos.push({ id: base + ":r" + n, janelaAlvo: Carreira.deslocar(t, ev.reagendar.emJanelas),
+            dados: Object.assign({}, it.dados, { prob: Math.min(ev.reagendar.probMax, it.dados.prob + ev.reagendar.incrementoProb), reagendamentos: n, idBase: base }) });
+        }
+      }
+    });
+    dados.eventos.filter(function (ev) { return ev.tipo === "gatilho"; }).sort(Comum.porId).forEach(function (ev) {
+      var u = RNG.decimal(rng); rng = u.rngStateNext;
+      var x = ler(e, ev.limiar.alvo), ultima = Comum.proprio(e.eventosRecentes, ev.familia);
+      var bloqueado = ultima && ev.bloqueioJanelas && Carreira.cmpTempo(t, Carreira.deslocar(ultima, ev.bloqueioJanelas)) < 0;
+      var habilitado = testa(x, ev.limiar.op, ev.limiar.valor) && vale(e, ev.condicao) && !bloqueado;
+      var chance = ev.probBase * Math.min(1, Math.abs(x - ev.limiar.valor) / ev.limiar.escala);
+      if (habilitado && u.valor < chance) disparados.push({ id: ev.id + ":" + t.ano + t.janela, ev: ev, item: null });
+    });
+    e.rng.eventos = rng;
+    var dec = (ctx.decisoes && ctx.decisoes.eventos) || {};
+    disparados.forEach(function (d) {
+      var ops = d.ev.opcoes, op;
+      if (ops.length === 1) op = ops[0];
+      else if (!ctx.manual) op = ops.filter(function (o) { return o.contencao === true; })[0];
+      else {
+        var esc = Comum.proprio(dec, d.id);
+        op = ops.filter(function (o) { return o.id === esc; })[0];
+        if (!op) {
+          if (!ctx.previa) erro("decisão ausente ou inválida para o evento " + d.id);
+          pend.push({ id: d.id, eventoId: d.ev.id, titulo: d.ev.titulo, texto: d.ev.texto,
+            opcoes: ops.map(function (o) { return { id: o.id, texto: o.texto, contencao: o.contencao === true }; }) });
+          op = ops.filter(function (o) { return o.contencao === true; })[0]; // provisória, só na prévia
+        }
+      }
+      Cartas.aplicarEfeitos(e, op.efeitos || []);
+      if (op.juridico) transicao(e, d.ev, op.juridico);
+      if (op.estadoTemporario) e.personagem.estadosTemporarios.push({ id: d.id + ":" + op.estadoTemporario.tipo, tipo: op.estadoTemporario.tipo,
+        origem: d.ev.id, inicio: { ano: t.ano, janela: t.janela }, fim: Carreira.deslocar(t, op.estadoTemporario.duracaoJanelas) });
+      if (op.agendar) e.filaEventos.push({ id: d.id + ":" + op.agendar.eventoId, janelaAlvo: Carreira.deslocar(t, op.agendar.emJanelas),
+        dados: { eventoId: op.agendar.eventoId, origemEventoId: d.ev.id, prob: op.agendar.prob, condicao: null,
+          nivelCorrupcao: d.item ? d.item.dados.nivelCorrupcao : null } });
+      e.eventosRecentes[d.ev.familia] = { ano: t.ano, janela: t.janela };
+      e.historico.push({ ano: t.ano, janela: t.janela, tipo: "evento", id: d.id, eventoId: d.ev.id, opcaoId: op.id, juridico: op.juridico || null });
+      oc.push({ tipo: "evento", id: d.id, eventoId: d.ev.id, opcaoId: op.id });
+    });
+    return { estado: e, ocorrencias: oc, pendentes: pend };
+  }
+  return Object.freeze({ validarCatalogo: validarCatalogo, resolverJanela: resolverJanela, JURIDICO: JURIDICO });
 })();
 
 return Object.freeze({ RNG: RNG, Dados: Dados, MaiorResto: MaiorResto, Pontuacao: Pontuacao, Comparecimento: Comparecimento,
   Proporcional: Proporcional, Majoritaria: Majoritaria, Senado: Senado, SegundoTurno: SegundoTurno, Cadeiras: Cadeiras,
   Cadastro: Cadastro, Sinteticos: Sinteticos, Opiniao: Opiniao, Maquina: Maquina, Campanha: Campanha,
   Datas: Datas, Elegibilidade: Elegibilidade, Posse: Posse, Fechamento: Fechamento, Desempate: Desempate, Eleicao: Eleicao,
-  Carreira: Carreira, Save: Save, Cartas: Cartas });
+  Carreira: Carreira, Save: Save, Cartas: Cartas, Eventos: Eventos });
 })();
 </script>
 </body>

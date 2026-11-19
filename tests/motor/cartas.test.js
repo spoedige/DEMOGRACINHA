@@ -141,7 +141,7 @@ test("invariante: popularidade e rejeição reduzidas na mesma proporção; com 
 
 test("Carreira.avancar com catálogo: prévia, escolha manual obrigatória e segura na automática", () => {
   const d = dadosCom(), e = novo();
-  const p = Carreira.previa(e, d, { decisoes: {} });
+  const p = Carreira.previa(e, d, { decisoes: {} }).mao;
   assert.throws(() => Carreira.avancar(e, d, { decisoes: {} }), ERRO);
   assert.throws(() => Carreira.avancar(e, d, { decisoes: { carta: "favor-emenda" } }), ERRO);
   const r = Carreira.avancar(e, d, { decisoes: { carta: p.acoes[0] } }).resultado;
@@ -156,7 +156,7 @@ test("ritmo não altera a simulação com cartas, quando as manuais jogam a segu
     const d = dadosCom();
     let e = novo((c) => { c.ritmo = ritmo; });
     while (e.tempo.ano < 2029) {
-      const dec = Carreira.ehManual(e) ? { carta: Carreira.previa(e, d, { decisoes: {} }).segura } : undefined;
+      const dec = Carreira.ehManual(e) ? { carta: Carreira.previa(e, d, { decisoes: {} }).mao.segura } : undefined;
       e = Carreira.avancar(e, d, { decisoes: dec }).resultado.estado;
     }
     const x = plano(e); delete x.ritmo; x.historico.forEach((h) => { delete h.manual; });

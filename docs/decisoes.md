@@ -424,3 +424,16 @@ Aprovada pelo autor antes da implementação.
 6. Ambição do personagem validada contra a lista fechada `dados.ambicoes`; segura escolhida pela maior contagem de ambições em comum, desempate por id.
 7. Convenção de invariante: popularidade e rejeição reduzidas na mesma proporção quando a soma passa da notoriedade; com notoriedade 0, zeradas.
 8. Catálogo artificial de teste em `tools/cenarios/cartas-exemplo.json`; o catálogo real é etapa própria.
+
+## D77. Eventos e risco, 19/11/2026
+
+Aprovada pelo autor antes da implementação.
+1. Evento é dado: catálogo com condição declarativa (testes ligados por "e"), opções e magnitudes (calibrar). Pontos de Inflexão, conjuntura autônoma e agentes ficam para a parte 2.
+2. Fluxo de eventos: um sorteio por item vencido da fila e um por gatilho, dispare ou não; na janela automática, a opção de contenção. O ritmo não altera a simulação.
+3. Gatilho: `chance = probBase × min(1, |x - valor| / escala)`, com bloqueio da família por N janelas. Descoberta atrasada: `prob = min(probMax, prob + incrementoProb)` a cada reagendamento.
+4. Desfecho de compromisso em dados (`efeitosCumprir`, `efeitosRomper`) e retaliação agendada quando rompido; `aplicarDesfecho` continua como alternativa.
+5. Escada jurídica com tabela fechada de transições; inelegibilidade só após condenação de evento com `enquadramentoInelegibilidade` (hipóteses legais a confirmar). Investigado vencido sem denúncia é arquivado na abertura da janela.
+6. Módulo 3 ganha o motivo `inelegibilidadeReconhecida`, lido da candidatura.
+7. Save na versão 2, com `MIGRAR[1]`. Os testes da D75 foram ajustados à versão 2 (versão atual 2; versão mais nova de teste 3; texto acentuado do teste de export passou de `statusJuridico`, agora em lista fechada, para `tags`).
+8. `Carreira.previa` em duas fases: `{ eventos, mao }`. Os testes da D76 e o simulador foram ajustados a esse formato.
+9. Catálogo artificial em `tools/cenarios/eventos-exemplo.json`; o compromisso da carta de acordo em `cartas-exemplo.json` ganhou desfecho em dados e retaliação.

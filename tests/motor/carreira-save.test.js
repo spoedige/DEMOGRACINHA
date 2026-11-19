@@ -31,7 +31,7 @@ test("criar: estado inicial válido em J1 de 2026, com os quatro fluxos de RNG",
   const e = novo();
   assert.deepEqual(plano(e.tempo), { ano: 2026, janela: "J1" });
   assert.deepEqual(Object.keys(e.rng).sort(), ["cartas", "eleicao", "eventos", "mundo"]);
-  assert.equal(e.saveVersion, 1); assert.equal(e.personagem.municipioLocal, "EX001");
+  assert.equal(e.saveVersion, 2); assert.equal(e.personagem.municipioLocal, "EX001");
   assert.equal(Carreira.validar(e), e);
 });
 
@@ -140,14 +140,14 @@ test("save: serialização canônica, leitura de volta e versão mais nova recus
   const t = Save.serializar(e);
   assert.equal(t, Save.serializar(JSON.parse(t)));
   assert.deepEqual(plano(Save.ler(t)), plano(e));
-  const futuro = JSON.parse(t); futuro.saveVersion = 2;
+  const futuro = JSON.parse(t); futuro.saveVersion = 3;
   assert.throws(() => Save.ler(JSON.stringify(futuro)), /mais nova/);
   assert.throws(() => Save.ler("{x"), ERRO);
   assert.throws(() => Save.ler(JSON.stringify({ a: 1 })), ERRO);
 });
 
 test("save: export e import por código de texto, com acentos e caracteres fora do BMP", () => {
-  const e = novo(); e.personagem.statusJuridico = "situação regular, ação arquivada 𝄞";
+  const e = novo(); e.personagem.tags = ["situação regular, ação arquivada 𝄞"];
   const cod = Save.exportar(e);
   assert.match(cod, /^DG1:[A-Za-z0-9+/]+={0,2}$/);
   assert.deepEqual(plano(Save.importar(cod)), plano(e));
