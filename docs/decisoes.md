@@ -492,3 +492,13 @@ Aprovada pelo autor antes da implementação.
 4. Fogos só na posse de mandato eletivo, uma vez por posse, cerca de 2,5 s, com céu noturno durante a queima.
 5. Movimento reduzido (sistema ou menu): nenhuma animação na cena, sem fogos; na posse, brilho dourado parado no céu, junto ao horizonte e atrás das cúpulas do Congresso, acima do painel de situação (ajuste do autor na revisão). Animações em laço pausadas com a aba em segundo plano.
 6. Correção de experiência encontrada nas capturas: cada fase nova começa no topo da página, com o horizonte à vista, e o foco vai ao título sem rolar.
+
+## D82. Candidatura livre com indicação partidária incerta, 20/11/2026
+
+Aprovada pelo autor antes da implementação.
+1. Em J3, aparece todo cargo com modelo de disputa no ano, na unidade do personagem, com o partido no modelo e o personagem apto no módulo 3. Saem as condições de entrada da D78: `oportunidades` vira `regrasIndicacao` (por cargo), mais `faixasFicha`. Cargo sem modelo ou sem regra não aparece.
+2. Lista proporcional: vaga garantida, sem incerteza. Cabeça de chapa: pedido de indicação, com `chance = clamp(base + cúpula × pc + notoriedade do escopo × pn + influência do grupo × pg - rejeição do escopo × pr + institucional × pi, piso, teto)` (calibrar). Institucional vale 1 com mandato já exercido, ou nomeação governamental, no escopo do cargo ou acima. Capital político não entra (D54).
+3. Sorteio no fluxo derivado `RNG.criar(semente, "mundo", "indicacao", ano, disputaId)`: não desloca outros sorteios; mesmo estado, mesmo resultado, por isso a prévia pode mostrar o desfecho.
+4. Indicação negada: segunda escolha obrigatória na mesma J3, só lista proporcional ou não concorrer, sem segundo pedido majoritário. A candidatura gravada ganha `indicacao` opcional (`pedida`, `concedida`, `pedidoDisputaId`), sem nova versão do save.
+5. Ficha só com faixas (calibrar): chance de indicação baixa abaixo de 0,35, média abaixo de 0,7, alta acima; competitividade pela popularidade no escopo frente ao concorrente mais popular de outras chapas (majoritária) ou à mediana da lista (proporcional): baixa abaixo da metade, média abaixo do líder, alta acima. A urna continua decidida pelo motor eleitoral.
+6. Os testes da D78 e de etapas seguintes foram ajustados aos ids `lista:` e `indicacao:` e à oferta livre; o simulador passou a preferir a lista no empate e a tratar a negativa.

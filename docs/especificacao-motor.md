@@ -374,3 +374,10 @@ Pendência para o módulo 9: a regra "F por último" do segmento livre (5.2) exi
 - Cartas do cargo: `pool.nomeacao` igual a `governamental`, `partidaria` ou lista de posições. Eventos: alvo de condição `cargos.nomeacaoAtiva` e opção `encerrarNomeacao`.
 - Módulo 3: candidatura com `nomeacaoGovernamental: true` é inapta com o motivo `semDesincompatibilizacao`.
 - `tools/sim.js --nomeacoes tools/cenarios/nomeacoes-exemplo.json` (exige `--cartas`): aceita a primeira oferta e permanece em J1.
+
+### 6.17 Candidatura livre com indicação incerta (D82)
+- Substitui, em 6.14, `dados.oportunidades` e suas condições: `dados.regrasIndicacao[cargo] = { tipo, custo, risco, chance: null | { base, pesos: { cupula, notoriedadeEscopo, grupo, rejeicaoEscopo, institucional }, piso, teto } }` e `dados.faixasFicha = { chance: [l1, l2], competitividade: [l1, l2] }`, todos (calibrar). `tipo` segue o cargo; proporcional sem chance; custo só em Caixa Pessoal.
+- `Candidatura.ofertas`: ids `lista:<disputa>` e `indicacao:<disputa>`; ficha com `chanceIndicacao` (`garantida`, `baixa`, `media`, `alta`) e `competitividade` (`baixa`, `media`, `alta`, `semReferencia`).
+- `Candidatura.chanceIndicacao(estado, regra, cargo)` e `Candidatura.institucional(estado, cargo)`: fórmula da D82, item 2. `Candidatura.sortearIndicacao(estado, dados, oferta)`: `{ concedida }`, fluxo derivado próprio.
+- Decisão em J3: `entrada.decisoes.candidatura` (oferta ou `naoConcorrer`); se o pedido de cabeça de chapa for negado, `entrada.decisoes.alternativa` (lista ou `naoConcorrer`) é obrigatória; alternativa sem negativa, ou alternativa majoritária, é erro. Prévia: com negativa, `candidaturas` traz só as listas e `indicacaoNegada = { ofertaId, disputaId, cargo }`.
+- Ocorrências `indicacaoConcedida` e `indicacaoNegada`; histórico com `{ tipo: "indicacao", concedida: false }` na negativa.

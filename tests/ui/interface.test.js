@@ -101,7 +101,8 @@ test("fluxo completo a 360 px: criação, janelas, eventos, candidatura, eleiç�
         await pg.click("[data-acao=confirmar]");
       } else if (h === "Oferta de candidatura") {
         vistos.add(h);
-        const oferta = pg.locator("[data-grupo=cand]").first();
+        const listas = pg.locator('[data-grupo=cand][data-valor^="lista:"]');            // vaga garantida na lista (D82)
+        const oferta = (await listas.count()) ? listas.first() : pg.locator("[data-grupo=cand][data-valor=naoConcorrer]");
         await oferta.click(); await capturar("06-candidatura");
         await pg.click("[data-acao=confirmar]");
       } else if (h === "Ações disponíveis") {

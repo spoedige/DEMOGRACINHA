@@ -1,6 +1,6 @@
 {
  "_cenario": "Modelos de disputa e catálogo de oportunidades artificiais (D78). Derivados de vereador.json, prefeito.json e senado.json, sem o personagem; o modelo de prefeito foi levado ao município EX001. Nenhum valor é dado histórico.",
- "_parametros": "Limiares, custos, exposição, Capital de Entrega por ciclo e notoriedade de protagonista (calibrar). Calendários (a confirmar).",
+ "_parametros": "Bases, pesos, pisos e tetos da chance de indicação, faixas da ficha, custos, exposição, Capital de Entrega por ciclo e notoriedade de protagonista (calibrar). Calendários (a confirmar).",
  "modelosDisputa": {
   "2026": [
    {
@@ -693,66 +693,6 @@
    }
   ]
  },
- "oportunidades": [
-  {
-   "id": "vaga-na-lista",
-   "tipo": "proporcional",
-   "cargos": [
-    "VEREADOR",
-    "DEPUTADO_ESTADUAL",
-    "DEPUTADO_DISTRITAL",
-    "DEPUTADO_FEDERAL"
-   ],
-   "condicao": [],
-   "custo": {
-    "recurso": "caixaPessoal",
-    "quantidade": 50000
-   },
-   "risco": "Disputa por votos dentro da própria lista."
-  },
-  {
-   "id": "indicacao-prefeitura",
-   "tipo": "cabecaDeChapa",
-   "cargos": [
-    "PREFEITO"
-   ],
-   "condicao": [
-    {
-     "alvo": "escopo.notoriedade",
-     "op": ">=",
-     "valor": 0.3
-    },
-    {
-     "alvo": "relacoes.cupula",
-     "op": ">=",
-     "valor": 0.25
-    }
-   ],
-   "custo": null,
-   "risco": "Exposição alta; derrota pesa na base local."
-  },
-  {
-   "id": "indicacao-senado",
-   "tipo": "cabecaDeChapa",
-   "cargos": [
-    "SENADOR"
-   ],
-   "condicao": [
-    {
-     "alvo": "escopo.notoriedade",
-     "op": ">=",
-     "valor": 0.05
-    },
-    {
-     "alvo": "relacoes.cupula",
-     "op": ">=",
-     "valor": 0.25
-    }
-   ],
-   "custo": null,
-   "risco": "Disputa estadual sem base fora do município."
-  }
- ],
  "regrasCargo": {
   "VEREADOR": {
    "exposicao": 0.02,
@@ -798,5 +738,121 @@
    "P1": "oposicao"
   },
   "nacional": {}
+ },
+ "regrasIndicacao": {
+  "VEREADOR": {
+   "tipo": "proporcional",
+   "custo": {
+    "recurso": "caixaPessoal",
+    "quantidade": 50000
+   },
+   "risco": "Disputa por votos dentro da própria lista.",
+   "chance": null
+  },
+  "DEPUTADO_ESTADUAL": {
+   "tipo": "proporcional",
+   "custo": {
+    "recurso": "caixaPessoal",
+    "quantidade": 100000
+   },
+   "risco": "Disputa por votos dentro da própria lista.",
+   "chance": null
+  },
+  "DEPUTADO_DISTRITAL": {
+   "tipo": "proporcional",
+   "custo": {
+    "recurso": "caixaPessoal",
+    "quantidade": 100000
+   },
+   "risco": "Disputa por votos dentro da própria lista.",
+   "chance": null
+  },
+  "DEPUTADO_FEDERAL": {
+   "tipo": "proporcional",
+   "custo": {
+    "recurso": "caixaPessoal",
+    "quantidade": 150000
+   },
+   "risco": "Disputa por votos dentro da própria lista.",
+   "chance": null
+  },
+  "PREFEITO": {
+   "tipo": "cabecaDeChapa",
+   "custo": null,
+   "risco": "Exposição alta; derrota pesa na base local.",
+   "chance": {
+    "base": 0.05,
+    "pesos": {
+     "cupula": 0.5,
+     "notoriedadeEscopo": 0.6,
+     "grupo": 0.3,
+     "rejeicaoEscopo": 0.8,
+     "institucional": 0.15
+    },
+    "piso": 0.02,
+    "teto": 0.95
+   }
+  },
+  "GOVERNADOR": {
+   "tipo": "cabecaDeChapa",
+   "custo": null,
+   "risco": "Disputa estadual exige base em vários municípios.",
+   "chance": {
+    "base": 0.0,
+    "pesos": {
+     "cupula": 0.5,
+     "notoriedadeEscopo": 0.6,
+     "grupo": 0.3,
+     "rejeicaoEscopo": 0.8,
+     "institucional": 0.15
+    },
+    "piso": 0.01,
+    "teto": 0.9
+   }
+  },
+  "SENADOR": {
+   "tipo": "cabecaDeChapa",
+   "custo": null,
+   "risco": "Disputa estadual sem base fora do município.",
+   "chance": {
+    "base": 0.0,
+    "pesos": {
+     "cupula": 0.5,
+     "notoriedadeEscopo": 0.6,
+     "grupo": 0.3,
+     "rejeicaoEscopo": 0.8,
+     "institucional": 0.15
+    },
+    "piso": 0.01,
+    "teto": 0.9
+   }
+  },
+  "PRESIDENTE": {
+   "tipo": "cabecaDeChapa",
+   "custo": null,
+   "risco": "Disputa nacional; a convenção pesa a projeção do nome no país.",
+   "chance": {
+    "base": -0.1,
+    "pesos": {
+     "cupula": 0.5,
+     "notoriedadeEscopo": 0.6,
+     "grupo": 0.3,
+     "rejeicaoEscopo": 0.8,
+     "institucional": 0.15
+    },
+    "piso": 0.005,
+    "teto": 0.85
+   }
+  }
+ },
+ "faixasFicha": {
+  "chance": [
+   0.35,
+   0.7
+  ],
+  "competitividade": [
+   0.5,
+   1
+  ]
  }
 }

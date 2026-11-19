@@ -78,14 +78,16 @@ function carreira(Motor, cen, dir, anos, catalogo, eventos, modelos, nomeacoes) 
     if (!catalogo) throw new Error("--eventos exige --cartas");
     dados.eventos = eventos.eventos;
   }
-  if (modelos) ["modelosDisputa", "oportunidades", "regrasCargo", "ambicoesCargos", "governos"].forEach((k) => { dados[k] = modelos[k]; });
+  if (modelos) ["modelosDisputa", "regrasIndicacao", "faixasFicha", "regrasCargo", "ambicoesCargos", "governos"].forEach((k) => { dados[k] = modelos[k]; });
   if (nomeacoes) {
     if (!catalogo) throw new Error("--nomeacoes exige --cartas");
     dados.posicoes = nomeacoes.posicoes;
   }
   const escolherOferta = (ofs) => {
     if (!ofs.length) return "naoConcorrer";
-    return ofs.slice().sort((a, b) => (b.ficha.aderenciaAmbicao - a.ficha.aderenciaAmbicao) || (a.id < b.id ? -1 : 1))[0].id;
+    // maior aderência; no empate, a lista proporcional (vaga garantida) antes do pedido de indicação; depois id
+    const peso = (o) => (o.tipo === "proporcional" ? 0 : 1);
+    return ofs.slice().sort((a, b) => (b.ficha.aderenciaAmbicao - a.ficha.aderenciaAmbicao) || (peso(a) - peso(b)) || (a.id < b.id ? -1 : 1))[0].id;
   };
   const decidir = () => {
     const dec = { compromissos: {}, eventos: {} };
@@ -95,6 +97,7 @@ function carreira(Motor, cen, dir, anos, catalogo, eventos, modelos, nomeacoes) 
     if (p.desincompatibilizacao) { dec.desincompatibilizacao = "permanecer"; p = Motor.Carreira.previa(e, dados, { opcoes, decisoes: dec }); }
     if (p.nomeacoes) { dec.nomeacao = p.nomeacoes[0].id; p = Motor.Carreira.previa(e, dados, { opcoes, decisoes: dec }); }
     if (p.candidaturas) { dec.candidatura = escolherOferta(p.candidaturas); p = Motor.Carreira.previa(e, dados, { opcoes, decisoes: dec }); }
+    if (p.indicacaoNegada) { dec.alternativa = escolherOferta(p.candidaturas); p = Motor.Carreira.previa(e, dados, { opcoes, decisoes: dec }); }
     dec.carta = p.mao.segura;
     return dec;
   };
@@ -103,6 +106,11 @@ function carreira(Motor, cen, dir, anos, catalogo, eventos, modelos, nomeacoes) 
     if (modelos && e.tempo.janela === "J3" && Motor.Carreira.tipoAno(e.tempo.ano) === "eleitoral") {
       const ofs = Motor.Candidatura.ofertas(e, dados);
       if (ofs.length) dec.candidatura = escolherOferta(ofs);
+      const pedida = ofs.find((o) => o.id === dec.candidatura);
+      if (pedida && pedida.tipo === "cabecaDeChapa" && !Motor.Candidatura.sortearIndicacao(e, dados, pedida).concedida) {
+        const listas = ofs.filter((o) => o.tipo === "proporcional");
+        dec.alternativa = listas.length ? escolherOferta(listas) : "naoConcorrer";   // indicação negada (D82)
+      }
     }
     return dec;
   };

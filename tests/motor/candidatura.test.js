@@ -1,5 +1,6 @@
 "use strict";
-// Candidatura em J3 e ficha de oportunidade (D78). Modelos e catálogo artificiais de tools/cenarios/candidatura-exemplo.json.
+// Candidatura em J3 e ficha de oportunidade (D78), candidatura livre com indicação incerta (D82).
+// Modelos e catálogo artificiais de tools/cenarios/candidatura-exemplo.json.
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const path = require("node:path");
@@ -20,36 +21,54 @@ const opcoes = { opcoesEleicao: (x) => sim.opcoesDoCenario(Motor, x) };
 const novo = (mod) => { const c = clone(CEN); delete c.eleicoes; if (mod) mod(c); return Carreira.criar({}, c, null).resultado; };
 const em = (e, ano, janela) => { const x = clone(e); x.tempo = { ano, janela }; return x; };
 const ids = (os) => plano(os.map((o) => o.id));
-const V = "vaga-na-lista:2028|VEREADOR|EX001|1", P = "indicacao-prefeitura:2028|PREFEITO|EX001|1", S = "indicacao-senado:2026|SENADOR|EX|1";
+const V = "lista:2028|VEREADOR|EX001|1", P = "indicacao:2028|PREFEITO|EX001|1", S = "indicacao:2026|SENADOR|EX|1";
+// fixa a chance de indicação do prefeito (piso = teto) para testar os dois desfechos
+const chanceFixa = (x) => (d) => { d.regrasIndicacao.PREFEITO.chance.piso = x; d.regrasIndicacao.PREFEITO.chance.teto = x; };
 
-test("catálogo de oportunidades válido; tipo, cargo, custo, risco e condição conferidos", () => {
+test("catálogo de regras de indicação válido; tipo, custo, risco, chance e faixas conferidos", () => {
   assert.doesNotThrow(() => Candidatura.validarCatalogo(dados()));
   const casos = [
-    (d) => { d.oportunidades[0].tipo = "convite"; },
-    (d) => { d.oportunidades[0].cargos.push("PREFEITO"); },                       // majoritário em oferta proporcional
-    (d) => { d.oportunidades[0].custo = { recurso: "fundoCampanha", quantidade: 1 }; }, // fundo só a partir de J4
-    (d) => { d.oportunidades[0].risco = ""; },
-    (d) => { d.oportunidades[1].condicao[0].alvo = "escopo.capital"; },
-    (d) => { delete d.regrasCargo; },
-    (d) => { delete d.governos; },
-    (d) => { d.oportunidades.push(clone(d.oportunidades[0])); }
+    (d) => { d.regrasIndicacao.VEREADOR.tipo = "cabecaDeChapa"; },                                   // tipo incompatível com o cargo
+    (d) => { d.regrasIndicacao.VEREADOR.custo = { recurso: "fundoCampanha", quantidade: 1 }; },       // fundo só a partir de J4
+    (d) => { d.regrasIndicacao.VEREADOR.risco = ""; },
+    (d) => { d.regrasIndicacao.VEREADOR.chance = d.regrasIndicacao.PREFEITO.chance; },               // proporcional sem chance (vaga garantida)
+    (d) => { delete d.regrasIndicacao.PREFEITO.chance; },
+    (d) => { d.regrasIndicacao.PREFEITO.chance.piso = 0.9; d.regrasIndicacao.PREFEITO.chance.teto = 0.5; },
+    (d) => { delete d.regrasIndicacao.PREFEITO.chance.pesos.institucional; },
+    (d) => { d.regrasIndicacao.CONSUL = d.regrasIndicacao.PREFEITO; },
+    (d) => { d.faixasFicha.chance = [0.7, 0.35]; },
+    (d) => { delete d.faixasFicha; }, (d) => { delete d.regrasCargo; }, (d) => { delete d.governos; }
   ];
   for (const m of casos) assert.throws(() => Candidatura.validarCatalogo(dados(m)), ERRO);
 });
 
-test("ofertas em J3 de 2028: lista do partido com ficha descritiva; cabeça de chapa só com as condições", () => {
+test("ofertas livres em J3 de 2028: todo cargo com modelo, ficha com faixas de chance e competitividade, sem condição de entrada", () => {
   const e = em(novo(), 2028, "J3");
   const o = Candidatura.ofertas(e, dados());
-  assert.deepEqual(ids(o), [V]);
-  assert.deepEqual(plano(o[0].ficha), { eleitoradoAlcancado: 60000, exposicaoEsperada: 0.02, recursoPolitico: 4, posicaoCoalizao: "aliado",
-    papelEsperado: "coadjuvante", custo: { recurso: "caixaPessoal", quantidade: 50000 }, risco: "Disputa por votos dentro da própria lista.", aderenciaAmbicao: 0 });
-  const f = clone(e); f.indicadores.local = { notoriedade: 0.6, popularidade: 0.3, rejeicao: 0.05 }; f.personagem.ambicao = ["executivo"];
+  assert.deepEqual(ids(o), [P, V]);                                                  // prefeito aparece mesmo com notoriedade baixa
+  assert.deepEqual(plano(o[1].ficha), { eleitoradoAlcancado: 60000, exposicaoEsperada: 0.02, recursoPolitico: 4, posicaoCoalizao: "aliado",
+    papelEsperado: "coadjuvante", custo: { recurso: "caixaPessoal", quantidade: 50000 }, risco: "Disputa por votos dentro da própria lista.", aderenciaAmbicao: 0,
+    chanceIndicacao: "garantida", competitividade: "media" });                      // 0,12 frente à mediana 0,15 da lista
+  assert.equal(o[0].ficha.chanceIndicacao, "baixa"); assert.equal(o[0].ficha.competitividade, "baixa"); assert.equal(o[0].listaOuChapaId, "CH1");
+  const f = clone(e); f.indicadores.local = { notoriedade: 0.6, popularidade: 0.35, rejeicao: 0.05 }; f.personagem.ambicao = ["executivo"]; f.relacoes.cupula = 0.7;
   const o2 = Candidatura.ofertas(f, dados((d) => { d.ambicoes = ["executivo"]; }));
-  assert.deepEqual(ids(o2), [P, V]);
+  assert.equal(o2[0].ficha.chanceIndicacao, "alta"); assert.equal(o2[0].ficha.competitividade, "alta");   // 0,35 frente a 0,30 do líder
   assert.equal(o2[0].ficha.papelEsperado, "protagonista"); assert.equal(o2[0].ficha.aderenciaAmbicao, 1);
-  assert.equal(o2[0].listaOuChapaId, "CH1");
-  f.relacoes.cupula = 0.2;
-  assert.deepEqual(ids(Candidatura.ofertas(f, dados())), [V]);
+});
+
+test("chance de indicação: fórmula linear, peso institucional no escopo ou acima, piso e teto", () => {
+  const e = em(novo(), 2028, "J3"), r = clone(CAND.regrasIndicacao.PREFEITO);
+  const base = 0.05 + 0.3 * 0.5 + 0.2 * 0.6 + 0 * 0.3 - 0.03 * 0.8;
+  assert.ok(Math.abs(Candidatura.chanceIndicacao(e, r, "PREFEITO") - base) < 1e-12);
+  const comMandato = clone(e); comMandato.cargos.mandatos = [{ disputaId: "D", cargo: "VEREADOR", unidadeId: "EX001", inicio: "2025-01-01", fim: "2028-12-31", situacao: "exercicio" }];
+  assert.ok(Math.abs(Candidatura.chanceIndicacao(comMandato, r, "PREFEITO") - (base + 0.15)) < 1e-12);       // mandato local conta para cargo local
+  assert.equal(Candidatura.institucional(comMandato, "SENADOR"), 0);                                         // escopo inferior não conta
+  const nomeado = clone(e); nomeado.cargos.nomeacoes = [{ id: "n", posicaoId: "x", tipo: "governamental", escopo: "estadual", inicio: { ano: 2027, janela: "C1" }, fim: null, situacao: "exercicio", motivoSaida: null, licencaMandato: null }];
+  assert.equal(Candidatura.institucional(nomeado, "PREFEITO"), 1); assert.equal(Candidatura.institucional(nomeado, "PRESIDENTE"), 0);
+  const eleito = clone(e); eleito.cargos.mandatos = [{ disputaId: "D", cargo: "VEREADOR", unidadeId: "EX001", inicio: "2029-01-01", fim: "2032-12-31", situacao: "eleito" }];
+  assert.equal(Candidatura.institucional(eleito, "PREFEITO"), 0);                                             // sem posse, sem peso
+  r.chance.teto = 0.1; assert.equal(Candidatura.chanceIndicacao(e, r, "PREFEITO"), 0.1);
+  r.chance.piso = 0.1; r.chance.base = -5; assert.equal(Candidatura.chanceIndicacao(e, r, "PREFEITO"), 0.1);
 });
 
 test("ofertas: unidade, partido, saldo, lista cheia, módulo 3 e uma candidatura por ano", () => {
@@ -57,14 +76,14 @@ test("ofertas: unidade, partido, saldo, lista cheia, módulo 3 e uma candidatura
   const sem = (mod) => { const x = clone(e); mod(x); return ids(Candidatura.ofertas(x, d)); };
   assert.deepEqual(sem((x) => { x.personagem.municipioLocal = "EX009"; }), []);
   assert.deepEqual(sem((x) => { x.personagem.partidoId = "P9"; }), []);
-  assert.deepEqual(sem((x) => { x.bolsos.caixaPessoal = 49999; }), []);
+  assert.deepEqual(sem((x) => { x.bolsos.caixaPessoal = 49999; }), [P]);                                     // a lista custa caixa; a indicação, não
   assert.deepEqual(sem((x) => { x.personagem.statusJuridico = "inelegibilidadeReconhecida"; }), []);
-  assert.deepEqual(sem((x) => { x.personagem.dataNascimento = "2012-01-01"; }), []);                 // idade mínima no registro
-  assert.deepEqual(sem((x) => { x.personagem.dataFiliacao = "2028-05-01"; }), []);                   // filiação após o prazo
+  assert.deepEqual(sem((x) => { x.personagem.dataNascimento = "2012-01-01"; }), []);                         // idade mínima
+  assert.deepEqual(sem((x) => { x.personagem.dataFiliacao = "2028-05-01"; }), []);                           // filiação após o prazo
   assert.deepEqual(sem((x) => { x.candidaturas = [{ ano: 2028, ofertaId: "x", disputaId: "y", cargo: "VEREADOR", unidadeId: "EX001", partidoId: "P1", listaOuChapaId: "P1", tipo: "proporcional" }]; }), []);
-  const cheia = dados((x) => { x.modelosDisputa["2028"][0].limiteLista = 1; });
-  assert.deepEqual(ids(Candidatura.ofertas(e, cheia)), []);
-  assert.deepEqual(ids(Candidatura.ofertas(em(novo(), 2026, "J3"), d)), []);                         // senado: notoriedade estadual baixa
+  assert.deepEqual(ids(Candidatura.ofertas(e, dados((x) => { x.modelosDisputa["2028"][0].limiteLista = 1; }))), [P]);
+  assert.deepEqual(ids(Candidatura.ofertas(em(novo(), 2026, "J3"), d)), [S]);                                 // Senado aparece; a urna decide
+  assert.deepEqual(ids(Candidatura.ofertas(e, dados((x) => { delete x.regrasIndicacao.PREFEITO; }))), [V]);    // cargo sem regra não aparece
 });
 
 test("mandato atual: dois mandatos consecutivos de prefeito impedem a terceira indicação", () => {
@@ -80,16 +99,17 @@ test("mandato atual: dois mandatos consecutivos de prefeito impedem a terceira i
   assert.ok(ids(Candidatura.ofertas(e, dados())).includes(P));
 });
 
-test("J3: prévia em três fases, decisão obrigatória e registro com custo", () => {
+test("J3: prévia, decisão obrigatória e registro da lista com custo", () => {
   const d = dados((x) => { Object.assign(x, { cartas: clone(CAT.cartas), ambicoes: CAT.ambicoes.slice(), parametrosCartas: clone(CAT.parametrosCartas) }); });
   const e = em(novo(), 2028, "J3");
   const p = Carreira.previa(e, d, { decisoes: {} });
-  assert.equal(p.mao, null); assert.deepEqual(plano(p.eventos), []);
-  assert.deepEqual(ids(p.candidaturas), [V]);
+  assert.equal(p.mao, null); assert.deepEqual(plano(p.eventos), []); assert.equal(p.indicacaoNegada, null);
+  assert.deepEqual(ids(p.candidaturas), [P, V]);
   const p2 = Carreira.previa(e, d, { decisoes: { candidatura: V } });
   assert.equal(p2.candidaturas, null); assert.ok(p2.mao.segura);
   assert.throws(() => Carreira.avancar(e, d, { decisoes: { carta: p2.mao.segura } }), ERRO);
   assert.throws(() => Carreira.avancar(e, d, { decisoes: { carta: p2.mao.segura, candidatura: "inexistente" } }), ERRO);
+  assert.throws(() => Carreira.avancar(e, d, { decisoes: { carta: p2.mao.segura, candidatura: V, alternativa: "naoConcorrer" } }), ERRO);   // alternativa sem negativa
   const r = Carreira.avancar(e, d, { decisoes: { carta: p2.mao.segura, candidatura: V } }).resultado.estado;
   assert.equal(r.bolsos.caixaPessoal, e.bolsos.caixaPessoal - 50000);
   assert.deepEqual(plano(r.candidaturas), [{ ano: 2028, ofertaId: V, disputaId: "2028|VEREADOR|EX001|1", cargo: "VEREADOR", unidadeId: "EX001",
@@ -97,6 +117,43 @@ test("J3: prévia em três fases, decisão obrigatória e registro com custo", (
   const n = Carreira.avancar(e, d, { decisoes: { carta: p2.mao.segura, candidatura: "naoConcorrer" } }).resultado;
   assert.deepEqual(plano(n.estado.candidaturas), []); assert.ok(n.ocorrencias.some((o) => o.tipo === "naoConcorreu"));
   assert.throws(() => Carreira.avancar(novo(), d, { decisoes: { carta: "agenda-bairro", candidatura: "naoConcorrer" } }), ERRO); // fora de J3
+});
+
+test("indicação concedida: candidatura de cabeça de chapa registrada com a indicação", () => {
+  const d = dados((x) => { chanceFixa(1)(x); Object.assign(x, { cartas: clone(CAT.cartas), ambicoes: CAT.ambicoes.slice(), parametrosCartas: clone(CAT.parametrosCartas) }); });
+  const e = em(novo(), 2028, "J3");
+  const p = Carreira.previa(e, d, { decisoes: { candidatura: P } });
+  assert.equal(p.indicacaoNegada, null); assert.ok(p.mao);
+  const r = Carreira.avancar(e, d, { decisoes: { candidatura: P, carta: p.mao.segura } }).resultado;
+  assert.deepEqual(plano(r.estado.candidaturas[0].indicacao), { pedida: true, concedida: true });
+  assert.ok(r.ocorrencias.some((o) => o.tipo === "indicacaoConcedida"));
+  assert.deepEqual(plano(r.estado.rng), plano(Carreira.avancar(e, d, { decisoes: { candidatura: V, carta: p.mao.segura } }).resultado.estado.rng)); // fluxo próprio
+});
+
+test("indicação negada: prévia mostra a negativa, alternativa só lista ou não concorrer, registro da tentativa", () => {
+  const d = dados((x) => { chanceFixa(0)(x); Object.assign(x, { cartas: clone(CAT.cartas), ambicoes: CAT.ambicoes.slice(), parametrosCartas: clone(CAT.parametrosCartas) }); });
+  const e = em(novo(), 2028, "J3");
+  const p = Carreira.previa(e, d, { decisoes: { candidatura: P } });
+  assert.deepEqual(plano(p.indicacaoNegada), { ofertaId: P, disputaId: "2028|PREFEITO|EX001|1", cargo: "PREFEITO" });
+  assert.deepEqual(ids(p.candidaturas), [V]); assert.equal(p.mao, null);
+  assert.throws(() => Carreira.avancar(e, d, { decisoes: { candidatura: P, carta: "agenda-bairro" } }), ERRO);          // alternativa obrigatória
+  assert.throws(() => Carreira.avancar(e, d, { decisoes: { candidatura: P, alternativa: P, carta: "agenda-bairro" } }), ERRO);  // sem segundo pedido
+  const p2 = Carreira.previa(e, d, { decisoes: { candidatura: P, alternativa: V } });
+  const r = Carreira.avancar(e, d, { decisoes: { candidatura: P, alternativa: V, carta: p2.mao.segura } }).resultado;
+  assert.deepEqual(plano(r.estado.candidaturas[0].indicacao), { pedida: true, concedida: false, pedidoDisputaId: "2028|PREFEITO|EX001|1" });
+  assert.equal(r.estado.candidaturas[0].ofertaId, V);
+  assert.ok(r.ocorrencias.some((o) => o.tipo === "indicacaoNegada"));
+  assert.ok(r.estado.historico.some((h) => h.tipo === "indicacao" && h.concedida === false));
+  const fora = Carreira.avancar(e, d, { decisoes: { candidatura: P, alternativa: "naoConcorrer", carta: p2.mao.segura } }).resultado;
+  assert.deepEqual(plano(fora.estado.candidaturas), []);
+});
+
+test("indicação: mesmo estado, mesmo resultado; outra semente pode mudar", () => {
+  const d = dados(), e = em(novo(), 2028, "J3"), o = Candidatura.ofertas(e, d)[0];
+  assert.deepEqual(plano(Candidatura.sortearIndicacao(e, d, o)), plano(Candidatura.sortearIndicacao(clone(e), d, o)));
+  const res = new Set();
+  for (let i = 0; i < 40; i++) { const x = clone(e); x.semente = "v1-IND-" + i; res.add(Candidatura.sortearIndicacao(x, d, o).concedida); }
+  assert.deepEqual([...res].sort(), [false, true]);                                                            // chance baixa, mas não nula
 });
 
 test("J5: disputa montada a partir do modelo, personagem eleito e mandato com unidade", () => {
@@ -127,7 +184,7 @@ test("Senado (estadual): oferta com notoriedade estadual e máquina agregada com
   const e = em(novo(), 2026, "J3");
   e.indicadores.estadual = { notoriedade: 0.1, popularidade: 0.04, rejeicao: 0.01 }; e.base.agregadoRegional = 0.05;
   const o = Candidatura.ofertas(e, dados());
-  assert.deepEqual(ids(o), [S]);
+  assert.deepEqual(ids(o), [S]); assert.equal(o[0].ficha.competitividade, "baixa");   // 0,04 frente a 0,25 do líder sem chapa própria
   const cen = Candidatura.montarDisputa(e, dados(), Object.assign({ ano: 2026, ofertaId: S }, o[0]));
   const m = cen.candidatos.find((x) => x.id === "A1").maquina.maquinaEfetiva;
   const mo = CAND.modelosDisputa["2026"][0], ag = mo.maquinaPersonagem.estadual;

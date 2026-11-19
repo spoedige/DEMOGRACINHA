@@ -125,7 +125,7 @@ test("desincompatibilização em J1: nomeado sai ou permanece; quem permanece n�
   assert.throws(() => Carreira.avancar(e, d, { decisoes: { carta: "agenda-bairro" } }), ERRO);
   const sai = Carreira.avancar(e, d, { decisoes: { desincompatibilizacao: "sair", carta: "agenda-bairro" } }).resultado.estado;
   assert.equal(sai.cargos.nomeacoes[0].motivoSaida, "desincompatibilizacao");
-  assert.deepEqual(ids(Candidatura.ofertas(em(sai, 2028, "J3"), d)), ["vaga-na-lista:2028|VEREADOR|EX001|1"]);
+  assert.deepEqual(ids(Candidatura.ofertas(em(sai, 2028, "J3"), d)), ["indicacao:2028|PREFEITO|EX001|1", "lista:2028|VEREADOR|EX001|1"]);
   const fica = Carreira.avancar(e, d, { decisoes: { desincompatibilizacao: "permanecer", carta: "agenda-bairro" } }).resultado.estado;
   assert.equal(fica.cargos.nomeacoes[0].situacao, "exercicio");
   assert.deepEqual(ids(Candidatura.ofertas(em(fica, 2028, "J3"), d)), []);
@@ -140,9 +140,9 @@ test("renúncia do chefe do Executivo em J1: com a renúncia, pode disputar outr
   assert.deepEqual(plano(Carreira.previa(base, d, { decisoes: {} }).desincompatibilizacao), { tipo: "executivo", cargo: "PREFEITO", disputaId: "D1" });
   const ren = Carreira.avancar(base, d, { decisoes: { desincompatibilizacao: "sair", carta: "agenda-bairro" } }).resultado.estado;
   assert.equal(ren.cargos.mandatos[0].situacao, "encerrado"); assert.equal(ren.cargos.mandatos[0].renuncia, "2028-01-01");
-  assert.ok(ids(Candidatura.ofertas(em(ren, 2028, "J3"), d)).includes("vaga-na-lista:2028|VEREADOR|EX001|1"));
+  assert.ok(ids(Candidatura.ofertas(em(ren, 2028, "J3"), d)).includes("lista:2028|VEREADOR|EX001|1"));
   const fica = Carreira.avancar(base, d, { decisoes: { desincompatibilizacao: "permanecer", carta: "agenda-bairro" } }).resultado.estado;
-  assert.deepEqual(ids(Candidatura.ofertas(em(fica, 2028, "J3"), d)), ["indicacao-prefeitura:2028|PREFEITO|EX001|1"]);
+  assert.deepEqual(ids(Candidatura.ofertas(em(fica, 2028, "J3"), d)), ["indicacao:2028|PREFEITO|EX001|1"]);
 });
 
 test("módulo 3: nomeação governamental depois do prazo é inaptidão por desincompatibilização", () => {

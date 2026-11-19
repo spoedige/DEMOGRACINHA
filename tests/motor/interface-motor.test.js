@@ -44,14 +44,15 @@ test("mudarRitmo: função pura validada; personagem.nome opcional", () => {
 
 test("histórico da eleição: votos, válidos e posição do personagem", () => {
   let e = novo(); e.tempo = { ano: 2028, janela: "J3" };
-  e = Carreira.avancar(e, CAND, { decisoes: { candidatura: "vaga-na-lista:2028|VEREADOR|EX001|1" }, opcoes }).resultado.estado;
+  e = Carreira.avancar(e, CAND, { decisoes: { candidatura: "lista:2028|VEREADOR|EX001|1" }, opcoes }).resultado.estado;
   while (e.tempo.janela !== "J6") e = Carreira.avancar(e, CAND, { decisoes: Carreira.ehManual(e) ? {} : undefined, opcoes }).resultado.estado;
   const h = e.historico.find((x) => x.tipo === "eleicao");
   assert.equal(h.cargo, "VEREADOR"); assert.ok(Number.isInteger(h.votos) && h.votos > 0);
   assert.ok(h.validos >= h.votos); assert.ok(Number.isInteger(h.posicao) && h.posicao >= 1); assert.equal(h.segundoTurno, null);
   let m = novo((c) => { c.inicio.indicadores.local = { notoriedade: 0.6, popularidade: 0.3, rejeicao: 0.05 }; }); m.tempo = { ano: 2028, janela: "J3" };
-  m = Carreira.avancar(m, CAND, { decisoes: { candidatura: "indicacao-prefeitura:2028|PREFEITO|EX001|1" }, opcoes }).resultado.estado;
-  while (!(m.tempo.ano === 2029)) m = Carreira.avancar(m, CAND, { decisoes: Carreira.ehManual(m) ? {} : undefined, opcoes }).resultado.estado;
+  const certa = clone(CAND); certa.regrasIndicacao.PREFEITO.chance.piso = 1; certa.regrasIndicacao.PREFEITO.chance.teto = 1;   // indicação garantida no teste
+  m = Carreira.avancar(m, certa, { decisoes: { candidatura: "indicacao:2028|PREFEITO|EX001|1" }, opcoes }).resultado.estado;
+  while (!(m.tempo.ano === 2029)) m = Carreira.avancar(m, certa, { decisoes: Carreira.ehManual(m) ? {} : undefined, opcoes }).resultado.estado;
   const hm = m.historico.find((x) => x.tipo === "eleicao");
   assert.ok(Number.isInteger(hm.votos)); assert.ok(hm.posicao >= 1 && hm.posicao <= 3);
   if (hm.segundoTurno) assert.ok(hm.segundoTurno.votos <= hm.segundoTurno.validos);
