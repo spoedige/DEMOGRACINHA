@@ -39,7 +39,8 @@ O 2º turno não passa pela distribuição de cadeiras. Proporcional e majoritá
 - Parâmetros: nenhum.
 - Simplificações: vagas recebidas como dado, sem recalcular por população.
 - Testes: Senado 2 vagas em 2026 e 1 em 2030; sem eleição municipal em Brasília e Fernando de Noronha; 2º turno previsto só onde a regra permite.
-- Implementação (etapa 7a, D73): `Eleicao.executar` orquestra uma disputa de cada vez (módulos 2 a 13 e posse). A montagem do conjunto de disputas do ano, com a exclusão de Brasília e Fernando de Noronha, ainda não existe.
+- Implementação (etapa 7a, D73): `Eleicao.executar` orquestra uma disputa de cada vez (módulos 2 a 13 e posse).
+- Implementação (D74): `Eleicao.montarAno` monta as disputas ordinárias do ano (6.10).
 
 ### 2. Cadastro de partidos, federações e candidaturas
 - Responsabilidade: definir listas e chapas.
@@ -301,3 +302,12 @@ Pendência para o módulo 9: a regra "F por último" do segmento livre (5.2) exi
 - `Eleicao.executar(estado, dados, rngState)`: uma disputa. Proporcional: 2, 3, 4, 5, 6, pontuação e legendas, 8, 9, 10, posse. Majoritária: 2, 3 (candidato da chapa), 5, 6, pontuação com `identChapa`, 8, 11 e, se houver, 12, posse. Senado: 13 com 1 ou 2 vagas; com 2, o módulo 8 com um voto por eleitor dá `validos1`. Todo parâmetro vem de `dados.parametros`; ausência é erro. Idade dos sintéticos para o módulo 10: `parametros.idadeSinteticos` (calibrar). Resolvedor padrão: módulo 14.
 - `tools/sim.js`: carrega o motor de `public/index.html` em contexto isolado. Formas das distribuições de `q_g` e `r_g` declaradas no cenário (`uniforme` com `min` e `max`; `exponencialTruncada` com `media` e `max`). `--cenario` executa uma vez e imprime resultado e SHA-256 do JSON canônico; `--rodadas N --semente-base S` executa N sementes `S-i` e conta segundos turnos, vagas não preenchidas, desempates por tipo e erros (insuficiência de modelagem, excesso de eleitos pelo quociente partidário, outros).
 - Cenários de exemplo em `tools/cenarios/` (vereador, prefeito, Senado): artificiais, com partidos e unidades fictícios (P1 a P4, EX001); nenhum valor é dado histórico; todos os parâmetros (calibrar); calendário de 2028 e 2029 (a confirmar).
+
+### 6.10 Montagem das disputas do ano (D74)
+- `Eleicao.montarAno(estado, dados, rngState)`: sem RNG (devolve o `rngState` recebido) e sem constante própria. Entrada: `ano`, `calendario` (objeto não vazio, recebido pronto, a confirmar), `unidades` (D58), `vagas` por cargo proporcional e unidade, `eleitorado` por município e `excluidosMunicipais` (códigos IBGE de Brasília e Fernando de Noronha, dado a confirmar).
+- Ano geral: `(ano - 2026)` múltiplo de 4, a partir de 2026; municipal: `(ano - 2028)` múltiplo de 4, a partir de 2028. Outro ano é erro.
+- Circunscrições: país, presidente; UF, governador, senador, deputado federal e deputado estadual, ou distrital quando o id da UF é `DF`; município fora da lista de exclusão, prefeito e vereador. Exterior e unidades estatísticas não geram disputa.
+- Vagas: proporcionais vêm do dado (ausência é erro); executivos têm 1; Senado tem 2 vagas e 2 votos quando `(ano - 2026)` é múltiplo de 8, senão 1 e 1. Vaga informada para cargo majoritário diferente disso é erro, assim como estadual no DF, distrital fora do DF e vagas de cargo sem eleição no ano. Chaves de unidades fora do conjunto informado são ignoradas, para aceitar subconjunto de municípios.
+- `segundoTurnoPrevisto`: presidente e governador sim; senador e proporcionais não; prefeito só com eleitorado acima de `Majoritaria.LIMITE_PREFEITO` (200 mil, D69). Eleitorado ausente para município participante é erro.
+- Erros de unidade: eleição geral sem exatamente um país ou sem UF; eleição municipal sem município após a exclusão; id repetido.
+- Saída: `{ ano, tipo, calendario, disputas }`, cada disputa validada por `Dados.disputa`, com id `ano:CARGO:unidade`, congelada e ordenada por id.

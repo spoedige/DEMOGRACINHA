@@ -1632,7 +1632,83 @@ var Eleicao = (function () {
     var out = { disputaId: d.id, cargo: d.cargo, sistema: d.sistema, eleitos: eleitos, ocupantes: ocupantes, desempates: desempates, etapas: etapas };
     return { resultado: JSON.parse(JSON.stringify(out)), rngStateNext: rng };
   }
-  return Object.freeze({ executar: executar });
+  // Montagem das disputas ordinárias de um ano (D74). Sem RNG e sem constante própria: vagas proporcionais,
+  // eleitorado municipal, lista de exclusão municipal e calendário vêm como dado. Circunscrições: país (presidente),
+  // UF (governador, senador, deputado federal, estadual ou distrital no DF), município com eleição própria
+  // (prefeito, vereador). Exterior e Fernando de Noronha são unidades de apuração, não circunscrições.
+  var POR_TIPO = { pais: ["PRESIDENTE"], uf: ["GOVERNADOR", "SENADOR", "DEPUTADO_FEDERAL", "DEPUTADO_ESTADUAL", "DEPUTADO_DISTRITAL"],
+    municipio: ["PREFEITO", "VEREADOR"] };
+  var PROPORCIONAIS = ["DEPUTADO_FEDERAL", "DEPUTADO_ESTADUAL", "DEPUTADO_DISTRITAL", "VEREADOR"];
+  function montarAno(estado, dados, rngState) {
+    RNG.validar(rngState);
+    var ano = dados && dados.ano;
+    var geral = Number.isSafeInteger(ano) && ano >= 2026 && (ano - 2026) % 4 === 0;
+    var municipal = Number.isSafeInteger(ano) && ano >= 2028 && (ano - 2028) % 4 === 0;
+    if (!geral && !municipal) Comum.erro("ano sem eleição ordinária: " + ano);
+    var cal = dados.calendario;
+    if (!cal || typeof cal !== "object" || Array.isArray(cal) || Object.keys(cal).length === 0) Comum.erro("calendario obrigatório (a confirmar)");
+    if (!Array.isArray(dados.unidades)) Comum.erro("unidades: lista obrigatória");
+    var unidades = porId(dados.unidades.map(Dados.unidade), "unidade");
+    var tipo = geral ? "geral" : "municipal";
+    var cargos = geral ? POR_TIPO.pais.concat(POR_TIPO.uf) : POR_TIPO.municipio;
+    var vagas = dados.vagas || {};
+    if (typeof vagas !== "object" || Array.isArray(vagas)) Comum.erro("vagas: objeto obrigatório");
+    Object.keys(vagas).forEach(function (c) {
+      // chaves de unidades fora do conjunto informado são ignoradas: permite subconjunto de municípios
+      if (cargos.indexOf(c) < 0) Comum.erro("vagas de cargo sem eleição em " + ano + ": " + c);
+    });
+    var excluidos = new Set();
+    if (municipal) {
+      if (!Array.isArray(dados.excluidosMunicipais)) Comum.erro("excluidosMunicipais: lista obrigatória (a confirmar)");
+      dados.excluidosMunicipais.forEach(function (x) { excluidos.add(Comum.idv(x, "excluidosMunicipais")); });
+    }
+    var vpeSenado = (ano - 2026) % 8 === 0 ? 2 : 1;
+    function vagasDe(cargo, u) {
+      var v = Comum.proprio(Comum.proprio(vagas, cargo), u.id);
+      if (PROPORCIONAIS.indexOf(cargo) >= 0) return v === undefined ? Comum.erro("vagas ausentes: " + cargo + " em " + u.id) : v;
+      var esperado = cargo === "SENADOR" ? vpeSenado : 1;
+      if (v !== undefined && v !== esperado) Comum.erro("vagas incompatíveis: " + cargo + " em " + u.id + " tem " + esperado);
+      return esperado;
+    }
+    function cabe(cargo, u) {
+      var df = u.id === "DF";
+      if (cargo === "DEPUTADO_ESTADUAL" || cargo === "DEPUTADO_DISTRITAL") {
+        var ok = cargo === "DEPUTADO_DISTRITAL" ? df : !df;
+        if (!ok && Comum.proprio(Comum.proprio(vagas, cargo), u.id) !== undefined) Comum.erro(cargo + " não existe em " + u.id);
+        return ok;
+      }
+      return true;
+    }
+    var disputas = [], porTipo = { pais: 0, uf: 0, municipio: 0 };
+    unidades.forEach(function (u) {
+      if (u.tipo === "exterior") return;
+      if (u.tipo === "municipio" && (!municipal || excluidos.has(u.id))) return;
+      if (u.tipo !== "municipio" && !geral) return;
+      porTipo[u.tipo]++;
+      POR_TIPO[u.tipo].forEach(function (cargo) {
+        if (!cabe(cargo, u)) return;
+        var n = vagasDe(cargo, u);
+        var d = Dados.disputa({ id: ano + ":" + cargo + ":" + u.id, ano: ano, cargo: cargo, unidadeId: u.id, vagas: n, turno: 1,
+          votosPorEleitor: cargo === "SENADOR" ? vpeSenado : 1 });
+        var st = cargo === "PRESIDENTE" || cargo === "GOVERNADOR";
+        if (cargo === "PREFEITO") {
+          var el = Comum.proprio(dados.eleitorado, u.id);
+          if (el === undefined) Comum.erro("eleitorado ausente para o município " + u.id);
+          st = Comum.inteiro(el, "eleitorado de " + u.id, 0) > Majoritaria.LIMITE_PREFEITO;
+        }
+        var x = {}; Object.keys(d).forEach(function (k) { x[k] = d[k]; });
+        x.segundoTurnoPrevisto = st;
+        disputas.push(Object.freeze(x));
+      });
+    });
+    if (geral && porTipo.pais !== 1) Comum.erro("eleição geral exige exatamente uma unidade do tipo pais");
+    if (geral && porTipo.uf === 0) Comum.erro("eleição geral exige ao menos uma UF");
+    if (municipal && porTipo.municipio === 0) Comum.erro("nenhum município com eleição própria após a exclusão");
+    disputas.sort(function (a, b) { return a.id < b.id ? -1 : a.id > b.id ? 1 : 0; });
+    return { resultado: Object.freeze({ ano: ano, tipo: tipo, calendario: JSON.parse(JSON.stringify(cal)), disputas: Object.freeze(disputas) }),
+      rngStateNext: rngState };
+  }
+  return Object.freeze({ executar: executar, montarAno: montarAno });
 })();
 
 return Object.freeze({ RNG: RNG, Dados: Dados, MaiorResto: MaiorResto, Pontuacao: Pontuacao, Comparecimento: Comparecimento,

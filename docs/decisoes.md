@@ -390,3 +390,12 @@ Aprovada pelo autor antes da etapa 7a.
 2. Nenhum parâmetro calibrável nasce no motor nem em `tools/sim.js`: valores e formas das distribuições vêm do arquivo de cenário, marcados (calibrar).
 3. Módulo 1 como orquestrador de uma disputa (`Eleicao.executar`); módulo 14 com votação técnica quando houver atributos e forma mínima por sorteio sem eles.
 4. `tools/sim.js` com execução única (hash SHA-256 do resultado canônico) e lote com telemetria de casos-limite.
+
+## D74. Montagem das disputas ordinárias do ano, 19/11/2026
+
+Aprovada pelo autor antes da implementação.
+1. `Eleicao.montarAno` gera as disputas ordinárias de um ano por circunscrição do cargo: país (presidente), UF (governador, senador, deputado federal, estadual ou distrital no DF) e município com eleição própria (prefeito e vereador).
+2. Exterior e Fernando de Noronha são unidades de apuração, não circunscrições. Brasília e Fernando de Noronha saem das eleições municipais pela lista `excluidosMunicipais`, recebida como dado.
+3. Eleitorado municipal recebido como dado; `segundoTurnoPrevisto` de prefeito acima de 200 mil eleitores (D69); ausência é erro.
+4. Calendário recebido pronto, sem deslocar datas de 2026. Aceita subconjunto de municípios.
+5. Id da disputa `ano:CARGO:unidade`; cada disputa passa por `Dados.disputa`.
