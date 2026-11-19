@@ -14,8 +14,8 @@ const ERRO = { name: "TypeError" };
 const clone = (x) => JSON.parse(JSON.stringify(x));
 const lotes = fs.readdirSync(CAT).filter((f) => /^degrau-\d\.json$/.test(f)).sort();
 const ler = (f) => JSON.parse(fs.readFileSync(path.join(CAT, f), "utf8"));
-const COMUNS = ler("eventos-comuns.json").eventos;                                // escada jurídica comum a todos os degraus
-const dadosDe = (l) => ({ cartas: l.cartas, eventos: l.eventos.concat(COMUNS), posicoes: l.posicoes, ambicoes: ["legislativo", "executivo", "bastidor"],
+const COMUNS = ler("eventos-comuns.json").eventos, CARTAS_COMUNS = ler("eventos-comuns.json").cartas;                                // escada jurídica comum a todos os degraus
+const dadosDe = (l) => ({ cartas: l.cartas.concat(CARTAS_COMUNS), eventos: l.eventos.concat(COMUNS), posicoes: l.posicoes, ambicoes: ["legislativo", "executivo", "bastidor"],
   parametrosCartas: { acoesPorMao: 2 }, parametrosDegrau: l.parametrosDegrau, governos: {} });
 const novo = () => { const c = clone(CEN); delete c.eleicoes; return Carreira.criar({}, c, null).resultado; };
 const TRAVESSAO = /[–—]/;
@@ -27,7 +27,7 @@ test("lotes do catálogo: válidos pelo motor, com degrau do arquivo e sem trave
     assert.doesNotThrow(() => Cartas.validarCatalogo(d), f);
     assert.doesNotThrow(() => Eventos.validarCatalogo(d), f);
     assert.doesNotThrow(() => Nomeacoes.validarCatalogo(d), f);
-    for (const x of [...l.cartas, ...l.eventos, ...l.posicoes]) assert.equal(x.degrau, n, f + ": " + x.id);
+    for (const x of [...l.cartas, ...l.eventos, ...l.posicoes].filter((y) => !COMUNS.includes(y) && !CARTAS_COMUNS.includes(y))) assert.equal(x.degrau, n, f + ": " + x.id);
     assert.ok(l.cartas.some((c) => c.segura), f + ": carta segura");
     assert.ok(!TRAVESSAO.test(JSON.stringify(l)), f + ": travessão");
   }

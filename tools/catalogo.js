@@ -18,7 +18,7 @@ function consolidar() {
     ambicoes: ["legislativo", "executivo", "bastidor"],
     parametrosCartas: { acoesPorMao: 2 },
     parametrosDegrau: lotes[0].parametrosDegrau,
-    cartas: [].concat(...lotes.map((l) => l.cartas)),
+    cartas: [].concat(...lotes.map((l) => l.cartas), comuns.cartas || []),
     eventos: [].concat(...lotes.map((l) => l.eventos), comuns.eventos),
     posicoes: [].concat(...lotes.map((l) => l.posicoes))
   };

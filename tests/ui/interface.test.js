@@ -17,13 +17,11 @@ const FONTE = fs.readFileSync(HTML, "utf8");
 const ler = (n) => JSON.parse(fs.readFileSync(path.join(RAIZ, "tools", "cenarios", n), "utf8"));
 const titulo = (pg) => pg.textContent("h1.dossier-title");
 
-test("dados embutidos são cópia exata dos catálogos de tools/cenarios; partidos só fictícios e sem logo", () => {
+test("dados embutidos: catálogo do jogo consolidado (D85) e modelos de tools/cenarios; partidos só fictícios e sem logo", () => {
   const d = JSON.parse(FONTE.match(/<script type="application\/json" id="dados-exemplo">([\s\S]*?)<\/script>/)[1]);
   assert.deepEqual(d.inicio, ler("carreira.json").inicio);
-  assert.deepEqual(d.cartas, ler("cartas-exemplo.json"));
-  assert.deepEqual(d.eventos, ler("eventos-exemplo.json"));
+  assert.deepEqual(d.catalogo, JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "data", "catalogo", "catalogo-jogo.json"), "utf8")));
   assert.deepEqual(d.candidatura, ler("candidatura-exemplo.json"));
-  assert.deepEqual(d.nomeacoes, ler("nomeacoes-exemplo.json"));
   assert.deepEqual(d.troca, ler("troca-exemplo.json"));
   const p = JSON.parse(FONTE.match(/<script type="application\/json" id="parties-data">([\s\S]*?)<\/script>/)[1]);
   for (const [k, v] of Object.entries(p)) if (k !== "_nota") { assert.match(k, /^P\d$/); assert.equal(v.logo, undefined); assert.equal(v.dataUri, undefined); }
