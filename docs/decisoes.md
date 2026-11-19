@@ -502,3 +502,13 @@ Aprovada pelo autor antes da implementação.
 4. Indicação negada: segunda escolha obrigatória na mesma J3, só lista proporcional ou não concorrer, sem segundo pedido majoritário. A candidatura gravada ganha `indicacao` opcional (`pedida`, `concedida`, `pedidoDisputaId`), sem nova versão do save.
 5. Ficha só com faixas (calibrar): chance de indicação baixa abaixo de 0,35, média abaixo de 0,7, alta acima; competitividade pela popularidade no escopo frente ao concorrente mais popular de outras chapas (majoritária) ou à mediana da lista (proporcional): baixa abaixo da metade, média abaixo do líder, alta acima. A urna continua decidida pelo motor eleitoral.
 6. Os testes da D78 e de etapas seguintes foram ajustados aos ids `lista:` e `indicacao:` e à oferta livre; o simulador passou a preferir a lista no empate e a tratar a negativa.
+
+## D83. Troca de partido e de domicílio, 20/11/2026
+
+Aprovada pelo autor antes da implementação. O vice ficou para a D84.
+1. Troca de partido em J1 do ano eleitoral (janela partidária e prazo de filiação de 04/04, a confirmar) e em C1 do ano calmo; mudança de domicílio só em J1 do ano eleitoral. Decisões opcionais do jogador, tomadas junto com a ação da janela manual; recusadas na janela automática.
+2. Mandato proporcional fora da janela: troca recusada com o aviso "Fora da janela partidária, trocar de partido acarretaria perda do mandato", sem modelar justa causa antes da 1B. Mandato majoritário troca sem perda (a confirmar). Mudança de domicílio com mandato eletivo em exercício recusada até a 1B.
+3. Filiação livre no partido de destino; a incerteza fica na indicação (D82). Efeitos do catálogo `trocaPartido` (calibrar): Cúpula vai ao valor de entrada, Bancada cai, credibilidade cai (mais fora da janela), tag `infidelidadePartidaria` com mandato. Compromissos com o partido antigo continuam ativos.
+4. Domicílio: o escopo local passa ao novo município com os indicadores do escopo estadual; em outra UF, tag `paraquedista`, UF atual nova e estadual a partir dos nacionais, com popularidade = notoriedade nacional × fator (calibrar, a confirmar). `ufInicial` guarda a origem; candidaturas usam `ufAtual`. A base do município antigo continua no conjunto da base (D52).
+5. Save na versão 5, com `personagem.filiacoes` (histórico com `desde`, `ate`, `tipo` e `dentroDaJanela`) e `personagem.ufAtual`; `MIGRAR[4]` recria a filiação a partir do partido e da data de filiação.
+6. Trajetória partidária na aba Carreira lê o histórico de filiações; painel "Filiação e domicílio" na fase de ações, com o bloqueio explicado em texto.

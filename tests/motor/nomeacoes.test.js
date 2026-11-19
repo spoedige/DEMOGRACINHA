@@ -166,7 +166,7 @@ test("save versão 4: migração de 3 com lista vazia; lista não vazia não tem
   const e = novo();
   const v3 = JSON.parse(Save.serializar(e)); v3.saveVersion = 3;
   const m = Save.ler(JSON.stringify(v3));
-  assert.equal(m.saveVersion, 4); assert.deepEqual(plano(m), plano(e));
+  assert.equal(m.saveVersion, 5); assert.deepEqual(plano(m), plano(e)); // 3 -> 4 -> 5
   v3.cargos.nomeacoes = [{ id: "x" }];
   assert.throws(() => Save.ler(JSON.stringify(v3)), /migração 3/);
   const duas = nomeado(clone(e), "a", "governamental", "municipal"); duas.cargos.nomeacoes.push(clone(duas.cargos.nomeacoes[0]));

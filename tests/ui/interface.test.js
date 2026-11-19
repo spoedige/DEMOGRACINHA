@@ -24,6 +24,7 @@ test("dados embutidos são cópia exata dos catálogos de tools/cenarios; partid
   assert.deepEqual(d.eventos, ler("eventos-exemplo.json"));
   assert.deepEqual(d.candidatura, ler("candidatura-exemplo.json"));
   assert.deepEqual(d.nomeacoes, ler("nomeacoes-exemplo.json"));
+  assert.deepEqual(d.troca, ler("troca-exemplo.json"));
   const p = JSON.parse(FONTE.match(/<script type="application\/json" id="parties-data">([\s\S]*?)<\/script>/)[1]);
   for (const [k, v] of Object.entries(p)) if (k !== "_nota") { assert.match(k, /^P\d$/); assert.equal(v.logo, undefined); assert.equal(v.dataUri, undefined); }
   assert.doesNotMatch(FONTE, /data:image|https?:\/\/(?!www\.w3\.org\/2000\/svg)/);   // nada externo nem imagem embutida
@@ -137,7 +138,7 @@ test("fluxo completo a 360 px: criação, janelas, eventos, candidatura, eleiç�
     assert.match(await pg.textContent("main"), /Limpar os dados do navegador apaga a partida/);
     await pg.selectOption("#ritmo", "intenso");
     const salvo = JSON.parse(await pg.evaluate(() => localStorage.getItem("demogracinha.save")));
-    assert.equal(salvo.ritmo, "intenso"); assert.equal(salvo.saveVersion, 4); assert.equal(salvo.personagem.nome, "Personagem de Teste");
+    assert.equal(salvo.ritmo, "intenso"); assert.equal(salvo.saveVersion, 5); assert.equal(salvo.personagem.nome, "Personagem de Teste");
     assert.doesNotThrow(() => carregarMotor().Motor.Save.ler(JSON.stringify(salvo)));
     await pg.click("[data-acao=exportar]");
     await pg.waitForSelector("#codigo-export");

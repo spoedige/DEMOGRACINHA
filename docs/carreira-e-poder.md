@@ -67,7 +67,7 @@ Tags, Arquivo Vermelho, eventos atrasados, `mandatosConsecutivos`, saúde gradua
 
 ### Mudanças de base
 - Migração de estado: tag Paraquedista. Popularidade inicial no novo estado = notoriedade nacional × fator (calibrar; a confirmar).
-- Troca de partido: custo ideológico e relacional (Cúpula, Bancada, tag de infidelidade partidária). Menor dentro da janela para cargos proporcionais.
+- Troca de partido: custo ideológico e relacional (Cúpula, Bancada, tag de infidelidade partidária). Menor dentro da janela para cargos proporcionais. Implementação e valores em D83 (calibrar).
 
 ## 2. Camadas de progressão
 

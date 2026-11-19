@@ -1,0 +1,13 @@
+{
+ "_cenario": "Catálogo artificial de troca de partido e de domicílio (D83). Partidos e municípios fictícios do exemplo; EY001 fica em outra UF fictícia.",
+ "_parametros": "Cúpula de entrada, perdas de Bancada e de credibilidade e fator de paraquedista (calibrar; fator a confirmar).",
+ "trocaPartido": {
+  "cupulaEntrada": 0.2,
+  "perdaBancada": 0.05,
+  "perdaCredibilidadeJanela": 0.02,
+  "perdaCredibilidadeFora": 0.06,
+  "fatorParaquedista": 0.5,
+  "partidos": ["P1", "P2", "P3", "P4"],
+  "municipios": [{ "id": "EX001", "uf": "EX" }, { "id": "EX002", "uf": "EX" }, { "id": "EY001", "uf": "EY" }]
+ }
+}

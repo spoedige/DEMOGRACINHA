@@ -36,7 +36,8 @@ Vereador, prefeito, vice-prefeito, deputado estadual (distrital no DF), deputado
 - Período: `GDD.md` 3. Vale só para detentores de cargos proporcionais.
 - Majoritários podem trocar sem perder o mandato (ADI 5081, a confirmar).
 - Filiação e domicílio eleitoral até o prazo de `GDD.md` 3.
-- Domicílio com mandato em curso (a confirmar).
+- Domicílio com mandato em curso (a confirmar). No MVP, a mudança de domicílio com mandato eletivo em exercício é recusada até a 1B (D83).
+- Troca de partido no jogo (D83): em J1 do ano eleitoral (janela e prazo de filiação) ou em C1 do ano calmo; mandato proporcional fora da janela tem a troca recusada, sem modelar justa causa; mudança de domicílio só em J1 do ano eleitoral.
 
 ### Barreira individual (só proporcional) [L1 encerrada, L2]
 - Regra completa (quociente, 10% no quociente partidário, sobras em duas fases, cenário sem quociente, empates): fonte única em `motor-eleitoral.md` 5.4. Este documento não a redefine.
