@@ -222,3 +222,20 @@ L33 a L36 permanecem abertas (L36: item aprovado, regra não validada; o número
 - Complemento da D42 aprovado (seções não instaladas, denominador de brancos e nulos, granularidade, fallback, unidade incompleta); testes automatizados em `tests/test_pipeline_dados.py` (65 testes).
 - Metas da Câmara 2026 (fonte e data de corte).
 - Todos os parâmetros de calibração e as funções listadas em `motor-eleitoral.md` 11.
+
+## Calibração básica (D87), 22/11/2026
+
+Lote: `node tools/sim.js --lote --n 300 --anos 12` (sementes v1-LOTE-0 a 299; 100 carreiras por porte, 60 por origem). Jogador automático em `tools/lote.js`: partido entre os 5 mais votados para vereador no município, majoritário só com chance alta e competitividade não baixa, carta de maior ganho esperado, eventos sem filtro de risco.
+
+| Ajuste | Antes | Depois | Motivo |
+|---|---|---|---|
+| `origens.escalaPorte` (novo) | sem escala | referência 5.000, expoente 0,6, piso 0,05 | a mesma rede alcança fração menor de um eleitorado maior; o porte estava invertido |
+| `parametros-modelos.sintetico.municipal` | fator 2, quadros e capilaridade 0,45 | fator 3, 0,6 | 85% se elegiam em 12 anos |
+| `parametros-modelos.sintetico.geral` | fator 2, 0,45 | mantido | com 3 e 0,6, só 1,3% chegavam a deputado |
+| Assessor: indicadores locais e base | 0,08 / 0,05 / 0,01; base 0,05 | 0,15 / 0,09 / 0,015; base 0,1 | 16,7% eleitos contra 50% a 70% das demais |
+| Empresário: caixa | R$ 20.000 | R$ 12.000 | vantagem sem relação com o caminho |
+| Carta `patrocinar-evento-local` | custo R$ 300; +0,02 notoriedade, +0,01 popularidade | custo R$ 600; +0,012 e +0,004 | rendia voto barato e decidia a origem |
+
+Resultado (alvos aprovados): eleito ao menos uma vez 55% (40 a 60); deputado ou senador 18,3% (10 a 20); governador ou presidente 0% (menos de 2); inelegível 0,3% (até 5 a 8). Por porte, eleitos: pequeno 68%, médio 51%, grande 46%. Por origem, eleitos: assessor 26,7%, empresario 63,3%, liderComunitario 71,7%, liderancaSindical 53,3%, servidor 60%.
+
+Pendências de calibração: assessor segue abaixo (o caminho dele é a nomeação, não contada aqui); servidor chega mais a deputado (35%); ninguém chega a governador em 12 anos.

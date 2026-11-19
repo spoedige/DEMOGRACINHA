@@ -544,3 +544,12 @@ Aprovada pelo autor antes da implementação (opção 1: respeitar o corte da D6
 3. Modelos: `Modelos.doAno` monta as disputas do ano a partir das contagens (taxas exatas), da identificação partidária pela votação (fator de sem identificação, calibrar), de listas por federação, de até 3 chapas majoritárias por votação e de rivais sintéticos sem nome real. Senado com 2 vagas em 2026 e 1 em 2030. Pesos do 2º turno por regra (finalistas mantêm a base própria). Calendários e posses (a confirmar).
 4. Interface: no site, a criação escolhe estado, município (busca por nome) e partido; a base da UF carrega sob demanda; domicílio com busca. Aberto por `file://`, o jogo segue o cenário de exemplo.
 5. Cláusula (EC 97/2017, L10): depois da J5 de 2026 e 2030, projeção do resultado nacional da Câmara pela base de 2022 com desvio por partido e UF (sigma, calibrar) e D'Hondt por UF; avaliação por votos (patamar nacional e em 9 UFs) ou bancada (deputados em 9 UFs), federação como agremiação, arredondamento a uma casa (a confirmar). Vale a partir do ano seguinte: a legenda abaixo perde exposição nas disputas (fator, calibrar). O personagem filiado recebe o evento "Partido abaixo da cláusula": federação, fusão ou saída por justa causa; a saída marca a tag que libera a troca sem perda do mandato fora da janela (EC 97/2017, art. 17, § 5º; a confirmar).
+
+## D87. Origens do personagem e calibração básica, 22/11/2026
+
+Aprovada pelo autor antes da implementação.
+1. Cinco origens da D36 no MVP (`data/catalogo/origens.json`): líder comunitário, servidor, empresário ou profissional liberal, liderança sindical ou associativa e assessor. Cada uma define aptidões, capacidade, indicadores locais, caixa, relações, grupo e base inicial (calibrar), sem mandato, nomeação ou Capital de Entrega. `Origens.inicio` monta o início no motor; a criação escolhe a origem.
+2. Uma carta própria por origem no degrau 1 (`pool.origens`).
+3. Indicadores locais iniciais escalados pelo eleitorado do município (`escalaPorte`, calibrar): começar em município pequeno é mais acessível.
+4. `tools/sim.js --lote` (`tools/lote.js`): 300 carreiras de 12 anos com dados reais por rodada, sementes fixas; ajustes e resultados em `docs/roadmap.md`.
+5. Correções encontradas pelo lote: ano calmo sem modelos; Senado de uma vaga com votos por eleitor; limite de lista no majoritário; município sem votos válidos na base fica sem modelo; a perda de identificação pela cláusula passa a sem identificação (soma 1).

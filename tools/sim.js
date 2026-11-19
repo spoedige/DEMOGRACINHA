@@ -128,6 +128,10 @@ function carreira(Motor, cen, dir, anos, catalogo, eventos, modelos, nomeacoes) 
 
 function principal(argv) {
   const arg = (n) => { const i = argv.indexOf(n); return i >= 0 ? argv[i + 1] : undefined; };
+  if (argv.indexOf("--lote") >= 0) { // calibração com dados reais (D87); não usa --cenario
+    const n = Number(arg("--n") || 300), anos = Number(arg("--anos") || 12);
+    return JSON.stringify(require("./lote.js").lote(carregarMotor(), n, anos, arg("--semente-base") || "v1-LOTE"), null, 1);
+  }
   const arq = arg("--cenario");
   if (!arq) throw new Error("uso: node tools/sim.js --cenario <arquivo.json> [--semente S] [--rodadas N --semente-base S] [--carreira --anos N]");
   const cen = JSON.parse(fs.readFileSync(arq, "utf8"));

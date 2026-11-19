@@ -23,6 +23,7 @@ test("dados embutidos: catálogo do jogo consolidado (D85) e modelos de tools/ce
   assert.deepEqual(d.catalogo, JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "data", "catalogo", "catalogo-jogo.json"), "utf8")));
   assert.deepEqual(d.candidatura, ler("candidatura-exemplo.json"));
   assert.deepEqual(d.troca, ler("troca-exemplo.json"));
+  assert.deepEqual(d.origens, JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "data", "catalogo", "origens.json"), "utf8")));
   const raiz = (f) => JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", f), "utf8"));
   assert.deepEqual(d.reais.partidos, raiz("data/consolidado/partidos.json"));                       // dados reais pequenos (D86)
   assert.deepEqual(d.reais.parametrosModelos, raiz("data/consolidado/parametros-modelos.json"));

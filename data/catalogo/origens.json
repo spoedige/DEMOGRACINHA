@@ -1,0 +1,187 @@
+{
+ "_cenario": "Origens do MVP (D36, D87). Nenhuma concede mandato, nomeação ou Capital de Entrega; diferenças pequenas servem ao caminho.",
+ "_parametros": "Todos os valores iniciais (calibrar). Caixa em centavos.",
+ "origens": [
+  {
+   "id": "liderComunitario",
+   "nome": "Líder comunitário",
+   "redePoliticaPrevia": "indireta",
+   "aptidoes": {
+    "articulacao": 0.5,
+    "comunicacao": 0.5,
+    "mobilizacao": 0.6,
+    "gestao": 0.4,
+    "estrategia": 0.5,
+    "resiliencia": 0.5
+   },
+   "capacidade": {
+    "articulacao": 0.3,
+    "comunicacao": 0.3,
+    "mobilizacao": 0.4,
+    "gestao": 0.2,
+    "estrategia": 0.3,
+    "resiliencia": 0.3
+   },
+   "local": {
+    "notoriedade": 0.2,
+    "popularidade": 0.12,
+    "rejeicao": 0.03
+   },
+   "caixaPessoal": 500000,
+   "relacoes": {
+    "cupula": 0.3,
+    "bancada": 0.2,
+    "executivo": 0.2,
+    "credibilidade": 0.5
+   },
+   "grupo": 0,
+   "baseForca": 0.2
+  },
+  {
+   "id": "servidor",
+   "nome": "Servidor público",
+   "redePoliticaPrevia": "nenhuma",
+   "aptidoes": {
+    "articulacao": 0.4,
+    "comunicacao": 0.4,
+    "mobilizacao": 0.4,
+    "gestao": 0.65,
+    "estrategia": 0.55,
+    "resiliencia": 0.5
+   },
+   "capacidade": {
+    "articulacao": 0.2,
+    "comunicacao": 0.2,
+    "mobilizacao": 0.2,
+    "gestao": 0.45,
+    "estrategia": 0.35,
+    "resiliencia": 0.3
+   },
+   "local": {
+    "notoriedade": 0.1,
+    "popularidade": 0.06,
+    "rejeicao": 0.01
+   },
+   "caixaPessoal": 600000,
+   "relacoes": {
+    "cupula": 0.2,
+    "bancada": 0.15,
+    "executivo": 0.3,
+    "credibilidade": 0.6
+   },
+   "grupo": 0,
+   "baseForca": 0.1
+  },
+  {
+   "id": "empresario",
+   "nome": "Empresário ou profissional liberal",
+   "redePoliticaPrevia": "indireta",
+   "aptidoes": {
+    "articulacao": 0.5,
+    "comunicacao": 0.5,
+    "mobilizacao": 0.35,
+    "gestao": 0.6,
+    "estrategia": 0.55,
+    "resiliencia": 0.5
+   },
+   "capacidade": {
+    "articulacao": 0.3,
+    "comunicacao": 0.3,
+    "mobilizacao": 0.15,
+    "gestao": 0.4,
+    "estrategia": 0.35,
+    "resiliencia": 0.3
+   },
+   "local": {
+    "notoriedade": 0.15,
+    "popularidade": 0.07,
+    "rejeicao": 0.05
+   },
+   "caixaPessoal": 1200000,
+   "relacoes": {
+    "cupula": 0.25,
+    "bancada": 0.15,
+    "executivo": 0.2,
+    "credibilidade": 0.45
+   },
+   "grupo": 0,
+   "baseForca": 0.1
+  },
+  {
+   "id": "liderancaSindical",
+   "nome": "Liderança sindical ou associativa",
+   "redePoliticaPrevia": "indireta",
+   "aptidoes": {
+    "articulacao": 0.55,
+    "comunicacao": 0.55,
+    "mobilizacao": 0.65,
+    "gestao": 0.35,
+    "estrategia": 0.45,
+    "resiliencia": 0.55
+   },
+   "capacidade": {
+    "articulacao": 0.35,
+    "comunicacao": 0.35,
+    "mobilizacao": 0.45,
+    "gestao": 0.15,
+    "estrategia": 0.25,
+    "resiliencia": 0.35
+   },
+   "local": {
+    "notoriedade": 0.18,
+    "popularidade": 0.1,
+    "rejeicao": 0.04
+   },
+   "caixaPessoal": 300000,
+   "relacoes": {
+    "cupula": 0.3,
+    "bancada": 0.2,
+    "executivo": 0.15,
+    "credibilidade": 0.5
+   },
+   "grupo": 0.05,
+   "baseForca": 0.15
+  },
+  {
+   "id": "assessor",
+   "nome": "Assessor político",
+   "redePoliticaPrevia": "direta",
+   "aptidoes": {
+    "articulacao": 0.65,
+    "comunicacao": 0.45,
+    "mobilizacao": 0.4,
+    "gestao": 0.45,
+    "estrategia": 0.6,
+    "resiliencia": 0.5
+   },
+   "capacidade": {
+    "articulacao": 0.45,
+    "comunicacao": 0.25,
+    "mobilizacao": 0.2,
+    "gestao": 0.25,
+    "estrategia": 0.4,
+    "resiliencia": 0.3
+   },
+   "local": {
+    "notoriedade": 0.15,
+    "popularidade": 0.09,
+    "rejeicao": 0.015
+   },
+   "caixaPessoal": 400000,
+   "relacoes": {
+    "cupula": 0.4,
+    "bancada": 0.3,
+    "executivo": 0.25,
+    "credibilidade": 0.5
+   },
+   "grupo": 0.03,
+   "baseForca": 0.1
+  }
+ ],
+ "escalaPorte": {
+  "_nota": "Indicadores locais iniciais escalados pelo eleitorado do município: fator = min(1, (referencia / eleitorado) ^ expoente), com piso (calibrar).",
+  "referencia": 2000,
+  "expoente": 0.6,
+  "piso": 0.05
+ }
+}

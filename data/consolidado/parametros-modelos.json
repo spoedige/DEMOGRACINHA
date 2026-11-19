@@ -2,11 +2,19 @@
  "_nota": "Parâmetros para montar modelos de disputa a partir das bases reais (D86). Todos (calibrar); datas de calendário e posse (a confirmar contra as resoluções do TSE e a Constituição).",
  "semIdentificacao": 0.6,
  "chapasMajoritarias": 3,
- "fatorSinteticos": 2,
  "sintetico": {
-  "quadros": 0.45,
-  "capilaridade": 0.45,
-  "lambda": 0.3
+  "municipal": {
+   "fator": 3,
+   "quadros": 0.6,
+   "capilaridade": 0.6,
+   "lambda": 0.3
+  },
+  "geral": {
+   "fator": 2,
+   "quadros": 0.45,
+   "capilaridade": 0.45,
+   "lambda": 0.3
+  }
  },
  "opiniaoSintetico": {
   "desconhecimento": 0.3,
@@ -113,6 +121,21 @@
    "dataRegistro": "2032-08-15",
    "prazoFiliacao": "2032-04-03",
    "prazoDesincompatibilizacao": "2032-04-03"
+  },
+  "2034": {
+   "dataRegistro": "2034-08-15",
+   "prazoFiliacao": "2034-04-08",
+   "prazoDesincompatibilizacao": "2034-04-08"
+  },
+  "2036": {
+   "dataRegistro": "2036-08-15",
+   "prazoFiliacao": "2036-04-05",
+   "prazoDesincompatibilizacao": "2036-04-05"
+  },
+  "2038": {
+   "dataRegistro": "2038-08-15",
+   "prazoFiliacao": "2038-04-03",
+   "prazoDesincompatibilizacao": "2038-04-03"
   }
  },
  "posse": {
