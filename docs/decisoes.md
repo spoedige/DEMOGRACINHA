@@ -412,3 +412,15 @@ Aprovada pelo autor antes da implementação.
 7. Em J5 rodam só as disputas informadas (personagem e agentes), sem as 5.569 municipais.
 8. Export `DG1:` mais base64 do JSON canônico, síncrono, sem compressão no MVP. Escopo local dos indicadores é o município de atuação (`municipioLocal`, inicialmente o município inicial).
 9. Nenhum valor inicial no código: tudo em `dados.inicio` (calibrar). Decisão automática, desfecho de compromisso, evento e manutenção entram como funções injetadas até existirem cartas, eventos e fórmulas.
+
+## D76. Cartas e ações por janela, 19/11/2026
+
+Aprovada pelo autor antes da implementação.
+1. Carta é dado: catálogo com textos e magnitudes (calibrar); o motor valida a regra de acoplamento (GDD 4) e executa no fluxo de cartas.
+2. Ordem da janela: abertura, compromissos vencidos, eventos, cartas, eleição em J5, manutenção, fechamento (eventos-e-risco 1; GDD 2). Sem catálogo, mantém-se o comportamento da D75.
+3. Mão sorteada em toda janela; a manual joga a carta escolhida, a automática a segura. Sucesso e risco consomem sempre dois sorteios.
+4. Mão mínima: com só a segura elegível, mão de 1 carta, sem completar com armadilha nem carta inventada.
+5. Talento por forma linear com `base` e `pesoCapacidade` por carta (calibrar); qualidade fora do MVP.
+6. Ambição do personagem validada contra a lista fechada `dados.ambicoes`; segura escolhida pela maior contagem de ambições em comum, desempate por id.
+7. Convenção de invariante: popularidade e rejeição reduzidas na mesma proporção quando a soma passa da notoriedade; com notoriedade 0, zeradas.
+8. Catálogo artificial de teste em `tools/cenarios/cartas-exemplo.json`; o catálogo real é etapa própria.

@@ -1898,24 +1898,26 @@ var Carreira = (function () {
     });
   }
 
-  function avancar(estado, dados, entrada) {
+  // n janelas adiante na sequência canônica (J1 a J6 nos anos pares, C1 a C4 nos ímpares)
+  function deslocar(tempo, n) {
+    var ano = tempo.ano, js = janelasDo(ano), i = js.indexOf(tempo.janela) + n;
+    while (i >= js.length) { i -= js.length; ano++; js = janelasDo(ano); }
+    return { ano: ano, janela: js[i] };
+  }
+  // Passos 1 a 3 (D76): abertura, compromissos vencidos e eventos, antes das cartas (eventos-e-risco 1; GDD 2).
+  function abrir(estado, dados, entrada) {
     validar(estado);
     var e = copia(estado), en = entrada || {}, opcoes = en.opcoes || {}, oc = [];
     var t = e.tempo, manual = ehManual(e), hoje = inicioJanela(t.ano, t.janela);
+    if (!manual && en.decisoes) erro("decisões manuais em janela automática " + t.janela);
     // 1. abertura: posse e fim de mandato pela data de início da janela
     e.cargos.mandatos.forEach(function (m) {
       if (m.situacao === "eleito" && m.inicio <= hoje) { m.situacao = "exercicio"; oc.push({ tipo: "posse", disputaId: m.disputaId }); }
       if (m.situacao === "exercicio" && m.fim < hoje) { m.situacao = "encerrado"; oc.push({ tipo: "fimMandato", disputaId: m.disputaId }); }
     });
-    // 2. decisões: manuais só em janela manual; automáticas pela opção segura injetada (sem cartas, nenhuma ação)
-    if (!manual && en.decisoes) erro("decisões manuais em janela automática " + t.janela);
-    if (!manual && typeof opcoes.decidirAutomatico === "function") {
-      var a = opcoes.decidirAutomatico(copia(e), { ano: t.ano, janela: t.janela }, e.rng.cartas);
-      e = a.estado; e.rng.cartas = a.rngStateNext;
-    }
-    // 3. compromissos
+    // 2. compromissos
     vencerCompromissos(e, manual, en.decisoes, opcoes, oc);
-    // 4. eventos da janela, em ordem de id
+    // 3. eventos da janela, em ordem de id
     var agora = e.filaEventos.filter(function (x) { return x.janelaAlvo.ano === t.ano && x.janelaAlvo.janela === t.janela; }).sort(Comum.porId);
     if (agora.length && typeof opcoes.resolverEvento !== "function") erro("resolverEvento necessário para evento na janela (sistema de eventos)");
     e.filaEventos = e.filaEventos.filter(function (x) { return agora.indexOf(x) < 0; });
@@ -1923,6 +1925,30 @@ var Carreira = (function () {
       var r = opcoes.resolverEvento(copia(e), copia(x), e.rng.eventos);
       e = r.estado; e.rng.eventos = r.rngStateNext; oc.push({ tipo: "evento", id: x.id });
     });
+    return { e: e, oc: oc, manual: manual, t: t, en: en, opcoes: opcoes };
+  }
+  // Prévia da mão da janela, após os passos 1 a 3, sem alterar nada: o que a interface mostra antes da escolha.
+  function previa(estado, dados, entrada) {
+    if (!dados || dados.cartas === undefined) erro("previa exige catálogo de cartas");
+    var a = abrir(estado, dados, entrada);
+    return Cartas.montarMao(a.e, dados, a.e.rng.cartas).resultado;
+  }
+  function avancar(estado, dados, entrada) {
+    var a = abrir(estado, dados, entrada);
+    var e = a.e, oc = a.oc, manual = a.manual, t = a.t, en = a.en, opcoes = a.opcoes;
+    // 4. cartas (D76): mão sorteada em toda janela; manual joga a escolhida, automática a segura. Sem catálogo, D75.
+    if (dados && dados.cartas !== undefined) {
+      var m = Cartas.montarMao(e, dados, e.rng.cartas), mao = m.resultado;
+      e.rng.cartas = m.rngStateNext;
+      var escolhida = manual ? (en.decisoes && en.decisoes.carta) : mao.segura;
+      if (manual && mao.ids.indexOf(escolhida) < 0) erro("carta escolhida fora da mão: " + escolhida);
+      var j = Cartas.jogar(e, dados, e.rng.cartas, { cartaId: escolhida, mao: mao.ids });
+      e = j.resultado.estado; e.rng.cartas = j.rngStateNext;
+      oc.push({ tipo: "carta", id: escolhida, sucesso: j.resultado.sucesso, risco: j.resultado.risco });
+    } else if (!manual && typeof opcoes.decidirAutomatico === "function") {
+      var d = opcoes.decidirAutomatico(copia(e), { ano: t.ano, janela: t.janela }, e.rng.cartas);
+      e = d.estado; e.rng.cartas = d.rngStateNext;
+    }
     // 5. eleição em J5: cenários de dados.eleicoes[ano], fluxo derivado por disputa (independe do ritmo)
     if (t.janela === "J5") {
       ((dados && dados.eleicoes && Comum.proprio(dados.eleicoes, String(t.ano))) || []).forEach(function (cen) {
@@ -1951,7 +1977,8 @@ var Carreira = (function () {
   }
 
   return Object.freeze({ SAVE_VERSION: SAVE_VERSION, JANELAS: JANELAS, MANUAIS: MANUAIS, criar: criar, avancar: avancar,
-    validar: validar, ehManual: ehManual, inicioJanela: inicioJanela });
+    validar: validar, ehManual: ehManual, inicioJanela: inicioJanela, previa: previa, deslocar: deslocar,
+    tipoAno: tipoAno, janelasDo: janelasDo, RECURSOS: RECURSOS, TIPOS_COMPROMISSO: TIPOS_COMPROMISSO, LIMITE_ATIVOS: LIMITE_ATIVOS });
 })();
 
 /* == SAVE == */
@@ -2024,11 +2051,221 @@ var Save = (function () {
   return Object.freeze({ PREFIXO: PREFIXO, MIGRAR: MIGRAR, canonico: canonico, serializar: serializar, ler: ler, exportar: exportar, importar: importar });
 })();
 
+/* == CARTAS == */
+// Cartas e ações por janela (GDD 4; D76). Carta é dado: o catálogo traz textos e todas as magnitudes (calibrar).
+// O motor valida a regra de acoplamento, monta a mão no fluxo cartas e resolve a carta jogada.
+var Cartas = (function () {
+  var erro = Comum.erro;
+  var APTIDOES = ["articulacao", "comunicacao", "mobilizacao", "gestao", "estrategia", "resiliencia"];
+  var CUSTOS = ["caixaPessoal", "fundoCampanha", "capitalEntrega", "saude", "cupula", "bancada", "executivo"];
+  var CAMPANHA = ["J4", "J5", "J6"];
+  var ESTOQUES = { "bolsos.caixaPessoal": "int", "bolsos.fundoCampanha": "int", "bolsos.capitalEntrega": "int",
+    "personagem.saude": "unit", "personagem.experiencia": "pos", "base.local.forca": "unit", "grupo.influencia": "unit" };
+  ["local", "estadual", "nacional"].forEach(function (s) {
+    ["notoriedade", "popularidade", "rejeicao"].forEach(function (k) { ESTOQUES["indicadores." + s + "." + k] = "unit"; });
+  });
+  var RELACOES = { "relacoes.cupula": 1, "relacoes.bancada": 1, "relacoes.executivo": 1, "relacoes.credibilidade": 1 };
+
+  function perda(alvo, delta) { return /\.rejeicao$/.test(alvo) ? delta > 0 : delta < 0; }
+  function efeitosValidos(lista, campo) {
+    if (!Array.isArray(lista)) erro(campo + ": lista obrigatória");
+    lista.forEach(function (x, i) {
+      if (!ESTOQUES[x.alvo] && !RELACOES[x.alvo]) erro(campo + "[" + i + "]: alvo desconhecido " + x.alvo);
+      Comum.real(x.delta, campo + "[" + i + "].delta", -Infinity);
+      if (ESTOQUES[x.alvo] === "int" && !Number.isSafeInteger(x.delta)) erro(campo + "[" + i + "]: delta inteiro em bolso");
+    });
+    return lista;
+  }
+  function chance(c, campo) { Comum.real(c.base !== undefined ? c.base : c.probBase, campo + ".base", 0, 1); Comum.real(c.pesoCapacidade, campo + ".pesoCapacidade", -Infinity); }
+
+  // Regra de acoplamento (GDD 4) e restrições de 10.3 e eventos-e-risco 5, carta a carta.
+  function validarCarta(c) {
+    var id = Comum.idv(c && c.id, "carta.id"), campo = "carta " + id;
+    if (typeof c.titulo !== "string" || c.titulo === "" || typeof c.texto !== "string") erro(campo + ": titulo e texto obrigatórios");
+    if (typeof c.segura !== "boolean") erro(campo + ".segura: booleano");
+    var pool = c.pool || {};
+    if (pool.peso !== undefined) Comum.real(pool.peso, campo + ".pool.peso", 0);
+    var ef = efeitosValidos(c.efeitos || [], campo + ".efeitos");
+    if (c.segura) {
+      if (c.custo || c.risco || c.atraso || c.corrupcao) erro(campo + ": carta segura sem custo, risco, atraso nem corrupção");
+      if (ef.some(function (x) { return x.delta !== 0 && !perda(x.alvo, x.delta); })) erro(campo + ": carta segura só com efeito nulo ou perda");
+      if (!Array.isArray(c.ambicoes)) erro(campo + ".ambicoes: lista obrigatória na segura");
+      return;
+    }
+    var cu = c.custo || erro(campo + ": custo obrigatório (uma moeda)");
+    var temCompromisso = cu.compromisso !== undefined;
+    if (temCompromisso === (cu.recurso !== undefined)) erro(campo + ": custo em exatamente uma moeda");
+    if (temCompromisso) {
+      var k = cu.compromisso;
+      if (Carreira.TIPOS_COMPROMISSO.indexOf(k.tipo) < 0) erro(campo + ": tipo de compromisso fora da lista (10.3)");
+      Comum.idv(k.ator, campo + ".compromisso.ator");
+      Comum.inteiro(k.prazoEmJanelas, campo + ".compromisso.prazoEmJanelas", 1);
+      if (Carreira.RECURSOS.indexOf(k.custo && k.custo.recurso) < 0) erro(campo + ": recurso do compromisso sem verificação de saldo");
+      if (k.tipo === "repasseInstitucional" && k.custo.recurso !== "capitalEntrega") erro(campo + ": repasse só com Capital de Entrega (10.3)");
+      Comum.real(k.custoPoliticoDeRomper, campo + ".compromisso.custoPoliticoDeRomper", 0);
+    } else {
+      if (CUSTOS.indexOf(cu.recurso) < 0) erro(campo + ": moeda de custo inválida " + cu.recurso);
+      if (/^(caixaPessoal|fundoCampanha|capitalEntrega)$/.test(cu.recurso)) Comum.inteiro(cu.quantidade, campo + ".custo.quantidade", 1);
+      else Comum.real(cu.quantidade, campo + ".custo.quantidade", 0, 1);
+      if (cu.recurso === "fundoCampanha") {
+        var js = pool.janelas || [];
+        if (js.length === 0 || js.some(function (j) { return CAMPANHA.indexOf(j) < 0; }) || JSON.stringify(pool.tiposAno) !== '["eleitoral"]')
+          erro(campo + ": Fundo de Campanha só em J4 a J6 de ano eleitoral");
+      }
+    }
+    if (APTIDOES.indexOf(c.aptidao) < 0) erro(campo + ".aptidao inválida");
+    chance(c.sucesso || erro(campo + ": sucesso obrigatório"), campo + ".sucesso");
+    var ff = efeitosValidos(c.efeitosFalha || [], campo + ".efeitosFalha");
+    var r = c.risco || erro(campo + ": exatamente um risco");
+    chance(r, campo + ".risco"); var er = efeitosValidos(r.efeitos, campo + ".risco.efeitos");
+    var at = c.atraso || erro(campo + ": exatamente um atraso");
+    Comum.idv(at.eventoId, campo + ".atraso.eventoId"); Comum.inteiro(at.emJanelas, campo + ".atraso.emJanelas", 1);
+    Comum.real(at.prob, campo + ".atraso.prob", 0, 1);
+    var alvos = new Set(), est = 0, rel = 0;
+    ef.concat(ff, er).forEach(function (x) { if (!alvos.has(x.alvo)) { alvos.add(x.alvo); if (RELACOES[x.alvo]) rel++; else est++; } });
+    if (est > 2 || rel > 1) erro(campo + ": efeitos em mais de 2 estoques ou 1 relação");
+    if (!ef.some(function (x) { return x.delta !== 0 && !perda(x.alvo, x.delta); })) erro(campo + ": sem ganho (carta sem tensão)");
+    if (c.corrupcao) { if ([1, 2, 3].indexOf(c.corrupcao.nivel) < 0) erro(campo + ".corrupcao.nivel: 1, 2 ou 3"); }
+  }
+  function validarCatalogo(dados) {
+    var cs = dados.cartas;
+    if (!Array.isArray(cs) || cs.length === 0) erro("cartas: catálogo não vazio");
+    var vistos = new Set();
+    cs.forEach(function (c) { validarCarta(c); if (vistos.has(c.id)) erro("carta repetida: " + c.id); vistos.add(c.id); });
+    if (!Array.isArray(dados.ambicoes)) erro("ambicoes: lista fechada obrigatória com o catálogo");
+    var amb = new Set(dados.ambicoes.map(function (a) { return Comum.idv(a, "ambicao"); }));
+    cs.forEach(function (c) { (c.ambicoes || []).forEach(function (a) { if (!amb.has(a)) erro("carta " + c.id + ": ambição fora da lista " + a); }); });
+    var p = dados.parametrosCartas || erro("parametrosCartas obrigatório (calibrar)");
+    var n = Comum.inteiro(p.acoesPorMao, "parametrosCartas.acoesPorMao (calibrar)", 1);
+    if (n > 3) erro("parametrosCartas.acoesPorMao: no máximo 3 (mão de até 4 com a segura)");
+    return { amb: amb, n: n };
+  }
+
+  function cargosAtuais(e) { return e.cargos.mandatos.filter(function (m) { return m.situacao === "exercicio"; }).map(function (m) { return m.cargo; }); }
+  function saldoDe(e, r) {
+    if (r === "saude") return e.personagem.saude;
+    if (r === "caixaPessoal" || r === "fundoCampanha" || r === "capitalEntrega") return e.bolsos[r];
+    return e.relacoes[r];
+  }
+  function cabeNoPool(e, c) {
+    var p = c.pool || {}, t = e.tempo, cs = cargosAtuais(e);
+    if (p.tiposAno && p.tiposAno.indexOf(Carreira.tipoAno(t.ano)) < 0) return false;
+    if (p.janelas && p.janelas.indexOf(t.janela) < 0) return false;
+    if (p.cargos === "semCargo" && cs.length) return false;
+    if (Array.isArray(p.cargos) && !p.cargos.some(function (x) { return cs.indexOf(x) >= 0; })) return false;
+    if (p.origens && p.origens.indexOf(e.personagem.origem) < 0) return false;
+    if (p.tagsExigidas && !p.tagsExigidas.every(function (x) { return e.personagem.tags.indexOf(x) >= 0; })) return false;
+    if (p.tagsVedadas && p.tagsVedadas.some(function (x) { return e.personagem.tags.indexOf(x) >= 0; })) return false;
+    if (p.statusJuridico && p.statusJuridico.indexOf(e.personagem.statusJuridico) < 0) return false;
+    var usaBase = (c.efeitos || []).concat(c.efeitosFalha || [], (c.risco && c.risco.efeitos) || []).some(function (x) { return x.alvo === "base.local.forca"; });
+    if (usaBase && !Comum.proprio(e.base.municipios, e.personagem.municipioLocal)) return false; // sem base local, sem alvo
+    if (c.segura) return true;
+    var cu = c.custo;
+    if (cu.compromisso) return e.compromissos.ativos.length < Carreira.LIMITE_ATIVOS;
+    return saldoDe(e, cu.recurso) + Comum.TOL >= cu.quantidade; // talento nunca bloqueia; saldo sim
+  }
+
+  // Mão: uma segura (maior número de ambições em comum, desempate por id) e até n de ação por peso, sem reposição.
+  function montarMao(estado, dados, rngState) {
+    var cfg = validarCatalogo(dados);
+    estado.personagem.ambicao.forEach(function (a) { if (!cfg.amb.has(a)) erro("ambição do personagem fora da lista: " + a); });
+    var e = RNG.validar(rngState);
+    if (e.dominio !== "cartas") erro("mão usa o fluxo de cartas");
+    var eleg = dados.cartas.filter(function (c) { return cabeNoPool(estado, c); }).sort(Comum.porId);
+    var seguras = eleg.filter(function (c) { return c.segura; });
+    if (seguras.length === 0) erro("nenhuma carta segura elegível: o catálogo deve cobrir todo contexto");
+    var amb = estado.personagem.ambicao;
+    var segura = seguras.map(function (c) { return { c: c, n: c.ambicoes.filter(function (a) { return amb.indexOf(a) >= 0; }).length }; })
+      .sort(function (a, b) { return (b.n - a.n) || (a.c.id < b.c.id ? -1 : 1); })[0].c;
+    var resto = eleg.filter(function (c) { return !c.segura; }).map(function (c) { return { id: c.id, peso: (c.pool && c.pool.peso !== undefined) ? c.pool.peso : 1 }; })
+      .filter(function (x) { return x.peso > 0; });
+    var acoes = [];
+    while (acoes.length < cfg.n && resto.length) {
+      var tot = resto.reduce(function (s, x) { return s + x.peso; }, 0);
+      var u = RNG.decimal(e); e = u.rngStateNext;
+      var alvo = u.valor * tot, i = 0, acc = resto[0].peso;
+      while (acc <= alvo && i < resto.length - 1) { i++; acc += resto[i].peso; }
+      acoes.push(resto[i].id); resto.splice(i, 1);
+    }
+    acoes.sort();
+    return { resultado: { segura: segura.id, acoes: acoes, ids: [segura.id].concat(acoes) }, rngStateNext: e };
+  }
+
+  // Convenção de invariante (D76): após efeito, se popularidade + rejeição passar da notoriedade, as duas são
+  // multiplicadas por notoriedade / (popularidade + rejeição); com notoriedade 0, as duas vão a 0.
+  function ajustarIndicadores(e) {
+    ["local", "estadual", "nacional"].forEach(function (s) {
+      var i = e.indicadores[s], soma = i.popularidade + i.rejeicao;
+      if (soma > i.notoriedade) {
+        if (i.notoriedade === 0) { i.popularidade = 0; i.rejeicao = 0; }
+        else { var f = i.notoriedade / soma; i.popularidade *= f; i.rejeicao *= f; }
+      }
+    });
+  }
+  function aplicar(e, lista) {
+    lista.forEach(function (x) {
+      var tipo = ESTOQUES[x.alvo] || "unit", partes = x.alvo.split("."), o;
+      if (x.alvo === "base.local.forca") { o = e.base.municipios[e.personagem.municipioLocal]; partes = ["", "forca"]; }
+      else o = e[partes[0]];
+      for (var i = 1; i < partes.length - 1; i++) o = o[partes[i]];
+      var k = partes[partes.length - 1], v = o[k] + x.delta;
+      o[k] = tipo === "unit" ? Math.min(1, Math.max(0, v)) : Math.max(0, v);
+    });
+    ajustarIndicadores(e);
+  }
+  function sorteio(rng, c, cap, inverso) {
+    var u = RNG.decimal(rng), base = c.base !== undefined ? c.base : c.probBase;
+    var p = Math.min(1, Math.max(0, base + (inverso ? -1 : 1) * c.pesoCapacidade * cap));
+    return { ok: u.valor < p, rngStateNext: u.rngStateNext };
+  }
+
+  // Resolve a carta: custo, sucesso, risco, atraso, corrupção, histórico. Dois sorteios sempre (também na segura),
+  // para que a sequência não dependa da carta nem dos valores (como no módulo 4).
+  function jogar(estado, dados, rngState, escolha) {
+    var e = JSON.parse(JSON.stringify(estado)), t = e.tempo;
+    var c = dados.cartas.filter(function (x) { return x.id === escolha.cartaId; })[0] || erro("carta desconhecida: " + escolha.cartaId);
+    var r = RNG.validar(rngState);
+    if (r.dominio !== "cartas") erro("carta usa o fluxo de cartas");
+    var cap = c.aptidao ? e.personagem.capacidade[c.aptidao] : 0;
+    var s1 = sorteio(r, c.sucesso || { base: 1, pesoCapacidade: 0 }, cap, false); r = s1.rngStateNext;
+    var s2 = sorteio(r, c.risco || { probBase: 0, pesoCapacidade: 0 }, cap, true); r = s2.rngStateNext;
+    var marca = c.id + ":" + t.ano + t.janela, agendado = null;
+    if (c.custo && c.custo.compromisso) {
+      var k = c.custo.compromisso;
+      e.compromissos.ativos.push({ id: marca, tipo: k.tipo, ator: k.ator, objeto: k.objeto, prazo: Carreira.deslocar(t, k.prazoEmJanelas),
+        custo: k.custo, contrapartida: k.contrapartida, seCumprir: k.seCumprir, seRomper: k.seRomper,
+        custoPoliticoDeRomper: k.custoPoliticoDeRomper, estado: "ativo", origemCartaId: c.id });
+    } else if (c.custo) {
+      var rec = c.custo.recurso;
+      if (saldoDe(e, rec) + Comum.TOL < c.custo.quantidade) erro("saldo insuficiente para a carta " + c.id);
+      if (rec === "saude") e.personagem.saude = Math.max(0, e.personagem.saude - c.custo.quantidade);
+      else if (e.bolsos[rec] !== undefined) e.bolsos[rec] -= c.custo.quantidade;
+      else e.relacoes[rec] = Math.max(0, e.relacoes[rec] - c.custo.quantidade);
+    }
+    aplicar(e, c.segura || s1.ok ? (c.efeitos || []) : (c.efeitosFalha || []));
+    var risco = !c.segura && s2.ok;
+    if (risco) aplicar(e, c.risco.efeitos);
+    if (c.atraso) {
+      agendado = { id: marca, janelaAlvo: Carreira.deslocar(t, c.atraso.emJanelas),
+        dados: { eventoId: c.atraso.eventoId, origemCartaId: c.id, prob: c.atraso.prob, condicao: c.atraso.condicao === undefined ? null : c.atraso.condicao,
+          nivelCorrupcao: c.corrupcao ? c.corrupcao.nivel : null } };
+      e.filaEventos.push(agendado);
+    }
+    if (c.corrupcao) e.personagem.arquivoVermelho.push({ cartaId: c.id, nivel: c.corrupcao.nivel, ano: t.ano, janela: t.janela });
+    var sucesso = c.segura ? true : s1.ok;
+    e.historico.push({ ano: t.ano, janela: t.janela, tipo: "carta", cartaId: c.id, mao: escolha.mao || [c.id], sucesso: sucesso, risco: risco,
+      eventoAgendado: agendado ? agendado.id : null });
+    return { resultado: { estado: e, sucesso: sucesso, risco: risco }, rngStateNext: r };
+  }
+
+  return Object.freeze({ validarCatalogo: validarCatalogo, montarMao: montarMao, jogar: jogar, ajustarIndicadores: ajustarIndicadores });
+})();
+
 return Object.freeze({ RNG: RNG, Dados: Dados, MaiorResto: MaiorResto, Pontuacao: Pontuacao, Comparecimento: Comparecimento,
   Proporcional: Proporcional, Majoritaria: Majoritaria, Senado: Senado, SegundoTurno: SegundoTurno, Cadeiras: Cadeiras,
   Cadastro: Cadastro, Sinteticos: Sinteticos, Opiniao: Opiniao, Maquina: Maquina, Campanha: Campanha,
   Datas: Datas, Elegibilidade: Elegibilidade, Posse: Posse, Fechamento: Fechamento, Desempate: Desempate, Eleicao: Eleicao,
-  Carreira: Carreira, Save: Save });
+  Carreira: Carreira, Save: Save, Cartas: Cartas });
 })();
 </script>
 </body>

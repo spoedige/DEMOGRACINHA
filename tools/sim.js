@@ -4,7 +4,7 @@
 // Nenhum parâmetro calibrável nasce aqui: valores e formas das distribuições vêm do arquivo de cenário.
 //   node tools/sim.js --cenario tools/cenarios/vereador.json [--semente v1-X]
 //   node tools/sim.js --cenario tools/cenarios/vereador.json --rodadas 200 [--semente-base v1-LOTE]
-//   node tools/sim.js --cenario tools/cenarios/carreira.json --carreira [--anos N] [--semente v1-X]
+//   node tools/sim.js --cenario tools/cenarios/carreira.json --carreira [--anos N] [--semente v1-X] [--cartas arquivo.json]
 const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
@@ -76,9 +76,10 @@ function lote(Motor, cen, base, n) {
   return { sementeBase: base, hash: sha256(canonico(t)), telemetria: t };
 }
 
-// Carreira (D75): avança janela a janela; janelas manuais recebem decisões vazias (ainda não há cartas).
+// Carreira (D75): avança janela a janela. Sem catálogo, janelas manuais recebem decisões vazias; com catálogo
+// (--cartas, D76), jogam a carta segura da prévia, o mesmo que a janela automática faria.
 // eleicoes[ano] lista arquivos de cenário de disputa, relativos ao arquivo da carreira.
-function carreira(Motor, cen, dir, anos) {
+function carreira(Motor, cen, dir, anos, catalogo) {
   const eleicoes = {};
   Object.keys(cen.eleicoes || {}).forEach((a) => {
     eleicoes[a] = cen.eleicoes[a].map((f) => JSON.parse(fs.readFileSync(path.join(dir, f), "utf8")));
@@ -86,9 +87,12 @@ function carreira(Motor, cen, dir, anos) {
   let e = Motor.Carreira.criar({}, cen, null).resultado;
   const fim = e.tempo.ano + anos, opcoes = { opcoesEleicao: (c) => opcoesDoCenario(Motor, c) };
   const ocorrencias = [];
+  const dados = catalogo ? { eleicoes, cartas: catalogo.cartas, ambicoes: catalogo.ambicoes, parametrosCartas: catalogo.parametrosCartas } : { eleicoes };
   while (e.tempo.ano < fim) {
     const manual = Motor.Carreira.ehManual(e);
-    const r = Motor.Carreira.avancar(e, { eleicoes }, { opcoes, decisoes: manual ? { compromissos: {} } : undefined });
+    let decisoes;
+    if (manual) decisoes = catalogo ? { compromissos: {}, carta: Motor.Carreira.previa(e, dados, { opcoes, decisoes: { compromissos: {} } }).segura } : { compromissos: {} };
+    const r = Motor.Carreira.avancar(e, dados, { opcoes, decisoes });
     e = r.resultado.estado;
     r.resultado.ocorrencias.forEach((o) => ocorrencias.push(o));
   }
@@ -106,7 +110,8 @@ function principal(argv) {
     const anos = arg("--anos") === undefined ? cen.anos : Number.parseInt(arg("--anos"), 10);
     if (!Number.isSafeInteger(anos) || anos < 1) throw new Error("--anos: inteiro positivo");
     const c = arg("--semente") ? { ...cen, semente: arg("--semente") } : cen;
-    return canonico(carreira(Motor, c, path.dirname(arq), anos));
+    const cat = arg("--cartas") ? JSON.parse(fs.readFileSync(arg("--cartas"), "utf8")) : undefined;
+    return canonico(carreira(Motor, c, path.dirname(arq), anos, cat));
   }
   const n = arg("--rodadas");
   const out = n === undefined ? rodar(Motor, cen, arg("--semente") || cen.semente)
