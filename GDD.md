@@ -162,6 +162,7 @@ Sistema visual "Plano Piloto: Dossiê e Palanque" (D79), que substitui a direç�
 - **Paleta.** Travertino (#EAE5DC), marfim (#FAF8F4), latão fosco (#B08D57), azul cívico (#134074) e azul-marinho (#0B1F3A). Texto com contraste de pelo menos 4,5:1 e bordas de controle de pelo menos 3:1, conferidos em teste.
 - **Clima de rua.** A Praça dos Três Poderes reflete os indicadores do escopo atual (atenção discreta, onda favorável, pressão nas ruas), sem número novo na tela. O céu muda com a fase: convenções em sol pleno, urna à noite, crise ou rua hostil no crepúsculo.
 - **Interação.** Cartões inteiros selecionáveis, com seleção no lugar, sem redesenhar a tela; carimbo "Ação registrada" ao confirmar o período. Com `prefers-reduced-motion` ou com a opção do menu, céu estático, sem transição de fase, sem contagem animada e sem carimbo.
+- **Cenário vivo (D81).** Figura genérica do personagem na praça, com postura pelo clima de rua (parada, acenando, ou recolhida entre dois assessores); multidão em cinco níveis pela popularidade do escopo, com bandeiras na cor do partido a partir do terceiro; fogos na posse de mandato eletivo, com céu noturno. Com movimento reduzido, cena parada e, na posse, brilho dourado parado no céu, atrás das cúpulas do Congresso. Tudo decorativo: nenhum número novo, e o que acontece segue no boletim em texto.
 - **Partidos.** Siglas em texto com cor própria, sem logos. Logos oficiais só depois, na etapa 1B, com fonte e licença verificadas (a confirmar).
 - Nenhum rosto de pessoa real; personagens são silhuetas ou figuras genéricas.
 

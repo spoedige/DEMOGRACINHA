@@ -28,6 +28,9 @@ html, body { margin: 0; padding: 0; min-height: 100%; background: var(--bg-outer
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }
 body.reduce-motion *, body.reduce-motion *::before, body.reduce-motion *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+/* cena decorativa: com movimento reduzido, nenhuma animação, nem a espera de atraso (D81) */
+@media (prefers-reduced-motion: reduce) { .sky-stage * { animation: none !important; } }
+body.reduce-motion .sky-stage * { animation: none !important; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* Moldura 360 px */
@@ -53,6 +56,21 @@ body.reduce-motion *, body.reduce-motion *::before, body.reduce-motion *::after 
 .flag-wave-delay { animation-delay: 0.65s; }
 @keyframes flagFlutter { from { transform: skewY(-2deg) scaleX(0.95); } to { transform: skewY(3deg) scaleX(1.04); } }
 .water-gold-glow { opacity: 0; transition: opacity var(--dur-med) var(--ease); }
+/* Cenário vivo (D81): só transformação e opacidade; parado com movimento reduzido; pausado com a aba oculta */
+.multidao, .figura, .fogo { opacity: 0; transition: opacity var(--dur-med) var(--ease); }
+.sky-stage[data-multidao="1"] .multidao[data-nivel="1"],
+.sky-stage[data-multidao="2"] .multidao[data-nivel="1"], .sky-stage[data-multidao="2"] .multidao[data-nivel="2"],
+.sky-stage[data-multidao="3"] .multidao:not([data-nivel="4"]), .sky-stage[data-multidao="4"] .multidao { opacity: 1; }
+.bandeira-partido { fill: var(--cor-partido, #134074); }
+.sky-stage[data-postura="discreta"] .pose-discreta, .sky-stage[data-postura="popular"] .pose-popular, .sky-stage[data-postura="hostil"] .pose-hostil { opacity: 1; }
+.aceno { transform-box: fill-box; transform-origin: 0% 100%; animation: aceno 1.6s ease-in-out infinite alternate; }
+@keyframes aceno { from { transform: rotate(-14deg); } to { transform: rotate(10deg); } }
+.fogo { transform-box: fill-box; transform-origin: center; }
+.sky-stage[data-fogos="1"] .fogo { animation: fogo 2.4s ease-out both; }
+@keyframes fogo { 0% { opacity: 0; transform: scale(0.1); } 35% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.3); } }
+.brilho-ceu { opacity: 0; transition: opacity var(--dur-med) var(--ease); }
+.sky-stage[data-brilho="1"] .brilho-ceu { opacity: 1; }
+body.aba-oculta .sky-stage * { animation-play-state: paused !important; }
 .sky-stage[data-street="popular"] .water-gold-glow { opacity: 0.38; }
 .top-chrome { position: relative; z-index: 4; padding: 12px; display: flex; align-items: center; }
 .brand-lockup { display: inline-flex; align-items: center; gap: 7px; background: rgba(9, 24, 46, 0.92); border: 1px solid rgba(255, 255, 255, 0.22); padding: 6px 10px; border-radius: 999px; color: #FFFFFF; margin: 0; }
@@ -238,6 +256,9 @@ code { font-family: var(--font-mono); overflow-wrap: anywhere; }
 
         <!-- Camada principal: Congresso Nacional + Espelho d'água + Alegoria da Praça -->
         <svg class="parallax-layer layer-fg" id="layer-fg" viewBox="0 0 360 166" preserveAspectRatio="none" aria-hidden="true">
+          <!-- Brilho da posse com movimento reduzido (D81): céu dourado parado atrás das cúpulas, acima do painel -->
+          <defs><radialGradient id="brilho-posse" cx="0.5" cy="0.62" r="0.5"><stop offset="0" stop-color="#FDE68A" stop-opacity="0.85" /><stop offset="0.55" stop-color="#F59E0B" stop-opacity="0.35" /><stop offset="1" stop-color="#F59E0B" stop-opacity="0" /></radialGradient></defs>
+          <ellipse class="brilho-ceu" cx="180" cy="100" rx="170" ry="62" fill="url(#brilho-posse)" />
           <!-- Espelho d'água -->
           <rect x="0" y="135" width="360" height="31" fill="#09182E" />
           <rect x="0" y="135" width="360" height="26" fill="#F59E0B" class="water-gold-glow" />
@@ -295,6 +316,10 @@ code { font-family: var(--font-mono); overflow-wrap: anywhere; }
             <line x1="48" y1="123.5" x2="312" y2="123.5" stroke="#F87171" stroke-width="1.2" stroke-dasharray="3 2" />
           </g>
 
+          <!-- Cenário vivo (D81): multidão por popularidade, figura do personagem por clima de rua, fogos na posse. Decorativo. -->
+          <g class="multidao" data-nivel="1" fill="#E2E8F0"><circle cx="70" cy="120" r="1.4" /><rect x="68.8" y="121.6" width="2.4" height="3.4" rx="1" /><circle cx="150" cy="120" r="1.4" /><rect x="148.8" y="121.6" width="2.4" height="3.4" rx="1" /><circle cx="250" cy="120" r="1.4" /><rect x="248.8" y="121.6" width="2.4" height="3.4" rx="1" /></g><g class="multidao" data-nivel="2" fill="#E2E8F0"><circle cx="60" cy="120" r="1.4" /><rect x="58.8" y="121.6" width="2.4" height="3.4" rx="1" /><circle cx="90" cy="120" r="1.4" /><rect x="88.8" y="121.6" width="2.4" height="3.4" rx="1" /><circle cx="135" cy="120" r="1.4" /><rect x="133.8" y="121.6" width="2.4" height="3.4" rx="1" /><circle cx="160" cy="120" r="1.4" /><rect x="158.8" y="121.6" width="2.4" height="3.4" rx="1" /><circle cx="240" cy="120" r="1.4" /><rect x="238.8" y="121.6" width="2.4" height="3.4" rx="1" /><circle cx="262" cy="120" r="1.4" /><rect x="260.8" y="121.6" width="2.4" height="3.4" rx="1" /><circle cx="290" cy="120" r="1.4" /><rect x="288.8" y="121.6" width="2.4" height="3.4" rx="1" /></g><g class="multidao" data-nivel="3" fill="#E2E8F0"><circle cx="52" cy="120" r="1.4" /><rect x="50.8" y="121.6" width="2.4" height="3.4" rx="1" /><circle cx="80" cy="120" r="1.4" /><rect x="78.8" y="121.6" width="2.4" height="3.4" rx="1" /><circle cx="100" cy="120" r="1.4" /><rect x="98.8" y="121.6" width="2.4" height="3.4" rx="1" /><circle cx="125" cy="120" r="1.4" /><rect x="123.8" y="121.6" width="2.4" height="3.4" rx="1" /><circle cx="230" cy="120" r="1.4" /><rect x="228.8" y="121.6" width="2.4" height="3.4" rx="1" /><circle cx="275" cy="120" r="1.4" /><rect x="273.8" y="121.6" width="2.4" height="3.4" rx="1" /><circle cx="300" cy="120" r="1.4" /><rect x="298.8" y="121.6" width="2.4" height="3.4" rx="1" /><circle cx="310" cy="120" r="1.4" /><rect x="308.8" y="121.6" width="2.4" height="3.4" rx="1" /><line x1="88" y1="121" x2="88" y2="109" stroke="#FFFFFF" stroke-width="0.8" /><path class="flag-wave bandeira-partido" d="M 88 109 L 97 111.5 L 88 114 Z" /><line x1="148" y1="121" x2="148" y2="109" stroke="#FFFFFF" stroke-width="0.8" /><path class="flag-wave bandeira-partido flag-wave-delay" d="M 148 109 L 157 111.5 L 148 114 Z" /><line x1="248" y1="121" x2="248" y2="109" stroke="#FFFFFF" stroke-width="0.8" /><path class="flag-wave bandeira-partido" d="M 248 109 L 257 111.5 L 248 114 Z" /><line x1="296" y1="121" x2="296" y2="109" stroke="#FFFFFF" stroke-width="0.8" /><path class="flag-wave bandeira-partido flag-wave-delay" d="M 296 109 L 305 111.5 L 296 114 Z" /></g><g class="multidao" data-nivel="4" fill="#E2E8F0"><circle cx="56" cy="120" r="1.4" /><rect x="54.8" y="121.6" width="2.4" height="3.4" rx="1" /><circle cx="74" cy="120" r="1.4" /><rect x="72.8" y="121.6" width="2.4" height="3.4" rx="1" /><circle cx="96" cy="120" r="1.4" /><rect x="94.8" y="121.6" width="2.4" height="3.4" rx="1" /><circle cx="112" cy="120" r="1.4" /><rect x="110.8" y="121.6" width="2.4" height="3.4" rx="1" /><circle cx="140" cy="120" r="1.4" /><rect x="138.8" y="121.6" width="2.4" height="3.4" rx="1" /><circle cx="226" cy="120" r="1.4" /><rect x="224.8" y="121.6" width="2.4" height="3.4" rx="1" /><circle cx="236" cy="120" r="1.4" /><rect x="234.8" y="121.6" width="2.4" height="3.4" rx="1" /><circle cx="255" cy="120" r="1.4" /><rect x="253.8" y="121.6" width="2.4" height="3.4" rx="1" /><circle cx="282" cy="120" r="1.4" /><rect x="280.8" y="121.6" width="2.4" height="3.4" rx="1" /><circle cx="305" cy="120" r="1.4" /><rect x="303.8" y="121.6" width="2.4" height="3.4" rx="1" /><line x1="70" y1="121" x2="70" y2="109" stroke="#FFFFFF" stroke-width="0.8" /><path class="flag-wave bandeira-partido" d="M 70 109 L 79 111.5 L 70 114 Z" /><line x1="268" y1="121" x2="268" y2="109" stroke="#FFFFFF" stroke-width="0.8" /><path class="flag-wave bandeira-partido flag-wave-delay" d="M 268 109 L 277 111.5 L 268 114 Z" /></g>
+          <g class="figura pose-discreta"><circle cx="205" cy="116.5" r="2.6" fill="#F8FAFC" /><path d="M 201.5 120 h7 l1 9 h-2.2 v5 h-1.6 v-5 h-1.4 v5 h-1.6 v-5 h-2.2 z" fill="#F8FAFC" /><line x1="201.8" y1="121" x2="200.6" y2="128" stroke="#F8FAFC" stroke-width="1.4" stroke-linecap="round" /><line x1="208.2" y1="121" x2="209.4" y2="128" stroke="#F8FAFC" stroke-width="1.4" stroke-linecap="round" /></g><g class="figura pose-popular"><circle cx="205" cy="116.5" r="2.6" fill="#F8FAFC" /><path d="M 201.5 120 h7 l1 9 h-2.2 v5 h-1.6 v-5 h-1.4 v5 h-1.6 v-5 h-2.2 z" fill="#F8FAFC" /><line x1="201.8" y1="121" x2="200.6" y2="128" stroke="#F8FAFC" stroke-width="1.4" stroke-linecap="round" /><line class="aceno" x1="208.2" y1="121" x2="211.5" y2="113.5" stroke="#F8FAFC" stroke-width="1.4" stroke-linecap="round" /></g><g class="figura pose-hostil"><circle cx="195" cy="116.5" r="2.6" fill="#94A3B8" /><path d="M 191.5 120 h7 l1 9 h-2.2 v5 h-1.6 v-5 h-1.4 v5 h-1.6 v-5 h-2.2 z" fill="#94A3B8" /><line x1="191.8" y1="121" x2="190.6" y2="128" stroke="#94A3B8" stroke-width="1.4" stroke-linecap="round" /><line x1="198.2" y1="121" x2="199.4" y2="128" stroke="#94A3B8" stroke-width="1.4" stroke-linecap="round" /><circle cx="215" cy="116.5" r="2.6" fill="#94A3B8" /><path d="M 211.5 120 h7 l1 9 h-2.2 v5 h-1.6 v-5 h-1.4 v5 h-1.6 v-5 h-2.2 z" fill="#94A3B8" /><line x1="211.8" y1="121" x2="210.6" y2="128" stroke="#94A3B8" stroke-width="1.4" stroke-linecap="round" /><line x1="218.2" y1="121" x2="219.4" y2="128" stroke="#94A3B8" stroke-width="1.4" stroke-linecap="round" /><circle cx="205" cy="116.5" r="2.6" fill="#F8FAFC" /><path d="M 201.5 120 h7 l1 9 h-2.2 v5 h-1.6 v-5 h-1.4 v5 h-1.6 v-5 h-2.2 z" fill="#F8FAFC" /><line x1="201.8" y1="122" x2="208" y2="124.5" stroke="#F8FAFC" stroke-width="1.4" stroke-linecap="round" /><line x1="208.2" y1="122" x2="202" y2="124.5" stroke="#F8FAFC" stroke-width="1.4" stroke-linecap="round" /></g>
+          <g class="fogos" stroke-width="1.3" stroke-linecap="round"><g class="fogo" style="animation-delay:0s" stroke="#FDE68A"><line x1="60" y1="30" x2="70" y2="30" /><line x1="60" y1="30" x2="67.0711" y2="37.0711" /><line x1="60" y1="30" x2="60" y2="40" /><line x1="60" y1="30" x2="52.9289" y2="37.071" /><line x1="60" y1="30" x2="50" y2="29.9999" /><line x1="60" y1="30" x2="52.929" y2="22.9289" /><line x1="60" y1="30" x2="60.0001" y2="20" /><line x1="60" y1="30" x2="67.0712" y2="22.929" /></g><g class="fogo" style="animation-delay:0.3s" stroke="#FFFFFF"><line x1="130" y1="20" x2="140" y2="20" /><line x1="130" y1="20" x2="137.071" y2="27.0711" /><line x1="130" y1="20" x2="130" y2="30" /><line x1="130" y1="20" x2="122.929" y2="27.071" /><line x1="130" y1="20" x2="120" y2="19.9999" /><line x1="130" y1="20" x2="122.929" y2="12.9289" /><line x1="130" y1="20" x2="130" y2="10" /><line x1="130" y1="20" x2="137.071" y2="12.929" /></g><g class="fogo" style="animation-delay:0.6s" stroke="#FDE68A"><line x1="250" y1="28" x2="260" y2="28" /><line x1="250" y1="28" x2="257.071" y2="35.0711" /><line x1="250" y1="28" x2="250" y2="38" /><line x1="250" y1="28" x2="242.929" y2="35.071" /><line x1="250" y1="28" x2="240" y2="27.9999" /><line x1="250" y1="28" x2="242.929" y2="20.9289" /><line x1="250" y1="28" x2="250" y2="18" /><line x1="250" y1="28" x2="257.071" y2="20.929" /></g><g class="fogo" style="animation-delay:0.9s" stroke="#F59E0B"><line x1="310" y1="40" x2="320" y2="40" /><line x1="310" y1="40" x2="317.071" y2="47.0711" /><line x1="310" y1="40" x2="310" y2="50" /><line x1="310" y1="40" x2="302.929" y2="47.071" /><line x1="310" y1="40" x2="300" y2="39.9999" /><line x1="310" y1="40" x2="302.929" y2="32.9289" /><line x1="310" y1="40" x2="310" y2="30" /><line x1="310" y1="40" x2="317.071" y2="32.929" /></g><g class="fogo" style="animation-delay:1.2s" stroke="#FFFFFF"><line x1="185" y1="14" x2="195" y2="14" /><line x1="185" y1="14" x2="192.071" y2="21.0711" /><line x1="185" y1="14" x2="185" y2="24" /><line x1="185" y1="14" x2="177.929" y2="21.071" /><line x1="185" y1="14" x2="175" y2="13.9999" /><line x1="185" y1="14" x2="177.929" y2="6.92887" /><line x1="185" y1="14" x2="185" y2="4" /><line x1="185" y1="14" x2="192.071" y2="6.92902" /></g></g>
           <!-- Reflexos no espelho d'água -->
           <rect x="165" y="139" width="13" height="18" fill="#FFFFFF" opacity="0.14" />
           <rect x="182" y="139" width="13" height="18" fill="#FFFFFF" opacity="0.14" />
@@ -3531,6 +3556,7 @@ function textoOcorrencia(o, e) {
 function avancarUma(decisoes) {
   var t = app.estado.tempo, r = M.Carreira.avancar(app.estado, DADOS, { opcoes: OPCOES, decisoes: decisoes });
   app.estado = r.resultado.estado;
+  if (r.resultado.ocorrencias.some(function (o) { return o.tipo === "posse"; })) app.posse = true; // fogos só na posse de mandato eletivo (D81)
   return { rotulo: t.ano + ", janela " + t.janela + (decisoes ? "" : " (automática)"),
     textos: r.resultado.ocorrencias.map(function (o) { return textoOcorrencia(o, app.estado); }).filter(Boolean) };
 }
@@ -3802,6 +3828,26 @@ function telaCriacao() {
 }
 
 // ---------- montagem da tela ----------
+// Cenário vivo (D81): função direta do estado, sem sorteio. Limites da multidão pela popularidade do escopo (calibrar).
+var MULTIDAO = [0.05, 0.1, 0.2, 0.3];
+var fogosAte = 0;
+function cenaViva(palco, emJogo, c) {
+  var e = app.estado;
+  if (!emJogo) { palco.setAttribute("data-postura", ""); palco.setAttribute("data-multidao", "0"); palco.setAttribute("data-fogos", "0"); palco.setAttribute("data-brilho", "0"); return false; }
+  var pop = e.indicadores[escopoAtual(e)].popularidade, n = 0;
+  MULTIDAO.forEach(function (lim) { if (pop >= lim) n++; });
+  palco.setAttribute("data-postura", c.chave); palco.setAttribute("data-multidao", String(n));
+  palco.style.setProperty("--cor-partido", partido(e.personagem.partidoId).cor);
+  var posse = !!(app.resumo && app.posse);
+  if (posse && !app.posseExibida) {
+    app.posseExibida = true;
+    if (reduzir()) palco.setAttribute("data-brilho", "1"); // sem movimento: brilho dourado parado no céu, atrás das cúpulas
+    else { palco.setAttribute("data-fogos", "1"); fogosAte = Date.now() + 2600; setTimeout(function () { palco.setAttribute("data-fogos", "0"); fogosAte = 0; ceu.tema(app.ultimoTema || "manha"); }, 2600); }
+  }
+  if (!posse) { app.posseExibida = false; palco.setAttribute("data-brilho", "0"); palco.setAttribute("data-fogos", "0"); fogosAte = 0; }
+  return fogosAte > Date.now();
+}
+document.addEventListener("visibilitychange", function () { document.body.classList.toggle("aba-oculta", document.hidden); });
 function render(mudouFase) {
   var e = app.estado, emJogo = app.tela === "jogo";
   var palco = document.getElementById("sky-stage"), desk = document.getElementById("conteudo"), abas = document.getElementById("abas"), html;
@@ -3814,14 +3860,16 @@ function render(mudouFase) {
   var c = emJogo ? clima(e) : { chave: "discreta" };
   palco.setAttribute("data-street", c.chave);
   var fn = app.faseNome, t = e && e.tempo;
-  ceu.tema(!emJogo ? "manha" : fn === "eventos" || c.chave === "hostil" ? "crepusculo" : t.janela === "J3" ? "solPleno" : t.janela === "J5" || t.janela === "J6" ? "noite" : "manha");
+  app.ultimoTema = !emJogo ? "manha" : fn === "eventos" || c.chave === "hostil" ? "crepusculo" : t.janela === "J3" ? "solPleno" : t.janela === "J5" || t.janela === "J6" ? "noite" : "manha";
+  ceu.tema(cenaViva(palco, emJogo, c) ? "noite" : app.ultimoTema); // noite durante os fogos
   abas.hidden = !emJogo;
   Array.prototype.forEach.call(abas.querySelectorAll("[data-aba]"), function (b) { b.setAttribute("aria-selected", String(b.dataset.aba === app.aba)); b.tabIndex = b.dataset.aba === app.aba ? 0 : -1; });
   renderHud();
   desk.innerHTML = (app.erro ? '<p class="erro" role="alert">' + esc(app.erro) + "</p>" : "") + '<div class="fase' + (mudouFase && !reduzir() ? " phase-enter" : "") + '">' + html + "</div>";
   Array.prototype.forEach.call(desk.querySelectorAll("[data-radiogroup]"), function (g) { sincronizarGrupo(g.dataset.radiogroup); });
   var chave = app.tela + app.aba + (fn || "") + (t ? t.ano + t.janela : "");
-  if (mudouFase || chave !== app.ultimaFase) { var h = desk.querySelector("h1.dossier-title"); if (h) h.focus({ preventScroll: false }); }
+  // fase nova começa no topo, com o horizonte à vista (fogos da posse incluídos); o foco vai ao título sem rolar
+  if (mudouFase || chave !== app.ultimaFase) { window.scrollTo(0, 0); var h = desk.querySelector("h1.dossier-title"); if (h) h.focus({ preventScroll: true }); }
   app.ultimaFase = chave;
 }
 // seleção no lugar: só classes e atributos mudam (sem flash e sem perder o foco)
@@ -3901,7 +3949,7 @@ var ACOES = {
   },
   "confirmar": confirmarFase,
   "avancar": function () { executar(undefined); },
-  "continuar": function () { app.resumo = null; render(true); },
+  "continuar": function () { app.resumo = null; app.posse = false; render(true); },
   "exportar": function () { app.exportado = M.Save.exportar(app.estado); carimbo("Código do save gerado", function () { render(false); var t = document.getElementById("codigo-export"); if (t) t.focus(); }); },
   "movimento": function () { pref.reduzirMovimento = !pref.reduzirMovimento; salvarPref(); document.body.classList.toggle("reduce-motion", pref.reduzirMovimento); ceu.animar(); render(false); },
   "nova": function () { if (app.confirmarNova) { app.confirmarNova = false; app.estado = null; app.tela = "criacao"; app.form = null; render(true); } else { app.confirmarNova = true; render(false); } }

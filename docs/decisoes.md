@@ -482,3 +482,13 @@ Aprovada pelo autor antes da implementação.
 6. Save na versão 4, com `MIGRAR[3]` (só lista vazia de nomeações tem correspondência).
 7. Prévia com as fases `{ compromissos, eventos, desincompatibilizacao, nomeacoes, candidaturas, mao }`.
 8. Catálogo artificial em `tools/cenarios/nomeacoes-exemplo.json`; três cartas de cargo em `cartas-exemplo.json` e dois eventos de cargo em `eventos-exemplo.json`.
+
+## D81. Cenário vivo, 20/11/2026
+
+Aprovada pelo autor antes da implementação.
+1. Só interface, em SVG e CSS sobre o horizonte e o shader de céu existentes; sem biblioteca, sem mudança no motor ou no save, sem número novo na tela. Cena decorativa (oculta de leitores de tela) e função direta do estado, sem sorteio.
+2. Figura genérica do personagem na praça, só durante a partida, com postura pelo clima de rua: parada (atenção discreta), acenando (onda favorável), recolhida entre dois assessores (pressão nas ruas).
+3. Multidão em cinco níveis pela popularidade do escopo, limites 0,05, 0,10, 0,20 e 0,30 (calibrar, só exibição); bandeiras a partir do terceiro nível, na cor do partido (`parties-data`).
+4. Fogos só na posse de mandato eletivo, uma vez por posse, cerca de 2,5 s, com céu noturno durante a queima.
+5. Movimento reduzido (sistema ou menu): nenhuma animação na cena, sem fogos; na posse, brilho dourado parado no céu, junto ao horizonte e atrás das cúpulas do Congresso, acima do painel de situação (ajuste do autor na revisão). Animações em laço pausadas com a aba em segundo plano.
+6. Correção de experiência encontrada nas capturas: cada fase nova começa no topo da página, com o horizonte à vista, e o foco vai ao título sem rolar.
