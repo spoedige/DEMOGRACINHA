@@ -49,7 +49,7 @@ test("convite de vice: ficha própria, confirmação e registro da candidatura d
     assert.match(card, /Convite de vice/); assert.match(card, /Vice-prefeito em EX001/);
     assert.match(card, /Chance de confirmação/); assert.match(card, /Competitividade do titular/); assert.match(card, /Vice na chapa de P1/);
     await pg.locator(VICE).scrollIntoViewIfNeeded(); await capturar(pg, "vice-convite");
-    await pg.click(VICE); await pg.click("[data-acao=confirmar]");
+    await pg.click(VICE); await pg.click("[data-acao=detalhe-escolher]"); await pg.click("[data-acao=confirmar]");
     assert.equal(await titulo(pg), "Ações disponíveis");
     await pg.locator("[data-grupo=carta]").first().click(); await pg.click("[data-acao=confirmar]");
     await pg.waitForFunction(() => document.querySelector("h1.dossier-title").textContent === "O que aconteceu");
@@ -64,7 +64,7 @@ test("convite desfeito: carimbo próprio e segunda escolha só com lista ou não
   const nav = await chromium.launch();
   try {
     const { pg, erros } = await abrir(nav, sementePara(false));
-    await pg.click(VICE); await pg.click("[data-acao=confirmar]");
+    await pg.click(VICE); await pg.click("[data-acao=detalhe-escolher]"); await pg.click("[data-acao=confirmar]");
     await pg.waitForFunction(() => document.getElementById("carimbo-main").textContent === "CONVITE DESFEITO");
     await pg.waitForFunction(() => document.querySelector("h1.dossier-title").textContent === "Convite desfeito");
     assert.match(await pg.textContent("main"), /A chapa preferiu outro nome para Vice-prefeito/);

@@ -104,7 +104,13 @@ test("fluxo completo a 360 px: criação, janelas, eventos, candidatura, eleiç�
         vistos.add(h);
         const listas = pg.locator('[data-grupo=cand][data-valor^="lista:"]');            // vaga garantida na lista (D82)
         const oferta = (await listas.count()) ? listas.first() : pg.locator("[data-grupo=cand][data-valor=naoConcorrer]");
-        await oferta.click(); await capturar("06-candidatura");
+        await oferta.click();
+        if (await pg.locator("#detalhe:not([hidden])").count()) {                       // ficha compacta: folha de detalhe (Lote 1)
+          assert.match(await pg.textContent("#detalhe"), /Chance de indicação/);
+          await pg.keyboard.press("Escape"); assert.equal(await pg.locator("#detalhe:not([hidden])").count(), 0);
+          await oferta.click(); await pg.click("[data-acao=detalhe-escolher]");
+        }
+        await capturar("06-candidatura");
         await pg.click("[data-acao=confirmar]");
       } else if (h === "Ações disponíveis") {
         vistos.add(h);

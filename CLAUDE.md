@@ -53,6 +53,14 @@ Para economizar contexto: leia só o documento da área da tarefa. Fonte única 
   - localStorage com chave versionada. Sem IndexedDB. Export e import por código de texto (JSON compactado e base64). Aviso de que limpar o navegador apaga a partida.
 - Acessibilidade: viewport 360 px, toque de 44 px, contraste 4.5:1, `prefers-reduced-motion`.
 
+## Economia de contexto
+
+- Nunca ler `public/index.html` inteiro. Localizar a seção pelo marcador (`/* == ... == */`) ou por `grep -n` e ler só o intervalo necessário.
+- Não criar arquivos `.md` de revisão no scratchpad nem gerar capturas, salvo mudança visual explícita.
+- Relatório de revisão: no máximo 10 linhas, mais o resumo numérico dos testes (`# pass` / `# fail`).
+- Link privado (artefato) só quando o autor pedir.
+- Lotes do catálogo em escada: usar a skill local `lote-catalogo`.
+
 ## Skills úteis por fase
 
 | Fase | Skill | Uso |

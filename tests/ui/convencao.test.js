@@ -61,14 +61,14 @@ test("indicação negada: carimbo, segunda escolha só com lista ou não concorr
   const nav = await chromium.launch();
   try {
     const { pg, erros } = await abrir(nav, sementePara(false));
-    await pg.click(PEDIDO); await pg.click("[data-acao=confirmar]");
+    await pg.click(PEDIDO); await pg.click("[data-acao=detalhe-escolher]"); await pg.click("[data-acao=confirmar]");
     await pg.waitForFunction(() => document.getElementById("carimbo-main").textContent === "INDICAÇÃO NEGADA");
     await pg.waitForFunction(() => document.querySelector("h1.dossier-title").textContent === "Indicação negada");
     assert.match(await pg.textContent("main"), /O partido preferiu outro nome para Prefeito/);
     const opcoes = await pg.locator("[data-grupo=alt]").evaluateAll((els) => els.map((x) => x.dataset.valor));
     assert.deepEqual(opcoes, ["lista:2028|VEREADOR|EX001|1", "naoConcorrer"]);
     await capturar(pg, "convencao-negada");
-    await pg.click('[data-grupo=alt][data-valor^="lista:"]'); await pg.click("[data-acao=confirmar]");
+    await pg.click('[data-grupo=alt][data-valor^="lista:"]'); await pg.click("[data-acao=detalhe-escolher]"); await pg.click("[data-acao=confirmar]");
     assert.equal(await titulo(pg), "Ações disponíveis");
     await pg.locator("[data-grupo=carta]").first().click(); await pg.click("[data-acao=confirmar]");
     await pg.waitForFunction(() => document.querySelector("h1.dossier-title").textContent === "O que aconteceu");
@@ -84,7 +84,7 @@ test("indicação concedida: segue para as ações e registra a cabeça de chapa
   const nav = await chromium.launch();
   try {
     const { pg, erros } = await abrir(nav, sementePara(true));
-    await pg.click(PEDIDO); await pg.click("[data-acao=confirmar]");
+    await pg.click(PEDIDO); await pg.click("[data-acao=detalhe-escolher]"); await pg.click("[data-acao=confirmar]");
     assert.equal(await titulo(pg), "Ações disponíveis");
     await pg.locator("[data-grupo=carta]").first().click(); await pg.click("[data-acao=confirmar]");
     await pg.waitForFunction(() => document.querySelector("h1.dossier-title").textContent === "O que aconteceu");

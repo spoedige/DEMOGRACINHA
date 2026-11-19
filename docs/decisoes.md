@@ -525,3 +525,11 @@ Aprovada pelo autor antes da implementação.
 7. Personagem titular: o vice é sintético, do mesmo partido, sem efeito no jogo. Módulo 15 deixa de recusar a vacância com vice: convocação põe o vice em exercício e preserva o mandato; vaga definitiva efetiva o vice. Sem vice, erro (linha sucessória seguinte a confirmar). Na renúncia para disputar outro cargo (D80), o histórico registra o vice sintético como sucessor.
 8. Revisão do autor: as duas ofertas na chapa própria ficam (pedido de cabeça de chapa e convite de vice); vice disputa outro cargo sem renunciar no MVP (a confirmar na 1B, substituição nos 6 meses anteriores ao pleito); sucessão mantém o fim do mandato original e não conta para a reeleição no MVP (a confirmar na 1B); gatilho de conjuntura `crise-do-titular` com probabilidade base baixa quando há vice em exercício (calibrar). Pendente na interface: ficha da convenção compacta, com detalhes abertos ao tocar e confirmar ou cancelar por opção.
 9. Save na versão 6, com `papel` (e `sucedeu` quando houver) no mandato; `MIGRAR[5]` marca todo mandato como titular e recusa mandato de vice, que não existia antes.
+
+## D85. Catálogo em escada, Lote 1, 21/11/2026
+
+Aprovada pelo autor antes da implementação.
+1. Cartas, eventos e posições ganham `degrau` de 1 a 5, sem trava linear (GDD 1). Degrau atual: maior escopo exercido (mandato com posse ou degrau da posição de nomeação) e notoriedade estadual ou nacional acima de limiares (calibrar).
+2. Peso: degrau até o atual + 1, cheio; atual + 2, fator de salto (convite inesperado, calibrar); acima, fora. Em posições, o salto é sorteado no fluxo derivado `RNG.criar(semente, "mundo", "salto", ano, janela, posicaoId)`; em gatilhos, multiplica a chance. Item sem degrau vale 1 (catálogos de teste).
+3. Volume inicial: metade do contrato, cerca de 6 cartas, 4 eventos e 3 posições por degrau, em `data/catalogo/degrau-N.json`, com revisão do autor por degrau. Integração ao jogo quando os degraus estiverem revisados.
+4. Ficha compacta: na convenção e nas nomeações, o card mostra o resumo; o toque abre a folha de detalhe com "Escolher esta opção" e "Cancelar" (Esc fecha, foco preso na folha). Seta no grupo continua selecionando direto.
