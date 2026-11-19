@@ -59,3 +59,18 @@ test("peso por degrau: até o atual + 1 cheio, + 2 com fator de salto, acima for
   const m = Cartas.montarMao(e, alto, e.rng.cartas).resultado;
   assert.deepEqual(plano(m.acoes), []);
 });
+
+test("catálogo consolidado: em dia com os lotes, válido pelo motor e com segura em todo degrau", () => {
+  const { consolidar, SAIDA } = require("../../tools/catalogo.js");
+  assert.equal(fs.readFileSync(SAIDA, "utf8"), consolidar(), "rode node tools/catalogo.js");
+  const c = JSON.parse(consolidar()), d = Object.assign({ governos: {} }, c);
+  assert.doesNotThrow(() => Cartas.validarCatalogo(d));
+  assert.doesNotThrow(() => Eventos.validarCatalogo(d));
+  assert.doesNotThrow(() => Nomeacoes.validarCatalogo(d));
+  for (let n = 1; n <= 5; n++) assert.ok(c.cartas.some((x) => x.degrau === n && x.segura && !x.pool), "segura sem pool no degrau " + n);
+  // a mão monta em qualquer degrau, só com cartas até o atual + 2
+  const e = novo(); e.tempo = { ano: 2027, janela: "C1" };
+  const m = Cartas.montarMao(e, d, e.rng.cartas).resultado;
+  assert.ok(m.segura);
+  for (const id of m.acoes) assert.ok(c.cartas.find((x) => x.id === id).degrau <= 3);
+});

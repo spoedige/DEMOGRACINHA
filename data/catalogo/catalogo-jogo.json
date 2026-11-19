@@ -1,0 +1,2732 @@
+{
+ "_cenario": "Catálogo do jogo consolidado por tools/catalogo.js a partir de data/catalogo/degrau-N.json e eventos-comuns.json. Não editar à mão.",
+ "_parametros": "Todos os valores (calibrar). Itens marcados (a confirmar) dependem da 1B.",
+ "ambicoes": [
+  "legislativo",
+  "executivo",
+  "bastidor"
+ ],
+ "parametrosCartas": {
+  "acoesPorMao": 2
+ },
+ "parametrosDegrau": {
+  "fatorSalto": 0.1,
+  "notoriedadeEstadual": 0.3,
+  "notoriedadeNacional": 0.3
+ },
+ "cartas": [
+  {
+   "id": "ouvir-a-base",
+   "degrau": 1,
+   "titulo": "Ouvir a base",
+   "texto": "Rodada de conversas sem promessa nova. Mantém o vínculo, sem ganho visível.",
+   "segura": true,
+   "ambicoes": [
+    "legislativo",
+    "executivo",
+    "bastidor"
+   ],
+   "efeitos": []
+  },
+  {
+   "id": "reuniao-associacao",
+   "degrau": 1,
+   "titulo": "Reunião com a associação de moradores",
+   "texto": "Popularidade e base local tendem a subir. A associação pode cobrar depois.",
+   "segura": false,
+   "pool": {
+    "peso": 1
+   },
+   "custo": {
+    "recurso": "caixaPessoal",
+    "quantidade": 5000
+   },
+   "aptidao": "mobilizacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "indicadores.local.popularidade",
+     "delta": 0.01
+    },
+    {
+     "alvo": "base.local.forca",
+     "delta": 0.02
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "base.local.forca",
+     "delta": 0.005
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "base.local.forca",
+      "delta": -0.01
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "cobranca-associacao",
+    "emJanelas": 3,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "video-do-bairro",
+   "degrau": 1,
+   "titulo": "Vídeo sobre um problema do bairro",
+   "texto": "Notoriedade local tende a subir. Exposição atrai críticas.",
+   "segura": false,
+   "pool": {
+    "peso": 1
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.01
+   },
+   "aptidao": "comunicacao",
+   "sucesso": {
+    "base": 0.55,
+    "pesoCapacidade": 0.35
+   },
+   "efeitos": [
+    {
+     "alvo": "indicadores.local.notoriedade",
+     "delta": 0.015
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "indicadores.local.notoriedade",
+     "delta": 0.005
+    }
+   ],
+   "risco": {
+    "probBase": 0.2,
+    "pesoCapacidade": 0.15,
+    "efeitos": [
+     {
+      "alvo": "indicadores.local.rejeicao",
+      "delta": 0.01
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "video-repercute",
+    "emJanelas": 1,
+    "prob": 0.15,
+    "condicao": null
+   }
+  },
+  {
+   "id": "trazer-filiados",
+   "degrau": 1,
+   "titulo": "Trazer novos filiados ao partido",
+   "texto": "A cúpula tende a notar o esforço. Disputa interna possível.",
+   "segura": false,
+   "pool": {
+    "peso": 1
+   },
+   "custo": {
+    "recurso": "caixaPessoal",
+    "quantidade": 3000
+   },
+   "aptidao": "articulacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "relacoes.cupula",
+     "delta": 0.03
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "relacoes.cupula",
+     "delta": 0.01
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "relacoes.cupula",
+      "delta": -0.02
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "disputa-no-diretorio",
+    "emJanelas": 2,
+    "prob": 0.25,
+    "condicao": null
+   }
+  },
+  {
+   "id": "mutirao-de-limpeza",
+   "degrau": 1,
+   "titulo": "Mutirão de limpeza na praça",
+   "texto": "Base e popularidade locais tendem a subir. Custa saúde.",
+   "segura": false,
+   "pool": {
+    "peso": 1
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.03
+   },
+   "aptidao": "mobilizacao",
+   "sucesso": {
+    "base": 0.65,
+    "pesoCapacidade": 0.25
+   },
+   "efeitos": [
+    {
+     "alvo": "base.local.forca",
+     "delta": 0.03
+    },
+    {
+     "alvo": "indicadores.local.popularidade",
+     "delta": 0.01
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "base.local.forca",
+     "delta": 0.01
+    }
+   ],
+   "risco": {
+    "probBase": 0.1,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "base.local.forca",
+      "delta": -0.005
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "cobranca-associacao",
+    "emJanelas": 4,
+    "prob": 0.2,
+    "condicao": null
+   }
+  },
+  {
+   "id": "cafe-com-vereador",
+   "degrau": 1,
+   "titulo": "Café com um vereador da cidade",
+   "texto": "Grupo e relação com a Câmara tendem a crescer. Pode abrir porta na assessoria.",
+   "segura": false,
+   "pool": {
+    "peso": 1
+   },
+   "custo": {
+    "recurso": "caixaPessoal",
+    "quantidade": 2000
+   },
+   "aptidao": "articulacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "grupo.influencia",
+     "delta": 0.02
+    },
+    {
+     "alvo": "relacoes.bancada",
+     "delta": 0.02
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "grupo.influencia",
+     "delta": 0.005
+    }
+   ],
+   "risco": {
+    "probBase": 0.1,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "grupo.influencia",
+      "delta": -0.01
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "disputa-no-diretorio",
+    "emJanelas": 3,
+    "prob": 0.15,
+    "condicao": null
+   }
+  },
+  {
+   "id": "expediente-de-gabinete",
+   "degrau": 2,
+   "titulo": "Expediente no gabinete",
+   "texto": "Atende quem marcou horário e despacha a rotina. Sem ganho visível.",
+   "segura": true,
+   "ambicoes": [
+    "legislativo",
+    "executivo",
+    "bastidor"
+   ],
+   "efeitos": []
+  },
+  {
+   "id": "indicacao-de-obra",
+   "degrau": 2,
+   "titulo": "Indicação de obra ao Executivo",
+   "texto": "Base e popularidade locais tendem a subir se a obra sair. Gasta capacidade de entrega.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "cargos": [
+     "VEREADOR"
+    ]
+   },
+   "custo": {
+    "recurso": "capitalEntrega",
+    "quantidade": 1
+   },
+   "aptidao": "articulacao",
+   "sucesso": {
+    "base": 0.55,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "base.local.forca",
+     "delta": 0.03
+    },
+    {
+     "alvo": "indicadores.local.popularidade",
+     "delta": 0.01
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "base.local.forca",
+     "delta": 0.01
+    }
+   ],
+   "risco": {
+    "probBase": 0.2,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "base.local.forca",
+      "delta": -0.01
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "obra-nao-sai",
+    "emJanelas": 3,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "relatar-projeto",
+   "degrau": 2,
+   "titulo": "Relatar projeto na Câmara",
+   "texto": "A relação com os colegas tende a melhorar. Atrai grupos de interesse.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "cargos": [
+     "VEREADOR"
+    ]
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.02
+   },
+   "aptidao": "estrategia",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "relacoes.bancada",
+     "delta": 0.03
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "relacoes.bancada",
+     "delta": 0.01
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "relacoes.bancada",
+      "delta": -0.02
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "proposta-de-grupo-de-interesse",
+    "emJanelas": 2,
+    "prob": 0.2,
+    "condicao": null
+   }
+  },
+  {
+   "id": "votar-com-o-governo",
+   "degrau": 2,
+   "titulo": "Votar com o governo municipal",
+   "texto": "A relação com a prefeitura tende a melhorar. Parte da base cobra independência.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "cargos": [
+     "VEREADOR"
+    ]
+   },
+   "custo": {
+    "recurso": "caixaPessoal",
+    "quantidade": 3000
+   },
+   "aptidao": "articulacao",
+   "sucesso": {
+    "base": 0.65,
+    "pesoCapacidade": 0.2
+   },
+   "efeitos": [
+    {
+     "alvo": "relacoes.executivo",
+     "delta": 0.04
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "relacoes.executivo",
+     "delta": 0.01
+    }
+   ],
+   "risco": {
+    "probBase": 0.2,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "relacoes.executivo",
+      "delta": -0.01
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "cobranca-da-base",
+    "emJanelas": 3,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "inaugurar-obra",
+   "degrau": 2,
+   "titulo": "Inaugurar obra da prefeitura",
+   "texto": "Popularidade e notoriedade locais tendem a subir. Gasta capacidade de entrega.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "cargos": [
+     "PREFEITO"
+    ]
+   },
+   "custo": {
+    "recurso": "capitalEntrega",
+    "quantidade": 3
+   },
+   "aptidao": "gestao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "indicadores.local.popularidade",
+     "delta": 0.02
+    },
+    {
+     "alvo": "indicadores.local.notoriedade",
+     "delta": 0.01
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "indicadores.local.popularidade",
+     "delta": 0.005
+    }
+   ],
+   "risco": {
+    "probBase": 0.2,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "indicadores.local.popularidade",
+      "delta": -0.01
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "obra-nao-sai",
+    "emJanelas": 4,
+    "prob": 0.2,
+    "condicao": null
+   }
+  },
+  {
+   "id": "plenaria-nos-bairros",
+   "degrau": 2,
+   "titulo": "Plenária nos bairros",
+   "texto": "Base e notoriedade locais tendem a subir. Os bairros passam a cobrar o que foi ouvido.",
+   "segura": false,
+   "pool": {
+    "peso": 1
+   },
+   "custo": {
+    "recurso": "caixaPessoal",
+    "quantidade": 8000
+   },
+   "aptidao": "mobilizacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "base.local.forca",
+     "delta": 0.03
+    },
+    {
+     "alvo": "indicadores.local.notoriedade",
+     "delta": 0.01
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "base.local.forca",
+     "delta": 0.01
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "base.local.forca",
+      "delta": -0.01
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "cobranca-da-base",
+    "emJanelas": 4,
+    "prob": 0.2,
+    "condicao": null
+   }
+  },
+  {
+   "id": "despacho-com-a-equipe",
+   "degrau": 3,
+   "titulo": "Despacho com a equipe",
+   "texto": "Revisa a agenda e os pedidos acumulados. Sem ganho visível.",
+   "segura": true,
+   "ambicoes": [
+    "legislativo",
+    "executivo",
+    "bastidor"
+   ],
+   "efeitos": []
+  },
+  {
+   "id": "emenda-para-prefeito-aliado",
+   "degrau": 3,
+   "titulo": "Emenda para prefeito aliado",
+   "texto": "O grupo político no interior tende a crescer. Outros prefeitos vão pedir o mesmo.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "cargos": [
+     "DEPUTADO_ESTADUAL",
+     "DEPUTADO_DISTRITAL"
+    ]
+   },
+   "custo": {
+    "recurso": "capitalEntrega",
+    "quantidade": 2
+   },
+   "aptidao": "articulacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "grupo.influencia",
+     "delta": 0.03
+    },
+    {
+     "alvo": "relacoes.bancada",
+     "delta": 0.02
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "grupo.influencia",
+     "delta": 0.01
+    }
+   ],
+   "risco": {
+    "probBase": 0.2,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "grupo.influencia",
+      "delta": -0.01
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "cobranca-de-prefeitos",
+    "emJanelas": 3,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "propor-cpi",
+   "degrau": 3,
+   "titulo": "Propor CPI na Assembleia",
+   "texto": "Notoriedade estadual tende a subir. O governo do estado reage.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "cargos": [
+     "DEPUTADO_ESTADUAL",
+     "DEPUTADO_DISTRITAL"
+    ]
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.03
+   },
+   "aptidao": "comunicacao",
+   "sucesso": {
+    "base": 0.5,
+    "pesoCapacidade": 0.35
+   },
+   "efeitos": [
+    {
+     "alvo": "indicadores.estadual.notoriedade",
+     "delta": 0.02
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "indicadores.estadual.notoriedade",
+     "delta": 0.005
+    }
+   ],
+   "risco": {
+    "probBase": 0.3,
+    "pesoCapacidade": 0.15,
+    "efeitos": [
+     {
+      "alvo": "relacoes.executivo",
+      "delta": -0.03
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "crise-na-assembleia",
+    "emJanelas": 2,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "fechar-acordo-com-a-bancada",
+   "degrau": 3,
+   "titulo": "Fechar acordo com a bancada",
+   "texto": "A relação com a bancada estadual tende a melhorar. Acordos rompidos voltam como crise.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "cargos": [
+     "DEPUTADO_ESTADUAL",
+     "DEPUTADO_DISTRITAL",
+     "GOVERNADOR"
+    ]
+   },
+   "custo": {
+    "recurso": "caixaPessoal",
+    "quantidade": 10000
+   },
+   "aptidao": "articulacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "relacoes.bancada",
+     "delta": 0.04
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "relacoes.bancada",
+     "delta": 0.01
+    }
+   ],
+   "risco": {
+    "probBase": 0.2,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "relacoes.bancada",
+      "delta": -0.02
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "crise-na-assembleia",
+    "emJanelas": 3,
+    "prob": 0.2,
+    "condicao": null
+   }
+  },
+  {
+   "id": "anunciar-programa-estadual",
+   "degrau": 3,
+   "titulo": "Anunciar programa estadual",
+   "texto": "Popularidade e notoriedade estaduais tendem a subir. Gasta capacidade de entrega e atrai os órgãos de controle.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "cargos": [
+     "GOVERNADOR"
+    ]
+   },
+   "custo": {
+    "recurso": "capitalEntrega",
+    "quantidade": 4
+   },
+   "aptidao": "gestao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "indicadores.estadual.popularidade",
+     "delta": 0.02
+    },
+    {
+     "alvo": "indicadores.estadual.notoriedade",
+     "delta": 0.01
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "indicadores.estadual.popularidade",
+     "delta": 0.005
+    }
+   ],
+   "risco": {
+    "probBase": 0.2,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "indicadores.estadual.popularidade",
+      "delta": -0.01
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "operacao-no-estado",
+    "emJanelas": 6,
+    "prob": 0.1,
+    "condicao": null
+   }
+  },
+  {
+   "id": "roteiro-pelo-interior",
+   "degrau": 3,
+   "titulo": "Roteiro pelo interior do estado",
+   "texto": "Notoriedade e popularidade estaduais tendem a subir. Prefeitos visitados passam a cobrar.",
+   "segura": false,
+   "pool": {
+    "peso": 1
+   },
+   "custo": {
+    "recurso": "caixaPessoal",
+    "quantidade": 15000
+   },
+   "aptidao": "mobilizacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "indicadores.estadual.notoriedade",
+     "delta": 0.015
+    },
+    {
+     "alvo": "indicadores.estadual.popularidade",
+     "delta": 0.005
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "indicadores.estadual.notoriedade",
+     "delta": 0.005
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "indicadores.estadual.popularidade",
+      "delta": -0.005
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "cobranca-de-prefeitos",
+    "emJanelas": 4,
+    "prob": 0.2,
+    "condicao": null
+   }
+  },
+  {
+   "id": "agenda-em-brasilia",
+   "degrau": 4,
+   "titulo": "Agenda de gabinete em Brasília",
+   "texto": "Reuniões de rotina e despachos. Sem ganho visível.",
+   "segura": true,
+   "ambicoes": [
+    "legislativo",
+    "executivo",
+    "bastidor"
+   ],
+   "efeitos": []
+  },
+  {
+   "id": "relatar-projeto-federal",
+   "degrau": 4,
+   "titulo": "Relatar projeto no Congresso",
+   "texto": "Notoriedade nacional tende a subir. Colegas contrariados podem reagir.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "cargos": [
+     "DEPUTADO_FEDERAL",
+     "SENADOR"
+    ]
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.03
+   },
+   "aptidao": "estrategia",
+   "sucesso": {
+    "base": 0.55,
+    "pesoCapacidade": 0.35
+   },
+   "efeitos": [
+    {
+     "alvo": "indicadores.nacional.notoriedade",
+     "delta": 0.01
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "indicadores.nacional.notoriedade",
+     "delta": 0.003
+    }
+   ],
+   "risco": {
+    "probBase": 0.2,
+    "pesoCapacidade": 0.15,
+    "efeitos": [
+     {
+      "alvo": "relacoes.bancada",
+      "delta": -0.02
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "embate-no-congresso",
+    "emJanelas": 2,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "emenda-de-bancada",
+   "degrau": 4,
+   "titulo": "Articular emenda de bancada estadual",
+   "texto": "Grupo político e relação com a bancada tendem a crescer. Emendas atraem auditoria.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "cargos": [
+     "DEPUTADO_FEDERAL",
+     "SENADOR"
+    ]
+   },
+   "custo": {
+    "recurso": "capitalEntrega",
+    "quantidade": 3
+   },
+   "aptidao": "articulacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "grupo.influencia",
+     "delta": 0.03
+    },
+    {
+     "alvo": "relacoes.bancada",
+     "delta": 0.02
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "grupo.influencia",
+     "delta": 0.01
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "grupo.influencia",
+      "delta": -0.01
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "auditoria-do-tcu",
+    "emJanelas": 6,
+    "prob": 0.15,
+    "condicao": null
+   }
+  },
+  {
+   "id": "circular-pelos-ministerios",
+   "degrau": 4,
+   "titulo": "Circular pelos ministérios",
+   "texto": "A relação com o governo federal tende a melhorar. Favores pedidos viram favores devidos.",
+   "segura": false,
+   "pool": {
+    "peso": 1
+   },
+   "custo": {
+    "recurso": "caixaPessoal",
+    "quantidade": 20000
+   },
+   "aptidao": "articulacao",
+   "sucesso": {
+    "base": 0.55,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "relacoes.executivo",
+     "delta": 0.03
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "relacoes.executivo",
+     "delta": 0.01
+    }
+   ],
+   "risco": {
+    "probBase": 0.2,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "relacoes.executivo",
+      "delta": -0.01
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "pedido-de-bastidor",
+    "emJanelas": 3,
+    "prob": 0.25,
+    "condicao": null
+   }
+  },
+  {
+   "id": "apresentar-resultados-da-gestao",
+   "degrau": 4,
+   "titulo": "Apresentar resultados da gestão",
+   "texto": "Notoriedade nacional e relação com o governo tendem a subir. Gasta capacidade de entrega.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "nomeacao": [
+     "secretario-executivo-ministerio",
+     "presidente-da-embratur",
+     "presidente-do-bndes"
+    ]
+   },
+   "custo": {
+    "recurso": "capitalEntrega",
+    "quantidade": 3
+   },
+   "aptidao": "gestao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "indicadores.nacional.notoriedade",
+     "delta": 0.01
+    },
+    {
+     "alvo": "relacoes.executivo",
+     "delta": 0.02
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "indicadores.nacional.notoriedade",
+     "delta": 0.003
+    }
+   ],
+   "risco": {
+    "probBase": 0.2,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "relacoes.executivo",
+      "delta": -0.02
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "crise-na-estatal",
+    "emJanelas": 3,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "entrevista-nacional",
+   "degrau": 4,
+   "titulo": "Entrevista a veículo nacional",
+   "texto": "Notoriedade e popularidade nacionais tendem a subir. Uma frase mal colocada pesa.",
+   "segura": false,
+   "pool": {
+    "peso": 1
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.02
+   },
+   "aptidao": "comunicacao",
+   "sucesso": {
+    "base": 0.55,
+    "pesoCapacidade": 0.35
+   },
+   "efeitos": [
+    {
+     "alvo": "indicadores.nacional.notoriedade",
+     "delta": 0.015
+    },
+    {
+     "alvo": "indicadores.nacional.popularidade",
+     "delta": 0.005
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "indicadores.nacional.notoriedade",
+     "delta": 0.005
+    }
+   ],
+   "risco": {
+    "probBase": 0.2,
+    "pesoCapacidade": 0.15,
+    "efeitos": [
+     {
+      "alvo": "indicadores.nacional.popularidade",
+      "delta": -0.005
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "embate-no-congresso",
+    "emJanelas": 2,
+    "prob": 0.1,
+    "condicao": null
+   }
+  },
+  {
+   "id": "reuniao-de-coordenacao",
+   "degrau": 5,
+   "titulo": "Reunião de coordenação política",
+   "texto": "Alinha a agenda da semana com os aliados. Sem ganho visível.",
+   "segura": true,
+   "ambicoes": [
+    "legislativo",
+    "executivo",
+    "bastidor"
+   ],
+   "efeitos": []
+  },
+  {
+   "id": "pronunciamento-em-rede-nacional",
+   "degrau": 5,
+   "titulo": "Pronunciamento em rede nacional",
+   "texto": "Popularidade e notoriedade nacionais tendem a subir. Um anúncio sem entrega vira cobrança.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "cargos": [
+     "PRESIDENTE"
+    ]
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.03
+   },
+   "aptidao": "comunicacao",
+   "sucesso": {
+    "base": 0.55,
+    "pesoCapacidade": 0.35
+   },
+   "efeitos": [
+    {
+     "alvo": "indicadores.nacional.popularidade",
+     "delta": 0.02
+    },
+    {
+     "alvo": "indicadores.nacional.notoriedade",
+     "delta": 0.01
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "indicadores.nacional.popularidade",
+     "delta": 0.005
+    }
+   ],
+   "risco": {
+    "probBase": 0.25,
+    "pesoCapacidade": 0.15,
+    "efeitos": [
+     {
+      "alvo": "indicadores.nacional.popularidade",
+      "delta": -0.01
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "crise-ministerial",
+    "emJanelas": 3,
+    "prob": 0.2,
+    "condicao": null
+   }
+  },
+  {
+   "id": "negociar-coalizao",
+   "degrau": 5,
+   "titulo": "Negociar a coalizão de governo",
+   "texto": "A base no Congresso tende a crescer. Gasta capacidade de entrega em cargos e verbas.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "cargos": [
+     "PRESIDENTE"
+    ]
+   },
+   "custo": {
+    "recurso": "capitalEntrega",
+    "quantidade": 6
+   },
+   "aptidao": "articulacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "relacoes.bancada",
+     "delta": 0.05
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "relacoes.bancada",
+     "delta": 0.015
+    }
+   ],
+   "risco": {
+    "probBase": 0.2,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "relacoes.bancada",
+      "delta": -0.03
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "crise-de-coalizao",
+    "emJanelas": 3,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "orientar-a-bancada",
+   "degrau": 5,
+   "titulo": "Orientar a bancada como líder",
+   "texto": "A relação com a bancada tende a melhorar. Dissidências aparecem nas votações difíceis.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "cargos": [
+     "DEPUTADO_FEDERAL",
+     "SENADOR"
+    ]
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.03
+   },
+   "aptidao": "articulacao",
+   "sucesso": {
+    "base": 0.55,
+    "pesoCapacidade": 0.35
+   },
+   "efeitos": [
+    {
+     "alvo": "relacoes.bancada",
+     "delta": 0.03
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "relacoes.bancada",
+     "delta": 0.01
+    }
+   ],
+   "risco": {
+    "probBase": 0.2,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "relacoes.bancada",
+      "delta": -0.02
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "perda-de-base",
+    "emJanelas": 3,
+    "prob": 0.2,
+    "condicao": null
+   }
+  },
+  {
+   "id": "conduzir-a-executiva-nacional",
+   "degrau": 5,
+   "titulo": "Conduzir a executiva nacional",
+   "texto": "Grupo político e relação com a cúpula tendem a crescer. Custa caixa.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "nomeacao": [
+     "presidente-executiva-nacional"
+    ]
+   },
+   "custo": {
+    "recurso": "caixaPessoal",
+    "quantidade": 20000
+   },
+   "aptidao": "articulacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "grupo.influencia",
+     "delta": 0.03
+    },
+    {
+     "alvo": "relacoes.cupula",
+     "delta": 0.03
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "grupo.influencia",
+     "delta": 0.01
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "grupo.influencia",
+      "delta": -0.01
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "crise-de-coalizao",
+    "emJanelas": 4,
+    "prob": 0.15,
+    "condicao": null
+   }
+  },
+  {
+   "id": "lancar-politica-do-ministerio",
+   "degrau": 5,
+   "titulo": "Lançar política do ministério",
+   "texto": "Notoriedade nacional e relação com o governo tendem a subir. Gasta capacidade de entrega.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "nomeacao": [
+     "ministro-das-cidades",
+     "ministro-do-turismo"
+    ]
+   },
+   "custo": {
+    "recurso": "capitalEntrega",
+    "quantidade": 5
+   },
+   "aptidao": "gestao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "indicadores.nacional.notoriedade",
+     "delta": 0.015
+    },
+    {
+     "alvo": "relacoes.executivo",
+     "delta": 0.02
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "indicadores.nacional.notoriedade",
+     "delta": 0.005
+    }
+   ],
+   "risco": {
+    "probBase": 0.2,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "relacoes.executivo",
+      "delta": -0.02
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "crise-ministerial",
+    "emJanelas": 3,
+    "prob": 0.3,
+    "condicao": null
+   }
+  }
+ ],
+ "eventos": [
+  {
+   "id": "cobranca-associacao",
+   "degrau": 1,
+   "familia": "demanda-local",
+   "titulo": "Cobrança da associação",
+   "texto": "A associação de moradores cobra o que foi conversado.",
+   "tipo": "atrasado",
+   "opcoes": [
+    {
+     "id": "registrar",
+     "texto": "Registrar a cobrança",
+     "efeitos": [
+      {
+       "alvo": "base.local.forca",
+       "delta": -0.01
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "video-repercute",
+   "degrau": 1,
+   "familia": "exposicao-local",
+   "titulo": "O vídeo repercute",
+   "texto": "O vídeo circula nos grupos do bairro e chega à imprensa local.",
+   "tipo": "atrasado",
+   "opcoes": [
+    {
+     "id": "moderar",
+     "texto": "Agradecer e mudar de assunto",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "indicadores.local.notoriedade",
+       "delta": 0.005
+      }
+     ]
+    },
+    {
+     "id": "aproveitar",
+     "texto": "Gravar outro vídeo, mais duro",
+     "efeitos": [
+      {
+       "alvo": "indicadores.local.notoriedade",
+       "delta": 0.02
+      },
+      {
+       "alvo": "indicadores.local.rejeicao",
+       "delta": 0.01
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "disputa-no-diretorio",
+   "degrau": 1,
+   "familia": "diretorio",
+   "titulo": "Disputa no diretório",
+   "texto": "Um grupo antigo do diretório municipal vê os novos filiados como ameaça.",
+   "tipo": "atrasado",
+   "opcoes": [
+    {
+     "id": "compor",
+     "texto": "Compor com o grupo antigo",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "relacoes.cupula",
+       "delta": 0.01
+      },
+      {
+       "alvo": "grupo.influencia",
+       "delta": -0.01
+      }
+     ]
+    },
+    {
+     "id": "enfrentar",
+     "texto": "Enfrentar o grupo antigo",
+     "efeitos": [
+      {
+       "alvo": "relacoes.cupula",
+       "delta": -0.03
+      },
+      {
+       "alvo": "grupo.influencia",
+       "delta": 0.02
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "boato-no-bairro",
+   "degrau": 1,
+   "familia": "boato",
+   "titulo": "Boato no bairro",
+   "texto": "Corre nos grupos de mensagem uma história sobre você que não é verdadeira.",
+   "tipo": "gatilho",
+   "limiar": {
+    "alvo": "indicadores.local.rejeicao",
+    "op": ">=",
+    "valor": 0.03,
+    "escala": 0.05
+   },
+   "probBase": 0.3,
+   "bloqueioJanelas": 4,
+   "opcoes": [
+    {
+     "id": "esclarecer",
+     "texto": "Esclarecer com calma",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "indicadores.local.rejeicao",
+       "delta": -0.003
+      }
+     ]
+    },
+    {
+     "id": "ignorar",
+     "texto": "Ignorar o boato",
+     "efeitos": [
+      {
+       "alvo": "indicadores.local.rejeicao",
+       "delta": 0.005
+      },
+      {
+       "alvo": "indicadores.local.notoriedade",
+       "delta": 0.005
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "obra-nao-sai",
+   "degrau": 2,
+   "familia": "obra-municipal",
+   "titulo": "A obra não sai",
+   "texto": "A obra prometida para o bairro parou e os moradores querem explicação.",
+   "tipo": "atrasado",
+   "opcoes": [
+    {
+     "id": "explicar",
+     "texto": "Explicar o atraso aos moradores",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "base.local.forca",
+       "delta": -0.005
+      }
+     ]
+    },
+    {
+     "id": "culpar-prefeitura",
+     "texto": "Cobrar a prefeitura em público",
+     "efeitos": [
+      {
+       "alvo": "relacoes.executivo",
+       "delta": -0.03
+      },
+      {
+       "alvo": "indicadores.local.popularidade",
+       "delta": 0.005
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "proposta-de-grupo-de-interesse",
+   "degrau": 2,
+   "familia": "grupo-de-interesse",
+   "titulo": "Proposta de um grupo de interesse",
+   "texto": "Uma empresa interessada no projeto oferece apoio em troca de mudanças no texto.",
+   "tipo": "atrasado",
+   "condicao": [
+    {
+     "alvo": "personagem.statusJuridico",
+     "op": "==",
+     "valor": "regular"
+    }
+   ],
+   "opcoes": [
+    {
+     "id": "recusar",
+     "texto": "Recusar a proposta",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "relacoes.bancada",
+       "delta": -0.01
+      }
+     ]
+    },
+    {
+     "id": "aceitar",
+     "texto": "Aceitar o acordo",
+     "efeitos": [
+      {
+       "alvo": "relacoes.bancada",
+       "delta": 0.02
+      },
+      {
+       "alvo": "indicadores.local.rejeicao",
+       "delta": 0.01
+      }
+     ],
+     "agendar": {
+      "eventoId": "investigacao-do-acordo",
+      "emJanelas": 3,
+      "prob": 0.4
+     }
+    }
+   ]
+  },
+  {
+   "id": "investigacao-do-acordo",
+   "degrau": 2,
+   "familia": "exposicao-municipal",
+   "titulo": "Investigação do acordo",
+   "texto": "O Ministério Público abre apuração sobre as mudanças no projeto.",
+   "tipo": "atrasado",
+   "condicao": [
+    {
+     "alvo": "personagem.statusJuridico",
+     "op": "==",
+     "valor": "regular"
+    }
+   ],
+   "opcoes": [
+    {
+     "id": "investigacao",
+     "texto": "Investigação aberta",
+     "efeitos": [
+      {
+       "alvo": "indicadores.local.rejeicao",
+       "delta": 0.02
+      }
+     ],
+     "juridico": "investigar",
+     "estadoTemporario": {
+      "tipo": "investigado",
+      "duracaoJanelas": 8
+     },
+     "agendar": {
+      "eventoId": "denuncia-oferecida",
+      "emJanelas": 3,
+      "prob": 0.4
+     }
+    }
+   ]
+  },
+  {
+   "id": "crise-na-saude-municipal",
+   "degrau": 2,
+   "familia": "crise-gestao-municipal",
+   "titulo": "Fila no posto de saúde",
+   "texto": "Reportagem mostra filas longas nos postos da cidade e cobra a prefeitura.",
+   "tipo": "gatilho",
+   "condicao": [
+    {
+     "alvo": "cargos.exercicio",
+     "op": "contem",
+     "valor": "PREFEITO"
+    }
+   ],
+   "limiar": {
+    "alvo": "indicadores.local.rejeicao",
+    "op": ">=",
+    "valor": 0.05,
+    "escala": 0.1
+   },
+   "probBase": 0.4,
+   "bloqueioJanelas": 4,
+   "opcoes": [
+    {
+     "id": "visitar",
+     "texto": "Visitar os postos e anunciar mutirão",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "indicadores.local.popularidade",
+       "delta": -0.005
+      }
+     ]
+    },
+    {
+     "id": "culpar-gestao-anterior",
+     "texto": "Atribuir a crise à gestão anterior",
+     "efeitos": [
+      {
+       "alvo": "indicadores.local.rejeicao",
+       "delta": 0.01
+      },
+      {
+       "alvo": "indicadores.local.popularidade",
+       "delta": 0.005
+      }
+     ]
+    },
+    {
+     "id": "trocar-secretario",
+     "texto": "Trocar o secretário de Saúde",
+     "efeitos": [
+      {
+       "alvo": "relacoes.bancada",
+       "delta": -0.02
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cobranca-da-base",
+   "degrau": 2,
+   "familia": "demanda-municipal",
+   "titulo": "Cobrança dos bairros",
+   "texto": "Lideranças dos bairros dizem que você sumiu depois de eleito.",
+   "tipo": "atrasado",
+   "opcoes": [
+    {
+     "id": "voltar-aos-bairros",
+     "texto": "Voltar aos bairros com agenda fixa",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "base.local.forca",
+       "delta": 0.005
+      }
+     ]
+    },
+    {
+     "id": "prometer-emenda",
+     "texto": "Prometer emenda para os bairros",
+     "efeitos": [
+      {
+       "alvo": "base.local.forca",
+       "delta": 0.015
+      },
+      {
+       "alvo": "relacoes.credibilidade",
+       "delta": -0.02
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "crise-na-assembleia",
+   "degrau": 3,
+   "familia": "crise-legislativo-estadual",
+   "titulo": "Impasse na Assembleia",
+   "texto": "A votação do orçamento trava e os líderes cobram uma posição sua.",
+   "tipo": "atrasado",
+   "opcoes": [
+    {
+     "id": "negociar",
+     "texto": "Negociar com os líderes",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "relacoes.bancada",
+       "delta": 0.005
+      }
+     ]
+    },
+    {
+     "id": "obstruir",
+     "texto": "Obstruir a votação",
+     "efeitos": [
+      {
+       "alvo": "relacoes.bancada",
+       "delta": -0.03
+      },
+      {
+       "alvo": "indicadores.estadual.notoriedade",
+       "delta": 0.01
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cobranca-de-prefeitos",
+   "degrau": 3,
+   "familia": "prefeitos-aliados",
+   "titulo": "Cobrança dos prefeitos aliados",
+   "texto": "Prefeitos da base dizem que o apoio na eleição depende de entregas no município.",
+   "tipo": "atrasado",
+   "opcoes": [
+    {
+     "id": "atender",
+     "texto": "Atender os pedidos possíveis",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "bolsos.capitalEntrega",
+       "delta": -1
+      }
+     ]
+    },
+    {
+     "id": "adiar",
+     "texto": "Adiar para depois da eleição",
+     "efeitos": [
+      {
+       "alvo": "grupo.influencia",
+       "delta": -0.02
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "crise-na-seguranca-estadual",
+   "degrau": 3,
+   "familia": "crise-gestao-estadual",
+   "titulo": "Onda de violência no estado",
+   "texto": "Uma sequência de crimes graves domina o noticiário e a oposição pede respostas.",
+   "tipo": "gatilho",
+   "condicao": [
+    {
+     "alvo": "cargos.exercicio",
+     "op": "contem",
+     "valor": "GOVERNADOR"
+    }
+   ],
+   "limiar": {
+    "alvo": "indicadores.estadual.rejeicao",
+    "op": ">=",
+    "valor": 0.05,
+    "escala": 0.1
+   },
+   "probBase": 0.4,
+   "bloqueioJanelas": 4,
+   "opcoes": [
+    {
+     "id": "anunciar-reforco",
+     "texto": "Anunciar reforço do policiamento",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "indicadores.estadual.popularidade",
+       "delta": -0.005
+      }
+     ]
+    },
+    {
+     "id": "trocar-secretario",
+     "texto": "Trocar o secretário de Segurança Pública",
+     "efeitos": [
+      {
+       "alvo": "relacoes.bancada",
+       "delta": -0.02
+      }
+     ]
+    },
+    {
+     "id": "culpar-governo-federal",
+     "texto": "Atribuir a crise ao governo federal",
+     "efeitos": [
+      {
+       "alvo": "indicadores.estadual.rejeicao",
+       "delta": 0.01
+      },
+      {
+       "alvo": "indicadores.estadual.popularidade",
+       "delta": 0.005
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "operacao-no-estado",
+   "degrau": 3,
+   "familia": "exposicao-estadual",
+   "titulo": "Operação sobre contratos estaduais",
+   "texto": "Uma operação apura contratos ligados ao seu grupo político.",
+   "tipo": "atrasado",
+   "condicao": [
+    {
+     "alvo": "personagem.statusJuridico",
+     "op": "==",
+     "valor": "regular"
+    }
+   ],
+   "opcoes": [
+    {
+     "id": "investigacao",
+     "texto": "Investigação aberta",
+     "efeitos": [
+      {
+       "alvo": "indicadores.estadual.rejeicao",
+       "delta": 0.02
+      }
+     ],
+     "juridico": "investigar",
+     "estadoTemporario": {
+      "tipo": "investigado",
+      "duracaoJanelas": 8
+     },
+     "agendar": {
+      "eventoId": "denuncia-oferecida",
+      "emJanelas": 3,
+      "prob": 0.4
+     }
+    }
+   ]
+  },
+  {
+   "id": "crise-na-estatal",
+   "degrau": 4,
+   "familia": "crise-estatal-federal",
+   "titulo": "Crise no órgão federal",
+   "texto": "A imprensa revela atrasos e prejuízos no órgão que você dirige.",
+   "tipo": "atrasado",
+   "condicao": [
+    {
+     "alvo": "cargos.nomeacaoAtiva",
+     "op": "==",
+     "valor": true
+    }
+   ],
+   "opcoes": [
+    {
+     "id": "explicar-no-congresso",
+     "texto": "Explicar em audiência no Congresso",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "indicadores.nacional.rejeicao",
+       "delta": 0.005
+      }
+     ]
+    },
+    {
+     "id": "pedir-demissao",
+     "texto": "Pedir demissão do cargo",
+     "efeitos": [
+      {
+       "alvo": "relacoes.credibilidade",
+       "delta": 0.01
+      }
+     ],
+     "encerrarNomeacao": true
+    },
+    {
+     "id": "defender-gestao",
+     "texto": "Defender a gestão na imprensa",
+     "efeitos": [
+      {
+       "alvo": "indicadores.nacional.notoriedade",
+       "delta": 0.01
+      },
+      {
+       "alvo": "indicadores.nacional.rejeicao",
+       "delta": 0.01
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "auditoria-do-tcu",
+   "degrau": 4,
+   "familia": "controle-federal",
+   "titulo": "Auditoria do TCU",
+   "texto": "O Tribunal de Contas da União aponta falhas na aplicação de recursos ligados a você.",
+   "tipo": "atrasado",
+   "opcoes": [
+    {
+     "id": "colaborar",
+     "texto": "Colaborar com a auditoria",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "relacoes.credibilidade",
+       "delta": 0.005
+      }
+     ]
+    },
+    {
+     "id": "contestar",
+     "texto": "Contestar o relatório em público",
+     "efeitos": [
+      {
+       "alvo": "relacoes.credibilidade",
+       "delta": -0.02
+      },
+      {
+       "alvo": "indicadores.nacional.rejeicao",
+       "delta": 0.01
+      }
+     ],
+     "agendar": {
+      "eventoId": "investigacao-a-partir-do-tcu",
+      "emJanelas": 3,
+      "prob": 0.15
+     }
+    }
+   ]
+  },
+  {
+   "id": "investigacao-a-partir-do-tcu",
+   "degrau": 4,
+   "familia": "controle-federal-investigacao",
+   "titulo": "Investigação a partir da auditoria",
+   "texto": "O Ministério Público Federal usa o relatório do TCU para abrir apuração.",
+   "tipo": "atrasado",
+   "condicao": [
+    {
+     "alvo": "personagem.statusJuridico",
+     "op": "==",
+     "valor": "regular"
+    }
+   ],
+   "opcoes": [
+    {
+     "id": "investigacao",
+     "texto": "Investigação aberta",
+     "efeitos": [
+      {
+       "alvo": "indicadores.nacional.rejeicao",
+       "delta": 0.015
+      }
+     ],
+     "juridico": "investigar",
+     "estadoTemporario": {
+      "tipo": "investigado",
+      "duracaoJanelas": 8
+     },
+     "agendar": {
+      "eventoId": "denuncia-oferecida",
+      "emJanelas": 3,
+      "prob": 0.4
+     }
+    }
+   ]
+  },
+  {
+   "id": "embate-no-congresso",
+   "degrau": 4,
+   "familia": "embate-congresso",
+   "titulo": "Embate no plenário",
+   "texto": "Uma votação apertada divide a sua bancada e os líderes cobram lealdade.",
+   "tipo": "atrasado",
+   "opcoes": [
+    {
+     "id": "recuar",
+     "texto": "Seguir a orientação da liderança",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "relacoes.bancada",
+       "delta": 0.005
+      }
+     ]
+    },
+    {
+     "id": "enfrentar",
+     "texto": "Votar contra a liderança",
+     "efeitos": [
+      {
+       "alvo": "relacoes.bancada",
+       "delta": -0.03
+      },
+      {
+       "alvo": "indicadores.nacional.notoriedade",
+       "delta": 0.01
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pedido-de-bastidor",
+   "degrau": 4,
+   "familia": "bastidor-federal",
+   "titulo": "Pedido de bastidor",
+   "texto": "Um intermediário pede que você destrave um contrato em troca de apoio futuro.",
+   "tipo": "atrasado",
+   "condicao": [
+    {
+     "alvo": "personagem.statusJuridico",
+     "op": "==",
+     "valor": "regular"
+    }
+   ],
+   "opcoes": [
+    {
+     "id": "recusar",
+     "texto": "Recusar o pedido",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "relacoes.executivo",
+       "delta": -0.01
+      }
+     ]
+    },
+    {
+     "id": "atender",
+     "texto": "Atender o pedido",
+     "efeitos": [
+      {
+       "alvo": "relacoes.executivo",
+       "delta": 0.02
+      }
+     ],
+     "agendar": {
+      "eventoId": "operacao-federal",
+      "emJanelas": 4,
+      "prob": 0.3
+     }
+    }
+   ]
+  },
+  {
+   "id": "operacao-federal",
+   "degrau": 4,
+   "familia": "exposicao-federal",
+   "titulo": "Operação da Polícia Federal",
+   "texto": "Uma operação apura o contrato destravado e chega ao seu gabinete.",
+   "tipo": "atrasado",
+   "condicao": [
+    {
+     "alvo": "personagem.statusJuridico",
+     "op": "==",
+     "valor": "regular"
+    }
+   ],
+   "opcoes": [
+    {
+     "id": "investigacao",
+     "texto": "Investigação aberta",
+     "efeitos": [
+      {
+       "alvo": "indicadores.nacional.rejeicao",
+       "delta": 0.02
+      }
+     ],
+     "juridico": "investigar",
+     "estadoTemporario": {
+      "tipo": "investigado",
+      "duracaoJanelas": 8
+     },
+     "agendar": {
+      "eventoId": "denuncia-oferecida",
+      "emJanelas": 3,
+      "prob": 0.4
+     }
+    }
+   ]
+  },
+  {
+   "id": "crise-ministerial",
+   "degrau": 5,
+   "familia": "crise-governo-federal",
+   "titulo": "Escândalo no ministério",
+   "texto": "Uma denúncia da imprensa atinge a cúpula de um ministério do governo.",
+   "tipo": "atrasado",
+   "opcoes": [
+    {
+     "id": "afastar-envolvidos",
+     "texto": "Afastar os envolvidos",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "indicadores.nacional.popularidade",
+       "delta": -0.005
+      }
+     ]
+    },
+    {
+     "id": "defender-o-ministerio",
+     "texto": "Defender o ministério em público",
+     "efeitos": [
+      {
+       "alvo": "indicadores.nacional.rejeicao",
+       "delta": 0.015
+      },
+      {
+       "alvo": "relacoes.executivo",
+       "delta": 0.01
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "perda-de-base",
+   "degrau": 5,
+   "familia": "base-congresso",
+   "titulo": "Debandada na base",
+   "texto": "Deputados aliados anunciam voto contra o governo na próxima votação importante.",
+   "tipo": "atrasado",
+   "opcoes": [
+    {
+     "id": "ceder-espacos",
+     "texto": "Ceder espaços para recompor a base",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "bolsos.capitalEntrega",
+       "delta": -2
+      }
+     ]
+    },
+    {
+     "id": "enfrentar-dissidentes",
+     "texto": "Enfrentar os dissidentes",
+     "efeitos": [
+      {
+       "alvo": "relacoes.bancada",
+       "delta": -0.04
+      },
+      {
+       "alvo": "indicadores.nacional.notoriedade",
+       "delta": 0.01
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "protestos-pelo-pais",
+   "degrau": 5,
+   "familia": "desgaste-nacional",
+   "titulo": "Protestos pelo país",
+   "texto": "Manifestações em várias capitais pedem mudanças no governo.",
+   "tipo": "gatilho",
+   "condicao": [
+    {
+     "alvo": "cargos.exercicio",
+     "op": "contem",
+     "valor": "PRESIDENTE"
+    }
+   ],
+   "limiar": {
+    "alvo": "indicadores.nacional.rejeicao",
+    "op": ">=",
+    "valor": 0.05,
+    "escala": 0.1
+   },
+   "probBase": 0.4,
+   "bloqueioJanelas": 4,
+   "opcoes": [
+    {
+     "id": "dialogar",
+     "texto": "Receber lideranças dos protestos",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "indicadores.nacional.popularidade",
+       "delta": -0.005
+      }
+     ]
+    },
+    {
+     "id": "reforma-ministerial",
+     "texto": "Anunciar reforma ministerial",
+     "efeitos": [
+      {
+       "alvo": "relacoes.bancada",
+       "delta": -0.02
+      }
+     ]
+    },
+    {
+     "id": "culpar-o-congresso",
+     "texto": "Atribuir a crise ao Congresso",
+     "efeitos": [
+      {
+       "alvo": "indicadores.nacional.rejeicao",
+       "delta": 0.01
+      },
+      {
+       "alvo": "indicadores.nacional.popularidade",
+       "delta": 0.005
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "crise-de-coalizao",
+   "degrau": 5,
+   "familia": "coalizao",
+   "titulo": "Aliado ameaça deixar a coalizão",
+   "texto": "Um partido da base exige mais espaço no governo ou promete sair.",
+   "tipo": "atrasado",
+   "opcoes": [
+    {
+     "id": "renegociar",
+     "texto": "Renegociar os termos",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "bolsos.capitalEntrega",
+       "delta": -2
+      }
+     ]
+    },
+    {
+     "id": "deixar-sair",
+     "texto": "Deixar o aliado sair",
+     "efeitos": [
+      {
+       "alvo": "relacoes.bancada",
+       "delta": -0.05
+      },
+      {
+       "alvo": "relacoes.credibilidade",
+       "delta": 0.01
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "denuncia-oferecida",
+   "familia": "juridico",
+   "titulo": "Denúncia oferecida",
+   "texto": "O Ministério Público transforma a investigação em denúncia.",
+   "tipo": "atrasado",
+   "condicao": [
+    {
+     "alvo": "personagem.statusJuridico",
+     "op": "==",
+     "valor": "investigado"
+    },
+    {
+     "alvo": "personagem.denunciaRegistrada",
+     "op": "==",
+     "valor": false
+    }
+   ],
+   "opcoes": [
+    {
+     "id": "denuncia",
+     "texto": "Denúncia registrada",
+     "efeitos": [
+      {
+       "alvo": "relacoes.cupula",
+       "delta": -0.04
+      }
+     ],
+     "juridico": "denunciar",
+     "agendar": {
+      "eventoId": "julgamento-colegiado",
+      "emJanelas": 4,
+      "prob": 0.6
+     }
+    }
+   ]
+  },
+  {
+   "id": "julgamento-colegiado",
+   "familia": "juridico",
+   "titulo": "Julgamento",
+   "texto": "O colegiado julga a denúncia.",
+   "tipo": "atrasado",
+   "enquadramentoInelegibilidade": true,
+   "condicao": [
+    {
+     "alvo": "personagem.statusJuridico",
+     "op": "==",
+     "valor": "investigado"
+    },
+    {
+     "alvo": "personagem.denunciaRegistrada",
+     "op": "==",
+     "valor": true
+    }
+   ],
+   "opcoes": [
+    {
+     "id": "condenacao",
+     "texto": "Condenação",
+     "efeitos": [
+      {
+       "alvo": "relacoes.credibilidade",
+       "delta": -0.05
+      }
+     ],
+     "juridico": "condenar",
+     "agendar": {
+      "eventoId": "inelegibilidade-reconhecida",
+      "emJanelas": 1,
+      "prob": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "inelegibilidade-reconhecida",
+   "familia": "juridico",
+   "titulo": "Inelegibilidade reconhecida",
+   "texto": "A condenação se enquadra em hipótese de inelegibilidade (a confirmar).",
+   "tipo": "atrasado",
+   "condicao": [
+    {
+     "alvo": "personagem.statusJuridico",
+     "op": "==",
+     "valor": "condenado"
+    },
+    {
+     "alvo": "personagem.condenacaoEnquadrada",
+     "op": "==",
+     "valor": true
+    }
+   ],
+   "opcoes": [
+    {
+     "id": "reconhecida",
+     "texto": "Inelegibilidade registrada",
+     "efeitos": [],
+     "juridico": "reconhecerInelegibilidade"
+    }
+   ]
+  }
+ ],
+ "posicoes": [
+  {
+   "id": "assessor-camara-municipal",
+   "degrau": 1,
+   "titulo": "Assessor parlamentar",
+   "orgao": "Câmara Municipal",
+   "tipo": "governamental",
+   "escopo": "municipal",
+   "condicao": [
+    {
+     "alvo": "relacoes.bancada",
+     "op": ">=",
+     "valor": 0.15
+    }
+   ],
+   "exigeGovernoAliado": false,
+   "capitalEntregaPorJanela": 1,
+   "experienciaPorJanela": 0.3,
+   "notoriedadePorJanela": 0.002,
+   "risco": "Trabalho de bastidor para um vereador; o crédito costuma ficar com ele."
+  },
+  {
+   "id": "secretario-diretorio-municipal",
+   "degrau": 1,
+   "titulo": "Secretário-geral do diretório municipal",
+   "orgao": "Diretório municipal do partido",
+   "tipo": "partidaria",
+   "escopo": "municipal",
+   "condicao": [
+    {
+     "alvo": "relacoes.cupula",
+     "op": ">=",
+     "valor": 0.2
+    }
+   ],
+   "exigeGovernoAliado": false,
+   "capitalEntregaPorJanela": 0,
+   "experienciaPorJanela": 0.2,
+   "notoriedadePorJanela": 0.002,
+   "risco": "Organiza filiações e convenções; atrito com grupos antigos do diretório."
+  },
+  {
+   "id": "conselheiro-saude-municipal",
+   "degrau": 1,
+   "titulo": "Conselheiro municipal de saúde",
+   "orgao": "Conselho Municipal de Saúde",
+   "tipo": "governamental",
+   "escopo": "municipal",
+   "condicao": [
+    {
+     "alvo": "relacoes.credibilidade",
+     "op": ">=",
+     "valor": 0.4
+    }
+   ],
+   "exigeGovernoAliado": false,
+   "capitalEntregaPorJanela": 0,
+   "experienciaPorJanela": 0.2,
+   "notoriedadePorJanela": 0.003,
+   "risco": "Reuniões longas e cobrança direta de usuários do SUS."
+  },
+  {
+   "id": "secretario-municipal-assistencia",
+   "degrau": 2,
+   "titulo": "Secretário municipal de Assistência Social",
+   "orgao": "Prefeitura Municipal",
+   "tipo": "governamental",
+   "escopo": "municipal",
+   "condicao": [
+    {
+     "alvo": "relacoes.executivo",
+     "op": ">=",
+     "valor": 0.2
+    }
+   ],
+   "exigeGovernoAliado": true,
+   "capitalEntregaPorJanela": 2,
+   "experienciaPorJanela": 0.5,
+   "notoriedadePorJanela": 0.005,
+   "risco": "Programas sociais sob vigilância da imprensa e dos órgãos de controle."
+  },
+  {
+   "id": "secretario-municipal-educacao",
+   "degrau": 2,
+   "titulo": "Secretário municipal de Educação",
+   "orgao": "Prefeitura Municipal",
+   "tipo": "governamental",
+   "escopo": "municipal",
+   "condicao": [
+    {
+     "alvo": "relacoes.executivo",
+     "op": ">=",
+     "valor": 0.3
+    },
+    {
+     "alvo": "relacoes.credibilidade",
+     "op": ">=",
+     "valor": 0.45
+    }
+   ],
+   "exigeGovernoAliado": true,
+   "capitalEntregaPorJanela": 3,
+   "experienciaPorJanela": 0.6,
+   "notoriedadePorJanela": 0.006,
+   "risco": "Pasta grande; greve ou falta de vaga em creche vira desgaste local."
+  },
+  {
+   "id": "presidente-autarquia-agua",
+   "degrau": 2,
+   "titulo": "Presidente da autarquia municipal de água e esgoto",
+   "orgao": "Serviço Autônomo de Água e Esgoto (SAAE)",
+   "tipo": "governamental",
+   "escopo": "municipal",
+   "condicao": [
+    {
+     "alvo": "relacoes.executivo",
+     "op": ">=",
+     "valor": 0.35
+    }
+   ],
+   "exigeGovernoAliado": true,
+   "capitalEntregaPorJanela": 3,
+   "experienciaPorJanela": 0.6,
+   "notoriedadePorJanela": 0.004,
+   "risco": "Falta d'água vira crise política imediata."
+  },
+  {
+   "id": "secretario-estadual-desenvolvimento-regional",
+   "degrau": 3,
+   "titulo": "Secretário estadual de Desenvolvimento Regional",
+   "orgao": "Governo do Estado",
+   "tipo": "governamental",
+   "escopo": "estadual",
+   "condicao": [
+    {
+     "alvo": "relacoes.executivo",
+     "op": ">=",
+     "valor": 0.35
+    }
+   ],
+   "exigeGovernoAliado": true,
+   "capitalEntregaPorJanela": 3,
+   "experienciaPorJanela": 0.6,
+   "notoriedadePorJanela": 0.008,
+   "risco": "Prefeitos de todo o estado disputam a mesma verba."
+  },
+  {
+   "id": "presidente-diretorio-estadual",
+   "degrau": 3,
+   "titulo": "Presidente do diretório estadual do partido",
+   "orgao": "Diretório estadual do partido",
+   "tipo": "partidaria",
+   "escopo": "estadual",
+   "condicao": [
+    {
+     "alvo": "relacoes.cupula",
+     "op": ">=",
+     "valor": 0.45
+    }
+   ],
+   "exigeGovernoAliado": false,
+   "capitalEntregaPorJanela": 0,
+   "experienciaPorJanela": 0.4,
+   "notoriedadePorJanela": 0.006,
+   "risco": "Montagem das chapas estaduais e brigas por legenda."
+  },
+  {
+   "id": "presidente-companhia-habitacao",
+   "degrau": 3,
+   "titulo": "Presidente da companhia estadual de habitação",
+   "orgao": "Companhia estadual de habitação",
+   "tipo": "governamental",
+   "escopo": "estadual",
+   "condicao": [
+    {
+     "alvo": "relacoes.executivo",
+     "op": ">=",
+     "valor": 0.4
+    },
+    {
+     "alvo": "relacoes.credibilidade",
+     "op": ">=",
+     "valor": 0.5
+    }
+   ],
+   "exigeGovernoAliado": true,
+   "capitalEntregaPorJanela": 4,
+   "experienciaPorJanela": 0.6,
+   "notoriedadePorJanela": 0.006,
+   "risco": "Sorteio de unidades e obras sob escrutínio dos órgãos de controle."
+  },
+  {
+   "id": "secretario-executivo-ministerio",
+   "degrau": 4,
+   "titulo": "Secretário executivo do Ministério das Cidades",
+   "orgao": "Ministério das Cidades",
+   "tipo": "governamental",
+   "escopo": "federal",
+   "condicao": [
+    {
+     "alvo": "relacoes.executivo",
+     "op": ">=",
+     "valor": 0.45
+    }
+   ],
+   "exigeGovernoAliado": true,
+   "capitalEntregaPorJanela": 4,
+   "experienciaPorJanela": 0.7,
+   "notoriedadePorJanela": 0.006,
+   "risco": "Bastidor de ministério; o crédito das entregas fica com o ministro."
+  },
+  {
+   "id": "presidente-da-embratur",
+   "degrau": 4,
+   "titulo": "Presidente da Embratur",
+   "orgao": "Embratur",
+   "tipo": "governamental",
+   "escopo": "federal",
+   "condicao": [
+    {
+     "alvo": "indicadores.nacional.notoriedade",
+     "op": ">=",
+     "valor": 0.05
+    },
+    {
+     "alvo": "relacoes.executivo",
+     "op": ">=",
+     "valor": 0.4
+    }
+   ],
+   "exigeGovernoAliado": true,
+   "capitalEntregaPorJanela": 4,
+   "experienciaPorJanela": 0.6,
+   "notoriedadePorJanela": 0.01,
+   "risco": "Exposição nacional; cobrança por resultados de promoção turística."
+  },
+  {
+   "id": "presidente-do-bndes",
+   "degrau": 4,
+   "titulo": "Presidente do BNDES",
+   "orgao": "BNDES",
+   "tipo": "governamental",
+   "escopo": "federal",
+   "condicao": [
+    {
+     "alvo": "relacoes.executivo",
+     "op": ">=",
+     "valor": 0.6
+    },
+    {
+     "alvo": "relacoes.credibilidade",
+     "op": ">=",
+     "valor": 0.6
+    }
+   ],
+   "exigeGovernoAliado": true,
+   "capitalEntregaPorJanela": 6,
+   "experienciaPorJanela": 0.8,
+   "notoriedadePorJanela": 0.012,
+   "risco": "Decisões de crédito sob escrutínio dos órgãos de controle."
+  },
+  {
+   "id": "ministro-das-cidades",
+   "degrau": 5,
+   "titulo": "Ministro de Estado das Cidades",
+   "orgao": "Ministério das Cidades",
+   "tipo": "governamental",
+   "escopo": "federal",
+   "condicao": [
+    {
+     "alvo": "relacoes.executivo",
+     "op": ">=",
+     "valor": 0.6
+    },
+    {
+     "alvo": "indicadores.nacional.notoriedade",
+     "op": ">=",
+     "valor": 0.1
+    }
+   ],
+   "exigeGovernoAliado": true,
+   "capitalEntregaPorJanela": 6,
+   "experienciaPorJanela": 0.9,
+   "notoriedadePorJanela": 0.015,
+   "risco": "Obras em todo o país e prefeitos de todos os partidos cobrando."
+  },
+  {
+   "id": "ministro-do-turismo",
+   "degrau": 5,
+   "titulo": "Ministro de Estado do Turismo",
+   "orgao": "Ministério do Turismo",
+   "tipo": "governamental",
+   "escopo": "federal",
+   "condicao": [
+    {
+     "alvo": "relacoes.executivo",
+     "op": ">=",
+     "valor": 0.55
+    }
+   ],
+   "exigeGovernoAliado": true,
+   "capitalEntregaPorJanela": 5,
+   "experienciaPorJanela": 0.8,
+   "notoriedadePorJanela": 0.012,
+   "risco": "Pasta de orçamento menor; o cargo vale pela vitrine e pode ser moeda na coalizão."
+  },
+  {
+   "id": "presidente-executiva-nacional",
+   "degrau": 5,
+   "titulo": "Presidente da executiva nacional do partido",
+   "orgao": "Executiva nacional do partido",
+   "tipo": "partidaria",
+   "escopo": "federal",
+   "condicao": [
+    {
+     "alvo": "relacoes.cupula",
+     "op": ">=",
+     "valor": 0.6
+    }
+   ],
+   "exigeGovernoAliado": false,
+   "capitalEntregaPorJanela": 0,
+   "experienciaPorJanela": 0.6,
+   "notoriedadePorJanela": 0.01,
+   "risco": "Fundo partidário, alianças nacionais e disputas por legenda passam pela sua mesa."
+  }
+ ]
+}
