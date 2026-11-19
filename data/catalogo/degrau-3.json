@@ -47,10 +47,7 @@
     { "id": "operacao-no-estado", "degrau": 3, "familia": "exposicao-estadual", "titulo": "Operação sobre contratos estaduais", "texto": "Uma operação apura contratos ligados ao seu grupo político.", "tipo": "atrasado",
       "condicao": [{ "alvo": "personagem.statusJuridico", "op": "==", "valor": "regular" }],
       "opcoes": [{ "id": "investigacao", "texto": "Investigação aberta", "efeitos": [{ "alvo": "indicadores.estadual.rejeicao", "delta": 0.02 }],
-        "juridico": "investigar", "estadoTemporario": { "tipo": "investigado", "duracaoJanelas": 8 }, "agendar": { "eventoId": "denuncia-estadual", "emJanelas": 3, "prob": 0.4 } }] },
-    { "id": "denuncia-estadual", "degrau": 3, "familia": "juridico-estadual", "titulo": "Denúncia oferecida", "texto": "O Ministério Público oferece denúncia a partir da operação.", "tipo": "atrasado",
-      "condicao": [{ "alvo": "personagem.statusJuridico", "op": "==", "valor": "investigado" }, { "alvo": "personagem.denunciaRegistrada", "op": "==", "valor": false }],
-      "opcoes": [{ "id": "denuncia", "texto": "Denúncia registrada", "efeitos": [{ "alvo": "relacoes.cupula", "delta": -0.04 }], "juridico": "denunciar" }] }
+        "juridico": "investigar", "estadoTemporario": { "tipo": "investigado", "duracaoJanelas": 8 }, "agendar": { "eventoId": "denuncia-oferecida", "emJanelas": 3, "prob": 0.4 } }] }
   ],
   "posicoes": [
     { "id": "secretario-estadual-desenvolvimento-regional", "degrau": 3, "titulo": "Secretário estadual de Desenvolvimento Regional", "orgao": "Governo do Estado", "tipo": "governamental", "escopo": "estadual",

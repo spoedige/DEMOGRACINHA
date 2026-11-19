@@ -1,0 +1,17 @@
+{
+  "_cenario": "Eventos comuns a todos os degraus: escada jurídica completa (eventos-e-risco 6). Sem degrau: valem em qualquer fase da carreira.",
+  "_parametros": "Prazos e probabilidades (calibrar). Enquadramento legal da inelegibilidade (a confirmar na 1B).",
+  "eventos": [
+    { "id": "denuncia-oferecida", "familia": "juridico", "titulo": "Denúncia oferecida", "texto": "O Ministério Público transforma a investigação em denúncia.", "tipo": "atrasado",
+      "condicao": [{ "alvo": "personagem.statusJuridico", "op": "==", "valor": "investigado" }, { "alvo": "personagem.denunciaRegistrada", "op": "==", "valor": false }],
+      "opcoes": [{ "id": "denuncia", "texto": "Denúncia registrada", "efeitos": [{ "alvo": "relacoes.cupula", "delta": -0.04 }], "juridico": "denunciar",
+        "agendar": { "eventoId": "julgamento-colegiado", "emJanelas": 4, "prob": 0.6 } }] },
+    { "id": "julgamento-colegiado", "familia": "juridico", "titulo": "Julgamento", "texto": "O colegiado julga a denúncia.", "tipo": "atrasado", "enquadramentoInelegibilidade": true,
+      "condicao": [{ "alvo": "personagem.statusJuridico", "op": "==", "valor": "investigado" }, { "alvo": "personagem.denunciaRegistrada", "op": "==", "valor": true }],
+      "opcoes": [{ "id": "condenacao", "texto": "Condenação", "efeitos": [{ "alvo": "relacoes.credibilidade", "delta": -0.05 }], "juridico": "condenar",
+        "agendar": { "eventoId": "inelegibilidade-reconhecida", "emJanelas": 1, "prob": 1 } }] },
+    { "id": "inelegibilidade-reconhecida", "familia": "juridico", "titulo": "Inelegibilidade reconhecida", "texto": "A condenação se enquadra em hipótese de inelegibilidade (a confirmar).", "tipo": "atrasado",
+      "condicao": [{ "alvo": "personagem.statusJuridico", "op": "==", "valor": "condenado" }, { "alvo": "personagem.condenacaoEnquadrada", "op": "==", "valor": true }],
+      "opcoes": [{ "id": "reconhecida", "texto": "Inelegibilidade registrada", "efeitos": [], "juridico": "reconhecerInelegibilidade" }] }
+  ]
+}

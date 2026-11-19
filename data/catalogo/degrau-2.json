@@ -43,7 +43,7 @@
     { "id": "investigacao-do-acordo", "degrau": 2, "familia": "exposicao-municipal", "titulo": "Investigação do acordo", "texto": "O Ministério Público abre apuração sobre as mudanças no projeto.", "tipo": "atrasado",
       "condicao": [{ "alvo": "personagem.statusJuridico", "op": "==", "valor": "regular" }],
       "opcoes": [{ "id": "investigacao", "texto": "Investigação aberta", "efeitos": [{ "alvo": "indicadores.local.rejeicao", "delta": 0.02 }],
-        "juridico": "investigar", "estadoTemporario": { "tipo": "investigado", "duracaoJanelas": 8 } }] },
+        "juridico": "investigar", "estadoTemporario": { "tipo": "investigado", "duracaoJanelas": 8 }, "agendar": { "eventoId": "denuncia-oferecida", "emJanelas": 3, "prob": 0.4 } }] },
     { "id": "crise-na-saude-municipal", "degrau": 2, "familia": "crise-gestao-municipal", "titulo": "Fila no posto de saúde", "texto": "Reportagem mostra filas longas nos postos da cidade e cobra a prefeitura.", "tipo": "gatilho",
       "condicao": [{ "alvo": "cargos.exercicio", "op": "contem", "valor": "PREFEITO" }],
       "limiar": { "alvo": "indicadores.local.rejeicao", "op": ">=", "valor": 0.05, "escala": 0.1 }, "probBase": 0.4, "bloqueioJanelas": 4,

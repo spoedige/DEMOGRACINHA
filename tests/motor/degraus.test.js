@@ -14,7 +14,8 @@ const ERRO = { name: "TypeError" };
 const clone = (x) => JSON.parse(JSON.stringify(x));
 const lotes = fs.readdirSync(CAT).filter((f) => /^degrau-\d\.json$/.test(f)).sort();
 const ler = (f) => JSON.parse(fs.readFileSync(path.join(CAT, f), "utf8"));
-const dadosDe = (l) => ({ cartas: l.cartas, eventos: l.eventos, posicoes: l.posicoes, ambicoes: ["legislativo", "executivo", "bastidor"],
+const COMUNS = ler("eventos-comuns.json").eventos;                                // escada jurídica comum a todos os degraus
+const dadosDe = (l) => ({ cartas: l.cartas, eventos: l.eventos.concat(COMUNS), posicoes: l.posicoes, ambicoes: ["legislativo", "executivo", "bastidor"],
   parametrosCartas: { acoesPorMao: 2 }, parametrosDegrau: l.parametrosDegrau, governos: {} });
 const novo = () => { const c = clone(CEN); delete c.eleicoes; return Carreira.criar({}, c, null).resultado; };
 const TRAVESSAO = /[–—]/;
@@ -30,6 +31,8 @@ test("lotes do catálogo: válidos pelo motor, com degrau do arquivo e sem trave
     assert.ok(l.cartas.some((c) => c.segura), f + ": carta segura");
     assert.ok(!TRAVESSAO.test(JSON.stringify(l)), f + ": travessão");
   }
+  assert.ok(COMUNS.every((x) => x.degrau === undefined), "eventos comuns sem degrau");
+  assert.ok(!TRAVESSAO.test(JSON.stringify(COMUNS)));
 });
 
 test("degrau atual: maior escopo exercido, degrau da posição e notoriedade", () => {
