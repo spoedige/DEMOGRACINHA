@@ -399,3 +399,16 @@ Aprovada pelo autor antes da implementação.
 3. Eleitorado municipal recebido como dado; `segundoTurnoPrevisto` de prefeito acima de 200 mil eleitores (D69); ausência é erro.
 4. Calendário recebido pronto, sem deslocar datas de 2026. Aceita subconjunto de municípios.
 5. Id da disputa `ano:CARGO:unidade`; cada disputa passa por `Dados.disputa`.
+
+## D75. Estado da carreira, ciclo de janelas e save, 19/11/2026
+
+Aprovada pelo autor antes da implementação.
+1. Estado da carreira e save são o mesmo objeto (D13), com `saveVersion` 1; funções `Carreira.criar`, `Carreira.avancar`, `Carreira.validar` e o módulo `Save`.
+2. Ano calmo em quatro trimestres (C1 a C4) como convenção do jogo; Normal decide em C1 e C3, Express em C1. A sequência simulada é a mesma em qualquer ritmo.
+3. Escalas: reais de 0 a 1 para indicadores, relações, grupo, base, aptidões e capacidade; potencial inteiro de 0 a 100; dinheiro em centavos inteiros; Capital de Entrega em unidades inteiras.
+4. Simplificação do MVP: Capital de Entrega é um inteiro único. Os tipos de entrega (emenda, indicação, prioridade) não se convertem entre si (carreira-e-poder 1), mas ainda não têm saldos separados; quando os compromissos distinguirem a moeda, o bolso passa a objeto por tipo, com migração de save.
+5. Compromisso vencido em janela automática só é cumprido se o saldo do recurso cobrir o custo; os não cobertos ficam rompidos (GDD 3).
+6. Base com mais de 10 municípios é erro, sem regra de substituição (lacuna de carreira-e-poder 10.2).
+7. Em J5 rodam só as disputas informadas (personagem e agentes), sem as 5.569 municipais.
+8. Export `DG1:` mais base64 do JSON canônico, síncrono, sem compressão no MVP. Escopo local dos indicadores é o município de atuação (`municipioLocal`, inicialmente o município inicial).
+9. Nenhum valor inicial no código: tudo em `dados.inicio` (calibrar). Decisão automática, desfecho de compromisso, evento e manutenção entram como funções injetadas até existirem cartas, eventos e fórmulas.

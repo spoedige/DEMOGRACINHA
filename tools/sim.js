@@ -4,6 +4,7 @@
 // Nenhum parâmetro calibrável nasce aqui: valores e formas das distribuições vêm do arquivo de cenário.
 //   node tools/sim.js --cenario tools/cenarios/vereador.json [--semente v1-X]
 //   node tools/sim.js --cenario tools/cenarios/vereador.json --rodadas 200 [--semente-base v1-LOTE]
+//   node tools/sim.js --cenario tools/cenarios/carreira.json --carreira [--anos N] [--semente v1-X]
 const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
@@ -75,12 +76,38 @@ function lote(Motor, cen, base, n) {
   return { sementeBase: base, hash: sha256(canonico(t)), telemetria: t };
 }
 
+// Carreira (D75): avança janela a janela; janelas manuais recebem decisões vazias (ainda não há cartas).
+// eleicoes[ano] lista arquivos de cenário de disputa, relativos ao arquivo da carreira.
+function carreira(Motor, cen, dir, anos) {
+  const eleicoes = {};
+  Object.keys(cen.eleicoes || {}).forEach((a) => {
+    eleicoes[a] = cen.eleicoes[a].map((f) => JSON.parse(fs.readFileSync(path.join(dir, f), "utf8")));
+  });
+  let e = Motor.Carreira.criar({}, cen, null).resultado;
+  const fim = e.tempo.ano + anos, opcoes = { opcoesEleicao: (c) => opcoesDoCenario(Motor, c) };
+  const ocorrencias = [];
+  while (e.tempo.ano < fim) {
+    const manual = Motor.Carreira.ehManual(e);
+    const r = Motor.Carreira.avancar(e, { eleicoes }, { opcoes, decisoes: manual ? { compromissos: {} } : undefined });
+    e = r.resultado.estado;
+    r.resultado.ocorrencias.forEach((o) => ocorrencias.push(o));
+  }
+  const save = Motor.Save.serializar(e);
+  return { semente: cen.semente, hash: sha256(save), tempo: e.tempo, mandatos: e.cargos.mandatos, ocorrencias: JSON.parse(JSON.stringify(ocorrencias)) };
+}
+
 function principal(argv) {
   const arg = (n) => { const i = argv.indexOf(n); return i >= 0 ? argv[i + 1] : undefined; };
   const arq = arg("--cenario");
-  if (!arq) throw new Error("uso: node tools/sim.js --cenario <arquivo.json> [--semente S] [--rodadas N --semente-base S]");
+  if (!arq) throw new Error("uso: node tools/sim.js --cenario <arquivo.json> [--semente S] [--rodadas N --semente-base S] [--carreira --anos N]");
   const cen = JSON.parse(fs.readFileSync(arq, "utf8"));
   const Motor = carregarMotor();
+  if (argv.indexOf("--carreira") >= 0) {
+    const anos = arg("--anos") === undefined ? cen.anos : Number.parseInt(arg("--anos"), 10);
+    if (!Number.isSafeInteger(anos) || anos < 1) throw new Error("--anos: inteiro positivo");
+    const c = arg("--semente") ? { ...cen, semente: arg("--semente") } : cen;
+    return canonico(carreira(Motor, c, path.dirname(arq), anos));
+  }
   const n = arg("--rodadas");
   const out = n === undefined ? rodar(Motor, cen, arg("--semente") || cen.semente)
     : lote(Motor, cen, arg("--semente-base") || cen.semente, Number.parseInt(n, 10));
@@ -88,4 +115,4 @@ function principal(argv) {
 }
 
 if (require.main === module) process.stdout.write(principal(process.argv.slice(2)) + "\n");
-module.exports = { carregarMotor, canonico, sorteador, opcoesDoCenario, rodar, lote, principal };
+module.exports = { carregarMotor, canonico, sorteador, opcoesDoCenario, rodar, lote, carreira, principal };

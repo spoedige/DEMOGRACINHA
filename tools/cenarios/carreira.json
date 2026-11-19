@@ -1,0 +1,27 @@
+{
+  "_cenario": "Carreira artificial para a simulação headless (D75). Personagem, unidades e valores fictícios; nenhum valor é dado histórico.",
+  "_parametros": "Todos os valores de inicio (calibrar). Datas das janelas e das posses (a confirmar).",
+  "semente": "v1-CARREIRA",
+  "gameVersion": "0.2.0",
+  "ritmo": "express",
+  "anos": 4,
+  "eleicoes": { "2028": ["vereador.json"] },
+  "inicio": {
+    "personagem": {
+      "id": "A1", "origem": "liderComunitario", "redePoliticaPrevia": "indireta", "dataNascimento": "1990-05-10",
+      "municipioInicial": "EX001", "ufInicial": "EX", "partidoId": "P1", "potencial": 50,
+      "aptidoes": { "articulacao": 0.5, "comunicacao": 0.5, "mobilizacao": 0.6, "gestao": 0.4, "estrategia": 0.5, "resiliencia": 0.5 },
+      "capacidade": { "articulacao": 0.3, "comunicacao": 0.3, "mobilizacao": 0.4, "gestao": 0.2, "estrategia": 0.3, "resiliencia": 0.3 },
+      "experiencia": 0, "saude": 1, "statusJuridico": "regular", "tags": [], "arquivoVermelho": [], "mandatosConsecutivos": {}, "ambicao": []
+    },
+    "indicadores": {
+      "local": { "notoriedade": 0.2, "popularidade": 0.12, "rejeicao": 0.03 },
+      "estadual": { "notoriedade": 0.01, "popularidade": 0.005, "rejeicao": 0.001 },
+      "nacional": { "notoriedade": 0, "popularidade": 0, "rejeicao": 0 }
+    },
+    "bolsos": { "caixaPessoal": 500000, "fundoCampanha": 0, "capitalEntrega": 0 },
+    "relacoes": { "cupula": 0.3, "bancada": 0.2, "executivo": 0.2, "credibilidade": 0.5 },
+    "grupo": { "influencia": 0, "relacoes": 0, "presenca": { "municipal": 0, "estadual": 0, "federal": 0 }, "papel": null },
+    "base": { "municipios": { "EX001": { "forca": 0.2, "custoManutencao": 0 } }, "agregadoRegional": 0 }
+  }
+}
