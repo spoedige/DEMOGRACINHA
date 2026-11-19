@@ -206,7 +206,7 @@ Posições relevantes que dão influência sem mandato eletivo. Lista fechada no
 |---|---|
 | Municipal | secretário municipal (nos municípios do conjunto de agentes) |
 | Estadual | secretário estadual |
-| Federal | ministro, secretário executivo de ministério |
+| Federal | ministro, secretário executivo de ministério, presidente de órgão ou estatal federal (como Embratur e BNDES; D80) |
 | Partidária | presidente de diretório municipal, estadual ou nacional |
 
 Fase 2 (decisão D37): secretário-geral, tesoureiro, coordenador de campanha do partido.

@@ -23,6 +23,7 @@ test("dados embutidos são cópia exata dos catálogos de tools/cenarios; partid
   assert.deepEqual(d.cartas, ler("cartas-exemplo.json"));
   assert.deepEqual(d.eventos, ler("eventos-exemplo.json"));
   assert.deepEqual(d.candidatura, ler("candidatura-exemplo.json"));
+  assert.deepEqual(d.nomeacoes, ler("nomeacoes-exemplo.json"));
   const p = JSON.parse(FONTE.match(/<script type="application\/json" id="parties-data">([\s\S]*?)<\/script>/)[1]);
   for (const [k, v] of Object.entries(p)) if (k !== "_nota") { assert.match(k, /^P\d$/); assert.equal(v.logo, undefined); assert.equal(v.dataUri, undefined); }
   assert.doesNotMatch(FONTE, /data:image|https?:\/\/(?!www\.w3\.org\/2000\/svg)/);   // nada externo nem imagem embutida
@@ -88,7 +89,11 @@ test("fluxo completo a 360 px: criação, janelas, eventos, candidatura, eleiç�
         if (/Eleição:/.test(await pg.textContent("main"))) { viuEleicao = true; await capturar("07-resultado"); }
         await pg.click("[data-acao=continuar]");
       } else if (h === "Janela automática") await pg.click("[data-acao=avancar]");
-      else if (h === "Compromissos que vencem" || h === "Acontecimentos") {
+      else if (h === "Convites de nomeação" || h === "Desincompatibilização") {
+        vistos.add(h); await capturar(h === "Convites de nomeação" ? "05b-nomeacao" : "05c-desincompatibilizacao");
+        await pg.locator("[data-grupo]").last().click();                                 // recusar ou permanecer (opção segura)
+        await pg.click("[data-acao=confirmar]");
+      } else if (h === "Compromissos que vencem" || h === "Acontecimentos") {
         vistos.add(h); await capturar(h === "Acontecimentos" ? "04-evento" : "05-compromisso");
         for (const g of await pg.locator("[data-radiogroup]").evaluateAll((els) => els.map((x) => x.dataset.radiogroup))) {
           await pg.locator(`[data-grupo="${g}"]:not([aria-disabled=true])`).first().click();
@@ -131,7 +136,7 @@ test("fluxo completo a 360 px: criação, janelas, eventos, candidatura, eleiç�
     assert.match(await pg.textContent("main"), /Limpar os dados do navegador apaga a partida/);
     await pg.selectOption("#ritmo", "intenso");
     const salvo = JSON.parse(await pg.evaluate(() => localStorage.getItem("demogracinha.save")));
-    assert.equal(salvo.ritmo, "intenso"); assert.equal(salvo.saveVersion, 3); assert.equal(salvo.personagem.nome, "Personagem de Teste");
+    assert.equal(salvo.ritmo, "intenso"); assert.equal(salvo.saveVersion, 4); assert.equal(salvo.personagem.nome, "Personagem de Teste");
     assert.doesNotThrow(() => carregarMotor().Motor.Save.ler(JSON.stringify(salvo)));
     await pg.click("[data-acao=exportar]");
     await pg.waitForSelector("#codigo-export");

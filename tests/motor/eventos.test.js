@@ -190,7 +190,7 @@ test("save: migração 1 para 2 (e 3) em cadeia; status sem correspondência rec
   v1.saveVersion = 1; delete v1.eventosRecentes;
   ["estadosTemporarios", "denunciaRegistrada", "condenacaoEnquadrada"].forEach((k) => delete v1.personagem[k]);
   const m = Save.ler(JSON.stringify(v1));
-  assert.equal(m.saveVersion, 3); // 1 -> 2 -> 3 em cadeia
+  assert.equal(m.saveVersion, 4); // 1 -> 2 -> 3 -> 4 em cadeia
   const esperado = plano(e); esperado.compromissos.ativos[0].efeitosCumprir = []; esperado.compromissos.ativos[0].efeitosRomper = []; esperado.compromissos.ativos[0].retaliacao = null;
   assert.deepEqual(plano(m), esperado);
   v1.personagem.statusJuridico = "processado";

@@ -448,7 +448,7 @@ Aprovada pelo autor antes da implementação.
 5. Prévia em três fases: `{ eventos, candidaturas, mao }`. Na janela automática, `naoConcorrer`.
 6. Save na versão 3: `personagem.dataFiliacao` e `candidaturas`; `MIGRAR[2]` exige a data de filiação no save ou em `ctx`, sem inventar.
 7. Unidade do personagem: `municipioLocal` nos cargos municipais, `ufInicial` nos estaduais, unidade do modelo para presidente.
-8. Vice fica para a D79. Até lá, chefe do Executivo só disputa a reeleição (desincompatibilização por renúncia ainda não existe).
+8. Vice fica para decisão própria (corrigido na D80: a D79 tratou da interface). A desincompatibilização por renúncia entrou na D80.
 9. `semOpiniao = max(0, notoriedade - popularidade - rejeicao)` na montagem da disputa, contra resíduo de ponto flutuante. Em disputa estadual ou nacional, a base própria fora dos municípios detalhados entra pelo `base.agregadoRegional` (motor-eleitoral 4.5).
 10. Personagem em mais de uma disputa no mesmo ano é erro. Os testes das D75 e D77 foram ajustados à versão 3 do save, e `carreira.json` ganhou `dataFiliacao`.
 
@@ -470,3 +470,15 @@ Aprovada pelo autor antes da implementação.
 13. Trajetória partidária na aba Carreira, acima do registro biográfico, com a filiação atual e pronta para vários registros. Partidos em `<script type="application/json" id="parties-data">` só com sigla, nome e cor dos partidos fictícios do exemplo; sem logos (GDD 6). Logos oficiais ficam para a 1B, com fonte e licença verificadas. Os desenhos de logos do protótipo não foram usados: imitavam marcas reais e atribuíam fontes oficiais a desenhos feitos à mão.
 14. Borda de cartão escurecida de #CFC7B8 (protótipo) para #857C6C, para 3:1 com a mesa e o cartão (WCAG 1.4.11, controles).
 15. Faixas só de exibição (calibrar): clima de rua hostil com rejeição a partir de 0,15 e maior que a popularidade; favorável com popularidade a partir de 0,2 e maior que a rejeição.
+
+## D80. Nomeações e desincompatibilização, 20/11/2026
+
+Aprovada pelo autor antes da implementação.
+1. Regra 3 do CLAUDE.md ampliada: instituições públicas reais pelo nome (ministérios, secretarias, autarquias e estatais, como Embratur e BNDES), com ocupantes sempre fictícios.
+2. Catálogo de posições (`dados.posicoes`): governamentais e partidárias, por escopo, com condição na linguagem dos eventos, exigência de governo aliado e valores por janela (Capital de Entrega, experiência, notoriedade), todos (calibrar). Posição partidária não rende Capital de Entrega (D25). Capital político não entra (D54).
+3. Ofertas em C1 e C3 dos anos calmos, sem nomeação ativa; chefe do Executivo não recebe; legislador recebe só posição governamental e entra em licença do mandato, reassumindo a cadeira ao sair. Recusa na janela automática. Uma nomeação por vez. Quem sai por vontade própria não recebe oferta na mesma janela.
+4. Saída voluntária, por evento (`encerrarNomeacao`), pela posse do novo governo do âmbito (C1 do ano seguinte à eleição do escopo; nova oferta possível na mesma C1) ou por desincompatibilização.
+5. Desincompatibilização em J1 do ano eleitoral, prazo único de 04/04 (a confirmar): nomeado governamental e chefe do Executivo decidem sair (renúncia) ou permanecer. Nomeado que permanece fica inapto no módulo 3 (motivo `semDesincompatibilizacao`); chefe do Executivo que permanece só disputa a reeleição.
+6. Save na versão 4, com `MIGRAR[3]` (só lista vazia de nomeações tem correspondência).
+7. Prévia com as fases `{ compromissos, eventos, desincompatibilizacao, nomeacoes, candidaturas, mao }`.
+8. Catálogo artificial em `tools/cenarios/nomeacoes-exemplo.json`; três cartas de cargo em `cartas-exemplo.json` e dois eventos de cargo em `eventos-exemplo.json`.

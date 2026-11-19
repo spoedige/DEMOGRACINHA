@@ -34,6 +34,8 @@
         { "id": "nota", "texto": "Divulgar nota de esclarecimento", "contencao": true, "efeitos": [{ "alvo": "indicadores.local.rejeicao", "delta": -0.005 }] },
         { "id": "enfrentar", "texto": "Enfrentar a imprensa", "efeitos": [{ "alvo": "indicadores.local.notoriedade", "delta": 0.02 }, { "alvo": "indicadores.local.rejeicao", "delta": 0.01 }] },
         { "id": "culpar-aliado", "texto": "Atribuir a culpa a um aliado", "efeitos": [{ "alvo": "indicadores.local.rejeicao", "delta": -0.01 }, { "alvo": "relacoes.bancada", "delta": -0.05 }] }
-      ] }
+      ] },
+    {"id": "crise-na-pasta", "familia": "crise-nomeacao", "titulo": "Crise na pasta", "texto": "A imprensa questiona a gestão da sua pasta.", "tipo": "atrasado", "condicao": [{"alvo": "cargos.nomeacaoAtiva", "op": "==", "valor": true}], "opcoes": [{"id": "audiencia", "texto": "Explicar em audiência pública", "contencao": true, "efeitos": [{"alvo": "indicadores.local.rejeicao", "delta": 0.005}]}, {"id": "demissao", "texto": "Pedir demissão do cargo", "efeitos": [{"alvo": "relacoes.credibilidade", "delta": 0.01}], "encerrarNomeacao": true}, {"id": "ignorar", "texto": "Ignorar as críticas", "efeitos": [{"alvo": "indicadores.local.rejeicao", "delta": 0.02}, {"alvo": "indicadores.local.notoriedade", "delta": 0.01}]}]},
+    {"id": "cobranca-do-governo", "familia": "cobranca-governo", "titulo": "Cobrança do governo", "texto": "O governo cobra resultados da sua gestão.", "tipo": "atrasado", "condicao": [{"alvo": "cargos.nomeacaoAtiva", "op": "==", "valor": true}], "opcoes": [{"id": "registrar", "texto": "Registrar a cobrança", "efeitos": [{"alvo": "relacoes.executivo", "delta": -0.02}]}]}
   ]
 }

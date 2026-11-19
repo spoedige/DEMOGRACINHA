@@ -25,6 +25,7 @@ Vereador, prefeito, vice-prefeito, deputado estadual (distrital no DF), deputado
 - Uma reeleição consecutiva para o mesmo cargo executivo.
 - Para disputar outro cargo, chefe do Executivo renuncia 6 meses antes da eleição (data em `GDD.md` 3).
 - Legisladores concorrem sem renunciar.
+- Ocupante de cargo de nomeação governamental (secretário, ministro, presidente de órgão ou estatal) deixa o cargo até o mesmo prazo para disputar (D80). Prazo único de 04/04 no MVP; prazos específicos por cargo (a confirmar, 1B). Cargo partidário não exige saída (a confirmar).
 
 ### 2º turno [L20; Res. TSE 23.677, art. 6º, na redação da Res. 23.748/2026, conferido]
 - Governador e presidente: sem maioria absoluta dos válidos.

@@ -6,7 +6,7 @@ Guia para quem trabalha neste repositório. Leia antes de qualquer alteração.
 
 1. **Nunca usar travessão** (" — ", "—" ou "–" como pontuação) em texto do jogo, da documentação, de commits ou de comentários. Use vírgula, dois-pontos, parênteses ou ponto. Hífen em palavras compostas e em intervalos "AAAA - AAAA" do resumo é permitido.
 2. Texto em português do Brasil, UTF-8, acentuação correta. Tom sério, sem sátira.
-3. Partidos, federações e municípios reais. Pessoas, agentes e eventos fictícios. Nenhum nome ou rosto de pessoa real no jogo.
+3. Partidos, federações, municípios e instituições públicas reais (ministérios, secretarias, autarquias e estatais, como Embratur e BNDES). Pessoas, agentes, ocupantes de cargos e eventos fictícios. Nenhum nome ou rosto de pessoa real no jogo.
 4. Nunca inventar número oficial. Marcar "(a confirmar)" o que não foi verificado em fonte oficial e "(calibrar)" todo parâmetro de balanceamento.
 5. Não copiar código, texto ou imagem do Copero. copero-99-ovr não é referência.
 6. Não alterar `wrangler.jsonc` e não mover `public/`.

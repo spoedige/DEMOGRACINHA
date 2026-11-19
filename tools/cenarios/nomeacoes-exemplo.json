@@ -1,0 +1,130 @@
+{
+ "_cenario": "Catálogo artificial de posições de nomeação (D80). Instituições públicas reais pelo nome; ocupante sempre o personagem fictício. Municípios e estados do exemplo são fictícios.",
+ "_parametros": "Condições, Capital de Entrega, experiência e notoriedade por janela (calibrar).",
+ "posicoes": [
+  {
+   "id": "sec-obras-ex001",
+   "titulo": "Secretário municipal de Obras",
+   "orgao": "Prefeitura de EX001 (município de exemplo)",
+   "tipo": "governamental",
+   "escopo": "municipal",
+   "condicao": [
+    {
+     "alvo": "relacoes.executivo",
+     "op": ">=",
+     "valor": 0.15
+    }
+   ],
+   "exigeGovernoAliado": true,
+   "capitalEntregaPorJanela": 2,
+   "experienciaPorJanela": 0.5,
+   "notoriedadePorJanela": 0.005,
+   "risco": "Obra atrasada vira desgaste local."
+  },
+  {
+   "id": "sec-turismo-ex",
+   "titulo": "Secretário estadual de Turismo",
+   "orgao": "Governo do estado de exemplo (EX)",
+   "tipo": "governamental",
+   "escopo": "estadual",
+   "condicao": [
+    {
+     "alvo": "relacoes.executivo",
+     "op": ">=",
+     "valor": 0.3
+    }
+   ],
+   "exigeGovernoAliado": true,
+   "capitalEntregaPorJanela": 3,
+   "experienciaPorJanela": 0.5,
+   "notoriedadePorJanela": 0.008,
+   "risco": "Agenda estadual afasta da base local."
+  },
+  {
+   "id": "presidente-embratur",
+   "titulo": "Presidente da Embratur",
+   "orgao": "Embratur",
+   "tipo": "governamental",
+   "escopo": "federal",
+   "condicao": [
+    {
+     "alvo": "indicadores.nacional.notoriedade",
+     "op": ">=",
+     "valor": 0.05
+    },
+    {
+     "alvo": "relacoes.executivo",
+     "op": ">=",
+     "valor": 0.4
+    }
+   ],
+   "exigeGovernoAliado": true,
+   "capitalEntregaPorJanela": 4,
+   "experienciaPorJanela": 0.6,
+   "notoriedadePorJanela": 0.01,
+   "risco": "Exposição nacional; cobrança por resultados de promoção turística."
+  },
+  {
+   "id": "presidente-bndes",
+   "titulo": "Presidente do BNDES",
+   "orgao": "BNDES",
+   "tipo": "governamental",
+   "escopo": "federal",
+   "condicao": [
+    {
+     "alvo": "relacoes.executivo",
+     "op": ">=",
+     "valor": 0.6
+    },
+    {
+     "alvo": "relacoes.credibilidade",
+     "op": ">=",
+     "valor": 0.6
+    }
+   ],
+   "exigeGovernoAliado": true,
+   "capitalEntregaPorJanela": 6,
+   "experienciaPorJanela": 0.8,
+   "notoriedadePorJanela": 0.012,
+   "risco": "Decisões de crédito sob escrutínio de órgãos de controle."
+  },
+  {
+   "id": "secex-turismo",
+   "titulo": "Secretário executivo do Ministério do Turismo",
+   "orgao": "Ministério do Turismo",
+   "tipo": "governamental",
+   "escopo": "federal",
+   "condicao": [
+    {
+     "alvo": "relacoes.executivo",
+     "op": ">=",
+     "valor": 0.45
+    }
+   ],
+   "exigeGovernoAliado": true,
+   "capitalEntregaPorJanela": 4,
+   "experienciaPorJanela": 0.7,
+   "notoriedadePorJanela": 0.006,
+   "risco": "Bastidor de ministério; pouca exposição própria."
+  },
+  {
+   "id": "diretorio-municipal",
+   "titulo": "Presidente do diretório municipal do partido",
+   "orgao": "Diretório municipal do partido",
+   "tipo": "partidaria",
+   "escopo": "municipal",
+   "condicao": [
+    {
+     "alvo": "relacoes.cupula",
+     "op": ">=",
+     "valor": 0.25
+    }
+   ],
+   "exigeGovernoAliado": false,
+   "capitalEntregaPorJanela": 0,
+   "experienciaPorJanela": 0.3,
+   "notoriedadePorJanela": 0.003,
+   "risco": "Disputas internas pela montagem das chapas."
+  }
+ ]
+}

@@ -150,7 +150,7 @@ test("save: migração 2 para 3 exige data de filiação; sem inventar", () => {
   const v2 = JSON.parse(Save.serializar(e)); v2.saveVersion = 2; delete v2.candidaturas; delete v2.personagem.dataFiliacao;
   assert.throws(() => Save.ler(JSON.stringify(v2)), /dataFiliacao/);
   const m = Save.ler(JSON.stringify(v2), undefined, { dataFiliacao: "2025-06-01" });
-  assert.equal(m.saveVersion, 3); assert.deepEqual(plano(m), plano(e));
+  assert.equal(m.saveVersion, 4); assert.deepEqual(plano(m), plano(e)); // 2 -> 3 -> 4 em cadeia
   const comCampo = clone(v2); comCampo.personagem.dataFiliacao = "2025-06-01";
   assert.deepEqual(plano(Save.ler(JSON.stringify(comCampo))), plano(e));
 });

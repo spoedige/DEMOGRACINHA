@@ -4,7 +4,7 @@
 // Nenhum parâmetro calibrável nasce aqui: valores e formas das distribuições vêm do arquivo de cenário.
 //   node tools/sim.js --cenario tools/cenarios/vereador.json [--semente v1-X]
 //   node tools/sim.js --cenario tools/cenarios/vereador.json --rodadas 200 [--semente-base v1-LOTE]
-//   node tools/sim.js --cenario tools/cenarios/carreira.json --carreira [--anos N] [--semente v1-X] [--cartas arquivo.json [--eventos arquivo.json]] [--modelos arquivo.json]
+//   node tools/sim.js --cenario tools/cenarios/carreira.json --carreira [--anos N] [--semente v1-X] [--cartas arquivo.json [--eventos arquivo.json]] [--modelos arquivo.json] [--nomeacoes arquivo.json]
 const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
@@ -63,7 +63,8 @@ function lote(Motor, cen, base, n) {
 // eleicoes[ano] lista arquivos de cenário de disputa, relativos ao arquivo da carreira.
 // Com --modelos (D78), J3 escolhe a oferta de maior aderência à ambição (desempate por id); sem oferta, não concorre.
 // É política do simulador, não regra do motor.
-function carreira(Motor, cen, dir, anos, catalogo, eventos, modelos) {
+// Com --nomeacoes (D80), a política do simulador aceita a primeira oferta de nomeação e permanece no cargo em J1.
+function carreira(Motor, cen, dir, anos, catalogo, eventos, modelos, nomeacoes) {
   const eleicoes = {};
   // com --modelos, a candidatura nasce em J3; os cenários prontos com o personagem (D75) não são carregados
   Object.keys(modelos ? {} : (cen.eleicoes || {})).forEach((a) => {
@@ -78,6 +79,10 @@ function carreira(Motor, cen, dir, anos, catalogo, eventos, modelos) {
     dados.eventos = eventos.eventos;
   }
   if (modelos) ["modelosDisputa", "oportunidades", "regrasCargo", "ambicoesCargos", "governos"].forEach((k) => { dados[k] = modelos[k]; });
+  if (nomeacoes) {
+    if (!catalogo) throw new Error("--nomeacoes exige --cartas");
+    dados.posicoes = nomeacoes.posicoes;
+  }
   const escolherOferta = (ofs) => {
     if (!ofs.length) return "naoConcorrer";
     return ofs.slice().sort((a, b) => (b.ficha.aderenciaAmbicao - a.ficha.aderenciaAmbicao) || (a.id < b.id ? -1 : 1))[0].id;
@@ -87,6 +92,8 @@ function carreira(Motor, cen, dir, anos, catalogo, eventos, modelos) {
     let p = Motor.Carreira.previa(e, dados, { opcoes, decisoes: dec });
     p.eventos.forEach((x) => { dec.eventos[x.id] = x.opcoes.find((o) => o.contencao).id; });
     if (p.eventos.length) p = Motor.Carreira.previa(e, dados, { opcoes, decisoes: dec });
+    if (p.desincompatibilizacao) { dec.desincompatibilizacao = "permanecer"; p = Motor.Carreira.previa(e, dados, { opcoes, decisoes: dec }); }
+    if (p.nomeacoes) { dec.nomeacao = p.nomeacoes[0].id; p = Motor.Carreira.previa(e, dados, { opcoes, decisoes: dec }); }
     if (p.candidaturas) { dec.candidatura = escolherOferta(p.candidaturas); p = Motor.Carreira.previa(e, dados, { opcoes, decisoes: dec }); }
     dec.carta = p.mao.segura;
     return dec;
@@ -124,7 +131,8 @@ function principal(argv) {
     const cat = arg("--cartas") ? JSON.parse(fs.readFileSync(arg("--cartas"), "utf8")) : undefined;
     const evs = arg("--eventos") ? JSON.parse(fs.readFileSync(arg("--eventos"), "utf8")) : undefined;
     const mods = arg("--modelos") ? JSON.parse(fs.readFileSync(arg("--modelos"), "utf8")) : undefined;
-    return canonico(carreira(Motor, c, path.dirname(arq), anos, cat, evs, mods));
+    const noms = arg("--nomeacoes") ? JSON.parse(fs.readFileSync(arg("--nomeacoes"), "utf8")) : undefined;
+    return canonico(carreira(Motor, c, path.dirname(arq), anos, cat, evs, mods, noms));
   }
   const n = arg("--rodadas");
   const out = n === undefined ? rodar(Motor, cen, arg("--semente") || cen.semente)

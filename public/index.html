@@ -1448,6 +1448,9 @@ var Elegibilidade = (function () {
         // inelegibilidade reconhecida na escada jurídica da carreira (D77; eventos-e-risco 6)
         if (c.inelegibilidadeReconhecida !== undefined && typeof c.inelegibilidadeReconhecida !== "boolean") Comum.erro("inelegibilidadeReconhecida de " + c.id + ": booleano");
         if (c.inelegibilidadeReconhecida === true) motivos.push("inelegibilidadeReconhecida");
+        // nomeado em cargo governamental depois do prazo de desincompatibilização (D80; prazo único 04/04, a confirmar)
+        if (c.nomeacaoGovernamental !== undefined && typeof c.nomeacaoGovernamental !== "boolean") Comum.erro("nomeacaoGovernamental de " + c.id + ": booleano");
+        if (c.nomeacaoGovernamental === true) motivos.push("semDesincompatibilizacao");
         var m = c.mandatoAtual;
         if (m) {
           if (typeof m.cargo !== "string" || !Object.prototype.hasOwnProperty.call(IDADE, m.cargo)) Comum.erro("mandatoAtual.cargo inválido: " + c.id);
@@ -2030,7 +2033,7 @@ var Eleicao = (function () {
 // altera o estado recebido. Nenhum valor inicial ou taxa nasce aqui: valores vêm de dados.inicio (calibrar) e regras
 // sem fórmula documentada (decisão automática, desfecho de compromisso, evento, manutenção) vêm injetadas em entrada.opcoes.
 var Carreira = (function () {
-  var SAVE_VERSION = 3; // D77: estados temporários e escada jurídica; D78: candidaturas e data de filiação
+  var SAVE_VERSION = 4; // D77: estados temporários e escada jurídica; D78: candidaturas e data de filiação; D80: nomeações
   var RITMOS = ["intenso", "normal", "express"];
   var ESCOPOS = ["local", "estadual", "nacional"];
   var APTIDOES = ["articulacao", "comunicacao", "mobilizacao", "gestao", "estrategia", "resiliencia"];
@@ -2154,7 +2157,22 @@ var Carreira = (function () {
     e.cargos.mandatos.forEach(function (m, i) {
       Comum.idv(m.disputaId, "mandato " + i + ".disputaId"); data(m.inicio, "mandato " + i + ".inicio"); data(m.fim, "mandato " + i + ".fim");
       if (["eleito", "exercicio", "encerrado"].indexOf(m.situacao) < 0) erro("mandato " + i + ".situacao inválida");
+      if (m.licenciado !== undefined && typeof m.licenciado !== "boolean") erro("mandato " + i + ".licenciado: booleano (D80)");
+      if (m.renuncia !== undefined) data(m.renuncia, "mandato " + i + ".renuncia");
     });
+    var ativas = 0;
+    e.cargos.nomeacoes.forEach(function (n, i) {
+      var c = "nomeação " + i;
+      Comum.idv(n.id, c + ".id"); Comum.idv(n.posicaoId, c + ".posicaoId");
+      if (n.tipo !== "governamental" && n.tipo !== "partidaria") erro(c + ".tipo inválido");
+      if (["municipal", "estadual", "federal"].indexOf(n.escopo) < 0) erro(c + ".escopo inválido");
+      validarTempo(n.inicio, c + ".inicio");
+      if (n.situacao === "exercicio") { ativas++; if (n.fim !== null) erro(c + ": em exercício sem fim"); }
+      else if (n.situacao === "encerrada") { validarTempo(n.fim, c + ".fim"); if (typeof n.motivoSaida !== "string") erro(c + ".motivoSaida obrigatório"); }
+      else erro(c + ".situacao inválida");
+      if (n.licencaMandato !== null) Comum.idv(n.licencaMandato, c + ".licencaMandato");
+    });
+    if (ativas > 1) erro("mais de uma nomeação em exercício (D80)");
     lista(e.basesParlamentares, "basesParlamentares"); obj(e.conjuntura, "conjuntura");
     lista(e.filaEventos, "filaEventos").forEach(function (x, i) {
       Comum.idv(x.id, "evento " + i + ".id"); obj(x.janelaAlvo, "evento " + i + ".janelaAlvo");
@@ -2268,6 +2286,8 @@ var Carreira = (function () {
       if (m.situacao === "eleito" && m.inicio <= hoje) { m.situacao = "exercicio"; oc.push({ tipo: "posse", disputaId: m.disputaId }); }
       if (m.situacao === "exercicio" && m.fim < hoje) { m.situacao = "encerrado"; oc.push({ tipo: "fimMandato", disputaId: m.disputaId }); }
     });
+    // posse de novo governo encerra a nomeação governamental do âmbito (D80)
+    if (dados && dados.posicoes !== undefined) Nomeacoes.trocaDeGoverno(e, oc);
     // estados temporários que chegaram ao fim (6.1); investigado vencido sem denúncia: arquivamento automático
     var pe = e.personagem;
     pe.estadosTemporarios = pe.estadosTemporarios.filter(function (x) {
@@ -2311,12 +2331,16 @@ var Carreira = (function () {
     var en = copia(entrada || {}); en.opcoes = (entrada || {}).opcoes; en.previa = true;
     var vc = compromissosDaJanela(estado), dc = (en.decisoes && en.decisoes.compromissos) || {};
     var faltam = vc.filter(function (c) { var x = Comum.proprio(dc, c.id); return x !== "cumprir" && x !== "romper"; });
-    if (faltam.length) return { compromissos: vc, eventos: null, candidaturas: null, mao: null };
+    var nulo = { compromissos: [], eventos: [], desincompatibilizacao: null, nomeacoes: null, candidaturas: null, mao: null };
+    var fase = function (k, v) { var r = copia(nulo); r[k] = v; if (k === "compromissos") r.eventos = null; return r; };
+    if (faltam.length) return fase("compromissos", vc);
     var a = abrir(estado, dados, en);
-    if (a.pendentes.length) return { compromissos: [], eventos: a.pendentes, candidaturas: null, mao: null };
-    var c = decidirCandidatura(a.e, dados, a.manual, en.decisoes, a.oc, true);
-    if (c.pendente) return { compromissos: [], eventos: [], candidaturas: c.ofertas, mao: null };
-    return { compromissos: [], eventos: [], candidaturas: null, mao: Cartas.montarMao(c.estado, dados, c.estado.rng.cartas).resultado };
+    if (a.pendentes.length) return fase("eventos", a.pendentes);
+    var g = decidirCargos(a.e, dados, a.manual, en.decisoes, a.oc, true);
+    if (g.pendente) return fase(Object.keys(g.pendente)[0], g.pendente[Object.keys(g.pendente)[0]]);
+    var c = decidirCandidatura(g.estado, dados, a.manual, en.decisoes, a.oc, true);
+    if (c.pendente) return fase("candidaturas", c.ofertas);
+    return fase("mao", Cartas.montarMao(c.estado, dados, c.estado.rng.cartas).resultado);
   }
   // Ritmo no menu (D79): função pura; o ritmo não altera a simulação (D75).
   function mudarRitmo(estado, ritmo) {
@@ -2338,6 +2362,36 @@ var Carreira = (function () {
     var st = null;
     if (et.segundoTurno && et.segundoTurno.votos[chave] !== undefined) st = { votos: et.segundoTurno.votos[chave], validos: et.segundoTurno.validos };
     return { votos: votos[chave], validos: validos, posicao: ordem.indexOf(chave) + 1, segundoTurno: st };
+  }
+  // Passo 3c (D80): desincompatibilização em J1 de ano eleitoral, saída voluntária e ofertas de nomeação em C1 e C3.
+  function decidirCargos(e, dados, manual, decisoes, oc, ehPrevia) {
+    var d = decisoes || {}, t = e.tempo;
+    if (!dados || dados.posicoes === undefined) {
+      if (d.nomeacao !== undefined || d.desincompatibilizacao !== undefined || d.deixarNomeacao !== undefined) erro("decisão de cargo sem catálogo de posições");
+      return { estado: e };
+    }
+    var pend = Nomeacoes.pendenciaDesincompatibilizacao(e);
+    if (pend) {
+      var esc = manual ? d.desincompatibilizacao : "permanecer";
+      if (esc === undefined) { if (ehPrevia) return { estado: e, pendente: { desincompatibilizacao: pend } }; erro("decisão de desincompatibilização obrigatória em J1 (sair ou permanecer)"); }
+      if (esc !== "sair" && esc !== "permanecer") erro("desincompatibilizacao: sair ou permanecer");
+      if (esc === "sair") Nomeacoes.desincompatibilizar(e, pend);
+      oc.push({ tipo: "desincompatibilizacao", decisao: esc, alvo: pend.tipo });
+    } else if (d.desincompatibilizacao !== undefined) erro("desincompatibilização só em J1 de ano eleitoral, com nomeação governamental ou chefia do Executivo");
+    if (d.deixarNomeacao !== undefined) {
+      if (!manual || d.deixarNomeacao !== true || !Nomeacoes.ativa(e)) erro("deixarNomeacao: true, em janela manual, com nomeação ativa");
+      var pos = Nomeacoes.ativa(e).posicaoId;
+      Nomeacoes.encerrar(e, "voluntaria"); oc.push({ tipo: "nomeacaoEncerrada", posicaoId: pos, motivo: "voluntaria" });
+      if (d.nomeacao !== undefined) erro("deixarNomeacao e nova nomeação na mesma janela");
+      return { estado: e }; // quem sai por vontade própria não recebe oferta na mesma janela
+    }
+    var ofs = Nomeacoes.ofertas(e, dados), esco = manual ? d.nomeacao : "recusar";
+    if (ofs.length === 0) { if (d.nomeacao !== undefined && d.nomeacao !== "recusar") erro("decisão de nomeação sem oferta"); return { estado: e }; }
+    if (esco === undefined) { if (ehPrevia) return { estado: e, pendente: { nomeacoes: ofs } }; erro("decisão de nomeação obrigatória (oferta ou recusar)"); }
+    if (esco === "recusar") { oc.push({ tipo: "nomeacaoRecusada" }); e.historico.push({ ano: t.ano, janela: t.janela, tipo: "nomeacao", acao: "recusada", ofertas: ofs.map(function (o) { return o.id; }) }); return { estado: e }; }
+    var o = ofs.filter(function (x) { return x.id === esco; })[0] || erro("oferta de nomeação inexistente: " + esco);
+    Nomeacoes.aceitar(e, o); oc.push({ tipo: "nomeacaoAceita", posicaoId: o.posicaoId });
+    return { estado: e };
   }
   // Passo 3b (D78): em J3 de ano eleitoral, com modelos de disputa, oferta e registro da candidatura.
   function decidirCandidatura(e, dados, manual, decisoes, oc, ehPrevia) {
@@ -2366,6 +2420,7 @@ var Carreira = (function () {
   function avancar(estado, dados, entrada) {
     var a = abrir(estado, dados, entrada);
     var e = a.e, oc = a.oc, manual = a.manual, t = a.t, en = a.en, opcoes = a.opcoes;
+    e = decidirCargos(e, dados, manual, en.decisoes, oc, false).estado;
     e = decidirCandidatura(e, dados, manual, en.decisoes, oc, false).estado;
     // 4. cartas (D76): mão sorteada em toda janela; manual joga a escolhida, automática a segura. Sem catálogo, D75.
     if (dados && dados.cartas !== undefined) {
@@ -2400,6 +2455,8 @@ var Carreira = (function () {
         oc.push({ tipo: "eleicao", disputaId: r.disputaId, personagemEleito: eleito });
       });
     }
+    // 5b. exercício da nomeação (D80): ganhos por janela, valores do catálogo (calibrar)
+    if (dados && dados.posicoes !== undefined) Nomeacoes.exercer(e, dados, oc);
     // 6. manutenção no fim do ano (calibrar, injetada); sem função, registrada como não modelada
     var js = janelasDo(t.ano), ultima = js[js.length - 1] === t.janela;
     if (ultima) {
@@ -2452,6 +2509,13 @@ var Save = (function () {
       }
       if (e.candidaturas === undefined) e.candidaturas = [];
       e.saveVersion = 3;
+      return e;
+    },
+    // 3 -> 4 (D80): nomeações com formato validado. Até a versão 3 nada gravava nomeação: só a lista vazia tem correspondência.
+    3: function (v) {
+      var e = JSON.parse(JSON.stringify(v));
+      if (!e.cargos || !Array.isArray(e.cargos.nomeacoes) || e.cargos.nomeacoes.length > 0) Comum.erro("migração 3: cargos.nomeacoes sem correspondência (só lista vazia)");
+      e.saveVersion = 4;
       return e;
     }
   });
@@ -2554,6 +2618,8 @@ var Cartas = (function () {
     if (typeof c.segura !== "boolean") erro(campo + ".segura: booleano");
     var pool = c.pool || {};
     if (pool.peso !== undefined) Comum.real(pool.peso, campo + ".pool.peso", 0);
+    if (pool.nomeacao !== undefined && pool.nomeacao !== "governamental" && pool.nomeacao !== "partidaria" &&
+      !(Array.isArray(pool.nomeacao) && pool.nomeacao.length && pool.nomeacao.every(function (x) { return Comum.ehId(x); }))) erro(campo + ".pool.nomeacao: governamental, partidaria ou lista de posições");
     var ef = efeitosValidos(c.efeitos || [], campo + ".efeitos");
     if (c.segura) {
       if (c.custo || c.risco || c.atraso || c.corrupcao) erro(campo + ": carta segura sem custo, risco, atraso nem corrupção");
@@ -2613,7 +2679,7 @@ var Cartas = (function () {
     return { amb: amb, n: n };
   }
 
-  function cargosAtuais(e) { return e.cargos.mandatos.filter(function (m) { return m.situacao === "exercicio"; }).map(function (m) { return m.cargo; }); }
+  function cargosAtuais(e) { return e.cargos.mandatos.filter(function (m) { return m.situacao === "exercicio" && !m.licenciado; }).map(function (m) { return m.cargo; }); }
   function saldoDe(e, r) {
     if (r === "saude") return e.personagem.saude;
     if (r === "caixaPessoal" || r === "fundoCampanha" || r === "capitalEntrega") return e.bolsos[r];
@@ -2629,6 +2695,10 @@ var Cartas = (function () {
     if (p.tagsExigidas && !p.tagsExigidas.every(function (x) { return e.personagem.tags.indexOf(x) >= 0; })) return false;
     if (p.tagsVedadas && p.tagsVedadas.some(function (x) { return e.personagem.tags.indexOf(x) >= 0; })) return false;
     if (p.statusJuridico && p.statusJuridico.indexOf(e.personagem.statusJuridico) < 0) return false;
+    if (p.nomeacao !== undefined) { // cartas do cargo de nomeação (D80)
+      var na = e.cargos.nomeacoes.filter(function (n) { return n.situacao === "exercicio"; })[0];
+      if (!na || !(p.nomeacao === na.tipo || (Array.isArray(p.nomeacao) && p.nomeacao.indexOf(na.posicaoId) >= 0))) return false;
+    }
     var usaBase = (c.efeitos || []).concat(c.efeitosFalha || [], (c.risco && c.risco.efeitos) || []).some(function (x) { return x.alvo === "base.local.forca"; });
     if (usaBase && !Comum.proprio(e.base.municipios, e.personagem.municipioLocal)) return false; // sem base local, sem alvo
     if (c.segura) return true;
@@ -2751,7 +2821,7 @@ var Eventos = (function () {
     condenar: { de: "investigado", denuncia: true }, reconhecerInelegibilidade: { de: "condenado", enquadrada: true }
   };
   var ESPECIAIS = { "personagem.statusJuridico": "texto", "personagem.denunciaRegistrada": "bool", "personagem.condenacaoEnquadrada": "bool",
-    "personagem.tags": "lista", "personagem.arquivoVermelho.length": "num", "cargos.exercicio": "lista" };
+    "personagem.tags": "lista", "personagem.arquivoVermelho.length": "num", "cargos.exercicio": "lista", "cargos.nomeacaoAtiva": "bool" };
 
   function tipoAlvo(alvo) {
     if (ESPECIAIS[alvo]) return ESPECIAIS[alvo];
@@ -2767,6 +2837,7 @@ var Eventos = (function () {
       case "personagem.tags": return p.tags;
       case "personagem.arquivoVermelho.length": return p.arquivoVermelho.length;
       case "cargos.exercicio": return e.cargos.mandatos.filter(function (m) { return m.situacao === "exercicio"; }).map(function (m) { return m.cargo; });
+      case "cargos.nomeacaoAtiva": return e.cargos.nomeacoes.some(function (n) { return n.situacao === "exercicio"; });
       case "base.local.forca": var b = Comum.proprio(e.base.municipios, p.municipioLocal); return b ? b.forca : 0;
     }
     var o = e, ps = alvo.split(".");
@@ -2836,6 +2907,7 @@ var Eventos = (function () {
         if (Carreira.TEMPORARIOS.indexOf(o.estadoTemporario.tipo) < 0) erro(c2 + ".estadoTemporario.tipo inválido");
         Comum.inteiro(o.estadoTemporario.duracaoJanelas, c2 + ".estadoTemporario.duracaoJanelas", 1);
       }
+      if (o.encerrarNomeacao !== undefined && o.encerrarNomeacao !== true) erro(c2 + ".encerrarNomeacao: true ou ausente");
       if (o.agendar) {
         if (!ids.has(o.agendar.eventoId)) erro(c2 + ": cadeia para evento desconhecido " + o.agendar.eventoId);
         Comum.inteiro(o.agendar.emJanelas, c2 + ".agendar.emJanelas", 1); Comum.real(o.agendar.prob, c2 + ".agendar.prob", 0, 1);
@@ -2918,6 +2990,7 @@ var Eventos = (function () {
       }
       Cartas.aplicarEfeitos(e, op.efeitos || []);
       if (op.juridico) transicao(e, d.ev, op.juridico);
+      if (op.encerrarNomeacao && Nomeacoes.encerrar(e, "evento:" + d.ev.id)) oc.push({ tipo: "nomeacaoEncerrada", motivo: "evento", eventoId: d.ev.id });
       if (op.estadoTemporario) e.personagem.estadosTemporarios.push({ id: d.id + ":" + op.estadoTemporario.tipo, tipo: op.estadoTemporario.tipo,
         origem: d.ev.id, inicio: { ano: t.ano, janela: t.janela }, fim: Carreira.deslocar(t, op.estadoTemporario.duracaoJanelas) });
       if (op.agendar) e.filaEventos.push({ id: d.id + ":" + op.agendar.eventoId, janelaAlvo: Carreira.deslocar(t, op.agendar.emJanelas),
@@ -3002,7 +3075,8 @@ var Candidatura = (function () {
   function candidatoBase(e) {
     var p = e.personagem;
     return { id: p.id, partidoId: p.partidoId, dataNascimento: p.dataNascimento, dataFiliacao: p.dataFiliacao,
-      mandatoAtual: mandatoAtual(e), inelegibilidadeReconhecida: p.statusJuridico === "inelegibilidadeReconhecida" };
+      mandatoAtual: mandatoAtual(e), inelegibilidadeReconhecida: p.statusJuridico === "inelegibilidadeReconhecida",
+      nomeacaoGovernamental: e.cargos.nomeacoes.some(function (n) { return n.situacao === "exercicio" && n.tipo === "governamental"; }) };
   }
   function aptoNoModulo3(e, modelo, lista) {
     var c = candidatoBase(e);
@@ -3116,6 +3190,119 @@ var Candidatura = (function () {
     escopoDe: escopoDe, mandatoAtual: mandatoAtual });
 })();
 
+/* == NOMEACOES == */
+// Cargos de nomeação e desincompatibilização (carreira-e-poder 10.4, 10.5 e 11; eventos-e-risco 6.1; GDD 3; D80).
+// Sem RNG e sem número no código: valores por janela, condições e textos vêm do catálogo dados.posicoes (calibrar).
+// Capital político não entra (D54); posição partidária não rende Capital de Entrega (D25).
+var Nomeacoes = (function () {
+  var erro = Comum.erro;
+  var ESCOPOS = { municipal: "local", estadual: "estadual", federal: "nacional" }; // escopo da posição -> indicadores e governos
+  var EXECUTIVO = { PREFEITO: true, GOVERNADOR: true, PRESIDENTE: true };
+  var LEGISLATIVO = { VEREADOR: true, DEPUTADO_ESTADUAL: true, DEPUTADO_DISTRITAL: true, DEPUTADO_FEDERAL: true, SENADOR: true };
+  var JANELAS_OFERTA = { C1: true, C3: true }; // anos calmos: montagem dos governos e reforma de meio de mandato (D80)
+  // posse de cada governo: ano seguinte à eleição do escopo (GDD 3)
+  var GOVERNO = { municipal: "municipal", estadual: "geral", federal: "geral" };
+
+  function validarCatalogo(dados) {
+    var ps = dados.posicoes;
+    if (!Array.isArray(ps) || ps.length === 0) erro("posicoes: catálogo não vazio");
+    var ids = new Set();
+    ps.forEach(function (p) {
+      var campo = "posição " + Comum.idv(p && p.id, "posicao.id");
+      if (ids.has(p.id)) erro(campo + " repetida"); ids.add(p.id);
+      ["titulo", "orgao", "risco"].forEach(function (k) { if (typeof p[k] !== "string" || p[k] === "") erro(campo + "." + k + ": texto obrigatório"); });
+      if (p.tipo !== "governamental" && p.tipo !== "partidaria") erro(campo + ".tipo: governamental ou partidaria");
+      if (!ESCOPOS[p.escopo]) erro(campo + ".escopo: municipal, estadual ou federal");
+      Eventos.validarCondicao(p.condicao, campo + ".condicao");
+      if (typeof p.exigeGovernoAliado !== "boolean") erro(campo + ".exigeGovernoAliado: booleano");
+      Comum.inteiro(p.capitalEntregaPorJanela, campo + ".capitalEntregaPorJanela (calibrar)", 0);
+      Comum.real(p.experienciaPorJanela, campo + ".experienciaPorJanela (calibrar)", 0);
+      Comum.real(p.notoriedadePorJanela, campo + ".notoriedadePorJanela (calibrar)", 0, 1);
+      if (p.tipo === "partidaria" && (p.capitalEntregaPorJanela !== 0 || p.exigeGovernoAliado)) erro(campo + ": posição partidária sem Capital de Entrega nem governo (D25)");
+    });
+    var m = new Map(); ps.forEach(function (p) { m.set(p.id, p); });
+    return m;
+  }
+  function ativa(e) { return e.cargos.nomeacoes.filter(function (n) { return n.situacao === "exercicio"; })[0] || null; }
+  function mandatoEmExercicio(e) { return e.cargos.mandatos.filter(function (m) { return m.situacao === "exercicio"; })[0] || null; }
+  function governamentalAtiva(e) { var n = ativa(e); return !!n && n.tipo === "governamental"; }
+
+  // Ofertas em C1 e C3 dos anos calmos, sem nomeação ativa; chefe do Executivo não recebe; legislador só governamental (licença).
+  function ofertas(e, dados) {
+    var cat = validarCatalogo(dados), t = e.tempo, p = e.personagem;
+    if (Carreira.tipoAno(t.ano) !== "calmo" || !JANELAS_OFERTA[t.janela] || ativa(e) || !p.partidoId) return [];
+    var m = mandatoEmExercicio(e);
+    if (m && EXECUTIVO[m.cargo]) return [];
+    var out = [];
+    cat.forEach(function (pos) {
+      if (m && LEGISLATIVO[m.cargo] && pos.tipo !== "governamental") return;
+      if (!Eventos.vale(e, pos.condicao)) return;
+      var esc = ESCOPOS[pos.escopo];
+      var posGov = Comum.proprio(Comum.proprio(dados.governos || {}, esc) || {}, p.partidoId) || "semInformacao";
+      if (pos.exigeGovernoAliado && posGov !== "aliado") return;
+      out.push({ id: pos.id, posicaoId: pos.id, titulo: pos.titulo, orgao: pos.orgao, tipo: pos.tipo, escopo: pos.escopo, comLicenca: !!m,
+        ficha: { capacidadeEntregaPorJanela: pos.capitalEntregaPorJanela, exposicaoPorJanela: pos.notoriedadePorJanela, posicaoCoalizao: posGov, risco: pos.risco } });
+    });
+    return out.sort(Comum.porId);
+  }
+  function presenca(e, escopo, d) { e.grupo.presenca[escopo] = Math.max(0, e.grupo.presenca[escopo] + d); }
+  function aceitar(e, oferta) {
+    var t = e.tempo, m = mandatoEmExercicio(e);
+    if (m) m.licenciado = true; // legislador: licença do mandato enquanto durar a nomeação (6.1); suplente só registrado (D55)
+    e.cargos.nomeacoes.push({ id: oferta.posicaoId + ":" + t.ano + t.janela, posicaoId: oferta.posicaoId, tipo: oferta.tipo, escopo: oferta.escopo,
+      inicio: { ano: t.ano, janela: t.janela }, fim: null, situacao: "exercicio", motivoSaida: null, licencaMandato: m ? m.disputaId : null });
+    presenca(e, oferta.escopo, 1);
+    e.historico.push({ ano: t.ano, janela: t.janela, tipo: "nomeacao", acao: "aceita", posicaoId: oferta.posicaoId, licencaMandato: m ? m.disputaId : null });
+  }
+  function encerrar(e, motivo) {
+    var n = ativa(e), t = e.tempo;
+    if (!n) return false;
+    n.situacao = "encerrada"; n.fim = { ano: t.ano, janela: t.janela }; n.motivoSaida = motivo;
+    presenca(e, n.escopo, -1);
+    if (n.licencaMandato) e.cargos.mandatos.forEach(function (m) { if (m.disputaId === n.licencaMandato && m.situacao === "exercicio") m.licenciado = false; }); // reassume a cadeira
+    e.historico.push({ ano: t.ano, janela: t.janela, tipo: "nomeacao", acao: "encerrada", posicaoId: n.posicaoId, motivo: motivo });
+    return true;
+  }
+  // Passo 1: na posse de um novo governo (C1 do ano seguinte à eleição do escopo), a nomeação governamental daquele âmbito acaba.
+  function trocaDeGoverno(e, oc) {
+    var t = e.tempo, n = ativa(e);
+    if (!n || n.tipo !== "governamental" || t.janela !== "C1") return;
+    var anterior = t.ano - 1, tipo = Carreira.tipoAno(anterior) === "eleitoral" ? ((anterior - 2026) % 4 === 0 ? "geral" : "municipal") : null;
+    if (tipo && GOVERNO[n.escopo] === tipo && encerrar(e, "trocaDeGoverno")) oc.push({ tipo: "nomeacaoEncerrada", posicaoId: n.posicaoId, motivo: "trocaDeGoverno" });
+  }
+  // Passo 5b: ganhos de cada janela em exercício (calibrar no catálogo). Licença de saúde ou afastamento cautelar: sem Capital de Entrega.
+  function exercer(e, dados, oc) {
+    var n = ativa(e);
+    if (!n) return;
+    var pos = validarCatalogo(dados).get(n.posicaoId) || erro("posição ausente do catálogo: " + n.posicaoId);
+    var tipos = e.personagem.estadosTemporarios.map(function (x) { return x.tipo; });
+    var semEntrega = tipos.indexOf("licencaSaude") >= 0 || tipos.indexOf("afastamentoCautelar") >= 0;
+    if (!semEntrega) e.bolsos.capitalEntrega += pos.capitalEntregaPorJanela;
+    e.personagem.experiencia += pos.experienciaPorJanela;
+    Cartas.aplicarEfeitos(e, [{ alvo: "indicadores." + ESCOPOS[pos.escopo] + ".notoriedade", delta: pos.notoriedadePorJanela }]);
+    oc.push({ tipo: "exercicioNomeacao", posicaoId: n.posicaoId, capitalEntrega: semEntrega ? 0 : pos.capitalEntregaPorJanela });
+  }
+  // Desincompatibilização em J1 de ano eleitoral (prazo 04/04, a confirmar): nomeado governamental ou chefe do Executivo.
+  function pendenciaDesincompatibilizacao(e) {
+    var t = e.tempo;
+    if (Carreira.tipoAno(t.ano) !== "eleitoral" || t.janela !== "J1") return null;
+    var n = ativa(e), m = mandatoEmExercicio(e);
+    if (n && n.tipo === "governamental") return { tipo: "nomeacao", posicaoId: n.posicaoId };
+    if (m && EXECUTIVO[m.cargo]) return { tipo: "executivo", cargo: m.cargo, disputaId: m.disputaId };
+    return null;
+  }
+  function desincompatibilizar(e, pend) {
+    var t = e.tempo;
+    if (pend.tipo === "nomeacao") { encerrar(e, "desincompatibilizacao"); return; }
+    var m = mandatoEmExercicio(e);
+    m.situacao = "encerrado"; m.renuncia = Carreira.inicioJanela(t.ano, t.janela); // renúncia antes do prazo (GDD 3)
+    e.historico.push({ ano: t.ano, janela: t.janela, tipo: "renuncia", disputaId: m.disputaId, cargo: m.cargo });
+  }
+  return Object.freeze({ validarCatalogo: validarCatalogo, ofertas: ofertas, aceitar: aceitar, encerrar: encerrar, trocaDeGoverno: trocaDeGoverno,
+    exercer: exercer, pendenciaDesincompatibilizacao: pendenciaDesincompatibilizacao, desincompatibilizar: desincompatibilizar,
+    ativa: ativa, governamentalAtiva: governamentalAtiva, ESCOPOS: ESCOPOS });
+})();
+
 /* == DISTRIBUICOES == */
 // Sorteadores de q_g e r_g a partir da forma declarada no cenário (D73; calibrar). Forma é código; valores vêm do cenário.
 // Usados por tools/sim.js e pela interface (D79), para os dois rodarem a mesma conta.
@@ -3146,10 +3333,10 @@ return Object.freeze({ RNG: RNG, Dados: Dados, MaiorResto: MaiorResto, Pontuacao
   Proporcional: Proporcional, Majoritaria: Majoritaria, Senado: Senado, SegundoTurno: SegundoTurno, Cadeiras: Cadeiras,
   Cadastro: Cadastro, Sinteticos: Sinteticos, Opiniao: Opiniao, Maquina: Maquina, Campanha: Campanha,
   Datas: Datas, Elegibilidade: Elegibilidade, Posse: Posse, Fechamento: Fechamento, Desempate: Desempate, Eleicao: Eleicao,
-  Carreira: Carreira, Save: Save, Cartas: Cartas, Eventos: Eventos, Candidatura: Candidatura, Distribuicoes: Distribuicoes });
+  Carreira: Carreira, Save: Save, Cartas: Cartas, Eventos: Eventos, Candidatura: Candidatura, Nomeacoes: Nomeacoes, Distribuicoes: Distribuicoes });
 })();
 </script>
-<script type="application/json" id="dados-exemplo">{"_nota":"Cópia dos catálogos artificiais de tools/cenarios (D79). Nenhum valor é dado histórico; todos (calibrar). Sincronia conferida em tests/ui.","gameVersion":"0.3.0","inicio":{"personagem":{"id":"A1","origem":"liderComunitario","redePoliticaPrevia":"indireta","dataNascimento":"1990-05-10","dataFiliacao":"2025-06-01","municipioInicial":"EX001","ufInicial":"EX","partidoId":"P1","potencial":50,"aptidoes":{"articulacao":0.5,"comunicacao":0.5,"mobilizacao":0.6,"gestao":0.4,"estrategia":0.5,"resiliencia":0.5},"capacidade":{"articulacao":0.3,"comunicacao":0.3,"mobilizacao":0.4,"gestao":0.2,"estrategia":0.3,"resiliencia":0.3},"experiencia":0,"saude":1,"statusJuridico":"regular","tags":[],"arquivoVermelho":[],"mandatosConsecutivos":{},"ambicao":[]},"indicadores":{"local":{"notoriedade":0.2,"popularidade":0.12,"rejeicao":0.03},"estadual":{"notoriedade":0.01,"popularidade":0.005,"rejeicao":0.001},"nacional":{"notoriedade":0,"popularidade":0,"rejeicao":0}},"bolsos":{"caixaPessoal":500000,"fundoCampanha":0,"capitalEntrega":0},"relacoes":{"cupula":0.3,"bancada":0.2,"executivo":0.2,"credibilidade":0.5},"grupo":{"influencia":0,"relacoes":0,"presenca":{"municipal":0,"estadual":0,"federal":0},"papel":null},"base":{"municipios":{"EX001":{"forca":0.2,"custoManutencao":0}},"agregadoRegional":0}},"cartas":{"_cenario":"Catálogo artificial de cartas para teste do mecanismo (D76). Não é o catálogo do jogo; textos provisórios.","_parametros":"Todas as magnitudes, chances, pesos e prazos (calibrar).","ambicoes":["legislativo","executivo","bastidor"],"parametrosCartas":{"acoesPorMao":2},"cartas":[{"id":"rotina-gabinete","titulo":"Rotina de gabinete","texto":"Cumpre a agenda sem riscos. A notoriedade tende a cair um pouco.","segura":true,"ambicoes":["legislativo","bastidor"],"efeitos":[{"alvo":"indicadores.local.notoriedade","delta":-0.005}]},{"id":"agenda-bairro","titulo":"Agenda no bairro","texto":"Visitas de rotina, sem compromisso novo.","segura":true,"ambicoes":["executivo"],"efeitos":[]},{"id":"discurso-mesa","titulo":"Discurso contra a mesa diretora","texto":"Notoriedade local tende a subir. Cúpula cai.","segura":false,"pool":{"peso":1},"custo":{"recurso":"caixaPessoal","quantidade":20000},"aptidao":"comunicacao","sucesso":{"base":0.5,"pesoCapacidade":0.4},"efeitos":[{"alvo":"indicadores.local.notoriedade","delta":0.03},{"alvo":"relacoes.cupula","delta":-0.05}],"efeitosFalha":[{"alvo":"indicadores.local.notoriedade","delta":0.01},{"alvo":"relacoes.cupula","delta":-0.05}],"risco":{"probBase":0.3,"pesoCapacidade":0.2,"efeitos":[{"alvo":"indicadores.local.rejeicao","delta":0.02}]},"atraso":{"eventoId":"convite-oposicao","emJanelas":3,"prob":0.3,"condicao":null}},{"id":"mutirao","titulo":"Mutirão no bairro","texto":"Popularidade e base local tendem a subir. Custa saúde.","segura":false,"pool":{"peso":1},"custo":{"recurso":"saude","quantidade":0.05},"aptidao":"mobilizacao","sucesso":{"base":0.6,"pesoCapacidade":0.3},"efeitos":[{"alvo":"indicadores.local.popularidade","delta":0.02},{"alvo":"base.local.forca","delta":0.03}],"efeitosFalha":[{"alvo":"base.local.forca","delta":0.01}],"risco":{"probBase":0.2,"pesoCapacidade":0.1,"efeitos":[{"alvo":"base.local.forca","delta":-0.01}]},"atraso":{"eventoId":"demanda-bairro","emJanelas":2,"prob":0.4,"condicao":null}},{"id":"acordo-lideranca","titulo":"Acordo com liderança local","texto":"Grupo tende a crescer. Fica devendo apoio eleitoral.","segura":false,"pool":{"peso":1},"custo":{"compromisso":{"tipo":"apoioEleitoral","ator":"P2","objeto":"apoio na próxima eleição","prazoEmJanelas":4,"custo":{"recurso":"cupula","quantidade":0.05},"custoPoliticoDeRomper":2,"contrapartida":"apoio do grupo local","seCumprir":"relação com o ator sobe","seRomper":"retaliação possível","efeitosCumprir":[{"alvo":"relacoes.credibilidade","delta":0.02}],"efeitosRomper":[{"alvo":"relacoes.credibilidade","delta":-0.04}],"retaliacao":{"eventoId":"cobranca-acordo","emJanelas":2,"prob":0.5}}},"aptidao":"articulacao","sucesso":{"base":0.7,"pesoCapacidade":0.2},"efeitos":[{"alvo":"grupo.influencia","delta":0.05},{"alvo":"relacoes.bancada","delta":0.02}],"efeitosFalha":[{"alvo":"grupo.influencia","delta":0.01}],"risco":{"probBase":0.15,"pesoCapacidade":0.1,"efeitos":[{"alvo":"relacoes.bancada","delta":-0.03}]},"atraso":{"eventoId":"cobranca-acordo","emJanelas":4,"prob":0.5,"condicao":null}},{"id":"favor-emenda","titulo":"Emenda em troca de favor","texto":"Base tende a subir. Ato ilícito, risco de exposição.","segura":false,"pool":{"peso":1,"cargos":["VEREADOR"]},"custo":{"recurso":"capitalEntrega","quantidade":1},"aptidao":"articulacao","sucesso":{"base":0.8,"pesoCapacidade":0.1},"efeitos":[{"alvo":"base.local.forca","delta":0.04}],"efeitosFalha":[],"risco":{"probBase":0.1,"pesoCapacidade":0,"efeitos":[{"alvo":"indicadores.local.rejeicao","delta":0.03}]},"atraso":{"eventoId":"exposicao-favor","emJanelas":6,"prob":0.2,"condicao":null},"corrupcao":{"nivel":1}},{"id":"panfletagem","titulo":"Panfletagem paga","texto":"Notoriedade tende a subir na campanha. Gasta o fundo.","segura":false,"pool":{"peso":1,"tiposAno":["eleitoral"],"janelas":["J4","J5"]},"custo":{"recurso":"fundoCampanha","quantidade":100000},"aptidao":"mobilizacao","sucesso":{"base":0.7,"pesoCapacidade":0.2},"efeitos":[{"alvo":"indicadores.local.notoriedade","delta":0.02}],"efeitosFalha":[],"risco":{"probBase":0.1,"pesoCapacidade":0.1,"efeitos":[{"alvo":"indicadores.local.rejeicao","delta":0.01}]},"atraso":{"eventoId":"denuncia-propaganda","emJanelas":2,"prob":0.1,"condicao":null}}]},"eventos":{"_cenario":"Catálogo artificial de eventos para teste do mecanismo (D77). Não é o catálogo do jogo; textos provisórios.","_parametros":"Todas as probabilidades, prazos, escalas e magnitudes (calibrar). Enquadramento legal da inelegibilidade (a confirmar).","eventos":[{"id":"convite-oposicao","familia":"convite","titulo":"Convite da oposição","texto":"Lideranças de oposição procuram você.","tipo":"atrasado","opcoes":[{"id":"ouvir","texto":"Ouvir a proposta","efeitos":[{"alvo":"relacoes.executivo","delta":-0.02},{"alvo":"indicadores.local.notoriedade","delta":0.01}]}]},{"id":"demanda-bairro","familia":"demanda","titulo":"Cobrança do bairro","texto":"Moradores cobram a continuidade do mutirão.","tipo":"atrasado","opcoes":[{"id":"registrar","texto":"Registrar a cobrança","efeitos":[{"alvo":"base.local.forca","delta":-0.01}]}]},{"id":"cobranca-acordo","familia":"retaliacao","titulo":"Cobrança do acordo","texto":"A liderança lembra o que foi combinado.","tipo":"atrasado","opcoes":[{"id":"registrar","texto":"Registrar a cobrança","efeitos":[{"alvo":"relacoes.cupula","delta":-0.02}]}]},{"id":"denuncia-propaganda","familia":"conformidade","titulo":"Questionamento da propaganda","texto":"Adversários questionam a panfletagem.","tipo":"atrasado","opcoes":[{"id":"registrar","texto":"Registrar o questionamento","efeitos":[{"alvo":"indicadores.local.rejeicao","delta":0.01}]}]},{"id":"exposicao-favor","familia":"exposicao","titulo":"Reportagem sobre a emenda","texto":"A imprensa liga a emenda a um favor.","tipo":"atrasado","condicao":[{"alvo":"personagem.statusJuridico","op":"==","valor":"regular"}],"reagendar":{"emJanelas":2,"incrementoProb":0.1,"probMax":0.8},"opcoes":[{"id":"investigacao","texto":"Investigação aberta","efeitos":[{"alvo":"indicadores.local.rejeicao","delta":0.03}],"juridico":"investigar","estadoTemporario":{"tipo":"investigado","duracaoJanelas":8},"agendar":{"eventoId":"denuncia-mp","emJanelas":3,"prob":0.5}}]},{"id":"denuncia-mp","familia":"juridico","titulo":"Denúncia oferecida","texto":"A investigação vira denúncia.","tipo":"atrasado","condicao":[{"alvo":"personagem.statusJuridico","op":"==","valor":"investigado"},{"alvo":"personagem.denunciaRegistrada","op":"==","valor":false}],"opcoes":[{"id":"denuncia","texto":"Denúncia registrada","efeitos":[{"alvo":"relacoes.cupula","delta":-0.05}],"juridico":"denunciar","agendar":{"eventoId":"julgamento","emJanelas":4,"prob":0.6}}]},{"id":"julgamento","familia":"juridico","titulo":"Julgamento","texto":"O colegiado julga a denúncia.","tipo":"atrasado","enquadramentoInelegibilidade":true,"condicao":[{"alvo":"personagem.statusJuridico","op":"==","valor":"investigado"},{"alvo":"personagem.denunciaRegistrada","op":"==","valor":true}],"opcoes":[{"id":"condenacao","texto":"Condenação","efeitos":[{"alvo":"indicadores.local.rejeicao","delta":0.05}],"juridico":"condenar","agendar":{"eventoId":"reconhecimento-inelegibilidade","emJanelas":1,"prob":1}}]},{"id":"reconhecimento-inelegibilidade","familia":"juridico","titulo":"Inelegibilidade reconhecida","texto":"A condenação se enquadra em hipótese de inelegibilidade (a confirmar).","tipo":"atrasado","condicao":[{"alvo":"personagem.statusJuridico","op":"==","valor":"condenado"},{"alvo":"personagem.condenacaoEnquadrada","op":"==","valor":true}],"opcoes":[{"id":"reconhecida","texto":"Inelegibilidade registrada","efeitos":[],"juridico":"reconhecerInelegibilidade"}]},{"id":"crise-gestao","familia":"crise","titulo":"Crise de imagem","texto":"A rejeição cresce e a imprensa pede explicações.","tipo":"gatilho","limiar":{"alvo":"indicadores.local.rejeicao","op":">=","valor":0.04,"escala":0.1},"probBase":0.6,"bloqueioJanelas":4,"opcoes":[{"id":"nota","texto":"Divulgar nota de esclarecimento","contencao":true,"efeitos":[{"alvo":"indicadores.local.rejeicao","delta":-0.005}]},{"id":"enfrentar","texto":"Enfrentar a imprensa","efeitos":[{"alvo":"indicadores.local.notoriedade","delta":0.02},{"alvo":"indicadores.local.rejeicao","delta":0.01}]},{"id":"culpar-aliado","texto":"Atribuir a culpa a um aliado","efeitos":[{"alvo":"indicadores.local.rejeicao","delta":-0.01},{"alvo":"relacoes.bancada","delta":-0.05}]}]}]},"candidatura":{"_cenario":"Modelos de disputa e catálogo de oportunidades artificiais (D78). Derivados de vereador.json, prefeito.json e senado.json, sem o personagem; o modelo de prefeito foi levado ao município EX001. Nenhum valor é dado histórico.","_parametros":"Limiares, custos, exposição, Capital de Entrega por ciclo e notoriedade de protagonista (calibrar). Calendários (a confirmar).","modelosDisputa":{"2026":[{"eleicaoId":"2026","disputa":{"id":"2026|SENADOR|EX|1","ano":2026,"cargo":"SENADOR","unidadeId":"EX","vagas":2,"turno":1,"votosPorEleitor":2},"eleitorado":3000000,"taxasEleitorado":{"comparecimento":{"numerador":80,"denominador":100},"abstencao":{"numerador":19,"denominador":100},"eleitoresSecoesNaoInstaladas":{"numerador":1,"denominador":100}},"taxasVotos":{"validos":{"numerador":90,"denominador":100},"brancos":{"numerador":4,"denominador":100},"nulos":{"numerador":5,"denominador":100},"anulados":{"numerador":1,"denominador":100},"anuladosSubJudice":{"numerador":0,"denominador":100},"anuladosApuracaoSeparada":{"numerador":0,"denominador":100}},"partidos":["P1","P2","P3","P4"],"federacoes":[],"identPartidaria":{"P1":0.15,"P2":0.1,"P3":0.08,"P4":0.07},"semIdentificacao":0.6,"candidatos":[{"id":"S1","partidoId":"P1","dataNascimento":"1970-01-01","dataFiliacao":"2025-06-01","opiniao":{"desconhecimento":0.2,"popularidade":0.3,"rejeicao":0.2,"semOpiniao":0.3},"maquina":{"maquinaEfetiva":0.5}},{"id":"S2","partidoId":"P2","dataNascimento":"1970-01-01","dataFiliacao":"2025-06-01","opiniao":{"desconhecimento":0.3,"popularidade":0.25,"rejeicao":0.2,"semOpiniao":0.25},"maquina":{"maquinaEfetiva":0.4}},{"id":"S3","partidoId":"P3","dataNascimento":"1970-01-01","dataFiliacao":"2025-06-01","opiniao":{"desconhecimento":0.4,"popularidade":0.2,"rejeicao":0.15,"semOpiniao":0.25},"maquina":{"maquinaEfetiva":0.35}},{"id":"S4","partidoId":"P4","dataNascimento":"1970-01-01","dataFiliacao":"2025-06-01","opiniao":{"desconhecimento":0.5,"popularidade":0.15,"rejeicao":0.1,"semOpiniao":0.25},"maquina":{"maquinaEfetiva":0.3}}],"chapas":[{"id":"SC1","titular":"P1","adesao":{"P1":0.9},"candidato":"S1"},{"id":"SC2","titular":"P2","adesao":{"P2":0.9},"candidato":"S2"},{"id":"SC3","titular":"P3","adesao":{"P3":0.9},"candidato":"S3"},{"id":"SC4","titular":"P4","adesao":{"P4":0.9},"candidato":"S4"}],"calendario":{"dataRegistro":"2026-08-15","dataPosse":"2027-02-01","prazoFiliacao":"2026-04-04","prazoDesincompatibilizacao":"2026-04-04"},"limiteLista":1,"posse":{"dataPosse":"2027-02-01","fimMandato":"2035-01-31"},"parametros":{"epsilon":0.01,"sigma":0.3,"sigmaLegenda":0.2,"alpha":0.4,"k":0.8,"v1":0.6,"v2":0.4,"m1":0.6,"m2":0.25,"m3":0.15,"delta":0.2,"D":0,"escalaGasto":500000,"sigmaT":0.3,"minimoNominalFase2":0,"idadeSinteticos":40,"taxaInvalidos2":0.1},"maquinaPersonagem":{"estadual":{"eleitoradoMunicipios":{"EX001":300000},"municipal":{"estruturaAliada":0,"aliancaFormal":false,"aliadosEstrutura":[],"aliadosMobilizacao":[],"alocMobilizacao":200000,"mobAliada":0,"liderancas":[{"id":"L1","tipo":"pessoa","forca":0.3,"aderencia":0.6}]},"regional":{"eleitorado":2700000,"municipios":[],"maquinaSemBase":0.3}}},"distribuicoes":{"q":{"forma":"exponencialTruncada","media":0.2,"max":1},"r":{"forma":"uniforme","min":0.1,"max":0.6}}}],"2028":[{"eleicaoId":"2028","disputa":{"id":"2028|VEREADOR|EX001|1","ano":2028,"cargo":"VEREADOR","unidadeId":"EX001","vagas":9,"turno":1},"eleitorado":60000,"taxasEleitorado":{"comparecimento":{"numerador":80,"denominador":100},"abstencao":{"numerador":19,"denominador":100},"eleitoresSecoesNaoInstaladas":{"numerador":1,"denominador":100}},"taxasVotos":{"validos":{"numerador":90,"denominador":100},"brancos":{"numerador":4,"denominador":100},"nulos":{"numerador":5,"denominador":100},"anulados":{"numerador":1,"denominador":100},"anuladosSubJudice":{"numerador":0,"denominador":100},"anuladosApuracaoSeparada":{"numerador":0,"denominador":100}},"partidos":["P1","P2","P3","P4"],"federacoes":[{"id":"F1","nome":"Federação de exemplo","partidos":["P3","P4"]}],"identPartidaria":{"P1":0.15,"P2":0.1,"P3":0.08,"P4":0.07},"semIdentificacao":0.6,"candidatos":[{"id":"A2","partidoId":"P1","dataNascimento":"1980-05-10","dataFiliacao":"2027-06-01","opiniao":{"desconhecimento":0.6,"popularidade":0.15,"rejeicao":0.1,"semOpiniao":0.15},"maquina":{"maquinaEfetiva":0.3}},{"id":"B1","partidoId":"P2","dataNascimento":"1980-05-10","dataFiliacao":"2027-06-01","opiniao":{"desconhecimento":0.5,"popularidade":0.2,"rejeicao":0.15,"semOpiniao":0.15},"maquina":{"maquinaEfetiva":0.4}},{"id":"C1","partidoId":"P3","dataNascimento":"1980-05-10","dataFiliacao":"2027-06-01","opiniao":{"desconhecimento":0.5,"popularidade":0.25,"rejeicao":0.1,"semOpiniao":0.15},"maquina":{"maquinaEfetiva":0.35}}],"sinteticos":{"P1":{"quantidade":8,"quadros":0.5,"capilaridade":0.5},"P2":{"quantidade":9,"quadros":0.4,"capilaridade":0.4},"F1":{"quantidade":9,"quadros":0.45,"capilaridade":0.45}},"calendario":{"dataRegistro":"2028-08-15","dataPosse":"2029-01-01","prazoFiliacao":"2028-04-07","prazoDesincompatibilizacao":"2028-04-07","_nota":"calendário de 2028 (a confirmar)"},"limiteLista":10,"posse":{"dataPosse":"2029-01-01","fimMandato":"2032-12-31","_nota":"datas de 2029 (a confirmar)"},"parametros":{"epsilon":0.01,"sigma":0.3,"sigmaLegenda":0.2,"alpha":0.4,"k":0.8,"v1":0.6,"v2":0.4,"m1":0.6,"m2":0.25,"m3":0.15,"delta":0.2,"D":0,"escalaGasto":500000,"sigmaT":0.3,"minimoNominalFase2":0,"idadeSinteticos":40,"lambda":{"P1":0.3,"P2":0.3,"F1":0.3}},"maquinaPersonagem":{"municipal":{"estruturaAliada":0,"aliancaFormal":false,"aliadosEstrutura":[],"aliadosMobilizacao":[],"alocMobilizacao":200000,"mobAliada":0,"liderancas":[{"id":"L1","tipo":"pessoa","forca":0.3,"aderencia":0.6}]}},"distribuicoes":{"q":{"forma":"exponencialTruncada","media":0.2,"max":1},"r":{"forma":"uniforme","min":0.1,"max":0.6}}},{"eleicaoId":"2028","disputa":{"id":"2028|PREFEITO|EX001|1","ano":2028,"cargo":"PREFEITO","unidadeId":"EX001","vagas":1,"turno":1},"eleitorado":450000,"taxasEleitorado":{"comparecimento":{"numerador":80,"denominador":100},"abstencao":{"numerador":19,"denominador":100},"eleitoresSecoesNaoInstaladas":{"numerador":1,"denominador":100}},"taxasVotos":{"validos":{"numerador":90,"denominador":100},"brancos":{"numerador":4,"denominador":100},"nulos":{"numerador":5,"denominador":100},"anulados":{"numerador":1,"denominador":100},"anuladosSubJudice":{"numerador":0,"denominador":100},"anuladosApuracaoSeparada":{"numerador":0,"denominador":100}},"partidos":["P1","P2","P3","P4"],"federacoes":[{"id":"F1","nome":"Federação de exemplo","partidos":["P3","P4"]}],"identPartidaria":{"P1":0.15,"P2":0.1,"P3":0.08,"P4":0.07},"semIdentificacao":0.6,"candidatos":[{"id":"X1","partidoId":"P1","dataNascimento":"1980-05-10","dataFiliacao":"2027-06-01","opiniao":{"desconhecimento":0.2,"popularidade":0.35,"rejeicao":0.2,"semOpiniao":0.25},"maquina":{"maquinaEfetiva":0.5}},{"id":"X2","partidoId":"P2","dataNascimento":"1980-05-10","dataFiliacao":"2027-06-01","opiniao":{"desconhecimento":0.25,"popularidade":0.3,"rejeicao":0.2,"semOpiniao":0.25},"maquina":{"maquinaEfetiva":0.5}},{"id":"X3","partidoId":"P3","dataNascimento":"1980-05-10","dataFiliacao":"2027-06-01","opiniao":{"desconhecimento":0.4,"popularidade":0.2,"rejeicao":0.15,"semOpiniao":0.25},"maquina":{"maquinaEfetiva":0.3}}],"chapas":[{"id":"CH1","titular":"P1","adesao":{"P1":0.9},"candidato":"X1"},{"id":"CH2","titular":"P2","adesao":{"P2":0.9},"candidato":"X2"},{"id":"CH3","titular":"F1","adesao":{"F1":0.85},"candidato":"X3"}],"calendario":{"dataRegistro":"2028-08-15","dataPosse":"2029-01-01","prazoFiliacao":"2028-04-07","prazoDesincompatibilizacao":"2028-04-07","_nota":"calendário de 2028 (a confirmar)"},"limiteLista":1,"posse":{"dataPosse":"2029-01-01","fimMandato":"2032-12-31","_nota":"datas de 2029 (a confirmar)"},"parametros":{"epsilon":0.01,"sigma":0.3,"sigmaLegenda":0.2,"alpha":0.4,"k":0.8,"v1":0.6,"v2":0.4,"m1":0.6,"m2":0.25,"m3":0.15,"delta":0.2,"D":0,"escalaGasto":500000,"sigmaT":0.3,"minimoNominalFase2":0,"idadeSinteticos":40,"pesosSegundoTurno":{"CH1":{"A":80,"B":5,"brancoNulo":5,"abstencao":10},"CH2":{"A":5,"B":80,"brancoNulo":5,"abstencao":10},"CH3":{"A":40,"B":40,"brancoNulo":10,"abstencao":10},"brancoNuloAnulado":{"A":10,"B":10,"brancoNulo":70,"abstencao":10},"abstencao":{"A":5,"B":5,"brancoNulo":5,"abstencao":85}},"proporcoesInvalidos2":{"brancos":4,"nulos":5,"anulados":1,"anuladosSubJudice":0,"anuladosApuracaoSeparada":0}},"maquinaPersonagem":{"municipal":{"estruturaAliada":0,"aliancaFormal":false,"aliadosEstrutura":[],"aliadosMobilizacao":[],"alocMobilizacao":200000,"mobAliada":0,"liderancas":[{"id":"L1","tipo":"pessoa","forca":0.3,"aderencia":0.6}]}},"distribuicoes":{"q":{"forma":"exponencialTruncada","media":0.2,"max":1},"r":{"forma":"uniforme","min":0.1,"max":0.6}}}]},"oportunidades":[{"id":"vaga-na-lista","tipo":"proporcional","cargos":["VEREADOR","DEPUTADO_ESTADUAL","DEPUTADO_DISTRITAL","DEPUTADO_FEDERAL"],"condicao":[],"custo":{"recurso":"caixaPessoal","quantidade":50000},"risco":"Disputa por votos dentro da própria lista."},{"id":"indicacao-prefeitura","tipo":"cabecaDeChapa","cargos":["PREFEITO"],"condicao":[{"alvo":"escopo.notoriedade","op":">=","valor":0.3},{"alvo":"relacoes.cupula","op":">=","valor":0.25}],"custo":null,"risco":"Exposição alta; derrota pesa na base local."},{"id":"indicacao-senado","tipo":"cabecaDeChapa","cargos":["SENADOR"],"condicao":[{"alvo":"escopo.notoriedade","op":">=","valor":0.05},{"alvo":"relacoes.cupula","op":">=","valor":0.25}],"custo":null,"risco":"Disputa estadual sem base fora do município."}],"regrasCargo":{"VEREADOR":{"exposicao":0.02,"capitalEntregaPorCiclo":4,"notoriedadeProtagonista":0.3},"PREFEITO":{"exposicao":0.06,"capitalEntregaPorCiclo":20,"notoriedadeProtagonista":0.5},"SENADOR":{"exposicao":0.05,"capitalEntregaPorCiclo":12,"notoriedadeProtagonista":0.4},"DEPUTADO_ESTADUAL":{"exposicao":0.03,"capitalEntregaPorCiclo":8,"notoriedadeProtagonista":0.2}},"ambicoesCargos":{"legislativo":["VEREADOR","DEPUTADO_ESTADUAL","DEPUTADO_FEDERAL","SENADOR"],"executivo":["PREFEITO","GOVERNADOR","PRESIDENTE"],"bastidor":[]},"governos":{"local":{"P1":"aliado","P2":"oposicao"},"estadual":{"P1":"oposicao"},"nacional":{}}}}</script>
+<script type="application/json" id="dados-exemplo">{"_nota":"Cópia dos catálogos artificiais de tools/cenarios (D79). Nenhum valor é dado histórico; todos (calibrar). Sincronia conferida em tests/ui.","gameVersion":"0.3.0","inicio":{"personagem":{"id":"A1","origem":"liderComunitario","redePoliticaPrevia":"indireta","dataNascimento":"1990-05-10","dataFiliacao":"2025-06-01","municipioInicial":"EX001","ufInicial":"EX","partidoId":"P1","potencial":50,"aptidoes":{"articulacao":0.5,"comunicacao":0.5,"mobilizacao":0.6,"gestao":0.4,"estrategia":0.5,"resiliencia":0.5},"capacidade":{"articulacao":0.3,"comunicacao":0.3,"mobilizacao":0.4,"gestao":0.2,"estrategia":0.3,"resiliencia":0.3},"experiencia":0,"saude":1,"statusJuridico":"regular","tags":[],"arquivoVermelho":[],"mandatosConsecutivos":{},"ambicao":[]},"indicadores":{"local":{"notoriedade":0.2,"popularidade":0.12,"rejeicao":0.03},"estadual":{"notoriedade":0.01,"popularidade":0.005,"rejeicao":0.001},"nacional":{"notoriedade":0,"popularidade":0,"rejeicao":0}},"bolsos":{"caixaPessoal":500000,"fundoCampanha":0,"capitalEntrega":0},"relacoes":{"cupula":0.3,"bancada":0.2,"executivo":0.2,"credibilidade":0.5},"grupo":{"influencia":0,"relacoes":0,"presenca":{"municipal":0,"estadual":0,"federal":0},"papel":null},"base":{"municipios":{"EX001":{"forca":0.2,"custoManutencao":0}},"agregadoRegional":0}},"cartas":{"_cenario":"Catálogo artificial de cartas para teste do mecanismo (D76). Não é o catálogo do jogo; textos provisórios.","_parametros":"Todas as magnitudes, chances, pesos e prazos (calibrar).","ambicoes":["legislativo","executivo","bastidor"],"parametrosCartas":{"acoesPorMao":2},"cartas":[{"id":"rotina-gabinete","titulo":"Rotina de gabinete","texto":"Cumpre a agenda sem riscos. A notoriedade tende a cair um pouco.","segura":true,"ambicoes":["legislativo","bastidor"],"efeitos":[{"alvo":"indicadores.local.notoriedade","delta":-0.005}]},{"id":"agenda-bairro","titulo":"Agenda no bairro","texto":"Visitas de rotina, sem compromisso novo.","segura":true,"ambicoes":["executivo"],"efeitos":[]},{"id":"discurso-mesa","titulo":"Discurso contra a mesa diretora","texto":"Notoriedade local tende a subir. Cúpula cai.","segura":false,"pool":{"peso":1},"custo":{"recurso":"caixaPessoal","quantidade":20000},"aptidao":"comunicacao","sucesso":{"base":0.5,"pesoCapacidade":0.4},"efeitos":[{"alvo":"indicadores.local.notoriedade","delta":0.03},{"alvo":"relacoes.cupula","delta":-0.05}],"efeitosFalha":[{"alvo":"indicadores.local.notoriedade","delta":0.01},{"alvo":"relacoes.cupula","delta":-0.05}],"risco":{"probBase":0.3,"pesoCapacidade":0.2,"efeitos":[{"alvo":"indicadores.local.rejeicao","delta":0.02}]},"atraso":{"eventoId":"convite-oposicao","emJanelas":3,"prob":0.3,"condicao":null}},{"id":"mutirao","titulo":"Mutirão no bairro","texto":"Popularidade e base local tendem a subir. Custa saúde.","segura":false,"pool":{"peso":1},"custo":{"recurso":"saude","quantidade":0.05},"aptidao":"mobilizacao","sucesso":{"base":0.6,"pesoCapacidade":0.3},"efeitos":[{"alvo":"indicadores.local.popularidade","delta":0.02},{"alvo":"base.local.forca","delta":0.03}],"efeitosFalha":[{"alvo":"base.local.forca","delta":0.01}],"risco":{"probBase":0.2,"pesoCapacidade":0.1,"efeitos":[{"alvo":"base.local.forca","delta":-0.01}]},"atraso":{"eventoId":"demanda-bairro","emJanelas":2,"prob":0.4,"condicao":null}},{"id":"acordo-lideranca","titulo":"Acordo com liderança local","texto":"Grupo tende a crescer. Fica devendo apoio eleitoral.","segura":false,"pool":{"peso":1},"custo":{"compromisso":{"tipo":"apoioEleitoral","ator":"P2","objeto":"apoio na próxima eleição","prazoEmJanelas":4,"custo":{"recurso":"cupula","quantidade":0.05},"custoPoliticoDeRomper":2,"contrapartida":"apoio do grupo local","seCumprir":"relação com o ator sobe","seRomper":"retaliação possível","efeitosCumprir":[{"alvo":"relacoes.credibilidade","delta":0.02}],"efeitosRomper":[{"alvo":"relacoes.credibilidade","delta":-0.04}],"retaliacao":{"eventoId":"cobranca-acordo","emJanelas":2,"prob":0.5}}},"aptidao":"articulacao","sucesso":{"base":0.7,"pesoCapacidade":0.2},"efeitos":[{"alvo":"grupo.influencia","delta":0.05},{"alvo":"relacoes.bancada","delta":0.02}],"efeitosFalha":[{"alvo":"grupo.influencia","delta":0.01}],"risco":{"probBase":0.15,"pesoCapacidade":0.1,"efeitos":[{"alvo":"relacoes.bancada","delta":-0.03}]},"atraso":{"eventoId":"cobranca-acordo","emJanelas":4,"prob":0.5,"condicao":null}},{"id":"favor-emenda","titulo":"Emenda em troca de favor","texto":"Base tende a subir. Ato ilícito, risco de exposição.","segura":false,"pool":{"peso":1,"cargos":["VEREADOR"]},"custo":{"recurso":"capitalEntrega","quantidade":1},"aptidao":"articulacao","sucesso":{"base":0.8,"pesoCapacidade":0.1},"efeitos":[{"alvo":"base.local.forca","delta":0.04}],"efeitosFalha":[],"risco":{"probBase":0.1,"pesoCapacidade":0,"efeitos":[{"alvo":"indicadores.local.rejeicao","delta":0.03}]},"atraso":{"eventoId":"exposicao-favor","emJanelas":6,"prob":0.2,"condicao":null},"corrupcao":{"nivel":1}},{"id":"panfletagem","titulo":"Panfletagem paga","texto":"Notoriedade tende a subir na campanha. Gasta o fundo.","segura":false,"pool":{"peso":1,"tiposAno":["eleitoral"],"janelas":["J4","J5"]},"custo":{"recurso":"fundoCampanha","quantidade":100000},"aptidao":"mobilizacao","sucesso":{"base":0.7,"pesoCapacidade":0.2},"efeitos":[{"alvo":"indicadores.local.notoriedade","delta":0.02}],"efeitosFalha":[],"risco":{"probBase":0.1,"pesoCapacidade":0.1,"efeitos":[{"alvo":"indicadores.local.rejeicao","delta":0.01}]},"atraso":{"eventoId":"denuncia-propaganda","emJanelas":2,"prob":0.1,"condicao":null}},{"id":"entrega-de-obra","titulo":"Entrega de obra da pasta","texto":"Popularidade local tende a subir. Gasta capacidade de entrega.","segura":false,"pool":{"peso":1,"nomeacao":"governamental"},"custo":{"recurso":"capitalEntrega","quantidade":2},"aptidao":"gestao","sucesso":{"base":0.6,"pesoCapacidade":0.3},"efeitos":[{"alvo":"indicadores.local.popularidade","delta":0.02},{"alvo":"relacoes.executivo","delta":0.02}],"efeitosFalha":[{"alvo":"indicadores.local.popularidade","delta":0.005}],"risco":{"probBase":0.2,"pesoCapacidade":0.1,"efeitos":[{"alvo":"indicadores.local.rejeicao","delta":0.01}]},"atraso":{"eventoId":"crise-na-pasta","emJanelas":3,"prob":0.25,"condicao":null}},{"id":"agenda-de-exposicao","titulo":"Agenda de exposição do cargo","texto":"Notoriedade tende a subir no escopo do cargo. Custa saúde.","segura":false,"pool":{"peso":1,"nomeacao":"governamental"},"custo":{"recurso":"saude","quantidade":0.03},"aptidao":"comunicacao","sucesso":{"base":0.6,"pesoCapacidade":0.3},"efeitos":[{"alvo":"indicadores.estadual.notoriedade","delta":0.02}],"efeitosFalha":[{"alvo":"indicadores.estadual.notoriedade","delta":0.005}],"risco":{"probBase":0.2,"pesoCapacidade":0.1,"efeitos":[{"alvo":"indicadores.estadual.rejeicao","delta":0.01}]},"atraso":{"eventoId":"cobranca-do-governo","emJanelas":2,"prob":0.3,"condicao":null}},{"id":"mobilizar-diretorio","titulo":"Mobilizar o diretório","texto":"Grupo político tende a crescer. Custa caixa.","segura":false,"pool":{"peso":1,"nomeacao":"partidaria"},"custo":{"recurso":"caixaPessoal","quantidade":10000},"aptidao":"articulacao","sucesso":{"base":0.6,"pesoCapacidade":0.3},"efeitos":[{"alvo":"grupo.influencia","delta":0.03},{"alvo":"relacoes.cupula","delta":0.02}],"efeitosFalha":[{"alvo":"grupo.influencia","delta":0.01}],"risco":{"probBase":0.15,"pesoCapacidade":0.1,"efeitos":[{"alvo":"relacoes.cupula","delta":-0.03}]},"atraso":{"eventoId":"cobranca-acordo","emJanelas":2,"prob":0.2,"condicao":null}}]},"eventos":{"_cenario":"Catálogo artificial de eventos para teste do mecanismo (D77). Não é o catálogo do jogo; textos provisórios.","_parametros":"Todas as probabilidades, prazos, escalas e magnitudes (calibrar). Enquadramento legal da inelegibilidade (a confirmar).","eventos":[{"id":"convite-oposicao","familia":"convite","titulo":"Convite da oposição","texto":"Lideranças de oposição procuram você.","tipo":"atrasado","opcoes":[{"id":"ouvir","texto":"Ouvir a proposta","efeitos":[{"alvo":"relacoes.executivo","delta":-0.02},{"alvo":"indicadores.local.notoriedade","delta":0.01}]}]},{"id":"demanda-bairro","familia":"demanda","titulo":"Cobrança do bairro","texto":"Moradores cobram a continuidade do mutirão.","tipo":"atrasado","opcoes":[{"id":"registrar","texto":"Registrar a cobrança","efeitos":[{"alvo":"base.local.forca","delta":-0.01}]}]},{"id":"cobranca-acordo","familia":"retaliacao","titulo":"Cobrança do acordo","texto":"A liderança lembra o que foi combinado.","tipo":"atrasado","opcoes":[{"id":"registrar","texto":"Registrar a cobrança","efeitos":[{"alvo":"relacoes.cupula","delta":-0.02}]}]},{"id":"denuncia-propaganda","familia":"conformidade","titulo":"Questionamento da propaganda","texto":"Adversários questionam a panfletagem.","tipo":"atrasado","opcoes":[{"id":"registrar","texto":"Registrar o questionamento","efeitos":[{"alvo":"indicadores.local.rejeicao","delta":0.01}]}]},{"id":"exposicao-favor","familia":"exposicao","titulo":"Reportagem sobre a emenda","texto":"A imprensa liga a emenda a um favor.","tipo":"atrasado","condicao":[{"alvo":"personagem.statusJuridico","op":"==","valor":"regular"}],"reagendar":{"emJanelas":2,"incrementoProb":0.1,"probMax":0.8},"opcoes":[{"id":"investigacao","texto":"Investigação aberta","efeitos":[{"alvo":"indicadores.local.rejeicao","delta":0.03}],"juridico":"investigar","estadoTemporario":{"tipo":"investigado","duracaoJanelas":8},"agendar":{"eventoId":"denuncia-mp","emJanelas":3,"prob":0.5}}]},{"id":"denuncia-mp","familia":"juridico","titulo":"Denúncia oferecida","texto":"A investigação vira denúncia.","tipo":"atrasado","condicao":[{"alvo":"personagem.statusJuridico","op":"==","valor":"investigado"},{"alvo":"personagem.denunciaRegistrada","op":"==","valor":false}],"opcoes":[{"id":"denuncia","texto":"Denúncia registrada","efeitos":[{"alvo":"relacoes.cupula","delta":-0.05}],"juridico":"denunciar","agendar":{"eventoId":"julgamento","emJanelas":4,"prob":0.6}}]},{"id":"julgamento","familia":"juridico","titulo":"Julgamento","texto":"O colegiado julga a denúncia.","tipo":"atrasado","enquadramentoInelegibilidade":true,"condicao":[{"alvo":"personagem.statusJuridico","op":"==","valor":"investigado"},{"alvo":"personagem.denunciaRegistrada","op":"==","valor":true}],"opcoes":[{"id":"condenacao","texto":"Condenação","efeitos":[{"alvo":"indicadores.local.rejeicao","delta":0.05}],"juridico":"condenar","agendar":{"eventoId":"reconhecimento-inelegibilidade","emJanelas":1,"prob":1}}]},{"id":"reconhecimento-inelegibilidade","familia":"juridico","titulo":"Inelegibilidade reconhecida","texto":"A condenação se enquadra em hipótese de inelegibilidade (a confirmar).","tipo":"atrasado","condicao":[{"alvo":"personagem.statusJuridico","op":"==","valor":"condenado"},{"alvo":"personagem.condenacaoEnquadrada","op":"==","valor":true}],"opcoes":[{"id":"reconhecida","texto":"Inelegibilidade registrada","efeitos":[],"juridico":"reconhecerInelegibilidade"}]},{"id":"crise-gestao","familia":"crise","titulo":"Crise de imagem","texto":"A rejeição cresce e a imprensa pede explicações.","tipo":"gatilho","limiar":{"alvo":"indicadores.local.rejeicao","op":">=","valor":0.04,"escala":0.1},"probBase":0.6,"bloqueioJanelas":4,"opcoes":[{"id":"nota","texto":"Divulgar nota de esclarecimento","contencao":true,"efeitos":[{"alvo":"indicadores.local.rejeicao","delta":-0.005}]},{"id":"enfrentar","texto":"Enfrentar a imprensa","efeitos":[{"alvo":"indicadores.local.notoriedade","delta":0.02},{"alvo":"indicadores.local.rejeicao","delta":0.01}]},{"id":"culpar-aliado","texto":"Atribuir a culpa a um aliado","efeitos":[{"alvo":"indicadores.local.rejeicao","delta":-0.01},{"alvo":"relacoes.bancada","delta":-0.05}]}]},{"id":"crise-na-pasta","familia":"crise-nomeacao","titulo":"Crise na pasta","texto":"A imprensa questiona a gestão da sua pasta.","tipo":"atrasado","condicao":[{"alvo":"cargos.nomeacaoAtiva","op":"==","valor":true}],"opcoes":[{"id":"audiencia","texto":"Explicar em audiência pública","contencao":true,"efeitos":[{"alvo":"indicadores.local.rejeicao","delta":0.005}]},{"id":"demissao","texto":"Pedir demissão do cargo","efeitos":[{"alvo":"relacoes.credibilidade","delta":0.01}],"encerrarNomeacao":true},{"id":"ignorar","texto":"Ignorar as críticas","efeitos":[{"alvo":"indicadores.local.rejeicao","delta":0.02},{"alvo":"indicadores.local.notoriedade","delta":0.01}]}]},{"id":"cobranca-do-governo","familia":"cobranca-governo","titulo":"Cobrança do governo","texto":"O governo cobra resultados da sua gestão.","tipo":"atrasado","condicao":[{"alvo":"cargos.nomeacaoAtiva","op":"==","valor":true}],"opcoes":[{"id":"registrar","texto":"Registrar a cobrança","efeitos":[{"alvo":"relacoes.executivo","delta":-0.02}]}]}]},"candidatura":{"_cenario":"Modelos de disputa e catálogo de oportunidades artificiais (D78). Derivados de vereador.json, prefeito.json e senado.json, sem o personagem; o modelo de prefeito foi levado ao município EX001. Nenhum valor é dado histórico.","_parametros":"Limiares, custos, exposição, Capital de Entrega por ciclo e notoriedade de protagonista (calibrar). Calendários (a confirmar).","modelosDisputa":{"2026":[{"eleicaoId":"2026","disputa":{"id":"2026|SENADOR|EX|1","ano":2026,"cargo":"SENADOR","unidadeId":"EX","vagas":2,"turno":1,"votosPorEleitor":2},"eleitorado":3000000,"taxasEleitorado":{"comparecimento":{"numerador":80,"denominador":100},"abstencao":{"numerador":19,"denominador":100},"eleitoresSecoesNaoInstaladas":{"numerador":1,"denominador":100}},"taxasVotos":{"validos":{"numerador":90,"denominador":100},"brancos":{"numerador":4,"denominador":100},"nulos":{"numerador":5,"denominador":100},"anulados":{"numerador":1,"denominador":100},"anuladosSubJudice":{"numerador":0,"denominador":100},"anuladosApuracaoSeparada":{"numerador":0,"denominador":100}},"partidos":["P1","P2","P3","P4"],"federacoes":[],"identPartidaria":{"P1":0.15,"P2":0.1,"P3":0.08,"P4":0.07},"semIdentificacao":0.6,"candidatos":[{"id":"S1","partidoId":"P1","dataNascimento":"1970-01-01","dataFiliacao":"2025-06-01","opiniao":{"desconhecimento":0.2,"popularidade":0.3,"rejeicao":0.2,"semOpiniao":0.3},"maquina":{"maquinaEfetiva":0.5}},{"id":"S2","partidoId":"P2","dataNascimento":"1970-01-01","dataFiliacao":"2025-06-01","opiniao":{"desconhecimento":0.3,"popularidade":0.25,"rejeicao":0.2,"semOpiniao":0.25},"maquina":{"maquinaEfetiva":0.4}},{"id":"S3","partidoId":"P3","dataNascimento":"1970-01-01","dataFiliacao":"2025-06-01","opiniao":{"desconhecimento":0.4,"popularidade":0.2,"rejeicao":0.15,"semOpiniao":0.25},"maquina":{"maquinaEfetiva":0.35}},{"id":"S4","partidoId":"P4","dataNascimento":"1970-01-01","dataFiliacao":"2025-06-01","opiniao":{"desconhecimento":0.5,"popularidade":0.15,"rejeicao":0.1,"semOpiniao":0.25},"maquina":{"maquinaEfetiva":0.3}}],"chapas":[{"id":"SC1","titular":"P1","adesao":{"P1":0.9},"candidato":"S1"},{"id":"SC2","titular":"P2","adesao":{"P2":0.9},"candidato":"S2"},{"id":"SC3","titular":"P3","adesao":{"P3":0.9},"candidato":"S3"},{"id":"SC4","titular":"P4","adesao":{"P4":0.9},"candidato":"S4"}],"calendario":{"dataRegistro":"2026-08-15","dataPosse":"2027-02-01","prazoFiliacao":"2026-04-04","prazoDesincompatibilizacao":"2026-04-04"},"limiteLista":1,"posse":{"dataPosse":"2027-02-01","fimMandato":"2035-01-31"},"parametros":{"epsilon":0.01,"sigma":0.3,"sigmaLegenda":0.2,"alpha":0.4,"k":0.8,"v1":0.6,"v2":0.4,"m1":0.6,"m2":0.25,"m3":0.15,"delta":0.2,"D":0,"escalaGasto":500000,"sigmaT":0.3,"minimoNominalFase2":0,"idadeSinteticos":40,"taxaInvalidos2":0.1},"maquinaPersonagem":{"estadual":{"eleitoradoMunicipios":{"EX001":300000},"municipal":{"estruturaAliada":0,"aliancaFormal":false,"aliadosEstrutura":[],"aliadosMobilizacao":[],"alocMobilizacao":200000,"mobAliada":0,"liderancas":[{"id":"L1","tipo":"pessoa","forca":0.3,"aderencia":0.6}]},"regional":{"eleitorado":2700000,"municipios":[],"maquinaSemBase":0.3}}},"distribuicoes":{"q":{"forma":"exponencialTruncada","media":0.2,"max":1},"r":{"forma":"uniforme","min":0.1,"max":0.6}}}],"2028":[{"eleicaoId":"2028","disputa":{"id":"2028|VEREADOR|EX001|1","ano":2028,"cargo":"VEREADOR","unidadeId":"EX001","vagas":9,"turno":1},"eleitorado":60000,"taxasEleitorado":{"comparecimento":{"numerador":80,"denominador":100},"abstencao":{"numerador":19,"denominador":100},"eleitoresSecoesNaoInstaladas":{"numerador":1,"denominador":100}},"taxasVotos":{"validos":{"numerador":90,"denominador":100},"brancos":{"numerador":4,"denominador":100},"nulos":{"numerador":5,"denominador":100},"anulados":{"numerador":1,"denominador":100},"anuladosSubJudice":{"numerador":0,"denominador":100},"anuladosApuracaoSeparada":{"numerador":0,"denominador":100}},"partidos":["P1","P2","P3","P4"],"federacoes":[{"id":"F1","nome":"Federação de exemplo","partidos":["P3","P4"]}],"identPartidaria":{"P1":0.15,"P2":0.1,"P3":0.08,"P4":0.07},"semIdentificacao":0.6,"candidatos":[{"id":"A2","partidoId":"P1","dataNascimento":"1980-05-10","dataFiliacao":"2027-06-01","opiniao":{"desconhecimento":0.6,"popularidade":0.15,"rejeicao":0.1,"semOpiniao":0.15},"maquina":{"maquinaEfetiva":0.3}},{"id":"B1","partidoId":"P2","dataNascimento":"1980-05-10","dataFiliacao":"2027-06-01","opiniao":{"desconhecimento":0.5,"popularidade":0.2,"rejeicao":0.15,"semOpiniao":0.15},"maquina":{"maquinaEfetiva":0.4}},{"id":"C1","partidoId":"P3","dataNascimento":"1980-05-10","dataFiliacao":"2027-06-01","opiniao":{"desconhecimento":0.5,"popularidade":0.25,"rejeicao":0.1,"semOpiniao":0.15},"maquina":{"maquinaEfetiva":0.35}}],"sinteticos":{"P1":{"quantidade":8,"quadros":0.5,"capilaridade":0.5},"P2":{"quantidade":9,"quadros":0.4,"capilaridade":0.4},"F1":{"quantidade":9,"quadros":0.45,"capilaridade":0.45}},"calendario":{"dataRegistro":"2028-08-15","dataPosse":"2029-01-01","prazoFiliacao":"2028-04-07","prazoDesincompatibilizacao":"2028-04-07","_nota":"calendário de 2028 (a confirmar)"},"limiteLista":10,"posse":{"dataPosse":"2029-01-01","fimMandato":"2032-12-31","_nota":"datas de 2029 (a confirmar)"},"parametros":{"epsilon":0.01,"sigma":0.3,"sigmaLegenda":0.2,"alpha":0.4,"k":0.8,"v1":0.6,"v2":0.4,"m1":0.6,"m2":0.25,"m3":0.15,"delta":0.2,"D":0,"escalaGasto":500000,"sigmaT":0.3,"minimoNominalFase2":0,"idadeSinteticos":40,"lambda":{"P1":0.3,"P2":0.3,"F1":0.3}},"maquinaPersonagem":{"municipal":{"estruturaAliada":0,"aliancaFormal":false,"aliadosEstrutura":[],"aliadosMobilizacao":[],"alocMobilizacao":200000,"mobAliada":0,"liderancas":[{"id":"L1","tipo":"pessoa","forca":0.3,"aderencia":0.6}]}},"distribuicoes":{"q":{"forma":"exponencialTruncada","media":0.2,"max":1},"r":{"forma":"uniforme","min":0.1,"max":0.6}}},{"eleicaoId":"2028","disputa":{"id":"2028|PREFEITO|EX001|1","ano":2028,"cargo":"PREFEITO","unidadeId":"EX001","vagas":1,"turno":1},"eleitorado":450000,"taxasEleitorado":{"comparecimento":{"numerador":80,"denominador":100},"abstencao":{"numerador":19,"denominador":100},"eleitoresSecoesNaoInstaladas":{"numerador":1,"denominador":100}},"taxasVotos":{"validos":{"numerador":90,"denominador":100},"brancos":{"numerador":4,"denominador":100},"nulos":{"numerador":5,"denominador":100},"anulados":{"numerador":1,"denominador":100},"anuladosSubJudice":{"numerador":0,"denominador":100},"anuladosApuracaoSeparada":{"numerador":0,"denominador":100}},"partidos":["P1","P2","P3","P4"],"federacoes":[{"id":"F1","nome":"Federação de exemplo","partidos":["P3","P4"]}],"identPartidaria":{"P1":0.15,"P2":0.1,"P3":0.08,"P4":0.07},"semIdentificacao":0.6,"candidatos":[{"id":"X1","partidoId":"P1","dataNascimento":"1980-05-10","dataFiliacao":"2027-06-01","opiniao":{"desconhecimento":0.2,"popularidade":0.35,"rejeicao":0.2,"semOpiniao":0.25},"maquina":{"maquinaEfetiva":0.5}},{"id":"X2","partidoId":"P2","dataNascimento":"1980-05-10","dataFiliacao":"2027-06-01","opiniao":{"desconhecimento":0.25,"popularidade":0.3,"rejeicao":0.2,"semOpiniao":0.25},"maquina":{"maquinaEfetiva":0.5}},{"id":"X3","partidoId":"P3","dataNascimento":"1980-05-10","dataFiliacao":"2027-06-01","opiniao":{"desconhecimento":0.4,"popularidade":0.2,"rejeicao":0.15,"semOpiniao":0.25},"maquina":{"maquinaEfetiva":0.3}}],"chapas":[{"id":"CH1","titular":"P1","adesao":{"P1":0.9},"candidato":"X1"},{"id":"CH2","titular":"P2","adesao":{"P2":0.9},"candidato":"X2"},{"id":"CH3","titular":"F1","adesao":{"F1":0.85},"candidato":"X3"}],"calendario":{"dataRegistro":"2028-08-15","dataPosse":"2029-01-01","prazoFiliacao":"2028-04-07","prazoDesincompatibilizacao":"2028-04-07","_nota":"calendário de 2028 (a confirmar)"},"limiteLista":1,"posse":{"dataPosse":"2029-01-01","fimMandato":"2032-12-31","_nota":"datas de 2029 (a confirmar)"},"parametros":{"epsilon":0.01,"sigma":0.3,"sigmaLegenda":0.2,"alpha":0.4,"k":0.8,"v1":0.6,"v2":0.4,"m1":0.6,"m2":0.25,"m3":0.15,"delta":0.2,"D":0,"escalaGasto":500000,"sigmaT":0.3,"minimoNominalFase2":0,"idadeSinteticos":40,"pesosSegundoTurno":{"CH1":{"A":80,"B":5,"brancoNulo":5,"abstencao":10},"CH2":{"A":5,"B":80,"brancoNulo":5,"abstencao":10},"CH3":{"A":40,"B":40,"brancoNulo":10,"abstencao":10},"brancoNuloAnulado":{"A":10,"B":10,"brancoNulo":70,"abstencao":10},"abstencao":{"A":5,"B":5,"brancoNulo":5,"abstencao":85}},"proporcoesInvalidos2":{"brancos":4,"nulos":5,"anulados":1,"anuladosSubJudice":0,"anuladosApuracaoSeparada":0}},"maquinaPersonagem":{"municipal":{"estruturaAliada":0,"aliancaFormal":false,"aliadosEstrutura":[],"aliadosMobilizacao":[],"alocMobilizacao":200000,"mobAliada":0,"liderancas":[{"id":"L1","tipo":"pessoa","forca":0.3,"aderencia":0.6}]}},"distribuicoes":{"q":{"forma":"exponencialTruncada","media":0.2,"max":1},"r":{"forma":"uniforme","min":0.1,"max":0.6}}}]},"oportunidades":[{"id":"vaga-na-lista","tipo":"proporcional","cargos":["VEREADOR","DEPUTADO_ESTADUAL","DEPUTADO_DISTRITAL","DEPUTADO_FEDERAL"],"condicao":[],"custo":{"recurso":"caixaPessoal","quantidade":50000},"risco":"Disputa por votos dentro da própria lista."},{"id":"indicacao-prefeitura","tipo":"cabecaDeChapa","cargos":["PREFEITO"],"condicao":[{"alvo":"escopo.notoriedade","op":">=","valor":0.3},{"alvo":"relacoes.cupula","op":">=","valor":0.25}],"custo":null,"risco":"Exposição alta; derrota pesa na base local."},{"id":"indicacao-senado","tipo":"cabecaDeChapa","cargos":["SENADOR"],"condicao":[{"alvo":"escopo.notoriedade","op":">=","valor":0.05},{"alvo":"relacoes.cupula","op":">=","valor":0.25}],"custo":null,"risco":"Disputa estadual sem base fora do município."}],"regrasCargo":{"VEREADOR":{"exposicao":0.02,"capitalEntregaPorCiclo":4,"notoriedadeProtagonista":0.3},"PREFEITO":{"exposicao":0.06,"capitalEntregaPorCiclo":20,"notoriedadeProtagonista":0.5},"SENADOR":{"exposicao":0.05,"capitalEntregaPorCiclo":12,"notoriedadeProtagonista":0.4},"DEPUTADO_ESTADUAL":{"exposicao":0.03,"capitalEntregaPorCiclo":8,"notoriedadeProtagonista":0.2}},"ambicoesCargos":{"legislativo":["VEREADOR","DEPUTADO_ESTADUAL","DEPUTADO_FEDERAL","SENADOR"],"executivo":["PREFEITO","GOVERNADOR","PRESIDENTE"],"bastidor":[]},"governos":{"local":{"P1":"aliado","P2":"oposicao"},"estadual":{"P1":"oposicao"},"nacional":{}}},"nomeacoes":{"_cenario":"Catálogo artificial de posições de nomeação (D80). Instituições públicas reais pelo nome; ocupante sempre o personagem fictício. Municípios e estados do exemplo são fictícios.","_parametros":"Condições, Capital de Entrega, experiência e notoriedade por janela (calibrar).","posicoes":[{"id":"sec-obras-ex001","titulo":"Secretário municipal de Obras","orgao":"Prefeitura de EX001 (município de exemplo)","tipo":"governamental","escopo":"municipal","condicao":[{"alvo":"relacoes.executivo","op":">=","valor":0.15}],"exigeGovernoAliado":true,"capitalEntregaPorJanela":2,"experienciaPorJanela":0.5,"notoriedadePorJanela":0.005,"risco":"Obra atrasada vira desgaste local."},{"id":"sec-turismo-ex","titulo":"Secretário estadual de Turismo","orgao":"Governo do estado de exemplo (EX)","tipo":"governamental","escopo":"estadual","condicao":[{"alvo":"relacoes.executivo","op":">=","valor":0.3}],"exigeGovernoAliado":true,"capitalEntregaPorJanela":3,"experienciaPorJanela":0.5,"notoriedadePorJanela":0.008,"risco":"Agenda estadual afasta da base local."},{"id":"presidente-embratur","titulo":"Presidente da Embratur","orgao":"Embratur","tipo":"governamental","escopo":"federal","condicao":[{"alvo":"indicadores.nacional.notoriedade","op":">=","valor":0.05},{"alvo":"relacoes.executivo","op":">=","valor":0.4}],"exigeGovernoAliado":true,"capitalEntregaPorJanela":4,"experienciaPorJanela":0.6,"notoriedadePorJanela":0.01,"risco":"Exposição nacional; cobrança por resultados de promoção turística."},{"id":"presidente-bndes","titulo":"Presidente do BNDES","orgao":"BNDES","tipo":"governamental","escopo":"federal","condicao":[{"alvo":"relacoes.executivo","op":">=","valor":0.6},{"alvo":"relacoes.credibilidade","op":">=","valor":0.6}],"exigeGovernoAliado":true,"capitalEntregaPorJanela":6,"experienciaPorJanela":0.8,"notoriedadePorJanela":0.012,"risco":"Decisões de crédito sob escrutínio de órgãos de controle."},{"id":"secex-turismo","titulo":"Secretário executivo do Ministério do Turismo","orgao":"Ministério do Turismo","tipo":"governamental","escopo":"federal","condicao":[{"alvo":"relacoes.executivo","op":">=","valor":0.45}],"exigeGovernoAliado":true,"capitalEntregaPorJanela":4,"experienciaPorJanela":0.7,"notoriedadePorJanela":0.006,"risco":"Bastidor de ministério; pouca exposição própria."},{"id":"diretorio-municipal","titulo":"Presidente do diretório municipal do partido","orgao":"Diretório municipal do partido","tipo":"partidaria","escopo":"municipal","condicao":[{"alvo":"relacoes.cupula","op":">=","valor":0.25}],"exigeGovernoAliado":false,"capitalEntregaPorJanela":0,"experienciaPorJanela":0.3,"notoriedadePorJanela":0.003,"risco":"Disputas internas pela montagem das chapas."}]}}</script>
 <script type="application/json" id="parties-data">{"_nota": "Partidos fictícios do cenário de exemplo (D79). Siglas em texto com cor própria, sem logos (GDD 6); logos oficiais só na etapa 1B, com fonte e licença verificadas.", "P1": {"sigla": "P1", "nome": "Partido de exemplo 1 (fictício)", "cor": "#134074"}, "P2": {"sigla": "P2", "nome": "Partido de exemplo 2 (fictício)", "cor": "#821D1D"}, "P3": {"sigla": "P3", "nome": "Partido de exemplo 3 (fictício)", "cor": "#114226"}, "P4": {"sigla": "P4", "nome": "Partido de exemplo 4 (fictício)", "cor": "#5B2A86"}}</script>
 <script id="ui">
 /* == UI == */
@@ -3162,7 +3349,8 @@ var BRUTO = JSON.parse(document.getElementById("dados-exemplo").textContent);
 var PARTIDOS = JSON.parse(document.getElementById("parties-data").textContent);
 var DADOS = { cartas: BRUTO.cartas.cartas, ambicoes: BRUTO.cartas.ambicoes, parametrosCartas: BRUTO.cartas.parametrosCartas,
   eventos: BRUTO.eventos.eventos, modelosDisputa: BRUTO.candidatura.modelosDisputa, oportunidades: BRUTO.candidatura.oportunidades,
-  regrasCargo: BRUTO.candidatura.regrasCargo, ambicoesCargos: BRUTO.candidatura.ambicoesCargos, governos: BRUTO.candidatura.governos };
+  regrasCargo: BRUTO.candidatura.regrasCargo, ambicoesCargos: BRUTO.candidatura.ambicoesCargos, governos: BRUTO.candidatura.governos,
+  posicoes: BRUTO.nomeacoes.posicoes };
 var OPCOES = { opcoesEleicao: function (cen) { return M.Distribuicoes.opcoesDoCenario(cen); } };
 var CHAVE = "demogracinha.save", CHAVE_PREF = "demogracinha.preferencias";
 var INICIO_CARREIRA = "2026-01-01", LIMITE_LOTE = 12;
@@ -3215,6 +3403,9 @@ function chip(c) { return '<span class="impact-chip ' + c.cls + '">' + esc(c.txt
 function cartaPorId(id) { return DADOS.cartas.filter(function (c) { return c.id === id; })[0]; }
 function eventoPorId(id) { return DADOS.eventos.filter(function (x) { return x.id === id; })[0]; }
 function mandatoAtual(e) { return e.cargos.mandatos.filter(function (x) { return x.situacao === "exercicio"; })[0] || null; }
+function nomeacaoAtiva(e) { return e.cargos.nomeacoes.filter(function (x) { return x.situacao === "exercicio"; })[0] || null; }
+function posicaoPorId(id) { return DADOS.posicoes.filter(function (x) { return x.id === id; })[0]; }
+var ESCOPO_POSICAO = { municipal: "municipal", estadual: "estadual", federal: "federal" };
 function escopoAtual(e) { var m = mandatoAtual(e); return m ? M.Candidatura.escopoDe(m.cargo) : "local"; }
 function idade(e) { return M.Datas.idade(M.Datas.ler(e.personagem.dataNascimento), M.Datas.ler(M.Carreira.inicioJanela(e.tempo.ano, e.tempo.janela))); }
 function partido(id) { return Object.prototype.hasOwnProperty.call(PARTIDOS, id) ? PARTIDOS[id] : { sigla: id, nome: "Sem cadastro", cor: "#134074" }; }
@@ -3311,6 +3502,8 @@ function faseAtual() {
   var p = previa();
   if (p.compromissos.length) return { nome: "compromissos", lista: p.compromissos };
   if (p.eventos.length) return { nome: "eventos", lista: p.eventos };
+  if (p.desincompatibilizacao) return { nome: "desincompatibilizacao", pend: p.desincompatibilizacao };
+  if (p.nomeacoes) return { nome: "nomeacoes", lista: p.nomeacoes };
   if (p.candidaturas) return { nome: "candidatura", lista: p.candidaturas };
   return { nome: "mao", mao: p.mao };
 }
@@ -3328,6 +3521,10 @@ function textoOcorrencia(o, e) {
     case "eleicao": var h = e.historico.filter(function (x) { return x.tipo === "eleicao" && x.disputaId === o.disputaId; }).slice(-1)[0];
       return "Eleição: " + (o.personagemEleito ? "eleito" : "não eleito") + (h && h.votos !== null ? ", " + inteiro(h.votos) + " votos (" + h.posicao + "º lugar)." : ".");
     case "arquivamento": return "Investigação arquivada por prazo.";
+    case "nomeacaoAceita": return "Nomeação aceita: " + (posicaoPorId(o.posicaoId) || { titulo: o.posicaoId }).titulo + ".";
+    case "nomeacaoRecusada": return "Convites de nomeação recusados.";
+    case "nomeacaoEncerrada": return "Saída do cargo de nomeação" + ({ voluntaria: " por decisão própria.", trocaDeGoverno: " com a posse do novo governo.", evento: " depois da crise.", desincompatibilizacao: " para disputar a eleição." }[o.motivo] || ".");
+    case "desincompatibilizacao": return o.decisao === "sair" ? (o.alvo === "executivo" ? "Renúncia ao mandato para disputar outro cargo." : "Saída do cargo para disputar a eleição.") : "Decidiu permanecer no cargo neste ano eleitoral.";
     default: return null;
   }
 }
@@ -3342,7 +3539,7 @@ function executar(decisoes) {
     var itens = [avancarUma(decisoes)], n = 0;
     while (!M.Carreira.ehManual(app.estado) && n++ < LIMITE_LOTE) itens.push(avancarUma(undefined));
     salvar();
-    app.resumo = itens; app.decisoes = {}; app.sel = {}; app.erro = null;
+    app.resumo = itens; app.decisoes = {}; app.sel = {}; app.deixar = false; app.erro = null;
   } catch (x) { app.erro = "Erro do motor: " + x.message; }
   render(true);
 }
@@ -3353,17 +3550,18 @@ function metricas(e) {
     { id: "hud-not", rotulo: "Notoriedade", v: i.notoriedade, f: pct }, { id: "hud-pop", rotulo: "Popularidade", v: i.popularidade, f: pct },
     { id: "hud-rej", rotulo: "Rejeição", v: i.rejeicao, f: pct }, { id: "hud-cai", rotulo: "Caixa Pessoal", v: b.caixaPessoal, f: reais }];
   if (M.Carreira.tipoAno(t.ano) === "eleitoral" && CAMPANHA[t.janela]) lista.push({ id: "hud-fun", rotulo: "Fundo de Campanha", v: b.fundoCampanha, f: reais });
-  if (mandatoAtual(e)) lista.push({ id: "hud-ent", rotulo: "Capacidade de entrega", v: b.capitalEntrega, f: inteiro });
+  var n = nomeacaoAtiva(e);
+  if (mandatoAtual(e) || (n && n.tipo === "governamental")) lista.push({ id: "hud-ent", rotulo: "Capacidade de entrega", v: b.capitalEntrega, f: inteiro });
   return { escopo: s, ind: i, lista: lista };
 }
 function renderHud() {
   var hud = document.getElementById("hud"), e = app.estado;
   hud.hidden = !(app.tela === "jogo" && app.aba === "janela");
   if (hud.hidden) return;
-  var m = metricas(e), t = e.tempo, man = mandatoAtual(e), pa = partido(e.personagem.partidoId);
+  var m = metricas(e), t = e.tempo, man = mandatoAtual(e), pa = partido(e.personagem.partidoId), nom = nomeacaoAtiva(e);
   var sem = Math.max(0, m.ind.notoriedade - m.ind.popularidade - m.ind.rejeicao);
   hud.innerHTML = '<div class="hud-context-row"><span class="hud-turn">' + t.ano + ", janela " + esc(t.janela) + ", desde " + diaMes(M.Carreira.inicioJanela(t.ano, t.janela)) +
-    (M.Carreira.ehManual(e) ? "" : " (automática)") + '</span><span class="hud-role">' + esc(man ? CARGOS[man.cargo] : "Sem cargo") + ", " + esc(pa.sigla) + ", escopo " + esc(m.escopo) + "</span></div>" +
+    (M.Carreira.ehManual(e) ? "" : " (automática)") + '</span><span class="hud-role">' + esc(nom ? (posicaoPorId(nom.posicaoId) || { titulo: nom.posicaoId }).titulo : man ? CARGOS[man.cargo] : "Sem cargo") + ", " + esc(pa.sigla) + ", escopo " + esc(m.escopo) + "</span></div>" +
     '<dl class="hud-grid-metrics' + (m.lista.length > 4 ? " has-extra" : "") + '">' + m.lista.map(function (x) {
       return '<div class="metric-cell"><dt class="metric-label">' + esc(x.rotulo) + '</dt><dd class="metric-val" id="' + x.id + '">' + esc(x.f(x.v)) + "</dd></div>"; }).join("") + "</dl>" +
     '<div class="opinion-bar" aria-hidden="true"><span class="op-seg-pop" style="width:' + (m.ind.popularidade * 100).toFixed(1) + '%"></span><span class="op-seg-neu" style="width:' +
@@ -3457,6 +3655,29 @@ function telaCandidatura(lista) {
     dica("Compare alcance, custo e papel esperado antes de registrar a candidatura. Não concorrer é sempre possível.") +
     grupoRadio("cand", "Opções de candidatura", cards) + "</article>" + confirmar("candidatura", "Confirmar convenção", ["cand"]);
 }
+function telaNomeacoes(lista) {
+  var cards = lista.map(function (o) {
+    var f = o.ficha;
+    return opcao("nom", o.id, '<div class="card-suit-bar"><span class="suit-tag">' + (o.tipo === "governamental" ? "Cargo de governo" : "Cargo partidário") + ", " + esc(ESCOPO_POSICAO[o.escopo]) + "</span>" +
+      (o.comLicenca ? '<span class="cost-pill">Licença do mandato</span>' : "") + '</div><h2 class="card-title">' + esc(o.titulo) + '</h2><p class="card-desc">' + esc(o.orgao) + '</p><div class="ficha-grid">' +
+      [["Capacidade de entrega por período", String(f.capacidadeEntregaPorJanela)], ["Exposição por período", "Até " + pct(f.exposicaoPorJanela)], ["Posição", POSICAO[f.posicaoCoalizao]], ["Tipo", o.tipo === "governamental" ? "Exige sair até 04/04 para disputar" : "Sem desincompatibilização"]]
+        .map(function (kv) { return '<div class="ficha-item"><span class="ficha-k">' + esc(kv[0]) + '</span><span class="ficha-v">' + esc(kv[1]) + "</span></div>"; }).join("") +
+      '</div><div class="chip-row"><span class="impact-chip chip-warn">' + esc("Risco: " + f.risco) + "</span></div>", false, ["Convite selecionado", "Toque para aceitar"]);
+  }).join("") + opcao("nom", "recusar", '<div class="card-suit-bar"><span class="suit-tag">Preservação</span><span class="cost-pill is-safe">Opção segura</span></div>' +
+    '<h2 class="card-title">Recusar os convites</h2><p class="card-desc">Mantém a autonomia e a agenda atual.</p>', false, ["Opção selecionada", "Toque para escolher"]);
+  return '<article class="dossier-card">' + cabecalho("Montagem de governo", "Convites de nomeação", selo(), true) +
+    dica("Um cargo de nomeação dá capacidade de entrega e experiência, mas exige sair até 04/04 do ano eleitoral para disputar eleição.") +
+    grupoRadio("nom", "Convites de nomeação", cards) + "</article>" + confirmar("nomeacoes", "Responder convites", ["nom"]);
+}
+function telaDesincompatibilizacao(p) {
+  var oque = p.tipo === "nomeacao" ? "o cargo de " + (posicaoPorId(p.posicaoId) || { titulo: p.posicaoId }).titulo : "o mandato de " + CARGOS[p.cargo];
+  var cards = opcao("des", "sair", '<div class="card-suit-bar"><span class="suit-tag">Candidatura</span></div><h2 class="card-title">Deixar ' + esc(oque) + '</h2><p class="card-desc">Fica apto a disputar outro cargo neste ano. Perde a capacidade de entrega do cargo.</p>', false, ["Opção selecionada", "Toque para escolher"]) +
+    opcao("des", "permanecer", '<div class="card-suit-bar"><span class="suit-tag">Preservação</span><span class="cost-pill is-safe">Opção segura</span></div><h2 class="card-title">Permanecer</h2><p class="card-desc">' +
+      (p.tipo === "nomeacao" ? "Segue no cargo, mas não poderá disputar eleição neste ano." : "Segue no mandato; só a reeleição continua possível.") + "</p>", false, ["Opção selecionada", "Toque para escolher"]);
+  return '<article class="dossier-card">' + cabecalho("Prazo eleitoral", "Desincompatibilização", selo(), true) +
+    dica("Quem ocupa cargo de governo, ou chefia o Executivo, precisa sair até 04/04 para disputar outro cargo (prazo a confirmar).") +
+    grupoRadio("des", "Desincompatibilização", cards) + "</article>" + confirmar("desincompatibilizacao", "Registrar decisão", ["des"]);
+}
 function corpoCarta(c) {
   var chips = (c.efeitos || []).map(function (x) { return chip(efeitoChip(x.alvo, x.delta)); });
   if (c.risco) chips.push(chip({ cls: "chip-warn", txt: "Risco " + faixa(c.risco.probBase, RISCO) + ": " + c.risco.efeitos.map(function (x) { return efeitoChip(x.alvo, x.delta).txt.toLowerCase(); }).join(", ") }));
@@ -3469,7 +3690,11 @@ function telaMao(mao) {
   return '<article class="dossier-card">' + cabecalho("Decisão do período", "Ações disponíveis", selo(), true) +
     dica("Cada período permite uma ação principal. A opção segura evita riscos, mas tem menor alcance.") +
     grupoRadio("carta", "Ações disponíveis para o período", mao.ids.map(function (id) { return opcao("carta", id, corpoCarta(cartaPorId(id)), false, ["Selecionada para este período", "Toque para selecionar"]); }).join("")) +
-    "</article>" + confirmar("mao", "Confirmar decisão", ["carta"]);
+    "</article>" + (function () {
+      var n = nomeacaoAtiva(app.estado);
+      if (!n) return "";
+      return '<div class="choice-box" role="checkbox" tabindex="0" data-deixar="1" aria-checked="' + !!app.deixar + '">' + esc("Deixar o cargo de " + (posicaoPorId(n.posicaoId) || { titulo: n.posicaoId }).titulo + " neste período") + "</div>";
+    })() + confirmar("mao", "Confirmar decisão", ["carta"]);
 }
 function telaResumo() {
   return '<article class="dossier-card">' + cabecalho("Boletim do período", "O que aconteceu", selo(), false) + '<div class="hand-stack">' +
@@ -3486,7 +3711,8 @@ function telaJanela() {
   var f = faseAtual();
   app.faseNome = f.nome;
   return ({ resumo: telaResumo, automatica: telaAutomatica, compromissos: function () { return telaCompromissos(f.lista); }, eventos: function () { return telaEventos(f.lista); },
-    candidatura: function () { return telaCandidatura(f.lista); }, mao: function () { return telaMao(f.mao); } })[f.nome]();
+    candidatura: function () { return telaCandidatura(f.lista); }, mao: function () { return telaMao(f.mao); },
+    desincompatibilizacao: function () { return telaDesincompatibilizacao(f.pend); }, nomeacoes: function () { return telaNomeacoes(f.lista); } })[f.nome]();
 }
 
 function trajetoria(e) {
@@ -3515,6 +3741,8 @@ function telaCarreira() {
   return trajetoria(e) + '<article class="dossier-card">' + cabecalho("Registro biográfico", "Carreira", JURIDICO[p.statusJuridico], false) +
     '<p class="card-desc"><strong>' + esc(p.nome || "Sem nome") + "</strong>, " + idade(e) + " anos. Situação jurídica: " + esc(JURIDICO[p.statusJuridico]) + ".</p>" +
     '<h2 class="secao">Mandatos</h2>' + (mandatos ? '<ul class="kv-list">' + mandatos + "</ul>" : '<p class="vazio">Nenhum mandato exercido ainda.</p>') +
+    '<h2 class="secao">Nomeações</h2>' + (e.cargos.nomeacoes.length ? '<ul class="kv-list">' + e.cargos.nomeacoes.map(function (n) {
+      return kv(n.inicio.ano + " - " + (n.fim ? n.fim.ano : "atual") + " - " + (posicaoPorId(n.posicaoId) || { titulo: n.posicaoId }).titulo, n.situacao === "exercicio" ? "Em exercício" : "Encerrada"); }).join("") + "</ul>" : '<p class="vazio">Nenhuma nomeação ainda.</p>') +
     '<h2 class="secao">Eleições disputadas</h2>' + (eleicoes ? '<ul class="kv-list">' + eleicoes + "</ul>" : '<p class="vazio">Nenhuma eleição disputada.</p>') +
     '<h2 class="secao">Últimos períodos</h2>' + (periodos ? '<ul class="kv-list">' + periodos + "</ul>" : '<p class="vazio">Nenhuma ação registrada.</p>') + "</article>";
 }
@@ -3652,8 +3880,11 @@ function confirmarFase(b) {
   if (fase === "compromissos") { app.decisoes.compromissos = app.decisoes.compromissos || {}; grupos.forEach(function (g) { app.decisoes.compromissos[g.slice(2)] = app.sel[g]; delete app.sel[g]; }); render(true); }
   else if (fase === "eventos") { app.decisoes.eventos = app.decisoes.eventos || {}; grupos.forEach(function (g) { app.decisoes.eventos[g.slice(2)] = app.sel[g]; delete app.sel[g]; }); render(true); }
   else if (fase === "candidatura") { app.decisoes.candidatura = app.sel.cand; delete app.sel.cand; render(true); }
+  else if (fase === "nomeacoes") { app.decisoes.nomeacao = app.sel.nom; delete app.sel.nom; render(true); }
+  else if (fase === "desincompatibilizacao") { app.decisoes.desincompatibilizacao = app.sel.des; delete app.sel.des; render(true); }
   else {
     var d = JSON.parse(JSON.stringify(app.decisoes)), t = app.estado.tempo; d.carta = app.sel.carta; b.disabled = true;
+    if (app.deixar) d.deixarNomeacao = true;
     carimbo("Período " + t.janela + " de " + t.ano + " concluído", function () { executar(d); });
   }
 }
@@ -3678,6 +3909,8 @@ var ACOES = {
 document.addEventListener("click", function (ev) {
   var r = ev.target.closest("[data-grupo]");
   if (r) { selecionar(r); return; }
+  var dx = ev.target.closest("[data-deixar]");
+  if (dx) { app.deixar = !app.deixar; dx.setAttribute("aria-checked", String(app.deixar)); return; }
   var a = ev.target.closest("[data-ambicao]");
   if (a) { var on = a.getAttribute("aria-checked") !== "true"; a.setAttribute("aria-checked", String(on)); return; }
   var t = ev.target.closest("[data-aba]");
@@ -3686,7 +3919,7 @@ document.addEventListener("click", function (ev) {
   if (b && ACOES[b.dataset.acao]) ACOES[b.dataset.acao](b);
 });
 document.addEventListener("keydown", function (ev) {
-  var r = ev.target.closest && ev.target.closest("[data-grupo], [data-ambicao]");
+  var r = ev.target.closest && ev.target.closest("[data-grupo], [data-ambicao], [data-deixar]");
   if (r && (ev.key === " " || ev.key === "Enter")) { ev.preventDefault(); r.click(); return; }
   // setas no grupo de rádio (padrão ARIA): move o foco e seleciona
   if (r && r.dataset.grupo && /^Arrow(Up|Down|Left|Right)$/.test(ev.key)) {
