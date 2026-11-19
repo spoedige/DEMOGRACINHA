@@ -382,3 +382,11 @@ Aprovada pelo autor antes da etapa 6.
 2. Módulo 15: evento de vacância recebido pronto; primeiro suplente da lista ordenada; prazos da vaga sem suplente pelo texto literal ("salvo se faltarem menos de"). Vacância de cargo majoritário com vice fica fora da etapa e é recusada com erro.
 3. Módulo 16: ordem obrigatória dos cinco passos por funções injetadas; `apoioEfetivo` e `folgaDeCusto` calculados; `estabilidade`, `negociacao` e faixa injetadas (calibrar).
 4. Conflito com a D55 resolvido pelo autor: no módulo 15 (motor eleitoral), a vaga definitiva com suplente efetiva o primeiro suplente da lista ordenada do módulo 10 (Código Eleitoral, art. 112). A D55 (`eventos-e-risco.md` 6.1) continua valendo para os gatilhos políticos e as negociações de abertura de vaga no sistema de eventos, na Fase 2.
+
+## D73. Simulação headless, orquestrador e desempate técnico mínimo, 18/11/2026
+
+Aprovada pelo autor antes da etapa 7a.
+1. Etapa 7 dividida: 7a (simulação headless, orquestrador e módulo 14) e 7b (metas de calibração e backtest de 2024, quando houver dados).
+2. Nenhum parâmetro calibrável nasce no motor nem em `tools/sim.js`: valores e formas das distribuições vêm do arquivo de cenário, marcados (calibrar).
+3. Módulo 1 como orquestrador de uma disputa (`Eleicao.executar`); módulo 14 com votação técnica quando houver atributos e forma mínima por sorteio sem eles.
+4. `tools/sim.js` com execução única (hash SHA-256 do resultado canônico) e lote com telemetria de casos-limite.

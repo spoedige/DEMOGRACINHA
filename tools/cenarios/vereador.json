@@ -1,0 +1,222 @@
+{
+ "_cenario": "artificial, para teste do orquestrador; nenhum valor é dado histórico",
+ "_parametros": "todos os parâmetros e distribuições (calibrar)",
+ "semente": "v1-VEREADOR",
+ "eleicaoId": "2028",
+ "disputa": {
+  "id": "2028|VEREADOR|EX001|1",
+  "ano": 2028,
+  "cargo": "VEREADOR",
+  "unidadeId": "EX001",
+  "vagas": 9,
+  "turno": 1
+ },
+ "eleitorado": 60000,
+ "taxasEleitorado": {
+  "comparecimento": {
+   "numerador": 80,
+   "denominador": 100
+  },
+  "abstencao": {
+   "numerador": 19,
+   "denominador": 100
+  },
+  "eleitoresSecoesNaoInstaladas": {
+   "numerador": 1,
+   "denominador": 100
+  }
+ },
+ "taxasVotos": {
+  "validos": {
+   "numerador": 90,
+   "denominador": 100
+  },
+  "brancos": {
+   "numerador": 4,
+   "denominador": 100
+  },
+  "nulos": {
+   "numerador": 5,
+   "denominador": 100
+  },
+  "anulados": {
+   "numerador": 1,
+   "denominador": 100
+  },
+  "anuladosSubJudice": {
+   "numerador": 0,
+   "denominador": 100
+  },
+  "anuladosApuracaoSeparada": {
+   "numerador": 0,
+   "denominador": 100
+  }
+ },
+ "partidos": [
+  "P1",
+  "P2",
+  "P3",
+  "P4"
+ ],
+ "federacoes": [
+  {
+   "id": "F1",
+   "nome": "Federação de exemplo",
+   "partidos": [
+    "P3",
+    "P4"
+   ]
+  }
+ ],
+ "identPartidaria": {
+  "P1": 0.15,
+  "P2": 0.1,
+  "P3": 0.08,
+  "P4": 0.07
+ },
+ "semIdentificacao": 0.6,
+ "candidatos": [
+  {
+   "id": "A1",
+   "partidoId": "P1",
+   "dataNascimento": "1980-05-10",
+   "dataFiliacao": "2027-06-01",
+   "opiniao": {
+    "desconhecimento": 0.4,
+    "popularidade": 0.3,
+    "rejeicao": 0.1,
+    "semOpiniao": 0.2
+   },
+   "maquina": {
+    "municipal": {
+     "naBase": true,
+     "baseTerritorial": 0.2,
+     "estruturaAliada": 0,
+     "aliancaFormal": false,
+     "aliadosEstrutura": [],
+     "aliadosMobilizacao": [],
+     "alocMobilizacao": 200000,
+     "mobAliada": 0,
+     "liderancas": [
+      {
+       "id": "L1",
+       "tipo": "pessoa",
+       "forca": 0.3,
+       "aderencia": 0.6
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "A2",
+   "partidoId": "P1",
+   "dataNascimento": "1980-05-10",
+   "dataFiliacao": "2027-06-01",
+   "opiniao": {
+    "desconhecimento": 0.6,
+    "popularidade": 0.15,
+    "rejeicao": 0.1,
+    "semOpiniao": 0.15
+   },
+   "maquina": {
+    "maquinaEfetiva": 0.3
+   }
+  },
+  {
+   "id": "B1",
+   "partidoId": "P2",
+   "dataNascimento": "1980-05-10",
+   "dataFiliacao": "2027-06-01",
+   "opiniao": {
+    "desconhecimento": 0.5,
+    "popularidade": 0.2,
+    "rejeicao": 0.15,
+    "semOpiniao": 0.15
+   },
+   "maquina": {
+    "maquinaEfetiva": 0.4
+   }
+  },
+  {
+   "id": "C1",
+   "partidoId": "P3",
+   "dataNascimento": "1980-05-10",
+   "dataFiliacao": "2027-06-01",
+   "opiniao": {
+    "desconhecimento": 0.5,
+    "popularidade": 0.25,
+    "rejeicao": 0.1,
+    "semOpiniao": 0.15
+   },
+   "maquina": {
+    "maquinaEfetiva": 0.35
+   }
+  }
+ ],
+ "sinteticos": {
+  "P1": {
+   "quantidade": 8,
+   "quadros": 0.5,
+   "capilaridade": 0.5
+  },
+  "P2": {
+   "quantidade": 9,
+   "quadros": 0.4,
+   "capilaridade": 0.4
+  },
+  "F1": {
+   "quantidade": 9,
+   "quadros": 0.45,
+   "capilaridade": 0.45
+  }
+ },
+ "calendario": {
+  "dataRegistro": "2028-08-15",
+  "dataPosse": "2029-01-01",
+  "prazoFiliacao": "2028-04-07",
+  "prazoDesincompatibilizacao": "2028-04-07",
+  "_nota": "calendário de 2028 (a confirmar)"
+ },
+ "limiteLista": 10,
+ "posse": {
+  "dataPosse": "2029-01-01",
+  "fimMandato": "2032-12-31",
+  "_nota": "datas de 2029 (a confirmar)"
+ },
+ "parametros": {
+  "epsilon": 0.01,
+  "sigma": 0.3,
+  "sigmaLegenda": 0.2,
+  "alpha": 0.4,
+  "k": 0.8,
+  "v1": 0.6,
+  "v2": 0.4,
+  "m1": 0.6,
+  "m2": 0.25,
+  "m3": 0.15,
+  "delta": 0.2,
+  "D": 0,
+  "escalaGasto": 500000,
+  "sigmaT": 0.3,
+  "minimoNominalFase2": 0,
+  "idadeSinteticos": 40,
+  "lambda": {
+   "P1": 0.3,
+   "P2": 0.3,
+   "F1": 0.3
+  }
+ },
+ "distribuicoes": {
+  "q": {
+   "forma": "exponencialTruncada",
+   "media": 0.2,
+   "max": 1
+  },
+  "r": {
+   "forma": "uniforme",
+   "min": 0.1,
+   "max": 0.6
+  }
+ }
+}

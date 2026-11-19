@@ -39,6 +39,7 @@ O 2º turno não passa pela distribuição de cadeiras. Proporcional e majoritá
 - Parâmetros: nenhum.
 - Simplificações: vagas recebidas como dado, sem recalcular por população.
 - Testes: Senado 2 vagas em 2026 e 1 em 2030; sem eleição municipal em Brasília e Fernando de Noronha; 2º turno previsto só onde a regra permite.
+- Implementação (etapa 7a, D73): `Eleicao.executar` orquestra uma disputa de cada vez (módulos 2 a 13 e posse). A montagem do conjunto de disputas do ano, com a exclusão de Brasília e Fernando de Noronha, ainda não existe.
 
 ### 2. Cadastro de partidos, federações e candidaturas
 - Responsabilidade: definir listas e chapas.
@@ -167,6 +168,7 @@ O 2º turno não passa pela distribuição de cadeiras. Proporcional e majoritá
 - Responsabilidade: decidir empates sem critério confirmado ou com critérios esgotados.
 - Entradas: empatados, Comunicação efetiva e gasto efetivo de todos os candidatos reais da disputa (para as medianas de referência dos sintéticos), válidos da disputa, fase das sobras (para o representante da lista), `rngState` de eleição.
 - Processamento: `motor-eleitoral.md` 5.5 (D66).
+- Implementação (etapa 7a, D73): `Desempate.resolver` aplica a votação técnica quando o contexto traz `atributos` e `validos`; sem eles, forma mínima (sorteio). O cálculo das medianas de referência dos sintéticos e a coleta de Comunicação e gasto ficam com quem monta o contexto, ainda não implementado.
 - Saídas: vencedor, registro interno; ou resultado estruturado sem vencedor quando não há concorrente elegível.
 - Dependências: chamado por 10 a 13.
 - Parâmetros: `pCarisma`, `pFinanceiro` (0,5 e 0,5, calibrar). Referência dos sintéticos derivada da disputa (mediana), sem parâmetro próprio.
@@ -229,7 +231,8 @@ O 2º turno não passa pela distribuição de cadeiras. Proporcional e majoritá
 | 4 | testes dos módulos 12 e 13 passam |
 | 5 | testes dos módulos 2, 4, 5, 6 e 7 passam, sem dupla contagem (o módulo 3 é da etapa 6) |
 | 6 | testes dos módulos 3, 15 e 16 passam |
-| 7 | simulação headless reproduz resultados com a mesma semente; metas de calibração medidas |
+| 7a | `tools/sim.js` reproduz resultados com a mesma semente (hash); lote com telemetria de casos-limite; módulos 1 e 14 |
+| 7b | metas de calibração medidas contra `calibration-targets.json`; backtest de 2024 (depende de dados pendentes, D64) |
 
 ## 6. Implementação da etapa 1 (fundação)
 
@@ -292,3 +295,9 @@ Pendência para o módulo 9: a regra "F por último" do segmento livre (5.2) exi
 - Módulo 3, `Elegibilidade.avaliar`: idade mínima na data de referência do cargo (vereador no registro, demais na posse); filiação até o prazo; uma reeleição consecutiva no mesmo cargo executivo e unidade (dois mandatos consecutivos impedem o terceiro); chefe do Executivo que disputa outro cargo, ou o mesmo cargo em outra unidade, precisa de renúncia até o prazo de desincompatibilização. Janela partidária não é condição de elegibilidade e fica para a regra de perda de mandato (L35).
 - Módulo 15, `Posse.empossar` e `Posse.vacancia`: convocação põe o primeiro suplente em exercício e preserva o mandato; vaga definitiva efetiva o primeiro suplente; sem suplente na vaga definitiva, eleição suplementar salvo se faltarem menos de 15 meses (deputados) ou do prazo da lei orgânica ou, sem ela, 9 meses (vereador). Afastamento sem suplente, Senado sem suplente e vacância com vice: erro, sem regra documentada.
 - Módulo 16, `Fechamento.executar` e `Fechamento.governabilidade`: passos em ordem fixa (`apuracaoEPosse`, `atualizarMatrizes`, `recalcularRecursos`, `aplicarClausula`, `abrirProximoCiclo`), cada um recebe o estado do anterior e a lista dos já concluídos; `apoioEfetivo = Σ cadeiras aliadas × coesão`, `folgaDeCusto = Capital de Entrega ÷ custo`, `razaoApoio = apoioEfetivo ÷ maioriaExigida`; estabilidade e negociação injetadas em [0, 1]; faixa injetada entre crítica, frágil, funcional e sólida.
+
+### 6.9 Orquestrador e simulação headless (etapa 7a)
+- `Desempate.resolver(empatadosIds, contexto, rngState)`: contrato dos módulos 10 a 13. Forma mínima: `RNG.inteiro` entre os ids em ordem UTF-16. Com `contexto.atributos` (`{ id: { carisma, financeiro } }`) e `contexto.validos`: votação técnica de 5.5, pesos `contexto.pesos` (0,5 e 0,5 sem informação, calibrar); empate persistente vai ao sorteio.
+- `Eleicao.executar(estado, dados, rngState)`: uma disputa. Proporcional: 2, 3, 4, 5, 6, pontuação e legendas, 8, 9, 10, posse. Majoritária: 2, 3 (candidato da chapa), 5, 6, pontuação com `identChapa`, 8, 11 e, se houver, 12, posse. Senado: 13 com 1 ou 2 vagas; com 2, o módulo 8 com um voto por eleitor dá `validos1`. Todo parâmetro vem de `dados.parametros`; ausência é erro. Idade dos sintéticos para o módulo 10: `parametros.idadeSinteticos` (calibrar). Resolvedor padrão: módulo 14.
+- `tools/sim.js`: carrega o motor de `public/index.html` em contexto isolado. Formas das distribuições de `q_g` e `r_g` declaradas no cenário (`uniforme` com `min` e `max`; `exponencialTruncada` com `media` e `max`). `--cenario` executa uma vez e imprime resultado e SHA-256 do JSON canônico; `--rodadas N --semente-base S` executa N sementes `S-i` e conta segundos turnos, vagas não preenchidas, desempates por tipo e erros (insuficiência de modelagem, excesso de eleitos pelo quociente partidário, outros).
+- Cenários de exemplo em `tools/cenarios/` (vereador, prefeito, Senado): artificiais, com partidos e unidades fictícios (P1 a P4, EX001); nenhum valor é dado histórico; todos os parâmetros (calibrar); calendário de 2028 e 2029 (a confirmar).

@@ -1,0 +1,91 @@
+#!/usr/bin/env node
+"use strict";
+// Simulação headless do motor (etapa 7a, D73). Carrega o bloco <script id="motor"> de public/index.html, sem DOM.
+// Nenhum parâmetro calibrável nasce aqui: valores e formas das distribuições vêm do arquivo de cenário.
+//   node tools/sim.js --cenario tools/cenarios/vereador.json [--semente v1-X]
+//   node tools/sim.js --cenario tools/cenarios/vereador.json --rodadas 200 [--semente-base v1-LOTE]
+const fs = require("node:fs");
+const path = require("node:path");
+const vm = require("node:vm");
+const crypto = require("node:crypto");
+
+function carregarMotor() {
+  const html = fs.readFileSync(path.join(__dirname, "..", "public", "index.html"), "utf8");
+  const m = html.match(/<script id="motor">([\s\S]*?)<\/script>/);
+  if (!m) throw new Error("bloco do motor não encontrado");
+  const ctx = vm.createContext({});
+  vm.runInContext("Math.random = function () { throw new Error('Math.random proibido no motor'); };", ctx);
+  vm.runInContext(m[1] + "\n;globalThis.Motor = Motor;", ctx, { filename: "index.html#motor" });
+  return ctx.Motor;
+}
+
+// JSON com chaves em ordem: base do hash reproduzível
+function canonico(x) {
+  if (Array.isArray(x)) return "[" + x.map(canonico).join(",") + "]";
+  if (x && typeof x === "object") return "{" + Object.keys(x).sort().map((k) => JSON.stringify(k) + ":" + canonico(x[k])).join(",") + "}";
+  return JSON.stringify(x);
+}
+const sha256 = (s) => crypto.createHash("sha256").update(s).digest("hex");
+
+// Sorteador a partir da forma declarada no cenário (calibrar): devolve (rngState) => { valor, rngStateNext }.
+function sorteador(Motor, def, nome) {
+  if (!def || typeof def !== "object") throw new Error("distribuição ausente no cenário: " + nome);
+  const num = (v, campo) => { if (typeof v !== "number" || !Number.isFinite(v)) throw new Error(nome + "." + campo + " inválido"); return v; };
+  if (def.forma === "uniforme") {
+    const min = num(def.min, "min"), max = num(def.max, "max");
+    if (!(min >= 0 && max >= min)) throw new Error(nome + ": uniforme exige 0 <= min <= max");
+    return (e) => { const r = Motor.RNG.decimal(e); return { valor: min + (max - min) * r.valor, rngStateNext: r.rngStateNext }; };
+  }
+  if (def.forma === "exponencialTruncada") {
+    const media = num(def.media, "media"), max = num(def.max, "max");
+    if (!(media > 0 && max > 0)) throw new Error(nome + ": exponencial truncada exige media e max positivos");
+    return (e) => { const r = Motor.RNG.decimal(e); return { valor: Math.min(max, -media * Math.log(1 - r.valor)), rngStateNext: r.rngStateNext }; };
+  }
+  throw new Error(nome + ": forma desconhecida " + def.forma);
+}
+
+function opcoesDoCenario(Motor, cen) {
+  const dist = cen.distribuicoes || {};
+  return { sortearQ: sorteador(Motor, dist.q, "distribuicoes.q"), sortearR: sorteador(Motor, dist.r, "distribuicoes.r") };
+}
+
+function rodar(Motor, cen, semente) {
+  const dados = { ...cen, semente };
+  const rng = Motor.RNG.criar(semente, "eleicao", cen.eleicaoId, cen.disputa.id);
+  const r = Motor.Eleicao.executar({ opcoes: opcoesDoCenario(Motor, cen) }, dados, rng);
+  const resultado = JSON.parse(JSON.stringify(r.resultado));
+  return { semente, hash: sha256(canonico(resultado)), resultado };
+}
+
+function lote(Motor, cen, base, n) {
+  const t = { rodadas: n, concluidas: 0, segundosTurnos: 0, vagasNaoPreenchidas: 0, desempates: {}, erros: {} };
+  for (let i = 0; i < n; i++) {
+    try {
+      const { resultado } = rodar(Motor, cen, base + "-" + i);
+      t.concluidas++;
+      if (resultado.etapas.segundoTurno) t.segundosTurnos++;
+      if (resultado.etapas.cadeiras) t.vagasNaoPreenchidas += resultado.etapas.cadeiras.naoPreenchidas;
+      for (const d of resultado.desempates) t.desempates[d.tipo] = (t.desempates[d.tipo] || 0) + 1;
+    } catch (err) {
+      const msg = err.message;
+      const k = /insuficiência de modelagem/.test(msg) ? "insuficienciaDeModelagem" : /excedem as vagas/.test(msg) ? "excessoQuocientePartidario" : "outro: " + msg;
+      t.erros[k] = (t.erros[k] || 0) + 1;
+    }
+  }
+  return { sementeBase: base, hash: sha256(canonico(t)), telemetria: t };
+}
+
+function principal(argv) {
+  const arg = (n) => { const i = argv.indexOf(n); return i >= 0 ? argv[i + 1] : undefined; };
+  const arq = arg("--cenario");
+  if (!arq) throw new Error("uso: node tools/sim.js --cenario <arquivo.json> [--semente S] [--rodadas N --semente-base S]");
+  const cen = JSON.parse(fs.readFileSync(arq, "utf8"));
+  const Motor = carregarMotor();
+  const n = arg("--rodadas");
+  const out = n === undefined ? rodar(Motor, cen, arg("--semente") || cen.semente)
+    : lote(Motor, cen, arg("--semente-base") || cen.semente, Number.parseInt(n, 10));
+  return canonico(out);
+}
+
+if (require.main === module) process.stdout.write(principal(process.argv.slice(2)) + "\n");
+module.exports = { carregarMotor, canonico, sorteador, opcoesDoCenario, rodar, lote, principal };

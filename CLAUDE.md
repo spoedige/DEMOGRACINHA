@@ -34,7 +34,7 @@ Guia para quem trabalha neste repositório. Leia antes de qualquer alteração.
 | Decisões aprovadas | `docs/decisoes.md` |
 | Fontes, coleta e pipeline de dados | `docs/coleta-estatistica.md`, `docs/pipeline-dados.md`, `data/fontes.json` |
 
-Testes do pipeline de dados: `python3 -m unittest discover -s tests -v`, da raiz. Testes do motor: `node --test tests/motor/*.test.js`, da raiz.
+Testes do pipeline de dados: `python3 -m unittest discover -s tests -v`, da raiz. Testes do motor: `node --test tests/motor/*.test.js`, da raiz. Simulação headless: `node tools/sim.js --cenario tools/cenarios/vereador.json` (ver `docs/especificacao-motor.md` 6.9).
 
 Para economizar contexto: leia só o documento da área da tarefa. Fonte única por regra: calendário e ritmos no `GDD.md`; regras legais em `docs/regras-e-mundo.md`; fórmulas em `docs/motor-eleitoral.md`. Outros documentos citam e não redefinem. O GDD é o índice.
 

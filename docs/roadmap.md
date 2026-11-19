@@ -22,7 +22,8 @@ Cada etapa termina com commit na `main`, que dispara deploy no Cloudflare.
 | 4 | Segundo turno e Senado |
 | 5 | Concorrentes, opinião, máquina e campanha |
 | 6 | Elegibilidade, substituição e fechamento do ciclo |
-| 7 | Simulação headless e calibração |
+| 7a | Simulação headless (`tools/sim.js`), orquestrador (módulo 1) e desempate técnico (módulo 14) |
+| 7b | Calibração contra metas e backtest de 2024, quando houver dados |
 
 A distribuição de cadeiras vem antes dos modelos probabilísticos: é determinística e testável isoladamente. Dados históricos do mundo inicial não bloqueiam o motor; os primeiros testes usam cenários artificiais controlados (casos normais, limites e extremos).
 

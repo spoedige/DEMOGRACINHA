@@ -1,0 +1,233 @@
+{
+ "_cenario": "artificial, para teste do orquestrador; nenhum valor é dado histórico",
+ "_parametros": "todos os parâmetros e distribuições (calibrar)",
+ "semente": "v1-PREFEITO",
+ "eleicaoId": "2028",
+ "disputa": {
+  "id": "2028|PREFEITO|EX002|1",
+  "ano": 2028,
+  "cargo": "PREFEITO",
+  "unidadeId": "EX002",
+  "vagas": 1,
+  "turno": 1
+ },
+ "eleitorado": 450000,
+ "taxasEleitorado": {
+  "comparecimento": {
+   "numerador": 80,
+   "denominador": 100
+  },
+  "abstencao": {
+   "numerador": 19,
+   "denominador": 100
+  },
+  "eleitoresSecoesNaoInstaladas": {
+   "numerador": 1,
+   "denominador": 100
+  }
+ },
+ "taxasVotos": {
+  "validos": {
+   "numerador": 90,
+   "denominador": 100
+  },
+  "brancos": {
+   "numerador": 4,
+   "denominador": 100
+  },
+  "nulos": {
+   "numerador": 5,
+   "denominador": 100
+  },
+  "anulados": {
+   "numerador": 1,
+   "denominador": 100
+  },
+  "anuladosSubJudice": {
+   "numerador": 0,
+   "denominador": 100
+  },
+  "anuladosApuracaoSeparada": {
+   "numerador": 0,
+   "denominador": 100
+  }
+ },
+ "partidos": [
+  "P1",
+  "P2",
+  "P3",
+  "P4"
+ ],
+ "federacoes": [
+  {
+   "id": "F1",
+   "nome": "Federação de exemplo",
+   "partidos": [
+    "P3",
+    "P4"
+   ]
+  }
+ ],
+ "identPartidaria": {
+  "P1": 0.15,
+  "P2": 0.1,
+  "P3": 0.08,
+  "P4": 0.07
+ },
+ "semIdentificacao": 0.6,
+ "candidatos": [
+  {
+   "id": "X1",
+   "partidoId": "P1",
+   "dataNascimento": "1980-05-10",
+   "dataFiliacao": "2027-06-01",
+   "opiniao": {
+    "desconhecimento": 0.2,
+    "popularidade": 0.35,
+    "rejeicao": 0.2,
+    "semOpiniao": 0.25
+   },
+   "maquina": {
+    "maquinaEfetiva": 0.5
+   }
+  },
+  {
+   "id": "X2",
+   "partidoId": "P2",
+   "dataNascimento": "1980-05-10",
+   "dataFiliacao": "2027-06-01",
+   "opiniao": {
+    "desconhecimento": 0.25,
+    "popularidade": 0.3,
+    "rejeicao": 0.2,
+    "semOpiniao": 0.25
+   },
+   "maquina": {
+    "maquinaEfetiva": 0.5
+   }
+  },
+  {
+   "id": "X3",
+   "partidoId": "P3",
+   "dataNascimento": "1980-05-10",
+   "dataFiliacao": "2027-06-01",
+   "opiniao": {
+    "desconhecimento": 0.4,
+    "popularidade": 0.2,
+    "rejeicao": 0.15,
+    "semOpiniao": 0.25
+   },
+   "maquina": {
+    "maquinaEfetiva": 0.3
+   }
+  }
+ ],
+ "chapas": [
+  {
+   "id": "CH1",
+   "titular": "P1",
+   "adesao": {
+    "P1": 0.9
+   },
+   "candidato": "X1"
+  },
+  {
+   "id": "CH2",
+   "titular": "P2",
+   "adesao": {
+    "P2": 0.9
+   },
+   "candidato": "X2"
+  },
+  {
+   "id": "CH3",
+   "titular": "F1",
+   "adesao": {
+    "F1": 0.85
+   },
+   "candidato": "X3"
+  }
+ ],
+ "calendario": {
+  "dataRegistro": "2028-08-15",
+  "dataPosse": "2029-01-01",
+  "prazoFiliacao": "2028-04-07",
+  "prazoDesincompatibilizacao": "2028-04-07",
+  "_nota": "calendário de 2028 (a confirmar)"
+ },
+ "limiteLista": 1,
+ "posse": {
+  "dataPosse": "2029-01-01",
+  "fimMandato": "2032-12-31",
+  "_nota": "datas de 2029 (a confirmar)"
+ },
+ "parametros": {
+  "epsilon": 0.01,
+  "sigma": 0.3,
+  "sigmaLegenda": 0.2,
+  "alpha": 0.4,
+  "k": 0.8,
+  "v1": 0.6,
+  "v2": 0.4,
+  "m1": 0.6,
+  "m2": 0.25,
+  "m3": 0.15,
+  "delta": 0.2,
+  "D": 0,
+  "escalaGasto": 500000,
+  "sigmaT": 0.3,
+  "minimoNominalFase2": 0,
+  "idadeSinteticos": 40,
+  "pesosSegundoTurno": {
+   "CH1": {
+    "A": 80,
+    "B": 5,
+    "brancoNulo": 5,
+    "abstencao": 10
+   },
+   "CH2": {
+    "A": 5,
+    "B": 80,
+    "brancoNulo": 5,
+    "abstencao": 10
+   },
+   "CH3": {
+    "A": 40,
+    "B": 40,
+    "brancoNulo": 10,
+    "abstencao": 10
+   },
+   "brancoNuloAnulado": {
+    "A": 10,
+    "B": 10,
+    "brancoNulo": 70,
+    "abstencao": 10
+   },
+   "abstencao": {
+    "A": 5,
+    "B": 5,
+    "brancoNulo": 5,
+    "abstencao": 85
+   }
+  },
+  "proporcoesInvalidos2": {
+   "brancos": 4,
+   "nulos": 5,
+   "anulados": 1,
+   "anuladosSubJudice": 0,
+   "anuladosApuracaoSeparada": 0
+  }
+ },
+ "distribuicoes": {
+  "q": {
+   "forma": "exponencialTruncada",
+   "media": 0.2,
+   "max": 1
+  },
+  "r": {
+   "forma": "uniforme",
+   "min": 0.1,
+   "max": 0.6
+  }
+ }
+}

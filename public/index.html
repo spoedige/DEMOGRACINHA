@@ -1451,10 +1451,196 @@ var Cadeiras = (function () {
   return Object.freeze({ quocienteEleitoral: quocienteEleitoral, distribuir: distribuir });
 })();
 
+
+/* == ORQUESTRADOR == */
+// Módulo 14: desempate técnico (5.5; D66; D73). Contrato dos módulos 10 a 13: (empatadosIds, contexto, rngState) =>
+// { vencedorId, rngStateNext }. Com contexto.atributos ({ id: { carisma, financeiro } }) e contexto.validos, aplica a
+// votação técnica de 5.5 com pesos contexto.pesos (padrão 0,5 e 0,5, calibrar); persistindo empate, ou sem atributos
+// (forma mínima), sorteio uniforme no fluxo de eleição recebido, entre os ids em ordem UTF-16.
+var Desempate = (function () {
+  function sortear(ids, rngState) {
+    var r = RNG.inteiro(rngState, ids.length);
+    return { vencedorId: ids[r.valor], rngStateNext: r.rngStateNext };
+  }
+  function resolver(empatadosIds, contexto, rngState) {
+    if (!Array.isArray(empatadosIds) || empatadosIds.length < 2) Comum.erro("desempate exige ao menos dois empatados");
+    var ids = empatadosIds.slice().sort();
+    ids.forEach(function (x, i) { Comum.idv(x, "empatado"); if (i && ids[i - 1] === x) Comum.erro("empatado repetido: " + x); });
+    var e = RNG.validar(rngState);
+    if (e.dominio !== "eleicao") Comum.erro("desempate usa o fluxo de eleição");
+    var at = contexto && contexto.atributos;
+    if (!at) return sortear(ids, e);
+    var validos = Comum.inteiro(contexto.validos, "contexto.validos", 1);
+    var pc = contexto.pesos ? Comum.real(contexto.pesos.carisma, "peso de carisma", 0, 1) : 0.5;
+    var pf = contexto.pesos ? Comum.real(contexto.pesos.financeiro, "peso financeiro", 0, 1) : 0.5;
+    if (Math.abs(pc + pf - 1) > Comum.TOL) Comum.erro("pesos do desempate não somam 1");
+    function fracoes(campo) {
+      var soma = 0, v = {};
+      ids.forEach(function (x) {
+        if (!at[x]) Comum.erro("atributos ausentes para " + x);
+        v[x] = Comum.real(at[x][campo], campo + " de " + x, 0); soma += v[x];
+      });
+      ids.forEach(function (x) { v[x] = soma === 0 ? 1 / ids.length : v[x] / soma; });
+      return v;
+    }
+    var fc = fracoes("carisma"), ff = fracoes("financeiro");
+    var votos = MaiorResto.distribuir(validos, ids.map(function (x) { return { id: x, peso: pc * fc[x] + pf * ff[x] }; }));
+    var max = Math.max.apply(null, ids.map(function (x) { return votos[x]; }));
+    var top = ids.filter(function (x) { return votos[x] === max; });
+    return top.length === 1 ? { vencedorId: top[0], rngStateNext: e } : sortear(top, e);
+  }
+  return Object.freeze({ resolver: resolver });
+})();
+
+// Módulo 1: preparação e orquestração de uma disputa (D73). Encadeia os módulos 2 a 13 e a posse (15) sem constante
+// própria: todo parâmetro calibrável vem de dados.parametros; sorteadores de q_g e r_g e o resolvedor de desempate vêm
+// de estado.opcoes (padrão do resolvedor: módulo 14).
+var Eleicao = (function () {
+  function porId(lista, campo) {
+    var m = new Map();
+    (lista || []).forEach(function (c) { Comum.idv(c.id, campo); if (m.has(c.id)) Comum.erro(campo + " repetido: " + c.id); m.set(c.id, c); });
+    return m;
+  }
+  function coletar(tel, r, origem) {
+    (r && r.desempates || []).forEach(function (d) { tel.push({ origem: origem, tipo: d.tipo, empatados: d.empatados, vencedorId: d.vencedorId }); });
+  }
+  function executar(estado, dados, rngState) {
+    var opcoes = (estado && estado.opcoes) || {};
+    var resolver = opcoes.resolverDesempateTecnico || Desempate.resolver;
+    var d = Dados.disputa(dados.disputa);
+    var p = dados.parametros;
+    if (!p || typeof p !== "object") Comum.erro("parametros obrigatórios (calibrar)");
+    var rng = RNG.validar(rngState);
+    if (rng.dominio !== "eleicao") Comum.erro("eleição usa o fluxo de eleição");
+    var cands = porId(dados.candidatos, "candidato");
+    var desempates = [], etapas = {};
+    var calendario = dados.calendario, unidadeId = d.unidadeId;
+
+    function maquinaDe(c) {
+      var mq = c.maquina || Comum.erro("maquina ausente para " + c.id);
+      if (mq.maquinaEfetiva !== undefined) return Comum.real(mq.maquinaEfetiva, "maquinaEfetiva de " + c.id, 0, 1);
+      if (!mq.municipal) Comum.erro("maquina de " + c.id + ": maquinaEfetiva ou municipal");
+      var m = mq.municipal, x = {};
+      Object.keys(m).forEach(function (k) { x[k] = m[k]; });
+      x.semente = dados.semente; x.eleicaoId = dados.eleicaoId; x.candidatoId = c.id; x.municipioId = unidadeId;
+      x.titularId = c.partidoId; x.escalaGasto = p.escalaGasto; x.sigmaT = p.sigmaT;
+      return Maquina.calcularMunicipal({}, x, rng).resultado.maquinaEfetiva;
+    }
+    function opinioes(lista) {
+      if (lista.length === 0) return {};
+      return Opiniao.calcular({}, { alpha: p.alpha, k: p.k, candidatos: lista.map(function (c) {
+        var o = c.opiniao || Comum.erro("opiniao ausente para " + c.id);
+        return { id: c.id, desconhecimento: o.desconhecimento, popularidade: o.popularidade, rejeicao: o.rejeicao, semOpiniao: o.semOpiniao };
+      }) }, rng).resultado;
+    }
+    function comparecimento(vpe) {
+      return Comparecimento.calcular({}, { disputaId: d.id, eleitorado: dados.eleitorado, votosPorEleitor: vpe,
+        taxasEleitorado: dados.taxasEleitorado, taxasVotos: dados.taxasVotos }, rng).resultado;
+    }
+    function elegiveis(listas) {
+      var r = Elegibilidade.avaliar({}, { cargo: d.cargo, unidadeId: unidadeId, calendario: calendario, limiteLista: dados.limiteLista,
+        listas: listas.map(function (l) { return { id: l.id, membros: l.membros, candidatos: l.candidatos.map(function (id) {
+          var c = cands.get(id) || Comum.erro("candidato sem dados: " + id); return c; }) }; }) }, rng).resultado;
+      etapas.elegibilidade = r;
+      return r;
+    }
+    function idadeNaPosse(c) { return Datas.idade(Datas.ler(c.dataNascimento, "dataNascimento"), Datas.ler(dados.posse.dataPosse, "posse.dataPosse")); }
+
+    var eleitos, ocupantes;
+    if (d.sistema === "proporcional") {
+      var cad = Cadastro.montarListasProporcionais({}, { disputaId: d.id, partidos: dados.partidos, federacoes: dados.federacoes,
+        identPartidaria: dados.identPartidaria, semIdentificacao: dados.semIdentificacao,
+        candidaturas: Array.from(cands.values()).map(function (c) { return { id: c.id, partidoId: c.partidoId }; }) }, rng).resultado;
+      etapas.cadastro = cad;
+      var eleg = elegiveis(cad.listas);
+      var aptos = new Map(), sint = [];
+      eleg.listas.forEach(function (l) {
+        l.aptos.forEach(function (id) { aptos.set(id, cands.get(id)); });
+        var cfg = (dados.sinteticos || {})[l.id] || Comum.erro("sinteticos ausentes para a lista " + l.id);
+        var n = cfg.quantidade === undefined ? l.vagasRestantesSinteticos : Math.min(Comum.inteiro(cfg.quantidade, "quantidade de sintéticos", 0), l.vagasRestantesSinteticos);
+        Sinteticos.gerar({ opcoes: opcoes }, { semente: dados.semente, unidadeId: unidadeId, listaId: l.id, eleicaoId: dados.eleicaoId,
+          quantidadeSinteticos: n, quadros: cfg.quadros, capilaridade: cfg.capilaridade }).resultado.forEach(function (s) { sint.push(s); });
+      });
+      var op = opinioes(Array.from(aptos.values()));
+      var conc = [];
+      aptos.forEach(function (c) { conc.push({ id: c.id, opiniao: op[c.id], maquina: maquinaDe(c) }); });
+      sint.forEach(function (s) { conc.push({ id: s.id, opiniao: s.opiniao, maquina: s.maquinaEfetiva }); });
+      var S = conc.length ? Pontuacao.calcularLote(conc.map(function (c) {
+        return { id: c.id, fatores: { opiniao: c.opiniao, maquina: c.maquina }, pesos: { opiniao: p.v1, maquina: p.v2 }, epsilon: p.epsilon, sigma: p.sigma };
+      }), rng) : { resultado: {}, rngStateNext: rng };
+      rng = S.rngStateNext;
+      var leg = Pontuacao.legendas(cad.listas.map(function (l) {
+        return { id: l.id, lambda: (p.lambda || {})[l.id] === undefined ? Comum.erro("lambda ausente para " + l.id) : p.lambda[l.id], sigma: p.sigmaLegenda };
+      }), rng);
+      rng = leg.rngStateNext;
+      var m8 = comparecimento(1); etapas.comparecimento = m8;
+      var porLista = new Map();
+      cad.listas.forEach(function (l) { porLista.set(l.id, []); });
+      aptos.forEach(function (c) { porLista.get(eleg.listas.filter(function (l) { return l.aptos.indexOf(c.id) >= 0; })[0].id).push({ id: c.id, S: S.resultado[c.id], idade: idadeNaPosse(c) }); });
+      sint.forEach(function (s) { porLista.get(s.listaId).push({ id: s.id, S: S.resultado[s.id], idade: Comum.inteiro(p.idadeSinteticos, "idadeSinteticos (calibrar)", 0) }); });
+      var m9 = Proporcional.apurar({}, { disputaId: d.id, validos: m8.validos, delta: p.delta, semIdentificacao: dados.semIdentificacao,
+        listas: cad.listas.map(function (l) { return { id: l.id, identPartidaria: l.identPartidaria, lambda: leg.resultado[l.id],
+          candidatos: porLista.get(l.id).map(function (c) { return { id: c.id, S: c.S }; }) }; }) }, rng).resultado;
+      etapas.apuracao = m9;
+      var m10 = Cadeiras.distribuir({ opcoes: { minimoNominalFase2: p.minimoNominalFase2, resolverDesempateTecnico: resolver } },
+        { disputaId: d.id, vagas: d.vagas, listas: cad.listas.map(function (l) { return { id: l.id, votosLegenda: m9.legenda[l.id],
+          candidatos: porLista.get(l.id).map(function (c) { return { id: c.id, votos: m9.votos[c.id], idade: c.idade }; }) }; }) }, rng);
+      rng = m10.rngStateNext; etapas.cadeiras = m10.resultado.cadeiras; coletar(desempates, m10.resultado.cadeiras, "cadeiras");
+      eleitos = m10.resultado.cadeiras.eleitos;
+    } else {
+      var chp = Cadastro.montarChapasMajoritarias({}, { disputaId: d.id, partidos: dados.partidos, federacoes: dados.federacoes,
+        identPartidaria: dados.identPartidaria, semIdentificacao: dados.semIdentificacao,
+        chapas: (dados.chapas || []).map(function (c) { return { id: c.id, titular: c.titular, coligados: c.coligados, adesao: c.adesao }; }) }, rng).resultado;
+      etapas.cadastro = chp;
+      var feds = new Map((dados.federacoes || []).map(function (f) { return [f.id, f.partidos]; }));
+      var candDe = new Map((dados.chapas || []).map(function (c) { return [c.id, c.candidato]; }));
+      var eg = elegiveis(chp.chapas.map(function (c) { return { id: c.id, membros: feds.has(c.titular) ? feds.get(c.titular) : [c.titular], candidatos: [candDe.get(c.id)] }; }));
+      var validas = chp.chapas.filter(function (c) { return eg.listas.filter(function (l) { return l.id === c.id; })[0].aptos.length === 1; });
+      if (validas.length === 0) Comum.erro("nenhuma chapa com candidato elegível");
+      var opm = opinioes(validas.map(function (c) { return cands.get(candDe.get(c.id)); }));
+      var Sm = Pontuacao.calcularLote(validas.map(function (c) {
+        var cand = cands.get(candDe.get(c.id));
+        return { id: c.id, fatores: { opiniao: opm[cand.id], identChapa: c.identChapa, maquina: maquinaDe(cand) },
+          pesos: { opiniao: p.m1, identChapa: p.m2, maquina: p.m3 }, epsilon: p.epsilon, sigma: p.sigma };
+      }), rng);
+      rng = Sm.rngStateNext;
+      var chapasS = validas.map(function (c) { return { id: c.id, S: Sm.resultado[c.id] }; });
+      var est = { opcoes: { resolverDesempateTecnico: resolver } };
+      var r1;
+      if (d.cargo === "SENADOR") {
+        var m8s = comparecimento(1); etapas.comparecimento = m8s;
+        r1 = d.vagas === 1
+          ? Senado.apurar(est, { disputaId: d.id, vagas: 1, eleitorado: dados.eleitorado, validos: m8s.validos, D: p.D, chapas: chapasS }, rng)
+          : Senado.apurar(est, { disputaId: d.id, vagas: 2, eleitorado: dados.eleitorado, validos1: m8s.validos, taxaInvalidos2: p.taxaInvalidos2, chapas: chapasS }, rng);
+      } else {
+        var m8m = comparecimento(1); etapas.comparecimento = m8m;
+        r1 = Majoritaria.apurar(est, { disputaId: d.id, cargo: d.cargo, vagas: 1, eleitorado: dados.eleitorado, validos: m8m.validos, D: p.D, chapas: chapasS }, rng);
+      }
+      rng = r1.rngStateNext; etapas.primeiroTurno = r1.resultado; coletar(desempates, r1.resultado, "primeiroTurno");
+      eleitos = r1.resultado.eleitos;
+      if (r1.resultado.segundoTurno) {
+        var c1 = etapas.comparecimento;
+        var t1 = { votos: r1.resultado.votos, votosNaoModelados: r1.resultado.votosNaoModelados, brancos: c1.brancos, nulos: c1.nulos,
+          anulados: c1.anulados, anuladosSubJudice: c1.anuladosSubJudice, anuladosApuracaoSeparada: c1.anuladosApuracaoSeparada,
+          abstencao: c1.abstencao, eleitoresSecoesNaoInstaladas: c1.eleitoresSecoesNaoInstaladas };
+        var r2 = SegundoTurno.apurar(est, { disputaId: d.id, eleitorado: dados.eleitorado, primeiroTurno: t1, finalistas: r1.resultado.finalistas,
+          pesos: p.pesosSegundoTurno, proporcoesInvalidos2: p.proporcoesInvalidos2 }, rng);
+        rng = r2.rngStateNext; etapas.segundoTurno = r2.resultado; coletar(desempates, r2.resultado, "segundoTurno");
+        eleitos = [r2.resultado.eleito];
+      }
+      eleitos = eleitos.map(function (ch) { return candDe.get(ch); });
+    }
+    ocupantes = Posse.empossar({}, { disputaId: d.id, cargo: d.cargo, eleitos: eleitos, dataPosse: dados.posse.dataPosse, fimMandato: dados.posse.fimMandato }, rng).resultado.ocupantes;
+    var out = { disputaId: d.id, cargo: d.cargo, sistema: d.sistema, eleitos: eleitos, ocupantes: ocupantes, desempates: desempates, etapas: etapas };
+    return { resultado: JSON.parse(JSON.stringify(out)), rngStateNext: rng };
+  }
+  return Object.freeze({ executar: executar });
+})();
+
 return Object.freeze({ RNG: RNG, Dados: Dados, MaiorResto: MaiorResto, Pontuacao: Pontuacao, Comparecimento: Comparecimento,
   Proporcional: Proporcional, Majoritaria: Majoritaria, Senado: Senado, SegundoTurno: SegundoTurno, Cadeiras: Cadeiras,
   Cadastro: Cadastro, Sinteticos: Sinteticos, Opiniao: Opiniao, Maquina: Maquina, Campanha: Campanha,
-  Datas: Datas, Elegibilidade: Elegibilidade, Posse: Posse, Fechamento: Fechamento });
+  Datas: Datas, Elegibilidade: Elegibilidade, Posse: Posse, Fechamento: Fechamento, Desempate: Desempate, Eleicao: Eleicao });
 })();
 </script>
 </body>
