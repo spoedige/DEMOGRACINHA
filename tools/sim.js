@@ -4,7 +4,7 @@
 // Nenhum parâmetro calibrável nasce aqui: valores e formas das distribuições vêm do arquivo de cenário.
 //   node tools/sim.js --cenario tools/cenarios/vereador.json [--semente v1-X]
 //   node tools/sim.js --cenario tools/cenarios/vereador.json --rodadas 200 [--semente-base v1-LOTE]
-//   node tools/sim.js --cenario tools/cenarios/carreira.json --carreira [--anos N] [--semente v1-X] [--cartas arquivo.json [--eventos arquivo.json]]
+//   node tools/sim.js --cenario tools/cenarios/carreira.json --carreira [--anos N] [--semente v1-X] [--cartas arquivo.json [--eventos arquivo.json]] [--modelos arquivo.json]
 const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
@@ -79,9 +79,12 @@ function lote(Motor, cen, base, n) {
 // Carreira (D75): avança janela a janela. Sem catálogo, janelas manuais recebem decisões vazias; com catálogo
 // (--cartas, D76; --eventos, D77), escolhem a contenção nos eventos e a carta segura da prévia, como a automática.
 // eleicoes[ano] lista arquivos de cenário de disputa, relativos ao arquivo da carreira.
-function carreira(Motor, cen, dir, anos, catalogo, eventos) {
+// Com --modelos (D78), J3 escolhe a oferta de maior aderência à ambição (desempate por id); sem oferta, não concorre.
+// É política do simulador, não regra do motor.
+function carreira(Motor, cen, dir, anos, catalogo, eventos, modelos) {
   const eleicoes = {};
-  Object.keys(cen.eleicoes || {}).forEach((a) => {
+  // com --modelos, a candidatura nasce em J3; os cenários prontos com o personagem (D75) não são carregados
+  Object.keys(modelos ? {} : (cen.eleicoes || {})).forEach((a) => {
     eleicoes[a] = cen.eleicoes[a].map((f) => JSON.parse(fs.readFileSync(path.join(dir, f), "utf8")));
   });
   let e = Motor.Carreira.criar({}, cen, null).resultado;
@@ -92,18 +95,32 @@ function carreira(Motor, cen, dir, anos, catalogo, eventos) {
     if (!catalogo) throw new Error("--eventos exige --cartas");
     dados.eventos = eventos.eventos;
   }
+  if (modelos) ["modelosDisputa", "oportunidades", "regrasCargo", "ambicoesCargos", "governos"].forEach((k) => { dados[k] = modelos[k]; });
+  const escolherOferta = (ofs) => {
+    if (!ofs.length) return "naoConcorrer";
+    return ofs.slice().sort((a, b) => (b.ficha.aderenciaAmbicao - a.ficha.aderenciaAmbicao) || (a.id < b.id ? -1 : 1))[0].id;
+  };
   const decidir = () => {
     const dec = { compromissos: {}, eventos: {} };
     let p = Motor.Carreira.previa(e, dados, { opcoes, decisoes: dec });
     p.eventos.forEach((x) => { dec.eventos[x.id] = x.opcoes.find((o) => o.contencao).id; });
     if (p.eventos.length) p = Motor.Carreira.previa(e, dados, { opcoes, decisoes: dec });
+    if (p.candidaturas) { dec.candidatura = escolherOferta(p.candidaturas); p = Motor.Carreira.previa(e, dados, { opcoes, decisoes: dec }); }
     dec.carta = p.mao.segura;
+    return dec;
+  };
+  const decidirSemCartas = () => {
+    const dec = { compromissos: {} };
+    if (modelos && e.tempo.janela === "J3" && Motor.Carreira.tipoAno(e.tempo.ano) === "eleitoral") {
+      const ofs = Motor.Candidatura.ofertas(e, dados);
+      if (ofs.length) dec.candidatura = escolherOferta(ofs);
+    }
     return dec;
   };
   while (e.tempo.ano < fim) {
     const manual = Motor.Carreira.ehManual(e);
     let decisoes;
-    if (manual) decisoes = catalogo ? decidir() : { compromissos: {} };
+    if (manual) decisoes = catalogo ? decidir() : decidirSemCartas();
     const r = Motor.Carreira.avancar(e, dados, { opcoes, decisoes });
     e = r.resultado.estado;
     r.resultado.ocorrencias.forEach((o) => ocorrencias.push(o));
@@ -124,7 +141,8 @@ function principal(argv) {
     const c = arg("--semente") ? { ...cen, semente: arg("--semente") } : cen;
     const cat = arg("--cartas") ? JSON.parse(fs.readFileSync(arg("--cartas"), "utf8")) : undefined;
     const evs = arg("--eventos") ? JSON.parse(fs.readFileSync(arg("--eventos"), "utf8")) : undefined;
-    return canonico(carreira(Motor, c, path.dirname(arq), anos, cat, evs));
+    const mods = arg("--modelos") ? JSON.parse(fs.readFileSync(arg("--modelos"), "utf8")) : undefined;
+    return canonico(carreira(Motor, c, path.dirname(arq), anos, cat, evs, mods));
   }
   const n = arg("--rodadas");
   const out = n === undefined ? rodar(Motor, cen, arg("--semente") || cen.semente)

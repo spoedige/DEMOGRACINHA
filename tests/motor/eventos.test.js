@@ -183,14 +183,14 @@ test("módulo 3: inelegibilidade reconhecida torna o candidato inapto; na carrei
   assert.equal(h.personagemEleito, false); assert.ok(!h.eleitos.includes("A1"));
 });
 
-test("save: migração 1 para 2 em cadeia; status sem correspondência recusado", () => {
+test("save: migração 1 para 2 (e 3) em cadeia; status sem correspondência recusado", () => {
   const e = novo(); e.compromissos.ativos = [{ id: "K1", tipo: "votoEmProposta", ator: "P2", objeto: "x", prazo: { ano: 2027, janela: "C4" },
     custo: { recurso: "bancada", quantidade: 0 }, contrapartida: "x", seCumprir: "x", seRomper: "x", custoPoliticoDeRomper: 1, estado: "ativo" }];
   const v1 = JSON.parse(Save.serializar(e));
   v1.saveVersion = 1; delete v1.eventosRecentes;
   ["estadosTemporarios", "denunciaRegistrada", "condenacaoEnquadrada"].forEach((k) => delete v1.personagem[k]);
   const m = Save.ler(JSON.stringify(v1));
-  assert.equal(m.saveVersion, 2);
+  assert.equal(m.saveVersion, 3); // 1 -> 2 -> 3 em cadeia
   const esperado = plano(e); esperado.compromissos.ativos[0].efeitosCumprir = []; esperado.compromissos.ativos[0].efeitosRomper = []; esperado.compromissos.ativos[0].retaliacao = null;
   assert.deepEqual(plano(m), esperado);
   v1.personagem.statusJuridico = "processado";

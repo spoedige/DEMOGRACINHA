@@ -8,7 +8,7 @@
   "eleicoes": { "2028": ["vereador.json"] },
   "inicio": {
     "personagem": {
-      "id": "A1", "origem": "liderComunitario", "redePoliticaPrevia": "indireta", "dataNascimento": "1990-05-10",
+      "id": "A1", "origem": "liderComunitario", "redePoliticaPrevia": "indireta", "dataNascimento": "1990-05-10", "dataFiliacao": "2025-06-01",
       "municipioInicial": "EX001", "ufInicial": "EX", "partidoId": "P1", "potencial": 50,
       "aptidoes": { "articulacao": 0.5, "comunicacao": 0.5, "mobilizacao": 0.6, "gestao": 0.4, "estrategia": 0.5, "resiliencia": 0.5 },
       "capacidade": { "articulacao": 0.3, "comunicacao": 0.3, "mobilizacao": 0.4, "gestao": 0.2, "estrategia": 0.3, "resiliencia": 0.3 },

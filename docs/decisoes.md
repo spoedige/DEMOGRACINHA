@@ -437,3 +437,17 @@ Aprovada pelo autor antes da implementação.
 7. Save na versão 2, com `MIGRAR[1]`. Os testes da D75 foram ajustados à versão 2 (versão atual 2; versão mais nova de teste 3; texto acentuado do teste de export passou de `statusJuridico`, agora em lista fechada, para `tags`).
 8. `Carreira.previa` em duas fases: `{ eventos, mao }`. Os testes da D76 e o simulador foram ajustados a esse formato.
 9. Catálogo artificial em `tools/cenarios/eventos-exemplo.json`; o compromisso da carta de acordo em `cartas-exemplo.json` ganhou desfecho em dados e retaliação.
+
+## D78. Candidatura em J3 e ficha de oportunidade, 19/11/2026
+
+Aprovada pelo autor antes da implementação.
+1. Modelos de disputa recebidos por ano (`dados.modelosDisputa`), no formato dos cenários, sem o personagem; os modelos reais virão da 1B (D64) sem mudar o contrato.
+2. Oferta determinística, sem sorteio: modelo, módulo 3, saldo e condições declarativas do catálogo; capital político não é calculado (regra de não duplicação).
+3. Custo da candidatura só em Caixa Pessoal ou nenhum; Fundo de Campanha só a partir de J4 (D76).
+4. Risco na ficha em texto do catálogo; o motor não estima chance de vitória.
+5. Prévia em três fases: `{ eventos, candidaturas, mao }`. Na janela automática, `naoConcorrer`.
+6. Save na versão 3: `personagem.dataFiliacao` e `candidaturas`; `MIGRAR[2]` exige a data de filiação no save ou em `ctx`, sem inventar.
+7. Unidade do personagem: `municipioLocal` nos cargos municipais, `ufInicial` nos estaduais, unidade do modelo para presidente.
+8. Vice fica para a D79. Até lá, chefe do Executivo só disputa a reeleição (desincompatibilização por renúncia ainda não existe).
+9. `semOpiniao = max(0, notoriedade - popularidade - rejeicao)` na montagem da disputa, contra resíduo de ponto flutuante. Em disputa estadual ou nacional, a base própria fora dos municípios detalhados entra pelo `base.agregadoRegional` (motor-eleitoral 4.5).
+10. Personagem em mais de uma disputa no mesmo ano é erro. Os testes das D75 e D77 foram ajustados à versão 3 do save, e `carreira.json` ganhou `dataFiliacao`.

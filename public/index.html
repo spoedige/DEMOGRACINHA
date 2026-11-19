@@ -1719,7 +1719,7 @@ var Eleicao = (function () {
 // altera o estado recebido. Nenhum valor inicial ou taxa nasce aqui: valores vêm de dados.inicio (calibrar) e regras
 // sem fórmula documentada (decisão automática, desfecho de compromisso, evento, manutenção) vêm injetadas em entrada.opcoes.
 var Carreira = (function () {
-  var SAVE_VERSION = 2; // D77: estados temporários, escada jurídica e bloqueio de famílias de evento
+  var SAVE_VERSION = 3; // D77: estados temporários e escada jurídica; D78: candidaturas e data de filiação
   var RITMOS = ["intenso", "normal", "express"];
   var ESCOPOS = ["local", "estadual", "nacional"];
   var APTIDOES = ["articulacao", "comunicacao", "mobilizacao", "gestao", "estrategia", "resiliencia"];
@@ -1795,7 +1795,7 @@ var Carreira = (function () {
     var p = obj(e.personagem, "personagem");
     Comum.idv(p.id, "personagem.id"); Comum.idv(p.origem, "personagem.origem");
     if (["nenhuma", "indireta", "direta"].indexOf(p.redePoliticaPrevia) < 0) erro("personagem.redePoliticaPrevia inválida");
-    data(p.dataNascimento, "personagem.dataNascimento");
+    data(p.dataNascimento, "personagem.dataNascimento"); data(p.dataFiliacao, "personagem.dataFiliacao (dado de entrada, calibrar)");
     Comum.idv(p.municipioInicial, "personagem.municipioInicial"); Comum.idv(p.municipioLocal, "personagem.municipioLocal");
     Comum.idv(p.ufInicial, "personagem.ufInicial");
     if (p.partidoId !== null) Comum.idv(p.partidoId, "personagem.partidoId");
@@ -1850,6 +1850,11 @@ var Carreira = (function () {
       if (janelasDo(x.janelaAlvo.ano).indexOf(x.janelaAlvo.janela) < 0) erro("evento " + x.id + ": janelaAlvo inválida");
     });
     lista(e.historico, "historico");
+    lista(e.candidaturas, "candidaturas").forEach(function (c, i) {
+      Comum.inteiro(c.ano, "candidatura " + i + ".ano", 2026); Comum.idv(c.disputaId, "candidatura " + i + ".disputaId");
+      Comum.idv(c.ofertaId, "candidatura " + i + ".ofertaId"); Comum.idv(c.listaOuChapaId, "candidatura " + i + ".listaOuChapaId");
+      if (c.tipo !== "proporcional" && c.tipo !== "cabecaDeChapa") erro("candidatura " + i + ".tipo inválido");
+    });
     obj(e.eventosRecentes, "eventosRecentes");
     Object.keys(e.eventosRecentes).forEach(function (f) { Comum.idv(f, "eventosRecentes"); validarTempo(e.eventosRecentes[f], "eventosRecentes." + f); });
     return e;
@@ -1869,7 +1874,7 @@ var Carreira = (function () {
       indicadores: copia(ini.indicadores), bolsos: copia(ini.bolsos), relacoes: copia(ini.relacoes), grupo: copia(ini.grupo),
       base: copia(ini.base), compromissos: { ativos: [], historico: [] }, cargos: { mandatos: [], nomeacoes: [] },
       basesParlamentares: [], conjuntura: copia(ini.conjuntura || {}), filaEventos: copia(ini.filaEventos || []), historico: [],
-      eventosRecentes: {}
+      eventosRecentes: {}, candidaturas: []
     };
     var pp = e.personagem;
     pp.municipioLocal = pp.municipioLocal || pp.municipioInicial;
@@ -1979,15 +1984,44 @@ var Carreira = (function () {
   }
   // Prévia da mão da janela, após os passos 1 a 3, sem alterar nada: o que a interface mostra antes da escolha.
   // Duas fases (D77): primeiro os eventos que pedem escolha; a mão só vem quando todas as escolhas foram informadas.
+  // Três fases (D78): eventos pendentes; depois, em J3, ofertas de candidatura sem decisão; depois a mão.
   function previa(estado, dados, entrada) {
     if (!dados || dados.cartas === undefined) erro("previa exige catálogo de cartas");
     var en = copia(entrada || {}); en.opcoes = (entrada || {}).opcoes; en.previa = true;
     var a = abrir(estado, dados, en);
-    return { eventos: a.pendentes, mao: a.pendentes.length ? null : Cartas.montarMao(a.e, dados, a.e.rng.cartas).resultado };
+    if (a.pendentes.length) return { eventos: a.pendentes, candidaturas: null, mao: null };
+    var c = decidirCandidatura(a.e, dados, a.manual, en.decisoes, a.oc, true);
+    if (c.pendente) return { eventos: [], candidaturas: c.ofertas, mao: null };
+    return { eventos: [], candidaturas: null, mao: Cartas.montarMao(c.estado, dados, c.estado.rng.cartas).resultado };
+  }
+  // Passo 3b (D78): em J3 de ano eleitoral, com modelos de disputa, oferta e registro da candidatura.
+  function decidirCandidatura(e, dados, manual, decisoes, oc, ehPrevia) {
+    var t = e.tempo;
+    if (!dados || dados.modelosDisputa === undefined || t.janela !== "J3" || tipoAno(t.ano) !== "eleitoral") {
+      if (decisoes && decisoes.candidatura !== undefined) erro("decisão de candidatura fora de J3 de ano eleitoral");
+      return { estado: e, pendente: false };
+    }
+    var ofertas = Candidatura.ofertas(e, dados);
+    var escolha = manual ? (decisoes && decisoes.candidatura) : "naoConcorrer";
+    if (ofertas.length === 0 && (escolha === undefined || escolha === "naoConcorrer")) return { estado: e, pendente: false };
+    if (escolha === undefined) {
+      if (ehPrevia) return { estado: e, pendente: true, ofertas: ofertas };
+      erro("decisão de candidatura obrigatória em J3 (oferta ou naoConcorrer)");
+    }
+    if (escolha === "naoConcorrer") {
+      e.historico.push({ ano: t.ano, janela: t.janela, tipo: "candidatura", ofertaId: null, ofertas: ofertas.map(function (o) { return o.id; }) });
+      oc.push({ tipo: "naoConcorreu" });
+      return { estado: e, pendente: false };
+    }
+    var o = ofertas.filter(function (x) { return x.id === escolha; })[0] || erro("oferta de candidatura inexistente: " + escolha);
+    e = Candidatura.registrar(e, o);
+    oc.push({ tipo: "candidatura", ofertaId: o.id, disputaId: o.disputaId });
+    return { estado: e, pendente: false };
   }
   function avancar(estado, dados, entrada) {
     var a = abrir(estado, dados, entrada);
     var e = a.e, oc = a.oc, manual = a.manual, t = a.t, en = a.en, opcoes = a.opcoes;
+    e = decidirCandidatura(e, dados, manual, en.decisoes, oc, false).estado;
     // 4. cartas (D76): mão sorteada em toda janela; manual joga a escolhida, automática a segura. Sem catálogo, D75.
     if (dados && dados.cartas !== undefined) {
       var m = Cartas.montarMao(e, dados, e.rng.cartas), mao = m.resultado;
@@ -2003,13 +2037,18 @@ var Carreira = (function () {
     }
     // 5. eleição em J5: cenários de dados.eleicoes[ano], fluxo derivado por disputa (independe do ritmo)
     if (t.janela === "J5") {
-      ((dados && dados.eleicoes && Comum.proprio(dados.eleicoes, String(t.ano))) || []).forEach(function (cen) {
+      // cenários prontos (D75) e disputas das candidaturas do ano, montadas a partir dos modelos (D78)
+      var cens = ((dados && dados.eleicoes && Comum.proprio(dados.eleicoes, String(t.ano))) || []).slice();
+      e.candidaturas.filter(function (c) { return c.ano === t.ano; }).forEach(function (c) { cens.push(Candidatura.montarDisputa(e, dados, c)); });
+      var comPersonagem = cens.filter(function (cen) { return (cen.candidatos || []).some(function (c) { return c.id === e.personagem.id; }); });
+      if (comPersonagem.length > 1) erro("personagem em mais de uma disputa no ano " + t.ano + ": " + comPersonagem.map(function (c) { return c.disputa.id; }).join(", "));
+      cens.forEach(function (cen) {
         var op = typeof opcoes.opcoesEleicao === "function" ? opcoes.opcoesEleicao(cen) : {};
         var dd = copia(cen); dd.semente = e.semente;
         (dd.candidatos || []).forEach(function (c) { if (c.id === e.personagem.id && e.personagem.statusJuridico === "inelegibilidadeReconhecida") c.inelegibilidadeReconhecida = true; });
         var r = Eleicao.executar({ opcoes: op }, dd, RNG.criar(e.semente, "eleicao", cen.eleicaoId, cen.disputa.id)).resultado;
         var eleito = r.eleitos.indexOf(e.personagem.id) >= 0;
-        if (eleito) e.cargos.mandatos.push({ disputaId: r.disputaId, cargo: r.cargo, inicio: cen.posse.dataPosse, fim: cen.posse.fimMandato, situacao: "eleito" });
+        if (eleito) e.cargos.mandatos.push({ disputaId: r.disputaId, cargo: r.cargo, unidadeId: cen.disputa.unidadeId, inicio: cen.posse.dataPosse, fim: cen.posse.fimMandato, situacao: "eleito" });
         e.historico.push({ ano: t.ano, janela: t.janela, tipo: "eleicao", disputaId: r.disputaId, eleitos: r.eleitos, personagemEleito: eleito });
         oc.push({ tipo: "eleicao", disputaId: r.disputaId, personagemEleito: eleito });
       });
@@ -2054,6 +2093,18 @@ var Save = (function () {
       });
       e.saveVersion = 2;
       return e;
+    },
+    // 2 -> 3 (D78): candidaturas e data de filiação. A data é dado legal usado pelo módulo 3 e não é inventada:
+    // vem do próprio save ou de ctx.dataFiliacao; sem ela, erro.
+    2: function (v, ctx) {
+      var e = JSON.parse(JSON.stringify(v)), p = e.personagem || {};
+      if (p.dataFiliacao === undefined) {
+        if (!ctx || ctx.dataFiliacao === undefined) Comum.erro("migração 2: dataFiliacao obrigatória (informe ctx.dataFiliacao)");
+        p.dataFiliacao = ctx.dataFiliacao;
+      }
+      if (e.candidaturas === undefined) e.candidaturas = [];
+      e.saveVersion = 3;
+      return e;
     }
   });
   function canonico(x) {
@@ -2062,7 +2113,7 @@ var Save = (function () {
     return JSON.stringify(x);
   }
   function serializar(estado) { return canonico(Carreira.validar(estado)); }
-  function ler(texto, migrar) {
+  function ler(texto, migrar, ctx) {
     var m = migrar || MIGRAR, e;
     try { e = JSON.parse(texto); } catch (x) { Comum.erro("save ilegível"); }
     if (!e || typeof e !== "object" || !Number.isSafeInteger(e.saveVersion) || e.saveVersion < 1) Comum.erro("save sem saveVersion válido");
@@ -2070,7 +2121,7 @@ var Save = (function () {
     while (e.saveVersion < Carreira.SAVE_VERSION) {
       var f = m[e.saveVersion];
       if (typeof f !== "function") Comum.erro("sem migração da versão " + e.saveVersion);
-      var n = e.saveVersion; e = f(e);
+      var n = e.saveVersion; e = f(e, ctx);
       if (e.saveVersion !== n + 1) Comum.erro("migração " + n + " não avançou a versão");
     }
     return Carreira.validar(e);
@@ -2106,7 +2157,7 @@ var Save = (function () {
     }
     return PREFIXO + o;
   }
-  function importar(codigo, migrar) {
+  function importar(codigo, migrar, ctx) {
     if (typeof codigo !== "string" || codigo.indexOf(PREFIXO) !== 0) Comum.erro("código de save sem prefixo " + PREFIXO);
     var s = codigo.slice(PREFIXO.length).replace(/\s+/g, "");
     if (s.length % 4 !== 0 || !/^[A-Za-z0-9+/]*={0,2}$/.test(s)) Comum.erro("código de save corrompido");
@@ -2116,7 +2167,7 @@ var Save = (function () {
       var x = v[0] << 18 | v[1] << 12 | v[2] << 6 | v[3];
       b.push(x >> 16 & 255); if (s[i + 2] !== "=") b.push(x >> 8 & 255); if (s[i + 3] !== "=") b.push(x & 255);
     }
-    return ler(deUtf8(b), migrar);
+    return ler(deUtf8(b), migrar, ctx);
   }
   return Object.freeze({ PREFIXO: PREFIXO, MIGRAR: MIGRAR, canonico: canonico, serializar: serializar, ler: ler, exportar: exportar, importar: importar });
 })();
@@ -2530,14 +2581,198 @@ var Eventos = (function () {
     });
     return { estado: e, ocorrencias: oc, pendentes: pend };
   }
-  return Object.freeze({ validarCatalogo: validarCatalogo, resolverJanela: resolverJanela, JURIDICO: JURIDICO });
+  return Object.freeze({ validarCatalogo: validarCatalogo, resolverJanela: resolverJanela, JURIDICO: JURIDICO, validarCondicao: validarCondicao, vale: vale });
+})();
+
+/* == CANDIDATURA == */
+// Candidatura em J3 e ficha de oportunidade (carreira-e-poder 7, 8 e 10.5; GDD 3 e 4; D78). Sem RNG: a oferta nasce do
+// cruzamento entre modelo de disputa, módulo 3, saldo e condições declarativas do catálogo. Capital político não é
+// calculado: as condições usam os componentes (regra de não duplicação, carreira-e-poder 1).
+var Candidatura = (function () {
+  var erro = Comum.erro;
+  var LOCAIS = { VEREADOR: true, PREFEITO: true };
+  var PROPORCIONAL = { VEREADOR: true, DEPUTADO_ESTADUAL: true, DEPUTADO_DISTRITAL: true, DEPUTADO_FEDERAL: true };
+  function escopoDe(cargo) { return LOCAIS[cargo] ? "local" : cargo === "PRESIDENTE" ? "nacional" : "estadual"; }
+  // "escopo.notoriedade" vira o indicador do escopo do cargo (GDD 5; eventos-e-risco 2.1)
+  function resolverCondicao(cond, cargo) {
+    return (cond || []).map(function (c) {
+      var m = /^escopo\.(notoriedade|popularidade|rejeicao)$/.exec(c.alvo);
+      return m ? { alvo: "indicadores." + escopoDe(cargo) + "." + m[1], op: c.op, valor: c.valor } : c;
+    });
+  }
+  function validarCatalogo(dados) {
+    var ops = dados.oportunidades;
+    if (!Array.isArray(ops) || ops.length === 0) erro("oportunidades: catálogo não vazio");
+    var ids = new Set();
+    ops.forEach(function (o) {
+      var campo = "oportunidade " + Comum.idv(o && o.id, "oportunidade.id");
+      if (ids.has(o.id)) erro(campo + " repetida"); ids.add(o.id);
+      if (o.tipo !== "proporcional" && o.tipo !== "cabecaDeChapa") erro(campo + ".tipo: proporcional ou cabecaDeChapa");
+      if (!Array.isArray(o.cargos) || o.cargos.length === 0) erro(campo + ".cargos: lista não vazia");
+      o.cargos.forEach(function (c) {
+        if (!Object.prototype.hasOwnProperty.call(Dados.CARGOS, c)) erro(campo + ": cargo desconhecido " + c);
+        if (!!PROPORCIONAL[c] !== (o.tipo === "proporcional")) erro(campo + ": cargo " + c + " incompatível com o tipo " + o.tipo);
+        Eventos.validarCondicao(resolverCondicao(o.condicao, c), campo + ".condicao");
+      });
+      if (o.custo !== null && o.custo !== undefined) {
+        // em J3 só Caixa Pessoal: Fundo de Campanha só a partir de J4 (D76, D78)
+        if (o.custo.recurso !== "caixaPessoal") erro(campo + ".custo: só caixaPessoal em J3");
+        Comum.inteiro(o.custo.quantidade, campo + ".custo.quantidade", 1);
+      }
+      if (typeof o.risco !== "string" || o.risco === "") erro(campo + ".risco: texto descritivo obrigatório");
+    });
+    var rc = dados.regrasCargo || erro("regrasCargo obrigatório (calibrar)");
+    var amb = dados.ambicoesCargos || erro("ambicoesCargos obrigatório");
+    Object.keys(amb).forEach(function (a) { if (!Array.isArray(amb[a])) erro("ambicoesCargos." + a + ": lista de cargos"); });
+    var gov = dados.governos || erro("governos obrigatório (posição na coalizão)");
+    return { rc: rc, amb: amb, gov: gov };
+  }
+
+  function mandatoAtual(e) {
+    var ms = e.cargos.mandatos.filter(function (m) { return m.situacao === "exercicio"; });
+    if (ms.length === 0) return undefined;
+    var atual = ms[ms.length - 1];
+    // mandatos consecutivos no mesmo cargo e unidade: o seguinte começa no ano do fim do anterior ou no ano seguinte
+    var mesmos = e.cargos.mandatos.filter(function (m) { return m.cargo === atual.cargo && m.unidadeId === atual.unidadeId && m.situacao !== "eleito"; })
+      .sort(function (a, b) { return a.inicio < b.inicio ? -1 : 1; });
+    var n = 1;
+    for (var i = mesmos.length - 1; i > 0; i--) {
+      var gap = Number(mesmos[i].inicio.slice(0, 4)) - Number(mesmos[i - 1].fim.slice(0, 4));
+      if (mesmos[i].inicio > mesmos[i - 1].fim && gap <= 1) n++; else break;
+    }
+    return { cargo: atual.cargo, unidadeId: atual.unidadeId, consecutivos: n };
+  }
+  function unidadeDoPersonagem(e, cargo, modelo) {
+    if (LOCAIS[cargo]) return e.personagem.municipioLocal;
+    if (cargo === "PRESIDENTE") return modelo.disputa.unidadeId; // país
+    return e.personagem.ufInicial;
+  }
+  function listaDoPartido(modelo, partidoId) {
+    var f = (modelo.federacoes || []).filter(function (x) { return x.partidos.indexOf(partidoId) >= 0; })[0];
+    return f ? { id: f.id, membros: f.partidos } : { id: partidoId, membros: [partidoId] };
+  }
+  function candidatoBase(e) {
+    var p = e.personagem;
+    return { id: p.id, partidoId: p.partidoId, dataNascimento: p.dataNascimento, dataFiliacao: p.dataFiliacao,
+      mandatoAtual: mandatoAtual(e), inelegibilidadeReconhecida: p.statusJuridico === "inelegibilidadeReconhecida" };
+  }
+  function aptoNoModulo3(e, modelo, lista) {
+    var c = candidatoBase(e);
+    if (c.mandatoAtual === undefined) delete c.mandatoAtual;
+    var r = Elegibilidade.avaliar({}, { cargo: modelo.disputa.cargo, unidadeId: modelo.disputa.unidadeId, calendario: modelo.calendario,
+      limiteLista: 1, listas: [{ id: lista.id, membros: lista.membros, candidatos: [c] }] }, null).resultado;
+    return r.listas[0].aptos.length === 1;
+  }
+
+  // Ofertas da J3: cada par (modelo do ano, regra do catálogo) em que tudo vale. Ordem por id da oferta.
+  function ofertas(e, dados) {
+    var cfg = validarCatalogo(dados), t = e.tempo, p = e.personagem, out = [];
+    if (!p.partidoId) return out;
+    var modelos = Comum.proprio(dados.modelosDisputa, String(t.ano)) || [];
+    if (!Array.isArray(modelos)) erro("modelosDisputa." + t.ano + ": lista");
+    if (e.candidaturas.some(function (c) { return c.ano === t.ano; })) return out; // uma candidatura por ano
+    modelos.forEach(function (mo) {
+      var d = Dados.disputa(mo.disputa), cargo = d.cargo;
+      if (d.ano !== t.ano) erro("modelo " + d.id + " de outro ano");
+      if (d.unidadeId !== unidadeDoPersonagem(e, cargo, mo)) return;
+      if (!(mo.partidos || []).some(function (x) { return (typeof x === "string" ? x : x.id) === p.partidoId; })) return;
+      var lista = listaDoPartido(mo, p.partidoId);
+      dados.oportunidades.forEach(function (o) {
+        if (o.cargos.indexOf(cargo) < 0) return;
+        if (!Eventos.vale(e, resolverCondicao(o.condicao, cargo))) return;
+        if (o.custo && e.bolsos.caixaPessoal < o.custo.quantidade) return;
+        var alvoId;
+        if (o.tipo === "proporcional") {
+          var na = (mo.candidatos || []).filter(function (c) { return lista.membros.indexOf(c.partidoId) >= 0; }).length;
+          if (na >= Comum.inteiro(mo.limiteLista, "limiteLista do modelo " + d.id, 0)) return;
+          alvoId = lista.id;
+        } else {
+          var ch = (mo.chapas || []).filter(function (c) { return c.titular === lista.id || c.titular === p.partidoId; })[0];
+          if (!ch) return;
+          alvoId = ch.id;
+        }
+        if (!aptoNoModulo3(e, mo, lista)) return;
+        var esc = escopoDe(cargo), regra = Comum.proprio(cfg.rc, cargo) || erro("regrasCargo sem o cargo " + cargo + " (calibrar)");
+        var ambs = p.ambicao.filter(function (a) { return (Comum.proprio(cfg.amb, a) || []).indexOf(cargo) >= 0; }).length;
+        var posGov = Comum.proprio(Comum.proprio(cfg.gov, esc) || {}, p.partidoId) || "semInformacao";
+        out.push({ id: o.id + ":" + d.id, oportunidadeId: o.id, tipo: o.tipo, disputaId: d.id, cargo: cargo, unidadeId: d.unidadeId,
+          partidoId: p.partidoId, listaOuChapaId: alvoId, custo: o.custo || null,
+          ficha: { eleitoradoAlcancado: mo.eleitorado, exposicaoEsperada: regra.exposicao, recursoPolitico: regra.capitalEntregaPorCiclo,
+            posicaoCoalizao: posGov, papelEsperado: e.indicadores[esc].notoriedade >= regra.notoriedadeProtagonista ? "protagonista" : "coadjuvante",
+            custo: o.custo || null, risco: o.risco, aderenciaAmbicao: ambs } });
+      });
+    });
+    return out.sort(Comum.porId);
+  }
+
+  function registrar(estado, oferta) {
+    var e = JSON.parse(JSON.stringify(estado)), t = e.tempo;
+    if (oferta.custo) e.bolsos.caixaPessoal -= oferta.custo.quantidade;
+    e.candidaturas.push({ ano: t.ano, ofertaId: oferta.id, disputaId: oferta.disputaId, cargo: oferta.cargo, unidadeId: oferta.unidadeId,
+      partidoId: oferta.partidoId, listaOuChapaId: oferta.listaOuChapaId, tipo: oferta.tipo });
+    e.historico.push({ ano: t.ano, janela: t.janela, tipo: "candidatura", ofertaId: oferta.id, disputaId: oferta.disputaId });
+    return e;
+  }
+
+  // Máquina do personagem (motor-eleitoral 4.5): base própria da carreira; demais componentes do modelo (calibrar).
+  function maquinaDe(e, mo) {
+    var mp = mo.maquinaPersonagem || erro("modelo " + mo.disputa.id + ": maquinaPersonagem obrigatória");
+    var base = e.base.municipios;
+    function municipal(municipioId, tpl) {
+      var x = JSON.parse(JSON.stringify(tpl)), b = Comum.proprio(base, municipioId);
+      x.naBase = !!b; x.baseTerritorial = b ? b.forca : 0; // fora do conjunto da base, 0 (D56)
+      return x;
+    }
+    if (LOCAIS[mo.disputa.cargo]) return { municipal: municipal(mo.disputa.unidadeId, mp.municipal || erro("maquinaPersonagem.municipal obrigatória")) };
+    // estadual ou nacional: municípios da base com eleitorado no modelo, mais o agregado regional
+    var ag = mp.estadual || erro("maquinaPersonagem.estadual obrigatória em disputa estadual ou nacional");
+    var munis = Object.keys(base).filter(function (m) { return Comum.proprio(ag.eleitoradoMunicipios || {}, m) !== undefined; }).sort();
+    var municipiosBase = munis.map(function (m) {
+      var r = Maquina.calcularMunicipal({}, (function () {
+        var x = municipal(m, ag.municipal); x.semente = e.semente; x.eleicaoId = mo.eleicaoId; x.candidatoId = e.personagem.id; x.municipioId = m;
+        x.titularId = e.personagem.partidoId; x.escalaGasto = mo.parametros.escalaGasto; x.sigmaT = mo.parametros.sigmaT; return x;
+      })(), null).resultado;
+      return { id: m, eleitorado: ag.eleitoradoMunicipios[m], maquinaEfetiva: r.maquinaEfetiva };
+    });
+    // regional: a base própria entra pelo agregadoRegional, composta com os demais componentes como em 4.5
+    var reg = ag.regional || erro("maquinaPersonagem.estadual.regional obrigatório");
+    var maqReg = 1 - (1 - e.base.agregadoRegional) * (1 - Comum.real(reg.maquinaSemBase, "regional.maquinaSemBase (calibrar)", 0, 1));
+    var a = Maquina.agregarEstadualOuNacional({}, { eleitoradoTotal: mo.eleitorado, municipiosBase: municipiosBase,
+      regional: { eleitorado: reg.eleitorado, municipios: (reg.municipios || []).filter(function (m) { return munis.indexOf(m) < 0; }), maquina: maqReg } }, null).resultado;
+    return { maquinaEfetiva: a.maquinaEfetiva };
+  }
+
+  // Disputa do personagem a partir do modelo (D78): opinião dos indicadores do escopo (motor-eleitoral 2 e 4.6).
+  function montarDisputa(e, dados, cand) {
+    var mo = (Comum.proprio(dados.modelosDisputa, String(cand.ano)) || []).filter(function (m) { return m.disputa.id === cand.disputaId; })[0]
+      || erro("modelo de disputa ausente: " + cand.disputaId);
+    var cen = JSON.parse(JSON.stringify(mo)), i = e.indicadores[escopoDe(cand.cargo)];
+    var c = candidatoBase(e);
+    if (c.mandatoAtual === undefined) delete c.mandatoAtual;
+    c.opiniao = { desconhecimento: 1 - i.notoriedade, popularidade: i.popularidade, rejeicao: i.rejeicao,
+      semOpiniao: Math.max(0, i.notoriedade - i.popularidade - i.rejeicao) }; // resíduo de ponto flutuante (D78)
+    c.maquina = maquinaDe(e, mo);
+    delete cen.maquinaPersonagem;
+    if (cand.tipo === "cabecaDeChapa") {
+      var ch = cen.chapas.filter(function (x) { return x.id === cand.listaOuChapaId; })[0] || erro("chapa ausente no modelo: " + cand.listaOuChapaId);
+      var antigo = ch.candidato;
+      ch.candidato = c.id;
+      cen.candidatos = (cen.candidatos || []).filter(function (x) { return x.id !== antigo; });
+    }
+    if ((cen.candidatos || []).some(function (x) { return x.id === c.id; })) erro("modelo já contém o personagem: " + c.id);
+    cen.candidatos = (cen.candidatos || []).concat([c]);
+    return cen;
+  }
+
+  return Object.freeze({ validarCatalogo: validarCatalogo, ofertas: ofertas, registrar: registrar, montarDisputa: montarDisputa,
+    escopoDe: escopoDe, mandatoAtual: mandatoAtual });
 })();
 
 return Object.freeze({ RNG: RNG, Dados: Dados, MaiorResto: MaiorResto, Pontuacao: Pontuacao, Comparecimento: Comparecimento,
   Proporcional: Proporcional, Majoritaria: Majoritaria, Senado: Senado, SegundoTurno: SegundoTurno, Cadeiras: Cadeiras,
   Cadastro: Cadastro, Sinteticos: Sinteticos, Opiniao: Opiniao, Maquina: Maquina, Campanha: Campanha,
   Datas: Datas, Elegibilidade: Elegibilidade, Posse: Posse, Fechamento: Fechamento, Desempate: Desempate, Eleicao: Eleicao,
-  Carreira: Carreira, Save: Save, Cartas: Cartas, Eventos: Eventos });
+  Carreira: Carreira, Save: Save, Cartas: Cartas, Eventos: Eventos, Candidatura: Candidatura });
 })();
 </script>
 </body>

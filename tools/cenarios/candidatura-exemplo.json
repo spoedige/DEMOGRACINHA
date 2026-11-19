@@ -1,0 +1,802 @@
+{
+ "_cenario": "Modelos de disputa e catálogo de oportunidades artificiais (D78). Derivados de vereador.json, prefeito.json e senado.json, sem o personagem; o modelo de prefeito foi levado ao município EX001. Nenhum valor é dado histórico.",
+ "_parametros": "Limiares, custos, exposição, Capital de Entrega por ciclo e notoriedade de protagonista (calibrar). Calendários (a confirmar).",
+ "modelosDisputa": {
+  "2026": [
+   {
+    "eleicaoId": "2026",
+    "disputa": {
+     "id": "2026|SENADOR|EX|1",
+     "ano": 2026,
+     "cargo": "SENADOR",
+     "unidadeId": "EX",
+     "vagas": 2,
+     "turno": 1,
+     "votosPorEleitor": 2
+    },
+    "eleitorado": 3000000,
+    "taxasEleitorado": {
+     "comparecimento": {
+      "numerador": 80,
+      "denominador": 100
+     },
+     "abstencao": {
+      "numerador": 19,
+      "denominador": 100
+     },
+     "eleitoresSecoesNaoInstaladas": {
+      "numerador": 1,
+      "denominador": 100
+     }
+    },
+    "taxasVotos": {
+     "validos": {
+      "numerador": 90,
+      "denominador": 100
+     },
+     "brancos": {
+      "numerador": 4,
+      "denominador": 100
+     },
+     "nulos": {
+      "numerador": 5,
+      "denominador": 100
+     },
+     "anulados": {
+      "numerador": 1,
+      "denominador": 100
+     },
+     "anuladosSubJudice": {
+      "numerador": 0,
+      "denominador": 100
+     },
+     "anuladosApuracaoSeparada": {
+      "numerador": 0,
+      "denominador": 100
+     }
+    },
+    "partidos": [
+     "P1",
+     "P2",
+     "P3",
+     "P4"
+    ],
+    "federacoes": [],
+    "identPartidaria": {
+     "P1": 0.15,
+     "P2": 0.1,
+     "P3": 0.08,
+     "P4": 0.07
+    },
+    "semIdentificacao": 0.6,
+    "candidatos": [
+     {
+      "id": "S1",
+      "partidoId": "P1",
+      "dataNascimento": "1970-01-01",
+      "dataFiliacao": "2025-06-01",
+      "opiniao": {
+       "desconhecimento": 0.2,
+       "popularidade": 0.3,
+       "rejeicao": 0.2,
+       "semOpiniao": 0.3
+      },
+      "maquina": {
+       "maquinaEfetiva": 0.5
+      }
+     },
+     {
+      "id": "S2",
+      "partidoId": "P2",
+      "dataNascimento": "1970-01-01",
+      "dataFiliacao": "2025-06-01",
+      "opiniao": {
+       "desconhecimento": 0.3,
+       "popularidade": 0.25,
+       "rejeicao": 0.2,
+       "semOpiniao": 0.25
+      },
+      "maquina": {
+       "maquinaEfetiva": 0.4
+      }
+     },
+     {
+      "id": "S3",
+      "partidoId": "P3",
+      "dataNascimento": "1970-01-01",
+      "dataFiliacao": "2025-06-01",
+      "opiniao": {
+       "desconhecimento": 0.4,
+       "popularidade": 0.2,
+       "rejeicao": 0.15,
+       "semOpiniao": 0.25
+      },
+      "maquina": {
+       "maquinaEfetiva": 0.35
+      }
+     },
+     {
+      "id": "S4",
+      "partidoId": "P4",
+      "dataNascimento": "1970-01-01",
+      "dataFiliacao": "2025-06-01",
+      "opiniao": {
+       "desconhecimento": 0.5,
+       "popularidade": 0.15,
+       "rejeicao": 0.1,
+       "semOpiniao": 0.25
+      },
+      "maquina": {
+       "maquinaEfetiva": 0.3
+      }
+     }
+    ],
+    "chapas": [
+     {
+      "id": "SC1",
+      "titular": "P1",
+      "adesao": {
+       "P1": 0.9
+      },
+      "candidato": "S1"
+     },
+     {
+      "id": "SC2",
+      "titular": "P2",
+      "adesao": {
+       "P2": 0.9
+      },
+      "candidato": "S2"
+     },
+     {
+      "id": "SC3",
+      "titular": "P3",
+      "adesao": {
+       "P3": 0.9
+      },
+      "candidato": "S3"
+     },
+     {
+      "id": "SC4",
+      "titular": "P4",
+      "adesao": {
+       "P4": 0.9
+      },
+      "candidato": "S4"
+     }
+    ],
+    "calendario": {
+     "dataRegistro": "2026-08-15",
+     "dataPosse": "2027-02-01",
+     "prazoFiliacao": "2026-04-04",
+     "prazoDesincompatibilizacao": "2026-04-04"
+    },
+    "limiteLista": 1,
+    "posse": {
+     "dataPosse": "2027-02-01",
+     "fimMandato": "2035-01-31"
+    },
+    "parametros": {
+     "epsilon": 0.01,
+     "sigma": 0.3,
+     "sigmaLegenda": 0.2,
+     "alpha": 0.4,
+     "k": 0.8,
+     "v1": 0.6,
+     "v2": 0.4,
+     "m1": 0.6,
+     "m2": 0.25,
+     "m3": 0.15,
+     "delta": 0.2,
+     "D": 0,
+     "escalaGasto": 500000,
+     "sigmaT": 0.3,
+     "minimoNominalFase2": 0,
+     "idadeSinteticos": 40,
+     "taxaInvalidos2": 0.1
+    },
+    "maquinaPersonagem": {
+     "estadual": {
+      "eleitoradoMunicipios": {
+       "EX001": 300000
+      },
+      "municipal": {
+       "estruturaAliada": 0,
+       "aliancaFormal": false,
+       "aliadosEstrutura": [],
+       "aliadosMobilizacao": [],
+       "alocMobilizacao": 200000,
+       "mobAliada": 0,
+       "liderancas": [
+        {
+         "id": "L1",
+         "tipo": "pessoa",
+         "forca": 0.3,
+         "aderencia": 0.6
+        }
+       ]
+      },
+      "regional": {
+       "eleitorado": 2700000,
+       "municipios": [],
+       "maquinaSemBase": 0.3
+      }
+     }
+    },
+    "distribuicoes": {
+     "q": {
+      "forma": "exponencialTruncada",
+      "media": 0.2,
+      "max": 1
+     },
+     "r": {
+      "forma": "uniforme",
+      "min": 0.1,
+      "max": 0.6
+     }
+    }
+   }
+  ],
+  "2028": [
+   {
+    "eleicaoId": "2028",
+    "disputa": {
+     "id": "2028|VEREADOR|EX001|1",
+     "ano": 2028,
+     "cargo": "VEREADOR",
+     "unidadeId": "EX001",
+     "vagas": 9,
+     "turno": 1
+    },
+    "eleitorado": 60000,
+    "taxasEleitorado": {
+     "comparecimento": {
+      "numerador": 80,
+      "denominador": 100
+     },
+     "abstencao": {
+      "numerador": 19,
+      "denominador": 100
+     },
+     "eleitoresSecoesNaoInstaladas": {
+      "numerador": 1,
+      "denominador": 100
+     }
+    },
+    "taxasVotos": {
+     "validos": {
+      "numerador": 90,
+      "denominador": 100
+     },
+     "brancos": {
+      "numerador": 4,
+      "denominador": 100
+     },
+     "nulos": {
+      "numerador": 5,
+      "denominador": 100
+     },
+     "anulados": {
+      "numerador": 1,
+      "denominador": 100
+     },
+     "anuladosSubJudice": {
+      "numerador": 0,
+      "denominador": 100
+     },
+     "anuladosApuracaoSeparada": {
+      "numerador": 0,
+      "denominador": 100
+     }
+    },
+    "partidos": [
+     "P1",
+     "P2",
+     "P3",
+     "P4"
+    ],
+    "federacoes": [
+     {
+      "id": "F1",
+      "nome": "Federação de exemplo",
+      "partidos": [
+       "P3",
+       "P4"
+      ]
+     }
+    ],
+    "identPartidaria": {
+     "P1": 0.15,
+     "P2": 0.1,
+     "P3": 0.08,
+     "P4": 0.07
+    },
+    "semIdentificacao": 0.6,
+    "candidatos": [
+     {
+      "id": "A2",
+      "partidoId": "P1",
+      "dataNascimento": "1980-05-10",
+      "dataFiliacao": "2027-06-01",
+      "opiniao": {
+       "desconhecimento": 0.6,
+       "popularidade": 0.15,
+       "rejeicao": 0.1,
+       "semOpiniao": 0.15
+      },
+      "maquina": {
+       "maquinaEfetiva": 0.3
+      }
+     },
+     {
+      "id": "B1",
+      "partidoId": "P2",
+      "dataNascimento": "1980-05-10",
+      "dataFiliacao": "2027-06-01",
+      "opiniao": {
+       "desconhecimento": 0.5,
+       "popularidade": 0.2,
+       "rejeicao": 0.15,
+       "semOpiniao": 0.15
+      },
+      "maquina": {
+       "maquinaEfetiva": 0.4
+      }
+     },
+     {
+      "id": "C1",
+      "partidoId": "P3",
+      "dataNascimento": "1980-05-10",
+      "dataFiliacao": "2027-06-01",
+      "opiniao": {
+       "desconhecimento": 0.5,
+       "popularidade": 0.25,
+       "rejeicao": 0.1,
+       "semOpiniao": 0.15
+      },
+      "maquina": {
+       "maquinaEfetiva": 0.35
+      }
+     }
+    ],
+    "sinteticos": {
+     "P1": {
+      "quantidade": 8,
+      "quadros": 0.5,
+      "capilaridade": 0.5
+     },
+     "P2": {
+      "quantidade": 9,
+      "quadros": 0.4,
+      "capilaridade": 0.4
+     },
+     "F1": {
+      "quantidade": 9,
+      "quadros": 0.45,
+      "capilaridade": 0.45
+     }
+    },
+    "calendario": {
+     "dataRegistro": "2028-08-15",
+     "dataPosse": "2029-01-01",
+     "prazoFiliacao": "2028-04-07",
+     "prazoDesincompatibilizacao": "2028-04-07",
+     "_nota": "calendário de 2028 (a confirmar)"
+    },
+    "limiteLista": 10,
+    "posse": {
+     "dataPosse": "2029-01-01",
+     "fimMandato": "2032-12-31",
+     "_nota": "datas de 2029 (a confirmar)"
+    },
+    "parametros": {
+     "epsilon": 0.01,
+     "sigma": 0.3,
+     "sigmaLegenda": 0.2,
+     "alpha": 0.4,
+     "k": 0.8,
+     "v1": 0.6,
+     "v2": 0.4,
+     "m1": 0.6,
+     "m2": 0.25,
+     "m3": 0.15,
+     "delta": 0.2,
+     "D": 0,
+     "escalaGasto": 500000,
+     "sigmaT": 0.3,
+     "minimoNominalFase2": 0,
+     "idadeSinteticos": 40,
+     "lambda": {
+      "P1": 0.3,
+      "P2": 0.3,
+      "F1": 0.3
+     }
+    },
+    "maquinaPersonagem": {
+     "municipal": {
+      "estruturaAliada": 0,
+      "aliancaFormal": false,
+      "aliadosEstrutura": [],
+      "aliadosMobilizacao": [],
+      "alocMobilizacao": 200000,
+      "mobAliada": 0,
+      "liderancas": [
+       {
+        "id": "L1",
+        "tipo": "pessoa",
+        "forca": 0.3,
+        "aderencia": 0.6
+       }
+      ]
+     }
+    },
+    "distribuicoes": {
+     "q": {
+      "forma": "exponencialTruncada",
+      "media": 0.2,
+      "max": 1
+     },
+     "r": {
+      "forma": "uniforme",
+      "min": 0.1,
+      "max": 0.6
+     }
+    }
+   },
+   {
+    "eleicaoId": "2028",
+    "disputa": {
+     "id": "2028|PREFEITO|EX001|1",
+     "ano": 2028,
+     "cargo": "PREFEITO",
+     "unidadeId": "EX001",
+     "vagas": 1,
+     "turno": 1
+    },
+    "eleitorado": 450000,
+    "taxasEleitorado": {
+     "comparecimento": {
+      "numerador": 80,
+      "denominador": 100
+     },
+     "abstencao": {
+      "numerador": 19,
+      "denominador": 100
+     },
+     "eleitoresSecoesNaoInstaladas": {
+      "numerador": 1,
+      "denominador": 100
+     }
+    },
+    "taxasVotos": {
+     "validos": {
+      "numerador": 90,
+      "denominador": 100
+     },
+     "brancos": {
+      "numerador": 4,
+      "denominador": 100
+     },
+     "nulos": {
+      "numerador": 5,
+      "denominador": 100
+     },
+     "anulados": {
+      "numerador": 1,
+      "denominador": 100
+     },
+     "anuladosSubJudice": {
+      "numerador": 0,
+      "denominador": 100
+     },
+     "anuladosApuracaoSeparada": {
+      "numerador": 0,
+      "denominador": 100
+     }
+    },
+    "partidos": [
+     "P1",
+     "P2",
+     "P3",
+     "P4"
+    ],
+    "federacoes": [
+     {
+      "id": "F1",
+      "nome": "Federação de exemplo",
+      "partidos": [
+       "P3",
+       "P4"
+      ]
+     }
+    ],
+    "identPartidaria": {
+     "P1": 0.15,
+     "P2": 0.1,
+     "P3": 0.08,
+     "P4": 0.07
+    },
+    "semIdentificacao": 0.6,
+    "candidatos": [
+     {
+      "id": "X1",
+      "partidoId": "P1",
+      "dataNascimento": "1980-05-10",
+      "dataFiliacao": "2027-06-01",
+      "opiniao": {
+       "desconhecimento": 0.2,
+       "popularidade": 0.35,
+       "rejeicao": 0.2,
+       "semOpiniao": 0.25
+      },
+      "maquina": {
+       "maquinaEfetiva": 0.5
+      }
+     },
+     {
+      "id": "X2",
+      "partidoId": "P2",
+      "dataNascimento": "1980-05-10",
+      "dataFiliacao": "2027-06-01",
+      "opiniao": {
+       "desconhecimento": 0.25,
+       "popularidade": 0.3,
+       "rejeicao": 0.2,
+       "semOpiniao": 0.25
+      },
+      "maquina": {
+       "maquinaEfetiva": 0.5
+      }
+     },
+     {
+      "id": "X3",
+      "partidoId": "P3",
+      "dataNascimento": "1980-05-10",
+      "dataFiliacao": "2027-06-01",
+      "opiniao": {
+       "desconhecimento": 0.4,
+       "popularidade": 0.2,
+       "rejeicao": 0.15,
+       "semOpiniao": 0.25
+      },
+      "maquina": {
+       "maquinaEfetiva": 0.3
+      }
+     }
+    ],
+    "chapas": [
+     {
+      "id": "CH1",
+      "titular": "P1",
+      "adesao": {
+       "P1": 0.9
+      },
+      "candidato": "X1"
+     },
+     {
+      "id": "CH2",
+      "titular": "P2",
+      "adesao": {
+       "P2": 0.9
+      },
+      "candidato": "X2"
+     },
+     {
+      "id": "CH3",
+      "titular": "F1",
+      "adesao": {
+       "F1": 0.85
+      },
+      "candidato": "X3"
+     }
+    ],
+    "calendario": {
+     "dataRegistro": "2028-08-15",
+     "dataPosse": "2029-01-01",
+     "prazoFiliacao": "2028-04-07",
+     "prazoDesincompatibilizacao": "2028-04-07",
+     "_nota": "calendário de 2028 (a confirmar)"
+    },
+    "limiteLista": 1,
+    "posse": {
+     "dataPosse": "2029-01-01",
+     "fimMandato": "2032-12-31",
+     "_nota": "datas de 2029 (a confirmar)"
+    },
+    "parametros": {
+     "epsilon": 0.01,
+     "sigma": 0.3,
+     "sigmaLegenda": 0.2,
+     "alpha": 0.4,
+     "k": 0.8,
+     "v1": 0.6,
+     "v2": 0.4,
+     "m1": 0.6,
+     "m2": 0.25,
+     "m3": 0.15,
+     "delta": 0.2,
+     "D": 0,
+     "escalaGasto": 500000,
+     "sigmaT": 0.3,
+     "minimoNominalFase2": 0,
+     "idadeSinteticos": 40,
+     "pesosSegundoTurno": {
+      "CH1": {
+       "A": 80,
+       "B": 5,
+       "brancoNulo": 5,
+       "abstencao": 10
+      },
+      "CH2": {
+       "A": 5,
+       "B": 80,
+       "brancoNulo": 5,
+       "abstencao": 10
+      },
+      "CH3": {
+       "A": 40,
+       "B": 40,
+       "brancoNulo": 10,
+       "abstencao": 10
+      },
+      "brancoNuloAnulado": {
+       "A": 10,
+       "B": 10,
+       "brancoNulo": 70,
+       "abstencao": 10
+      },
+      "abstencao": {
+       "A": 5,
+       "B": 5,
+       "brancoNulo": 5,
+       "abstencao": 85
+      }
+     },
+     "proporcoesInvalidos2": {
+      "brancos": 4,
+      "nulos": 5,
+      "anulados": 1,
+      "anuladosSubJudice": 0,
+      "anuladosApuracaoSeparada": 0
+     }
+    },
+    "maquinaPersonagem": {
+     "municipal": {
+      "estruturaAliada": 0,
+      "aliancaFormal": false,
+      "aliadosEstrutura": [],
+      "aliadosMobilizacao": [],
+      "alocMobilizacao": 200000,
+      "mobAliada": 0,
+      "liderancas": [
+       {
+        "id": "L1",
+        "tipo": "pessoa",
+        "forca": 0.3,
+        "aderencia": 0.6
+       }
+      ]
+     }
+    },
+    "distribuicoes": {
+     "q": {
+      "forma": "exponencialTruncada",
+      "media": 0.2,
+      "max": 1
+     },
+     "r": {
+      "forma": "uniforme",
+      "min": 0.1,
+      "max": 0.6
+     }
+    }
+   }
+  ]
+ },
+ "oportunidades": [
+  {
+   "id": "vaga-na-lista",
+   "tipo": "proporcional",
+   "cargos": [
+    "VEREADOR",
+    "DEPUTADO_ESTADUAL",
+    "DEPUTADO_DISTRITAL",
+    "DEPUTADO_FEDERAL"
+   ],
+   "condicao": [],
+   "custo": {
+    "recurso": "caixaPessoal",
+    "quantidade": 50000
+   },
+   "risco": "Disputa por votos dentro da própria lista."
+  },
+  {
+   "id": "indicacao-prefeitura",
+   "tipo": "cabecaDeChapa",
+   "cargos": [
+    "PREFEITO"
+   ],
+   "condicao": [
+    {
+     "alvo": "escopo.notoriedade",
+     "op": ">=",
+     "valor": 0.3
+    },
+    {
+     "alvo": "relacoes.cupula",
+     "op": ">=",
+     "valor": 0.25
+    }
+   ],
+   "custo": null,
+   "risco": "Exposição alta; derrota pesa na base local."
+  },
+  {
+   "id": "indicacao-senado",
+   "tipo": "cabecaDeChapa",
+   "cargos": [
+    "SENADOR"
+   ],
+   "condicao": [
+    {
+     "alvo": "escopo.notoriedade",
+     "op": ">=",
+     "valor": 0.05
+    },
+    {
+     "alvo": "relacoes.cupula",
+     "op": ">=",
+     "valor": 0.25
+    }
+   ],
+   "custo": null,
+   "risco": "Disputa estadual sem base fora do município."
+  }
+ ],
+ "regrasCargo": {
+  "VEREADOR": {
+   "exposicao": 0.02,
+   "capitalEntregaPorCiclo": 4,
+   "notoriedadeProtagonista": 0.3
+  },
+  "PREFEITO": {
+   "exposicao": 0.06,
+   "capitalEntregaPorCiclo": 20,
+   "notoriedadeProtagonista": 0.5
+  },
+  "SENADOR": {
+   "exposicao": 0.05,
+   "capitalEntregaPorCiclo": 12,
+   "notoriedadeProtagonista": 0.4
+  },
+  "DEPUTADO_ESTADUAL": {
+   "exposicao": 0.03,
+   "capitalEntregaPorCiclo": 8,
+   "notoriedadeProtagonista": 0.2
+  }
+ },
+ "ambicoesCargos": {
+  "legislativo": [
+   "VEREADOR",
+   "DEPUTADO_ESTADUAL",
+   "DEPUTADO_FEDERAL",
+   "SENADOR"
+  ],
+  "executivo": [
+   "PREFEITO",
+   "GOVERNADOR",
+   "PRESIDENTE"
+  ],
+  "bastidor": []
+ },
+ "governos": {
+  "local": {
+   "P1": "aliado",
+   "P2": "oposicao"
+  },
+  "estadual": {
+   "P1": "oposicao"
+  },
+  "nacional": {}
+ }
+}
