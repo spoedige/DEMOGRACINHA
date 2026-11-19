@@ -34,7 +34,8 @@
   "eventos": [
     { "id": "obra-nao-sai", "degrau": 2, "familia": "obra-municipal", "titulo": "A obra não sai", "texto": "A obra prometida para o bairro parou e os moradores querem explicação.", "tipo": "atrasado",
       "opcoes": [{ "id": "explicar", "texto": "Explicar o atraso aos moradores", "contencao": true, "efeitos": [{ "alvo": "base.local.forca", "delta": -0.005 }] },
-        { "id": "culpar-prefeitura", "texto": "Cobrar a prefeitura em público", "efeitos": [{ "alvo": "relacoes.executivo", "delta": -0.03 }, { "alvo": "indicadores.local.popularidade", "delta": 0.005 }] }] },
+        { "id": "culpar-prefeitura", "texto": "Cobrar a prefeitura em público", "efeitos": [{ "alvo": "relacoes.executivo", "delta": -0.03 }, { "alvo": "indicadores.local.popularidade", "delta": 0.005 }] },
+        {"id": "denunciar-sabotagem", "texto": "Denunciar sabotagem da prefeitura", "exigeTag": "estilo:combativo", "efeitos": [{"alvo": "relacoes.executivo", "delta": -0.04}, {"alvo": "indicadores.local.popularidade", "delta": 0.01}]}] },
     { "id": "proposta-de-grupo-de-interesse", "degrau": 2, "familia": "grupo-de-interesse", "titulo": "Proposta de um grupo de interesse", "texto": "Uma empresa interessada no projeto oferece apoio em troca de mudanças no texto.", "tipo": "atrasado",
       "condicao": [{ "alvo": "personagem.statusJuridico", "op": "==", "valor": "regular" }],
       "opcoes": [{ "id": "recusar", "texto": "Recusar a proposta", "contencao": true, "efeitos": [{ "alvo": "relacoes.bancada", "delta": -0.01 }] },
@@ -49,7 +50,8 @@
       "limiar": { "alvo": "indicadores.local.rejeicao", "op": ">=", "valor": 0.05, "escala": 0.1 }, "probBase": 0.4, "bloqueioJanelas": 4,
       "opcoes": [{ "id": "visitar", "texto": "Visitar os postos e anunciar mutirão", "contencao": true, "efeitos": [{ "alvo": "indicadores.local.popularidade", "delta": -0.005 }] },
         { "id": "culpar-gestao-anterior", "texto": "Atribuir a crise à gestão anterior", "efeitos": [{ "alvo": "indicadores.local.rejeicao", "delta": 0.01 }, { "alvo": "indicadores.local.popularidade", "delta": 0.005 }] },
-        { "id": "trocar-secretario", "texto": "Trocar o secretário de Saúde", "efeitos": [{ "alvo": "relacoes.bancada", "delta": -0.02 }] }] },
+        { "id": "trocar-secretario", "texto": "Trocar o secretário de Saúde", "efeitos": [{ "alvo": "relacoes.bancada", "delta": -0.02 }] },
+        {"id": "apresentar-dados", "texto": "Apresentar os dados da rede de saúde", "exigeTag": "estilo:tecnico", "efeitos": [{"alvo": "indicadores.local.popularidade", "delta": 0.003}]}] },
     { "id": "cobranca-da-base", "degrau": 2, "familia": "demanda-municipal", "titulo": "Cobrança dos bairros", "texto": "Lideranças dos bairros dizem que você sumiu depois de eleito.", "tipo": "atrasado",
       "opcoes": [{ "id": "voltar-aos-bairros", "texto": "Voltar aos bairros com agenda fixa", "contencao": true, "efeitos": [{ "alvo": "base.local.forca", "delta": 0.005 }] },
         { "id": "prometer-emenda", "texto": "Prometer emenda para os bairros", "efeitos": [{ "alvo": "base.local.forca", "delta": 0.015 }, { "alvo": "relacoes.credibilidade", "delta": -0.02 }] }] }

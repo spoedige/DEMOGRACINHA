@@ -239,3 +239,7 @@ Lote: `node tools/sim.js --lote --n 300 --anos 12` (sementes v1-LOTE-0 a 299; 10
 Resultado (alvos aprovados): eleito ao menos uma vez 55% (40 a 60); deputado ou senador 18,3% (10 a 20); governador ou presidente 0% (menos de 2); inelegível 0,3% (até 5 a 8). Por porte, eleitos: pequeno 68%, médio 51%, grande 46%. Por origem, eleitos: assessor 26,7%, empresario 63,3%, liderComunitario 71,7%, liderancaSindical 53,3%, servidor 60%.
 
 Pendências de calibração: assessor segue abaixo (o caminho dele é a nomeação, não contada aqui); servidor chega mais a deputado (35%); ninguém chega a governador em 12 anos.
+
+### Validação da D89 (estilos), 22/11/2026
+
+Mesmo lote (300 carreiras, 12 anos, sementes v1-LOTE), com estilo em rotação. Sem novo ajuste de parâmetro. Eleito ao menos uma vez 53%; deputado ou senador 18,3%; governador ou presidente 0%; inelegível 0%. Por estilo, eleitos: articulador 52%, combativo 49,3%, influencer 56%, tecnico 54,7%. Por porte: pequeno 71%, médio 43%, grande 45%.

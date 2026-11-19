@@ -1,0 +1,15 @@
+{
+ "_cenario": "Estilos de atuação (D89). Etiqueta no personagem; ajustes leves somados ao início da origem.",
+ "_parametros": "Ajustes e perda de credibilidade na troca (calibrar).",
+ "perdaCredibilidadeTroca": 0.04,
+ "estilos": [
+  { "id": "influencer", "nome": "Influencer / Redes", "tag": "estilo:influencer",
+    "aptidoes": { "comunicacao": 0.1 }, "local": { "notoriedade": 0.03, "rejeicao": 0.01 }, "relacoes": {} },
+  { "id": "tecnico", "nome": "Técnico / Gestor", "tag": "estilo:tecnico",
+    "aptidoes": { "gestao": 0.1 }, "local": {}, "relacoes": { "credibilidade": 0.05 } },
+  { "id": "combativo", "nome": "Combativo / Polêmico", "tag": "estilo:combativo",
+    "aptidoes": { "mobilizacao": 0.05, "resiliencia": 0.05 }, "local": { "notoriedade": 0.02, "rejeicao": 0.015 }, "relacoes": {} },
+  { "id": "articulador", "nome": "Articulador / Discreto", "tag": "estilo:articulador",
+    "aptidoes": { "articulacao": 0.1 }, "local": { "notoriedade": -0.02 }, "relacoes": { "cupula": 0.03, "bancada": 0.03 } }
+ ]
+}

@@ -561,3 +561,12 @@ Aprovada pelo autor antes da implementação.
 2. Textos: ocorrências de cláusula de desempenho, filiação e domicílio com nomes reais; domicílio na aba Carreira; aba Partido com a situação na cláusula e a nota do registro de 2024. Varredura sem travessões nem termos internos visíveis.
 3. Acessibilidade conferida nos testes: guia fechado só com teclado (Tab e Enter), setas no grupo de ações, folha de detalhe com foco preso e Esc, movimento reduzido, contraste de texto e bordas.
 4. Link privado com os dados reais publicados junto da página (`data/municipios.json` e `data/eleicoes/*.json`).
+
+## D89. Estilo de atuação, 22/11/2026
+
+Aprovada pelo autor antes da implementação.
+1. Quatro estilos em `data/catalogo/estilos.json`: Influencer / Redes, Técnico / Gestor, Combativo / Polêmico e Articulador / Discreto. Guardados como etiqueta `estilo:<id>` no personagem, sem mudar o save (versão 6). Ajustes leves de aptidão, indicadores locais e relações somados ao início da origem (`Origens.aplicarEstilo`, calibrar).
+2. Oito cartas próprias no degrau 1, duas por estilo, por `pool.tagsExigidas`. "Cortina de fumaça", "Desconversar" e "Fingir que não viu" baixam a rejeição na hora e agendam o evento "A manobra veio à tona" com chance (calibrar).
+3. Opção de evento com `exigeTag`: só aparece e só pode ser escolhida com a etiqueta; a contenção nunca exige etiqueta. Uma opção própria por estilo em crises e cobranças existentes: o vídeo repercute (influencer), disputa no diretório (articulador), fila no posto de saúde (técnico) e a obra não sai (combativo).
+4. Troca de estilo só em C1 do ano calmo, no painel de filiação e domicílio, com perda de credibilidade (calibrar).
+5. Lote de 300 carreiras dentro das faixas aprovadas, sem novo ajuste (`docs/roadmap.md`).

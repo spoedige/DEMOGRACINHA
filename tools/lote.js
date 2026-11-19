@@ -17,12 +17,12 @@ const NIVEL = { VEREADOR: 1, VICE_PREFEITO: 1, PREFEITO: 1, DEPUTADO_ESTADUAL: 2
 function contexto(Motor) {
   const reg = J("data/consolidado/partidos.json"), cfg = J("data/consolidado/parametros-modelos.json"), cat = J("data/catalogo/catalogo-jogo.json");
   const cand = J("tools/cenarios/candidatura-exemplo.json"), car = J("tools/cenarios/carreira.json"), orig = J("data/catalogo/origens.json");
-  const mun = J("public/data/municipios.json").municipios, br = J("public/data/eleicoes/BR.json"), bases = {};
+  const est = J("data/catalogo/estilos.json"), mun = J("public/data/municipios.json").municipios, br = J("public/data/eleicoes/BR.json"), bases = {};
   const base = (uf) => bases[uf] || (bases[uf] = J("public/data/eleicoes/" + uf + ".json"));
   const dados = { cartas: cat.cartas, ambicoes: cat.ambicoes, parametrosCartas: cat.parametrosCartas, parametrosDegrau: cat.parametrosDegrau,
     eventos: cat.eventos, posicoes: cat.posicoes, regrasIndicacao: cand.regrasIndicacao, faixasFicha: cand.faixasFicha, ambicoesCargos: cand.ambicoesCargos,
-    regrasCargo: cfg.regrasCargo, governos: {}, clausula: Object.assign({ base: br.deputadoFederal2022, registro: reg }, cfg.clausula) };
-  return { Motor, reg, cfg, cat, car, orig, mun, br, base, dados, porId: new Map(cat.cartas.map((c) => [c.id, c])) };
+    regrasCargo: cfg.regrasCargo, governos: {}, estilos: est, clausula: Object.assign({ base: br.deputadoFederal2022, registro: reg }, cfg.clausula) };
+  return { Motor, reg, cfg, cat, car, orig, est, mun, br, base, dados, porId: new Map(cat.cartas.map((c) => [c.id, c])) };
 }
 // amostra determinística: município do porte pela semente, entre os que têm eleição municipal
 function escolher(lista, chave) { let h = 0; for (const ch of chave) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return lista[h % lista.length]; }
@@ -48,13 +48,14 @@ function oferta(ofs) {
 }
 function soma(op) { return (op.efeitos || []).reduce((a, x) => a + (x.alvo.includes("rejeicao") ? -x.delta : x.delta), 0); }
 
-function carreira(ctx, origemId, municipio, ambicao, semente, anos) {
+function carreira(ctx, origemId, municipio, ambicao, semente, anos, estiloId) {
   const { Motor: M, dados, cfg, reg } = ctx;
   const org = ctx.orig.origens.find((o) => o.id === origemId);
   const cen = JSON.parse(JSON.stringify(ctx.car)); delete cen.eleicoes;
   cen.semente = semente; cen.ritmo = "express";
   cen.inicio = M.Origens.inicio(ctx.car.inicio, org, municipio.id, municipio.uf, partidoLocal(ctx, municipio, semente), municipio.eleitorado, ctx.orig.escalaPorte);
   cen.inicio.personagem.ambicao = [ambicao];
+  if (estiloId) M.Origens.aplicarEstilo(cen.inicio, ctx.est.estilos.find((x) => x.id === estiloId));
   let e = M.Carreira.criar({}, cen, null).resultado;
   const fim = e.tempo.ano + anos, opcoes = { opcoesEleicao: (c) => M.Distribuicoes.opcoesDoCenario(c) }, cache = {};
   const prep = () => {
@@ -68,7 +69,7 @@ function carreira(ctx, origemId, municipio, ambicao, semente, anos) {
     let p = pv();
     (p.compromissos || []).forEach((c) => { dec.compromissos[c.id] = c.podeCumprir ? "cumprir" : "romper"; });
     if ((p.compromissos || []).length) p = pv();
-    if (p.eventos.length) { p.eventos.forEach((x) => { const ev = dados.eventos.find((y) => y.id === x.eventoId); const ops = ev.opcoes.slice().sort((a, b) => soma(b) - soma(a)); dec.eventos[x.id] = ops[0].id; }); p = pv(); }
+    if (p.eventos.length) { p.eventos.forEach((x) => { const ev = dados.eventos.find((y) => y.id === x.eventoId); const ok = new Set(x.opcoes.map((o) => o.id)); const ops = ev.opcoes.filter((o) => ok.has(o.id)).sort((a, b) => soma(b) - soma(a)); dec.eventos[x.id] = ops[0].id; }); p = pv(); }
     if (p.desincompatibilizacao) { dec.desincompatibilizacao = "sair"; p = pv(); }
     if (p.nomeacoes) { dec.nomeacao = p.nomeacoes.length ? p.nomeacoes[0].id : "recusar"; p = pv(); }
     if (p.candidaturas) { dec.candidatura = p.candidaturas.length ? oferta(p.candidaturas) : "naoConcorrer"; p = pv(); }
@@ -95,12 +96,13 @@ function lote(Motor, n, anos, sementeBase) {
   for (let i = 0; i < n; i++) {
     const porte = Object.keys(PORTES)[i % 3], origem = origens[Math.floor(i / 3) % origens.length], amb = ambs[Math.floor(i / 15) % ambs.length];
     const sem = sementeBase + "-" + i, m = escolher(porPorte[porte], sem);
-    const r = carreira(ctx, origem, m, amb, sem, anos); r.porte = porte; linhas.push(r);
+    const estilo = ctx.est.estilos[i % ctx.est.estilos.length].id;  // estilo em rotação própria (D89)
+    const r = carreira(ctx, origem, m, amb, sem, anos, estilo); r.porte = porte; r.estilo = estilo; linhas.push(r);
   }
   const pct = (xs, f) => (xs.length ? Math.round(1000 * xs.filter(f).length / xs.length) / 10 : 0);
   const resumo = (xs) => ({ n: xs.length, eleitoAlgumaVez: pct(xs, (x) => x.nivel >= 1), deputadoOuSenador: pct(xs, (x) => x.nivel >= 2),
     governadorOuPresidente: pct(xs, (x) => x.nivel >= 3), semCargo: pct(xs, (x) => x.nivel === 0 && !x.nomeado), inelegivel: pct(xs, (x) => x.inelegivel) });
   const por = (k) => Object.fromEntries([...new Set(linhas.map((x) => x[k]))].sort().map((v) => [v, resumo(linhas.filter((x) => x[k] === v))]));
-  return { n, anos, sementeBase, geral: resumo(linhas), porOrigem: por("origem"), porPorte: por("porte") };
+  return { n, anos, sementeBase, geral: resumo(linhas), porOrigem: por("origem"), porPorte: por("porte"), porEstilo: por("estilo") };
 }
 module.exports = { lote, carreira, contexto, PORTES };
