@@ -138,11 +138,38 @@ var RNG = (function () {
     normalizarSemente: normalizarSemente, criar: criar, validar: validar, u32: u32, inteiro: inteiro, decimal: decimal, normal: normal });
 })();
 
+// Funções comuns de validação e desempate, usadas por todos os módulos.
+var Comum = (function () {
+  var ID = /^[A-Za-z0-9][A-Za-z0-9_.:|-]{0,127}$/;
+  var TOL = 1e-9;
+  function erro(msg) { throw new TypeError(msg); }
+  function ehId(v) { return typeof v === "string" && ID.test(v); }
+  function idv(v, campo) { if (!ehId(v)) erro(campo + ": identificador inválido"); return v; }
+  function inteiro(v, campo, min) { if (!Number.isSafeInteger(v) || v < min) erro(campo + ": inteiro maior ou igual a " + min); return v; }
+  function real(v, campo, min, max) {
+    if (typeof v !== "number" || !Number.isFinite(v) || v < min || (max !== undefined && v > max)) erro(campo + ": número fora da faixa");
+    return v;
+  }
+  // chave própria de objeto recebido: ids como "constructor" não alcançam o protótipo
+  function proprio(o, k) { return o && Object.prototype.hasOwnProperty.call(o, k) ? o[k] : undefined; }
+  function porId(a, b) { return a.id < b.id ? -1 : 1; }
+  // resolvedor de desempate técnico injetado (módulo 14), mesmo contrato do módulo 10
+  function resolver(ctx, empatados, contexto) {
+    if (typeof ctx.resolver !== "function") throw new Error("desempate técnico necessário e nenhum resolvedor informado (módulo 14)");
+    var ids = empatados.slice().sort();
+    var r = ctx.resolver(ids, contexto, ctx.rng);
+    if (!r || ids.indexOf(r.vencedorId) < 0) throw new Error("resolvedor de desempate devolveu vencedor fora dos empatados");
+    ctx.rng = r.rngStateNext === undefined ? ctx.rng : r.rngStateNext;
+    ctx.desempates.push({ tipo: contexto.tipo, empatados: ids, vencedorId: r.vencedorId });
+    return r.vencedorId;
+  }
+  return Object.freeze({ TOL: TOL, erro: erro, ehId: ehId, idv: idv, proprio: proprio, inteiro: inteiro, real: real, porId: porId, resolver: resolver });
+})();
+
 /* == DADOS == */
 // Estruturas fundamentais. Dados estáticos: congelados, sem estado de RNG nem campos mutáveis.
 // Estado mutável: só em EstadoEleicao, sempre substituído por um novo objeto (nunca alterado no lugar).
 var Dados = (function () {
-  var ID = /^[A-Za-z0-9][A-Za-z0-9_.:|-]{0,127}$/;
   var CARGOS = Object.freeze({
     VEREADOR: Object.freeze({ sistema: "proporcional", segundoTurno: false, eleicao: "municipal" }),
     DEPUTADO_ESTADUAL: Object.freeze({ sistema: "proporcional", segundoTurno: false, eleicao: "geral" }),
@@ -159,8 +186,7 @@ var Dados = (function () {
   var TIPOS_UNIDADE = ["municipio", "uf", "pais", "exterior"];
   var FASES = ["preparada", "apurada", "concluida"];
 
-  function erro(msg) { throw new TypeError(msg); }
-  function id(v, campo) { if (typeof v !== "string" || !ID.test(v)) erro(campo + ": identificador inválido"); return v; }
+  var erro = Comum.erro, id = Comum.idv;
   function texto(v, campo) { if (typeof v !== "string" || v.trim() === "") erro(campo + ": texto obrigatório"); return v; }
   function inteiroNaoNeg(v, campo) { if (!Number.isSafeInteger(v) || v < 0) erro(campo + ": inteiro não negativo obrigatório"); return v; }
   function profundo(o) {
@@ -275,7 +301,6 @@ var Dados = (function () {
 // sem perda para inteiro escalado por potência de 2; quotas e restos são comparados como frações de mesmo denominador.
 // Não contém regra eleitoral: a distribuição de cadeiras é a seção 5.4.
 var MaiorResto = (function () {
-  var ID = /^[A-Za-z0-9][A-Za-z0-9_.:|-]{0,127}$/;
 
   function decompor(x) { // x = m × 2^e, exato
     var dv = new DataView(new ArrayBuffer(8));
@@ -298,7 +323,7 @@ var MaiorResto = (function () {
       if (opcoes.ordemDesempate !== undefined) {
         if (!Array.isArray(opcoes.ordemDesempate)) throw new TypeError("ordemDesempate deve ser lista de ids");
         opcoes.ordemDesempate.forEach(function (x, i) {
-          if (typeof x !== "string" || !ID.test(x)) throw new TypeError("ordemDesempate com id inválido");
+          if (!Comum.ehId(x)) throw new TypeError("ordemDesempate com id inválido");
           if (posicao.has(x)) throw new TypeError("ordemDesempate com id repetido: " + x);
           posicao.set(x, i);
         });
@@ -313,7 +338,7 @@ var MaiorResto = (function () {
     if (!Array.isArray(participantes) || participantes.length === 0) throw new TypeError("participantes obrigatórios");
     var vistos = new Set();
     var lista = participantes.map(function (p) {
-      if (!p || typeof p.id !== "string" || !ID.test(p.id)) throw new TypeError("participante com id inválido");
+      if (!p || !Comum.ehId(p.id)) throw new TypeError("participante com id inválido");
       if (vistos.has(p.id)) throw new TypeError("id repetido: " + p.id);
       vistos.add(p.id);
       if (typeof p.peso !== "number" || !Number.isFinite(p.peso) || p.peso < 0) throw new RangeError("peso inválido para " + p.id);
@@ -339,31 +364,6 @@ var MaiorResto = (function () {
   }
 
   return Object.freeze({ distribuir: distribuir });
-})();
-
-// Funções comuns dos módulos 8, 9 e 11.
-var Comum = (function () {
-  var ID = /^[A-Za-z0-9][A-Za-z0-9_.:|-]{0,127}$/;
-  var TOL = 1e-9;
-  function erro(msg) { throw new TypeError(msg); }
-  function idv(v, campo) { if (typeof v !== "string" || !ID.test(v)) erro(campo + ": identificador inválido"); return v; }
-  function inteiro(v, campo, min) { if (!Number.isSafeInteger(v) || v < min) erro(campo + ": inteiro maior ou igual a " + min); return v; }
-  function real(v, campo, min, max) {
-    if (typeof v !== "number" || !Number.isFinite(v) || v < min || (max !== undefined && v > max)) erro(campo + ": número fora da faixa");
-    return v;
-  }
-  function porId(a, b) { return a.id < b.id ? -1 : 1; }
-  // resolvedor de desempate técnico injetado (módulo 14), mesmo contrato do módulo 10
-  function resolver(ctx, empatados, contexto) {
-    if (typeof ctx.resolver !== "function") throw new Error("desempate técnico necessário e nenhum resolvedor informado (módulo 14)");
-    var ids = empatados.slice().sort();
-    var r = ctx.resolver(ids, contexto, ctx.rng);
-    if (!r || ids.indexOf(r.vencedorId) < 0) throw new Error("resolvedor de desempate devolveu vencedor fora dos empatados");
-    ctx.rng = r.rngStateNext === undefined ? ctx.rng : r.rngStateNext;
-    ctx.desempates.push({ tipo: contexto.tipo, empatados: ids, vencedorId: r.vencedorId });
-    return r.vencedorId;
-  }
-  return Object.freeze({ TOL: TOL, erro: erro, idv: idv, inteiro: inteiro, real: real, porId: porId, resolver: resolver });
 })();
 
 // Pontuação com ruído (motor-eleitoral.md 4.1; na majoritária, seção 6 com ε, D69).
@@ -761,7 +761,7 @@ var SegundoTurno = (function () {
     DESTINOS.forEach(function (d) { tot[d] = 0; });
     origens.forEach(function (o) {
       if (o.n === 0) return;
-      var p = pesos[o.id];
+      var p = Comum.proprio(pesos, o.id);
       if (!p || typeof p !== "object" || Object.keys(p).sort().join("|") !== DESTINOS.slice().sort().join("|")) Comum.erro("pesos da origem " + o.id + ": destinos A, B, brancoNulo, abstencao");
       DESTINOS.forEach(function (d) {
         Comum.real(p[d], "peso " + o.id + "→" + d, 0);
@@ -1274,12 +1274,9 @@ var Fechamento = (function () {
 // só é repassado ao resolvedor de desempate técnico injetado (módulo 14) e devolvido como ele o deixar.
 // Toda comparação de patamar e de média é exata em inteiros (BigInt); nenhuma divisão em ponto flutuante.
 var Cadeiras = (function () {
-  var ID = /^[A-Za-z0-9][A-Za-z0-9_.:|-]{0,127}$/;
   var MINIMOS_FASE2 = Object.freeze({ "0": 0n, "0.1": 1n }); // décimos do QE (D65)
 
-  function erro(msg) { throw new TypeError(msg); }
-  function inteiro(v, campo, min) { if (!Number.isSafeInteger(v) || v < min) erro(campo + ": inteiro maior ou igual a " + min); return v; }
-  function idv(v, campo) { if (typeof v !== "string" || !ID.test(v)) erro(campo + ": identificador inválido"); return v; }
+  var erro = Comum.erro, inteiro = Comum.inteiro, idv = Comum.idv;
 
   // Código Eleitoral, art. 106: fração até meio desprezada, acima de meio arredondada para um.
   function quocienteEleitoral(validos, vagas) {
@@ -1368,7 +1365,7 @@ var Cadeiras = (function () {
     // cenário sem quociente (5.4 item 8; Res. 23.677, art. 12-A, II): fase seguinte sem votação mínima
     var minimo2 = algumaNoQE ? MINIMOS_FASE2[chaveMin] : 0n;
 
-    var est = {};
+    var est = Object.create(null);
     d.listas.forEach(function (l) {
       est[l.id] = { lista: l, ordem: ordenar(l, ctx), prox: 0, eleitos: [], QP: Math.floor(l.votosLista / QE), obtidas: 0 };
     });
@@ -1475,10 +1472,11 @@ var Desempate = (function () {
     var pf = contexto.pesos ? Comum.real(contexto.pesos.financeiro, "peso financeiro", 0, 1) : 0.5;
     if (Math.abs(pc + pf - 1) > Comum.TOL) Comum.erro("pesos do desempate não somam 1");
     function fracoes(campo) {
-      var soma = 0, v = {};
+      var soma = 0, v = Object.create(null);
       ids.forEach(function (x) {
-        if (!at[x]) Comum.erro("atributos ausentes para " + x);
-        v[x] = Comum.real(at[x][campo], campo + " de " + x, 0); soma += v[x];
+        var ax = Comum.proprio(at, x);
+        if (!ax) Comum.erro("atributos ausentes para " + x);
+        v[x] = Comum.real(ax[campo], campo + " de " + x, 0); soma += v[x];
       });
       ids.forEach(function (x) { v[x] = soma === 0 ? 1 / ids.length : v[x] / soma; });
       return v;
@@ -1556,7 +1554,7 @@ var Eleicao = (function () {
       var aptos = new Map(), sint = [];
       eleg.listas.forEach(function (l) {
         l.aptos.forEach(function (id) { aptos.set(id, cands.get(id)); });
-        var cfg = (dados.sinteticos || {})[l.id] || Comum.erro("sinteticos ausentes para a lista " + l.id);
+        var cfg = Comum.proprio(dados.sinteticos, l.id) || Comum.erro("sinteticos ausentes para a lista " + l.id);
         var n = cfg.quantidade === undefined ? l.vagasRestantesSinteticos : Math.min(Comum.inteiro(cfg.quantidade, "quantidade de sintéticos", 0), l.vagasRestantesSinteticos);
         Sinteticos.gerar({ opcoes: opcoes }, { semente: dados.semente, unidadeId: unidadeId, listaId: l.id, eleicaoId: dados.eleicaoId,
           quantidadeSinteticos: n, quadros: cfg.quadros, capilaridade: cfg.capilaridade }).resultado.forEach(function (s) { sint.push(s); });
@@ -1570,7 +1568,7 @@ var Eleicao = (function () {
       }), rng) : { resultado: {}, rngStateNext: rng };
       rng = S.rngStateNext;
       var leg = Pontuacao.legendas(cad.listas.map(function (l) {
-        return { id: l.id, lambda: (p.lambda || {})[l.id] === undefined ? Comum.erro("lambda ausente para " + l.id) : p.lambda[l.id], sigma: p.sigmaLegenda };
+        return { id: l.id, lambda: Comum.proprio(p.lambda, l.id) === undefined ? Comum.erro("lambda ausente para " + l.id) : p.lambda[l.id], sigma: p.sigmaLegenda };
       }), rng);
       rng = leg.rngStateNext;
       var m8 = comparecimento(1); etapas.comparecimento = m8;
