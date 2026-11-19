@@ -125,7 +125,7 @@ test("desincompatibilização em J1: nomeado sai ou permanece; quem permanece n�
   assert.throws(() => Carreira.avancar(e, d, { decisoes: { carta: "agenda-bairro" } }), ERRO);
   const sai = Carreira.avancar(e, d, { decisoes: { desincompatibilizacao: "sair", carta: "agenda-bairro" } }).resultado.estado;
   assert.equal(sai.cargos.nomeacoes[0].motivoSaida, "desincompatibilizacao");
-  assert.deepEqual(ids(Candidatura.ofertas(em(sai, 2028, "J3"), d)), ["indicacao:2028|PREFEITO|EX001|1", "lista:2028|VEREADOR|EX001|1"]);
+  assert.deepEqual(ids(Candidatura.ofertas(em(sai, 2028, "J3"), d)), ["indicacao:2028|PREFEITO|EX001|1", "lista:2028|VEREADOR|EX001|1", "vice:2028|PREFEITO|EX001|1"]);
   const fica = Carreira.avancar(e, d, { decisoes: { desincompatibilizacao: "permanecer", carta: "agenda-bairro" } }).resultado.estado;
   assert.equal(fica.cargos.nomeacoes[0].situacao, "exercicio");
   assert.deepEqual(ids(Candidatura.ofertas(em(fica, 2028, "J3"), d)), []);
@@ -166,7 +166,7 @@ test("save versão 4: migração de 3 com lista vazia; lista não vazia não tem
   const e = novo();
   const v3 = JSON.parse(Save.serializar(e)); v3.saveVersion = 3;
   const m = Save.ler(JSON.stringify(v3));
-  assert.equal(m.saveVersion, 5); assert.deepEqual(plano(m), plano(e)); // 3 -> 4 -> 5
+  assert.equal(m.saveVersion, 6); assert.deepEqual(plano(m), plano(e)); // 3 -> 4 -> 5
   v3.cargos.nomeacoes = [{ id: "x" }];
   assert.throws(() => Save.ler(JSON.stringify(v3)), /migração 3/);
   const duas = nomeado(clone(e), "a", "governamental", "municipal"); duas.cargos.nomeacoes.push(clone(duas.cargos.nomeacoes[0]));

@@ -49,7 +49,7 @@ test("fila: dispara com a prob do item, um sorteio por item, e evento desconheci
   assert.ok(Math.abs(r.estado.relacoes.executivo - 0.18) < 1e-12);
   assert.deepEqual(plano(r.estado.filaEventos.map((x) => x.id)), ["C"]);
   let rng = e.rng.eventos;
-  for (let i = 0; i < 2 + 1; i++) rng = RNG.decimal(rng).rngStateNext;          // 2 itens + 1 gatilho do catálogo
+  for (let i = 0; i < 2 + EVS.eventos.filter((x) => x.tipo === "gatilho").length; i++) rng = RNG.decimal(rng).rngStateNext; // 2 itens + gatilhos do catálogo
   assert.deepEqual(plano(r.estado.rng.eventos), plano(rng));
   const f = novo(); f.filaEventos = [item("Z", "nao-existe", 1)];
   assert.throws(() => resolver(f), ERRO);
@@ -128,7 +128,11 @@ test("estado temporário: investigado vence sem denúncia e é arquivado na aber
   assert.equal(e.personagem.statusJuridico, "investigado");
   e.filaEventos = e.filaEventos.filter((x) => x.dados.eventoId !== "denuncia-mp");     // sem denúncia até o prazo
   while (!(e.tempo.ano === 2027 && e.tempo.janela === "C3")) {
-    const dec = Carreira.ehManual(e) ? { carta: Carreira.previa(e, d, { decisoes: {} }).mao.segura } : undefined;
+    let dec;
+    if (Carreira.ehManual(e)) { // crise pendente: escolhe a contenção; depois, a segura
+      const ev = {}; Carreira.previa(e, d, { decisoes: {} }).eventos.forEach((x) => { ev[x.id] = x.opcoes.find((o) => o.contencao).id; });
+      dec = { eventos: ev }; dec.carta = Carreira.previa(e, d, { decisoes: dec }).mao.segura;
+    }
     e = Carreira.avancar(e, d, { decisoes: dec }).resultado.estado;
   }
   const r = Carreira.avancar(e, d, {}).resultado;
@@ -190,7 +194,7 @@ test("save: migração 1 para 2 (e 3) em cadeia; status sem correspondência rec
   v1.saveVersion = 1; delete v1.eventosRecentes;
   ["estadosTemporarios", "denunciaRegistrada", "condenacaoEnquadrada"].forEach((k) => delete v1.personagem[k]);
   const m = Save.ler(JSON.stringify(v1));
-  assert.equal(m.saveVersion, 5); // 1 -> 2 -> 3 -> 4 -> 5 em cadeia
+  assert.equal(m.saveVersion, 6); // 1 -> 2 -> 3 -> 4 -> 5 -> 6 em cadeia
   const esperado = plano(e); esperado.compromissos.ativos[0].efeitosCumprir = []; esperado.compromissos.ativos[0].efeitosRomper = []; esperado.compromissos.ativos[0].retaliacao = null;
   assert.deepEqual(plano(m), esperado);
   v1.personagem.statusJuridico = "processado";

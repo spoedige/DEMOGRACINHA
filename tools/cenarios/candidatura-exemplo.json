@@ -713,6 +713,11 @@
    "exposicao": 0.03,
    "capitalEntregaPorCiclo": 8,
    "notoriedadeProtagonista": 0.2
+  },
+  "VICE_PREFEITO": {
+   "exposicao": 0.03,
+   "capitalEntregaPorCiclo": 6,
+   "notoriedadeProtagonista": 1
   }
  },
  "ambicoesCargos": {
@@ -725,7 +730,10 @@
   "executivo": [
    "PREFEITO",
    "GOVERNADOR",
-   "PRESIDENTE"
+   "PRESIDENTE",
+   "VICE_PREFEITO",
+   "VICE_GOVERNADOR",
+   "VICE_PRESIDENTE"
   ],
   "bastidor": []
  },
@@ -842,6 +850,57 @@
     },
     "piso": 0.005,
     "teto": 0.85
+   }
+  },
+  "VICE_PREFEITO": {
+   "tipo": "vice",
+   "custo": null,
+   "risco": "Mandato à sombra do titular; sucessão só se o cargo vagar.",
+   "chance": {
+    "base": 0.1,
+    "pesos": {
+     "cupula": 0.6,
+     "notoriedadeEscopo": 0.3,
+     "grupo": 0.3,
+     "rejeicaoEscopo": 0.6,
+     "institucional": 0.1
+    },
+    "piso": 0.02,
+    "teto": 0.9
+   }
+  },
+  "VICE_GOVERNADOR": {
+   "tipo": "vice",
+   "custo": null,
+   "risco": "Pouca agenda própria; a chapa depende do titular.",
+   "chance": {
+    "base": 0.0,
+    "pesos": {
+     "cupula": 0.6,
+     "notoriedadeEscopo": 0.3,
+     "grupo": 0.3,
+     "rejeicaoEscopo": 0.6,
+     "institucional": 0.1
+    },
+    "piso": 0.02,
+    "teto": 0.9
+   }
+  },
+  "VICE_PRESIDENTE": {
+   "tipo": "vice",
+   "custo": null,
+   "risco": "Projeção nacional sem agenda própria; a chapa depende do titular.",
+   "chance": {
+    "base": -0.1,
+    "pesos": {
+     "cupula": 0.6,
+     "notoriedadeEscopo": 0.3,
+     "grupo": 0.3,
+     "rejeicaoEscopo": 0.6,
+     "institucional": 0.1
+    },
+    "piso": 0.02,
+    "teto": 0.9
    }
   }
  },

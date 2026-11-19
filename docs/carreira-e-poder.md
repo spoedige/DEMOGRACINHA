@@ -121,12 +121,12 @@ Tags, Arquivo Vermelho, eventos atrasados, `mandatosConsecutivos`, saúde gradua
 
 ## 9. Vice
 
-- Convite chega como carta quando uma chapa majoritária precisa de companheiro.
+- Convite chega na convenção (J3), ao lado das demais candidaturas, quando uma chapa majoritária do partido ou aliada tem titular; a chapa confirma ou não o nome, com chance (D84, calibrar). A chapa disputa com os indicadores do titular.
 - Ganhos: notoriedade no escopo da chapa (municipal, estadual ou nacional), rede do titular, experiência executiva, crédito na Cúpula.
 - Custos: menos autonomia, popularidade avaliada junto com o titular, Bancada menos favorável.
 - Risco: se o titular cai, o vice sucede com legitimidade reduzida (calibrar; regras a confirmar). Vice substitui e sucede titular do Executivo; suplente substitui ou sucede legislador (senador, deputado, vereador). As regras são distintas por cargo (a confirmar na 1B).
 - Armadilha do vice: exposição sem descolamento. Cartas de posicionamento próprio custam Cúpula e liberam candidatura própria.
-- Pool próprio de bastidor. Substituição (temporária) é diferente de sucessão (definitiva).
+- Pool próprio de bastidor. Substituição (temporária) é diferente de sucessão (definitiva); as duas chegam por evento (D84). Com o personagem titular, o vice é sintético e sem efeito no jogo.
 
 ## 10. Poder entre eleições (MVP enxuto)
 

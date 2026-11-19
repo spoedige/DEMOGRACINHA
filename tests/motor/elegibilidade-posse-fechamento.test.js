@@ -103,8 +103,15 @@ test("vaga sem suplente: vereador pela lei orgânica ou, sem ela, art. 113 (9 me
   assert.deepEqual([lo.acao, lo.fonteDoPrazo], ["vagaSemPreenchimento", "lei orgânica municipal"]);
 });
 
-test("vacância: majoritário com vice fora da etapa; Senado só com suplente", () => {
-  for (const cargo of ["PREFEITO", "GOVERNADOR", "PRESIDENTE"]) assert.throws(() => vac({ cargo }), /fora da etapa 6/);
+test("vacância: Executivo passa ao vice (D84); sem vice, erro; Senado só com suplente", () => {
+  for (const cargo of ["PREFEITO", "GOVERNADOR", "PRESIDENTE"]) {
+    const d = vac({ cargo, viceId: "V1" });
+    assert.equal(d.emExercicio, "V1"); assert.equal(d.acao, "viceSucede"); assert.equal(d.mandatoDoTitular, "extinto");
+    const c = vac({ cargo, viceId: "V1", tipo: "convocacao" });
+    assert.equal(c.acao, "viceSubstitui"); assert.equal(c.mandatoDoTitular, "preservado");
+    assert.throws(() => vac({ cargo }), /sem vice/);
+    assert.throws(() => vac({ cargo, viceId: "T" }), ERRO);
+  }
   assert.equal(vac({ cargo: "SENADOR", tipo: "convocacao" }).emExercicio, "S1");
   assert.throws(() => vac({ cargo: "SENADOR", suplentes: [] }), /Senado sem suplente/);
   assert.throws(() => vac({ dataEvento: "2031-02-01" }), ERRO);

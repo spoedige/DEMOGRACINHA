@@ -21,7 +21,7 @@ const opcoes = { opcoesEleicao: (x) => sim.opcoesDoCenario(Motor, x) };
 const novo = (mod) => { const c = clone(CEN); delete c.eleicoes; if (mod) mod(c); return Carreira.criar({}, c, null).resultado; };
 const em = (e, ano, janela) => { const x = clone(e); x.tempo = { ano, janela }; return x; };
 const ids = (os) => plano(os.map((o) => o.id));
-const V = "lista:2028|VEREADOR|EX001|1", P = "indicacao:2028|PREFEITO|EX001|1", S = "indicacao:2026|SENADOR|EX|1";
+const V = "lista:2028|VEREADOR|EX001|1", P = "indicacao:2028|PREFEITO|EX001|1", S = "indicacao:2026|SENADOR|EX|1", VP = "vice:2028|PREFEITO|EX001|1";
 // fixa a chance de indicação do prefeito (piso = teto) para testar os dois desfechos
 const chanceFixa = (x) => (d) => { d.regrasIndicacao.PREFEITO.chance.piso = x; d.regrasIndicacao.PREFEITO.chance.teto = x; };
 
@@ -45,7 +45,7 @@ test("catálogo de regras de indicação válido; tipo, custo, risco, chance e f
 test("ofertas livres em J3 de 2028: todo cargo com modelo, ficha com faixas de chance e competitividade, sem condição de entrada", () => {
   const e = em(novo(), 2028, "J3");
   const o = Candidatura.ofertas(e, dados());
-  assert.deepEqual(ids(o), [P, V]);                                                  // prefeito aparece mesmo com notoriedade baixa
+  assert.deepEqual(ids(o), [P, V, VP]);                                              // prefeito aparece mesmo com notoriedade baixa; convite de vice da chapa própria (D84)
   assert.deepEqual(plano(o[1].ficha), { eleitoradoAlcancado: 60000, exposicaoEsperada: 0.02, recursoPolitico: 4, posicaoCoalizao: "aliado",
     papelEsperado: "coadjuvante", custo: { recurso: "caixaPessoal", quantidade: 50000 }, risco: "Disputa por votos dentro da própria lista.", aderenciaAmbicao: 0,
     chanceIndicacao: "garantida", competitividade: "media" });                      // 0,12 frente à mediana 0,15 da lista
@@ -76,14 +76,14 @@ test("ofertas: unidade, partido, saldo, lista cheia, módulo 3 e uma candidatura
   const sem = (mod) => { const x = clone(e); mod(x); return ids(Candidatura.ofertas(x, d)); };
   assert.deepEqual(sem((x) => { x.personagem.municipioLocal = "EX009"; }), []);
   assert.deepEqual(sem((x) => { x.personagem.partidoId = "P9"; }), []);
-  assert.deepEqual(sem((x) => { x.bolsos.caixaPessoal = 49999; }), [P]);                                     // a lista custa caixa; a indicação, não
+  assert.deepEqual(sem((x) => { x.bolsos.caixaPessoal = 49999; }), [P, VP]);                                     // a lista custa caixa; a indicação, não
   assert.deepEqual(sem((x) => { x.personagem.statusJuridico = "inelegibilidadeReconhecida"; }), []);
   assert.deepEqual(sem((x) => { x.personagem.dataNascimento = "2012-01-01"; }), []);                         // idade mínima
   assert.deepEqual(sem((x) => { x.personagem.dataFiliacao = "2028-05-01"; }), []);                           // filiação após o prazo
   assert.deepEqual(sem((x) => { x.candidaturas = [{ ano: 2028, ofertaId: "x", disputaId: "y", cargo: "VEREADOR", unidadeId: "EX001", partidoId: "P1", listaOuChapaId: "P1", tipo: "proporcional" }]; }), []);
-  assert.deepEqual(ids(Candidatura.ofertas(e, dados((x) => { x.modelosDisputa["2028"][0].limiteLista = 1; }))), [P]);
+  assert.deepEqual(ids(Candidatura.ofertas(e, dados((x) => { x.modelosDisputa["2028"][0].limiteLista = 1; }))), [P, VP]);
   assert.deepEqual(ids(Candidatura.ofertas(em(novo(), 2026, "J3"), d)), [S]);                                 // Senado aparece; a urna decide
-  assert.deepEqual(ids(Candidatura.ofertas(e, dados((x) => { delete x.regrasIndicacao.PREFEITO; }))), [V]);    // cargo sem regra não aparece
+  assert.deepEqual(ids(Candidatura.ofertas(e, dados((x) => { delete x.regrasIndicacao.PREFEITO; }))), [V, VP]);    // cargo sem regra não aparece
 });
 
 test("mandato atual: dois mandatos consecutivos de prefeito impedem a terceira indicação", () => {
@@ -104,7 +104,7 @@ test("J3: prévia, decisão obrigatória e registro da lista com custo", () => {
   const e = em(novo(), 2028, "J3");
   const p = Carreira.previa(e, d, { decisoes: {} });
   assert.equal(p.mao, null); assert.deepEqual(plano(p.eventos), []); assert.equal(p.indicacaoNegada, null);
-  assert.deepEqual(ids(p.candidaturas), [P, V]);
+  assert.deepEqual(ids(p.candidaturas), [P, V, VP]);
   const p2 = Carreira.previa(e, d, { decisoes: { candidatura: V } });
   assert.equal(p2.candidaturas, null); assert.ok(p2.mao.segura);
   assert.throws(() => Carreira.avancar(e, d, { decisoes: { carta: p2.mao.segura } }), ERRO);
@@ -207,7 +207,7 @@ test("save: migração 2 para 3 exige data de filiação; sem inventar", () => {
   const v2 = JSON.parse(Save.serializar(e)); v2.saveVersion = 2; delete v2.candidaturas; delete v2.personagem.dataFiliacao;
   assert.throws(() => Save.ler(JSON.stringify(v2)), /dataFiliacao/);
   const m = Save.ler(JSON.stringify(v2), undefined, { dataFiliacao: "2025-06-01" });
-  assert.equal(m.saveVersion, 5); assert.deepEqual(plano(m), plano(e)); // 2 -> 3 -> 4 -> 5 em cadeia
+  assert.equal(m.saveVersion, 6); assert.deepEqual(plano(m), plano(e)); // 2 -> 3 -> 4 -> 5 em cadeia
   const comCampo = clone(v2); comCampo.personagem.dataFiliacao = "2025-06-01";
   assert.deepEqual(plano(Save.ler(JSON.stringify(comCampo))), plano(e));
 });
