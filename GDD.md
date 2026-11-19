@@ -156,12 +156,14 @@ Para convites, filiações, candidaturas e vice: atributos descritivos calculado
 
 ## 6. Visual
 
-- Pixel art inspirada em Brasília, gerada em código (canvas ou SVG), `image-rendering: pixelated`. Sem assets externos, sem CDN.
-- Paleta base (tons exatos a fixar na etapa 2 com teste de contraste): concreto claro, céu azul do cerrado, verde, ocre, terra vermelha.
-- Elementos: Congresso Nacional (duas torres e as duas cúpulas), Esplanada dos Ministérios, Catedral, colunas do Alvorada, Eixo Monumental, céu amplo.
-- Cenário muda com o cargo: câmara municipal genérica, assembleia, Congresso, Planalto. Céu muda com o mês (seca e chuva do cerrado), sem animação se `prefers-reduced-motion`.
-- Fonte pixel embutida em código ou fallback de sistema monoespaçado.
-- Siglas de partido em texto com cor própria, sem logos. Nenhum rosto de pessoa real; personagens são silhuetas ou sprites genéricos.
+Sistema visual "Plano Piloto: Dossiê e Palanque" (D79), que substitui a direção de pixel art. Tudo gerado em código, sem assets externos nem CDN.
+
+- **Três planos.** Plano 0: horizonte de Brasília em vetor (Congresso Nacional com as duas torres e as duas cúpulas, Catedral, Esplanada dos Ministérios, colunas do Planalto, espelho d'água) sobre céu do cerrado em shader WebGL, com recurso 2D. Plano 1: painel translúcido de situação, ancorado ao horizonte. Plano 2: mesa de despacho em travertino, com cartões em papel marfim e filetes de latão.
+- **Paleta.** Travertino (#EAE5DC), marfim (#FAF8F4), latão fosco (#B08D57), azul cívico (#134074) e azul-marinho (#0B1F3A). Texto com contraste de pelo menos 4,5:1 e bordas de controle de pelo menos 3:1, conferidos em teste.
+- **Clima de rua.** A Praça dos Três Poderes reflete os indicadores do escopo atual (atenção discreta, onda favorável, pressão nas ruas), sem número novo na tela. O céu muda com a fase: convenções em sol pleno, urna à noite, crise ou rua hostil no crepúsculo.
+- **Interação.** Cartões inteiros selecionáveis, com seleção no lugar, sem redesenhar a tela; carimbo "Ação registrada" ao confirmar o período. Com `prefers-reduced-motion` ou com a opção do menu, céu estático, sem transição de fase, sem contagem animada e sem carimbo.
+- **Partidos.** Siglas em texto com cor própria, sem logos. Logos oficiais só depois, na etapa 1B, com fonte e licença verificadas (a confirmar).
+- Nenhum rosto de pessoa real; personagens são silhuetas ou figuras genéricas.
 
 ## 7. Dificuldade
 

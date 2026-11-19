@@ -451,3 +451,22 @@ Aprovada pelo autor antes da implementação.
 8. Vice fica para a D79. Até lá, chefe do Executivo só disputa a reeleição (desincompatibilização por renúncia ainda não existe).
 9. `semOpiniao = max(0, notoriedade - popularidade - rejeicao)` na montagem da disputa, contra resíduo de ponto flutuante. Em disputa estadual ou nacional, a base própria fora dos municípios detalhados entra pelo `base.agregadoRegional` (motor-eleitoral 4.5).
 10. Personagem em mais de uma disputa no mesmo ano é erro. Os testes das D75 e D77 foram ajustados à versão 3 do save, e `carreira.json` ganhou `dataFiliacao`.
+
+## D79. Esqueleto da interface, 19/11/2026
+
+Aprovada pelo autor antes da implementação.
+1. Arquivo único sem build: `<style>` com tokens, casca no `<body>`, motor intocado, catálogos de exemplo embutidos em JSON e `<script id="ui">`. Funciona por `file://`. A escolha entre arquivo único e `public/data/*.json` fica para a entrada dos dados da 1B (D64).
+2. A interface só chama o motor; nenhuma regra de jogo vive nela.
+3. Prévia com fase zero de compromissos: `{ compromissos, eventos, candidaturas, mao }`.
+4. Histórico da eleição com votos, válidos, posição e 2º turno do personagem.
+5. Criação: nome, data de nascimento (18 a 60 anos em 01/01/2026), ambição, ritmo e semente; origem, UF, município, partido e dificuldade fixos no exemplo até os dados reais. `personagem.nome` opcional, sem nova versão do save.
+6. Semente sugerida por `crypto.getRandomValues`, só na interface. `Carreira.mudarRitmo` no motor.
+7. Janelas automáticas processadas em lote até a próxima manual (no máximo 12 por vez), com resumo.
+8. Faixas de exibição (calibrar): credibilidade e grupo em frágil (abaixo de 0,25), regular (abaixo de 0,5), boa (abaixo de 0,75) e sólida; risco da carta pela `probBase` em baixo (abaixo de 0,15), moderado (abaixo de 0,35) e alto.
+9. Testes de interface com Playwright em `tests/ui`, separados da suíte do motor. Sorteadores de distribuição movidos para o motor (`Distribuicoes`), sem mudar resultados.
+10. Sistema visual "Plano Piloto: Dossiê e Palanque", aprovado pelo autor a partir de um protótipo, substitui a pixel art do GDD 6: horizonte vetorial com shader de céu, painel de situação e mesa de despacho. Sem o botão "Simular cena" nem atalhos de depuração do protótipo.
+11. Painel de situação: notoriedade, popularidade, rejeição e Caixa Pessoal sempre; Fundo de Campanha só de J4 a J6 de ano eleitoral; Capacidade de entrega só com mandato em exercício (no máximo 6 números, GDD 5).
+12. "Capacidade de entrega" é só o rótulo de tela para Capital de Entrega; documentos, motor e save mantêm Capital de Entrega e `capitalEntrega`. Outros rótulos de tela: "Ações disponíveis", "Decisão do período", "Oferta de candidatura", "Alinhada à sua ambição".
+13. Trajetória partidária na aba Carreira, acima do registro biográfico, com a filiação atual e pronta para vários registros. Partidos em `<script type="application/json" id="parties-data">` só com sigla, nome e cor dos partidos fictícios do exemplo; sem logos (GDD 6). Logos oficiais ficam para a 1B, com fonte e licença verificadas. Os desenhos de logos do protótipo não foram usados: imitavam marcas reais e atribuíam fontes oficiais a desenhos feitos à mão.
+14. Borda de cartão escurecida de #CFC7B8 (protótipo) para #857C6C, para 3:1 com a mesa e o cartão (WCAG 1.4.11, controles).
+15. Faixas só de exibição (calibrar): clima de rua hostil com rejeição a partir de 0,15 e maior que a popularidade; favorável com popularidade a partir de 0,2 e maior que a rejeição.

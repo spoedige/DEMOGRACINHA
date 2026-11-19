@@ -28,27 +28,9 @@ function canonico(x) {
 }
 const sha256 = (s) => crypto.createHash("sha256").update(s).digest("hex");
 
-// Sorteador a partir da forma declarada no cenário (calibrar): devolve (rngState) => { valor, rngStateNext }.
-function sorteador(Motor, def, nome) {
-  if (!def || typeof def !== "object") throw new Error("distribuição ausente no cenário: " + nome);
-  const num = (v, campo) => { if (typeof v !== "number" || !Number.isFinite(v)) throw new Error(nome + "." + campo + " inválido"); return v; };
-  if (def.forma === "uniforme") {
-    const min = num(def.min, "min"), max = num(def.max, "max");
-    if (!(min >= 0 && max >= min)) throw new Error(nome + ": uniforme exige 0 <= min <= max");
-    return (e) => { const r = Motor.RNG.decimal(e); return { valor: min + (max - min) * r.valor, rngStateNext: r.rngStateNext }; };
-  }
-  if (def.forma === "exponencialTruncada") {
-    const media = num(def.media, "media"), max = num(def.max, "max");
-    if (!(media > 0 && max > 0)) throw new Error(nome + ": exponencial truncada exige media e max positivos");
-    return (e) => { const r = Motor.RNG.decimal(e); return { valor: Math.min(max, -media * Math.log(1 - r.valor)), rngStateNext: r.rngStateNext }; };
-  }
-  throw new Error(nome + ": forma desconhecida " + def.forma);
-}
-
-function opcoesDoCenario(Motor, cen) {
-  const dist = cen.distribuicoes || {};
-  return { sortearQ: sorteador(Motor, dist.q, "distribuicoes.q"), sortearR: sorteador(Motor, dist.r, "distribuicoes.r") };
-}
+// Sorteadores: código no motor (Motor.Distribuicoes, D79), valores no cenário (calibrar).
+function sorteador(Motor, def, nome) { return Motor.Distribuicoes.sorteador(def, nome); }
+function opcoesDoCenario(Motor, cen) { return Motor.Distribuicoes.opcoesDoCenario(cen); }
 
 function rodar(Motor, cen, semente) {
   const dados = { ...cen, semente };
