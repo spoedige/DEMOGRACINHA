@@ -18,21 +18,26 @@
   {
    "id": "ouvir-a-base",
    "degrau": 1,
-   "titulo": "Visitar apoiadores sem fazer promessas",
-   "texto": "Rodada de conversas sem promessa nova. Mantém o vínculo, sem ganho visível.",
+   "titulo": "Ouvir apoiadores sem prometer nada",
+   "texto": "Você passa a tarde ouvindo lideranças e apoiadores, sem anunciar projetos nem assumir compromissos que ainda não pode cumprir. Não vira manchete, mas quem esteve com você sabe que foi ouvido.",
    "segura": true,
    "ambicoes": [
     "legislativo",
     "executivo",
     "bastidor"
    ],
-   "efeitos": []
+   "efeitos": [
+    {
+     "alvo": "indicadores.local.rejeicao",
+     "delta": -0.003
+    }
+   ]
   },
   {
    "id": "reuniao-associacao",
    "degrau": 1,
    "titulo": "Reunião com a associação de moradores",
-   "texto": "Popularidade e base local tendem a subir. A associação pode cobrar depois.",
+   "texto": "Na sede da associação, os moradores listam o que falta no bairro: iluminação, poda, uma lombada na rua da escola. Você anota tudo e se compromete a acompanhar. Eles vão lembrar do que ouviram.",
    "segura": false,
    "pool": {
     "peso": 1
@@ -83,7 +88,7 @@
    "id": "video-do-bairro",
    "degrau": 1,
    "titulo": "Vídeo sobre um problema do bairro",
-   "texto": "Notoriedade local tende a subir. Exposição atrai críticas.",
+   "texto": "Um vídeo seu mostrando postes apagados no bairro começa a circular nos grupos da cidade. Muitos moradores elogiam. Na prefeitura, há quem diga que você está usando o problema para aparecer.",
    "segura": false,
    "pool": {
     "peso": 1
@@ -130,7 +135,7 @@
    "id": "trazer-filiados",
    "degrau": 1,
    "titulo": "Trazer novos filiados ao partido",
-   "texto": "A cúpula tende a notar o esforço. Disputa interna possível.",
+   "texto": "Você começa a trazer vizinhos e conhecidos para o partido. A direção municipal repara no movimento, mas quem controla aquele espaço há anos não gosta de ver gente nova chegando com você.",
    "segura": false,
    "pool": {
     "peso": 1
@@ -177,7 +182,7 @@
    "id": "mutirao-de-limpeza",
    "degrau": 1,
    "titulo": "Mutirão de limpeza na praça",
-   "texto": "Base e popularidade locais tendem a subir. Custa saúde.",
+   "texto": "Num sábado de manhã, você junta vizinhos para limpar a praça abandonada. O cansaço é real e o resultado aparece. Agora o pessoal espera que a praça continue cuidada.",
    "segura": false,
    "pool": {
     "peso": 1
@@ -228,7 +233,7 @@
    "id": "cafe-com-vereador",
    "degrau": 1,
    "titulo": "Café com um vereador da cidade",
-   "texto": "Grupo e relação com a Câmara tendem a crescer. Pode abrir porta na assessoria.",
+   "texto": "Um vereador experiente aceita tomar um café com você. Fala dos bastidores da Câmara, de quem manda em quê e de vagas que podem surgir no gabinete. Ajuda oferecida assim costuma ser cobrada depois.",
    "segura": false,
    "pool": {
     "peso": 1
@@ -279,7 +284,7 @@
    "id": "rede-de-moradores",
    "degrau": 1,
    "titulo": "Acionar a rede de moradores",
-   "texto": "Base local tende a crescer. A rede cobra presença depois.",
+   "texto": "Você aciona os contatos de anos de trabalho no bairro: síndicos, donos de mercadinho, a turma da igreja e do futebol. A rede responde rápido e passa a esperar sua presença em tudo.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -329,7 +334,7 @@
    "id": "parecer-tecnico",
    "degrau": 1,
    "titulo": "Parecer técnico sobre problema da cidade",
-   "texto": "Credibilidade e notoriedade local tendem a subir. Colegas podem estranhar a exposição.",
+   "texto": "Com o conhecimento de quem trabalhou por dentro, você escreve uma análise sobre um problema da cidade e divulga. O texto circula entre gente que decide. Alguns ex-colegas acham que você falou demais.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -383,7 +388,7 @@
    "id": "patrocinar-evento-local",
    "degrau": 1,
    "titulo": "Patrocinar evento no bairro",
-   "texto": "Notoriedade e popularidade locais tendem a subir. Custa caixa e atrai crítica.",
+   "texto": "Você banca a estrutura de um evento no bairro: som, tenda, lanche para as crianças. Seu nome aparece na faixa. Tem quem agradeça e tem quem comente que dinheiro compra presença.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -437,7 +442,7 @@
    "id": "assembleia-da-categoria",
    "degrau": 1,
    "titulo": "Convocar assembleia do sindicato ou da associação",
-   "texto": "Grupo organizado e base local tendem a crescer. A categoria cobra resultados.",
+   "texto": "Você convoca a categoria para discutir salário, condições de trabalho e o que esperar da prefeitura. O auditório lota. Quem compareceu quer ver resultado e vai cobrar de você.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -491,7 +496,7 @@
    "id": "ponte-com-gabinetes",
    "degrau": 1,
    "titulo": "Abrir conversa com gabinetes de parlamentares",
-   "texto": "Relação com a cúpula tende a crescer. Bastidor rende pouca exposição.",
+   "texto": "Você usa os anos de assessoria para abrir conversas com gabinetes de parlamentares. As portas se abrem com facilidade, mas ninguém do lado de fora fica sabendo disso.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -541,10 +546,11 @@
    "id": "governar-pelos-videos",
    "degrau": 1,
    "titulo": "Divulgar o mandato em vídeos curtos",
-   "texto": "Notoriedade local tende a subir rápido. Cada vídeo vira cobrança de entrega.",
+   "texto": "Você grava vídeos curtos mostrando o que fez no cargo durante a semana: uma visita, uma cobrança, uma resposta. O alcance cresce rápido. Cada vídeo também vira uma promessa que alguém vai querer ver cumprida.",
    "segura": false,
    "pool": {
     "peso": 1,
+    "cargos": "comMandato",
     "tagsExigidas": [
      "estilo:influencer"
     ]
@@ -590,8 +596,8 @@
   {
    "id": "live-do-gabinete",
    "degrau": 1,
-   "titulo": "Transmissão ao vivo do gabinete",
-   "texto": "Notoriedade e popularidade locais tendem a subir. Uma resposta mal dada circula sem controle.",
+   "titulo": "Transmissão ao vivo respondendo moradores",
+   "texto": "Você abre uma transmissão ao vivo e responde perguntas de quem estiver assistindo. A conversa fica próxima e espontânea. Uma resposta mal dada pode ser recortada e circular sem contexto.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -644,8 +650,8 @@
   {
    "id": "explicar-os-numeros",
    "degrau": 1,
-   "titulo": "Explicar os números em detalhe",
-   "texto": "Credibilidade tende a subir. Pouca gente assiste até o fim.",
+   "titulo": "Explicar as contas da cidade em detalhe",
+   "texto": "Você publica uma explicação do orçamento da cidade, com tabela e fonte. Quem lê até o fim passa a confiar no que você diz. A maioria para no segundo parágrafo.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -695,7 +701,7 @@
    "id": "relatorio-de-prioridades",
    "degrau": 1,
    "titulo": "Relatório de prioridades do bairro",
-   "texto": "Base local tende a crescer com propostas concretas. Custa caixa.",
+   "texto": "Você junta reclamações, visitas e dados públicos e entrega um relatório com as prioridades do bairro. É trabalho miúdo e custa dinheiro para imprimir e divulgar. Os moradores vão querer saber o que acontece com ele.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -745,7 +751,7 @@
    "id": "criar-polemica",
    "degrau": 1,
    "titulo": "Criar polêmica nas redes sobre um tema local",
-   "texto": "Notoriedade local tende a disparar. Rejeição sobe junto.",
+   "texto": "Você escolhe um tema que divide a cidade e sobe o tom nas redes. Em poucas horas, todo mundo está falando de você. Muita gente também passa a não querer ouvir seu nome.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -803,7 +809,7 @@
    "id": "cortina-de-fumaca",
    "degrau": 1,
    "titulo": "Puxar outro assunto para abafar a crise",
-   "texto": "Muda o assunto e a rejeição cai agora. Se descobrirem a manobra, volta pior.",
+   "texto": "No meio de uma crítica que cresce, você lança outro assunto para tirar a atenção. Funciona por alguns dias. Se alguém perceber a manobra, a história volta mais forte.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -853,7 +859,7 @@
    "id": "desconversar",
    "degrau": 1,
    "titulo": "Desconversar sobre cobranças da imprensa",
-   "texto": "A pergunta incômoda perde força e a rejeição cai um pouco. A imprensa pode insistir.",
+   "texto": "A imprensa insiste numa pergunta incômoda e você responde outra coisa, com educação. O assunto perde força por enquanto. Repórter que se sente enrolado costuma voltar.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -903,7 +909,7 @@
    "id": "fingir-que-nao-viu",
    "degrau": 1,
    "titulo": "Fingir que não viu a denúncia no bairro",
-   "texto": "Evita se comprometer e a rejeição cai agora. Se o caso estourar, cobram a omissão.",
+   "texto": "Chega até você uma denúncia sobre algo errado no bairro. Você decide não tocar no assunto agora para não se comprometer. Se o caso estourar, vão perguntar por que você ficou calado.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -953,7 +959,7 @@
    "id": "panfletar-na-feira",
    "degrau": 1,
    "titulo": "Panfletar na feira do bairro",
-   "texto": "Notoriedade local tende a subir aos poucos. Custa um pouco de saúde.",
+   "texto": "Domingo cedo, você distribui panfletos entre as barracas da feira e conversa com quem para. É lento e cansativo, mas as pessoas começam a reconhecer seu rosto. Nem todo mundo gosta de ser abordado.",
    "segura": false,
    "pool": {
     "peso": 1
@@ -1000,7 +1006,7 @@
    "id": "responder-mensagens",
    "degrau": 1,
    "titulo": "Responder mensagens de moradores",
-   "texto": "Popularidade e base locais tendem a subir devagar.",
+   "texto": "Você separa a noite para responder, uma por uma, as mensagens de moradores. Ninguém vê esse trabalho, mas quem recebe resposta não esquece.",
    "segura": false,
    "pool": {
     "peso": 1
@@ -1051,7 +1057,7 @@
    "id": "visitar-escolas-e-postos",
    "degrau": 1,
    "titulo": "Visitar escolas e postos de saúde",
-   "texto": "Popularidade e notoriedade locais tendem a subir. Ouve cobranças na hora.",
+   "texto": "Você visita escolas e postos de saúde do bairro e conversa com quem trabalha e com quem espera atendimento. Ouve elogios e reclamações na hora, sem filtro.",
    "segura": false,
    "pool": {
     "peso": 1
@@ -1102,7 +1108,7 @@
    "id": "festa-da-comunidade",
    "degrau": 1,
    "titulo": "Participar da festa da comunidade",
-   "texto": "Notoriedade e base locais tendem a subir. Sem custo em dinheiro.",
+   "texto": "Você vai à festa da comunidade, ajuda na barraca e fica até o fim. Não gasta nada além de tempo e energia. Em festa, todo comentário corre rápido, inclusive os maldosos.",
    "segura": false,
    "pool": {
     "peso": 1
@@ -1152,21 +1158,26 @@
   {
    "id": "expediente-de-gabinete",
    "degrau": 2,
-   "titulo": "Atender pedidos no gabinete",
-   "texto": "Atende quem marcou horário e despacha a rotina. Sem ganho visível.",
+   "titulo": "Pôr em dia os pedidos acumulados",
+   "texto": "Você atende quem marcou horário, responde ofícios atrasados e organiza a fila de pedidos. Nada disso aparece fora, mas evita que pequenas pendências virem reclamação.",
    "segura": true,
    "ambicoes": [
     "legislativo",
     "executivo",
     "bastidor"
    ],
-   "efeitos": []
+   "efeitos": [
+    {
+     "alvo": "indicadores.local.rejeicao",
+     "delta": -0.003
+    }
+   ]
   },
   {
    "id": "indicacao-de-obra",
    "degrau": 2,
    "titulo": "Indicação de obra ao Executivo",
-   "texto": "Base e popularidade locais tendem a subir se a obra sair. Gasta capacidade de entrega.",
+   "texto": "Você protocola na Câmara Municipal uma indicação para a prefeitura asfaltar a rua que alaga toda chuva. Se a obra sair, o bairro vai lembrar de quem pediu. Se não sair, também.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -1219,8 +1230,8 @@
   {
    "id": "relatar-projeto",
    "degrau": 2,
-   "titulo": "Relatar projeto na Câmara",
-   "texto": "A relação com os colegas tende a melhorar. Atrai grupos de interesse.",
+   "titulo": "Relatar projeto na Câmara Municipal",
+   "texto": "A presidência da Câmara entrega a você a relatoria de um projeto importante. Os colegas passam a procurar você para negociar o texto, e grupos de interesse também.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -1270,7 +1281,7 @@
    "id": "votar-com-o-governo",
    "degrau": 2,
    "titulo": "Votar com o governo municipal",
-   "texto": "A relação com a prefeitura tende a melhorar. Parte da base cobra independência.",
+   "texto": "Num projeto disputado, você vota com a prefeitura. O prefeito agradece e abre portas. Parte de quem votou em você esperava mais independência e não esconde a decepção.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -1320,7 +1331,7 @@
    "id": "inaugurar-obra",
    "degrau": 2,
    "titulo": "Inaugurar obra da prefeitura",
-   "texto": "Popularidade e notoriedade locais tendem a subir. Gasta capacidade de entrega.",
+   "texto": "A obra fica pronta e você corta a fita diante dos moradores e das câmeras. É hora de mostrar entrega. Qualquer defeito que aparecer depois terá seu nome.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -1374,7 +1385,7 @@
    "id": "plenaria-nos-bairros",
    "degrau": 2,
    "titulo": "Plenária nos bairros",
-   "texto": "Base e notoriedade locais tendem a subir. Os bairros passam a cobrar o que foi ouvido.",
+   "texto": "Você organiza plenárias em vários bairros para ouvir as prioridades de cada um. As salas enchem. Cada bairro sai de lá esperando ser atendido.",
    "segura": false,
    "pool": {
     "peso": 1
@@ -1425,7 +1436,7 @@
    "id": "discurso-na-tribuna",
    "degrau": 2,
    "titulo": "Discursar na tribuna sobre o bairro",
-   "texto": "Notoriedade local tende a subir. Colegas podem se incomodar.",
+   "texto": "Você sobe à tribuna da Câmara Municipal e expõe o abandono do bairro com nomes e datas. O vídeo do discurso circula. Alguns colegas acham que você quis aparecer às custas deles.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -1475,7 +1486,7 @@
    "id": "ouvir-servidores",
    "degrau": 2,
    "titulo": "Ouvir servidores da prefeitura",
-   "texto": "A relação com o Executivo municipal tende a melhorar.",
+   "texto": "Você conversa com servidores da prefeitura que conhecem os gargalos da máquina. Aprende onde as coisas travam e ganha interlocutores. Nem toda chefia gosta de saber dessas conversas.",
    "segura": false,
    "pool": {
     "peso": 1
@@ -1521,8 +1532,8 @@
   {
    "id": "mutirao-de-atendimento",
    "degrau": 2,
-   "titulo": "Mutirão de atendimento no gabinete",
-   "texto": "Popularidade e base locais tendem a subir. Cansa a equipe.",
+   "titulo": "Mutirão de atendimento aos moradores",
+   "texto": "Você e sua equipe passam o dia atendendo moradores: encaminhamentos, documentos, dúvidas sobre benefícios. A fila é longa e todos terminam exaustos. Quem foi atendido conta para os vizinhos.",
    "segura": false,
    "pool": {
     "peso": 1
@@ -1573,7 +1584,7 @@
    "id": "visitar-a-zona-rural",
    "degrau": 2,
    "titulo": "Visitar a zona rural do município",
-   "texto": "Base local tende a crescer onde poucos políticos aparecem.",
+   "texto": "Você percorre estradas de terra até comunidades rurais que raramente recebem político. A acolhida é calorosa. A cobrança, depois, também.",
    "segura": false,
    "pool": {
     "peso": 1
@@ -1619,21 +1630,26 @@
   {
    "id": "despacho-com-a-equipe",
    "degrau": 3,
-   "titulo": "Organizar a agenda interna do gabinete",
-   "texto": "Revisa a agenda e os pedidos acumulados. Sem ganho visível.",
+   "titulo": "Reorganizar a equipe e a agenda",
+   "texto": "Você revisa com a equipe os pedidos, os prazos e os compromissos assumidos. Não sai nada para a imprensa, mas ninguém é pego de surpresa na semana seguinte.",
    "segura": true,
    "ambicoes": [
     "legislativo",
     "executivo",
     "bastidor"
    ],
-   "efeitos": []
+   "efeitos": [
+    {
+     "alvo": "relacoes.credibilidade",
+     "delta": 0.003
+    }
+   ]
   },
   {
    "id": "emenda-para-prefeito-aliado",
    "degrau": 3,
    "titulo": "Emenda para prefeito aliado",
-   "texto": "O grupo político no interior tende a crescer. Outros prefeitos vão pedir o mesmo.",
+   "texto": "Você destina uma emenda para a cidade de um prefeito aliado no interior. Ele faz questão de anunciar seu nome. No dia seguinte, outros prefeitos ligam pedindo o mesmo.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -1687,8 +1703,8 @@
   {
    "id": "propor-cpi",
    "degrau": 3,
-   "titulo": "Propor CPI na Assembleia",
-   "texto": "Notoriedade estadual tende a subir. O governo do estado reage.",
+   "titulo": "Propor CPI na Assembleia Legislativa",
+   "texto": "Você colhe assinaturas para uma CPI sobre contratos do governo estadual. O tema ganha espaço na imprensa do estado. O Palácio passa a tratar você como adversário.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -1739,7 +1755,7 @@
    "id": "fechar-acordo-com-a-bancada",
    "degrau": 3,
    "titulo": "Fechar acordo com a bancada",
-   "texto": "A relação com a bancada estadual tende a melhorar. Acordos rompidos voltam como crise.",
+   "texto": "Você senta com os líderes da bancada e fecha um acordo para as próximas votações. A convivência fica mais fácil. Acordo rompido depois vira crise.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -1791,7 +1807,7 @@
    "id": "anunciar-programa-estadual",
    "degrau": 3,
    "titulo": "Anunciar programa estadual",
-   "texto": "Popularidade e notoriedade estaduais tendem a subir. Gasta capacidade de entrega e atrai os órgãos de controle.",
+   "texto": "Você lança um programa estadual com metas e prazos. O anúncio repercute em todo o estado. A partir de agora, cada atraso será cobrado e cada contrato, examinado.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -1845,7 +1861,7 @@
    "id": "roteiro-pelo-interior",
    "degrau": 3,
    "titulo": "Roteiro pelo interior do estado",
-   "texto": "Notoriedade e popularidade estaduais tendem a subir. Prefeitos visitados passam a cobrar.",
+   "texto": "Você roda o interior do estado em uma semana, com reuniões e entrevistas em rádios locais. Seu nome passa a ser conhecido fora da capital. Os prefeitos que receberam você vão pedir retorno.",
    "segura": false,
    "pool": {
     "peso": 1
@@ -1895,21 +1911,26 @@
   {
    "id": "agenda-em-brasilia",
    "degrau": 4,
-   "titulo": "Cumprir a agenda de rotina em Brasília",
-   "texto": "Reuniões de rotina e despachos. Sem ganho visível.",
+   "titulo": "Cumprir a rotina em Brasília",
+   "texto": "Você cumpre reuniões de comissão, despacha com a equipe e retorna ligações de lideranças do estado. Não rende manchete, mas mantém abertas as portas que você já tem.",
    "segura": true,
    "ambicoes": [
     "legislativo",
     "executivo",
     "bastidor"
    ],
-   "efeitos": []
+   "efeitos": [
+    {
+     "alvo": "relacoes.bancada",
+     "delta": 0.003
+    }
+   ]
   },
   {
    "id": "relatar-projeto-federal",
    "degrau": 4,
    "titulo": "Relatar projeto no Congresso",
-   "texto": "Notoriedade nacional tende a subir. Colegas contrariados podem reagir.",
+   "texto": "Você assume a relatoria de um projeto que mobiliza o Congresso. Sua posição passa a ser noticiada no país inteiro. Colegas contrariados pelo texto vão cobrar na próxima votação.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -1960,7 +1981,7 @@
    "id": "emenda-de-bancada",
    "degrau": 4,
    "titulo": "Articular emenda de bancada estadual",
-   "texto": "Grupo político e relação com a bancada tendem a crescer. Emendas atraem auditoria.",
+   "texto": "Você articula com a bancada do seu estado uma emenda para uma obra regional. A negociação fortalece seu grupo. Emendas desse tamanho costumam chamar a atenção dos órgãos de controle.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -2015,7 +2036,7 @@
    "id": "circular-pelos-ministerios",
    "degrau": 4,
    "titulo": "Circular pelos ministérios em busca de verbas",
-   "texto": "A relação com o governo federal tende a melhorar. Favores pedidos viram favores devidos.",
+   "texto": "Você percorre a Esplanada pedindo recursos para o seu estado. Algumas portas se abrem. Cada favor concedido vira uma dívida que o governo vai cobrar.",
    "segura": false,
    "pool": {
     "peso": 1
@@ -2062,7 +2083,7 @@
    "id": "apresentar-resultados-da-gestao",
    "degrau": 4,
    "titulo": "Apresentar resultados da gestão",
-   "texto": "Notoriedade nacional e relação com o governo tendem a subir. Gasta capacidade de entrega.",
+   "texto": "Você apresenta os números da sua gestão em entrevista coletiva. A apresentação agrada ao governo e ganha espaço nacional. Agora os números passam a ser conferidos.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -2118,7 +2139,7 @@
    "id": "entrevista-nacional",
    "degrau": 4,
    "titulo": "Entrevista a veículo nacional",
-   "texto": "Notoriedade e popularidade nacionais tendem a subir. Uma frase mal colocada pesa.",
+   "texto": "Um veículo nacional pede uma entrevista longa. É a chance de ser conhecido fora do seu estado. Uma frase mal colocada pode virar manchete por dias.",
    "segura": false,
    "pool": {
     "peso": 1
@@ -2168,21 +2189,26 @@
   {
    "id": "reuniao-de-coordenacao",
    "degrau": 5,
-   "titulo": "Reunir a coordenação política da semana",
-   "texto": "Alinha a agenda da semana com os aliados. Sem ganho visível.",
+   "titulo": "Reunir a coordenação política",
+   "texto": "Você reúne os principais aliados para alinhar a agenda da semana. Ninguém anuncia nada, mas cada um sai sabendo o que esperar dos outros.",
    "segura": true,
    "ambicoes": [
     "legislativo",
     "executivo",
     "bastidor"
    ],
-   "efeitos": []
+   "efeitos": [
+    {
+     "alvo": "relacoes.cupula",
+     "delta": 0.003
+    }
+   ]
   },
   {
    "id": "pronunciamento-em-rede-nacional",
    "degrau": 5,
    "titulo": "Pronunciamento em rede nacional",
-   "texto": "Popularidade e notoriedade nacionais tendem a subir. Um anúncio sem entrega vira cobrança.",
+   "texto": "Você fala ao país em cadeia de rádio e TV e anuncia uma medida esperada. A audiência é enorme. Se a entrega não vier, o pronunciamento será lembrado.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -2236,7 +2262,7 @@
    "id": "negociar-coalizao",
    "degrau": 5,
    "titulo": "Negociar a coalizão de governo",
-   "texto": "A base no Congresso tende a crescer. Gasta capacidade de entrega em cargos e verbas.",
+   "texto": "Você negocia ministérios e espaços com os partidos para formar maioria no Congresso. A base cresce. Cada cargo cedido reduz o que você ainda tem para oferecer.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -2286,7 +2312,7 @@
    "id": "orientar-a-bancada",
    "degrau": 5,
    "titulo": "Orientar a bancada como líder",
-   "texto": "A relação com a bancada tende a melhorar. Dissidências aparecem nas votações difíceis.",
+   "texto": "Como líder, você orienta a bancada numa votação decisiva. A maioria segue. Quem discorda guarda a insatisfação para a próxima votação difícil.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -2337,7 +2363,7 @@
    "id": "conduzir-a-executiva-nacional",
    "degrau": 5,
    "titulo": "Conduzir a executiva nacional",
-   "texto": "Grupo político e relação com a cúpula tendem a crescer. Custa caixa.",
+   "texto": "Você comanda a reunião da executiva nacional e define as prioridades do partido. Seu grupo ganha força nas decisões. Manter essa estrutura custa caro e desperta ambições internas.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -2391,7 +2417,7 @@
    "id": "lancar-politica-do-ministerio",
    "degrau": 5,
    "titulo": "Lançar política do ministério",
-   "texto": "Notoriedade nacional e relação com o governo tendem a subir. Gasta capacidade de entrega.",
+   "texto": "Você lança uma política nacional do ministério, com metas e agenda de viagens. O governo aplaude. A execução vai depender de recursos que nem sempre chegam.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -2445,7 +2471,7 @@
   {
    "id": "agenda-do-vice",
    "titulo": "Representar o titular em agendas oficiais",
-   "texto": "Notoriedade local e relação com o Executivo tendem a subir. Custa saúde.",
+   "texto": "Você representa o titular em inaugurações, reuniões e solenidades. Ganha visibilidade e a confiança do governo. A agenda é cheia e cansativa.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -2500,7 +2526,7 @@
   {
    "id": "bastidor-do-vice",
    "titulo": "Costurar apoio ao governo no Legislativo",
-   "texto": "Bancada e grupo tendem a crescer. Custa caixa.",
+   "texto": "Você usa a sua posição para costurar apoio ao governo no Legislativo. Os parlamentares passam a ver você como interlocutor. Nem todos no governo gostam de ver o vice crescer.",
    "segura": false,
    "pool": {
     "peso": 1,
@@ -2559,12 +2585,12 @@
    "degrau": 1,
    "familia": "demanda-local",
    "titulo": "Cobrança da associação",
-   "texto": "A associação de moradores cobra o que foi conversado.",
+   "texto": "A presidente da associação de moradores liga para saber o que aconteceu com os pedidos daquela reunião. Os vizinhos estão perguntando.",
    "tipo": "atrasado",
    "opcoes": [
     {
      "id": "registrar",
-     "texto": "Registrar a cobrança",
+     "texto": "Ouvir a cobrança e prometer retorno",
      "efeitos": [
       {
        "alvo": "base.local.forca",
@@ -2579,7 +2605,7 @@
    "degrau": 1,
    "familia": "exposicao-local",
    "titulo": "O vídeo repercute",
-   "texto": "O vídeo circula nos grupos do bairro e chega à imprensa local.",
+   "texto": "O vídeo sai dos grupos do bairro e chega a um portal de notícias da cidade. O repórter quer saber se você vai continuar cobrando a prefeitura.",
    "tipo": "atrasado",
    "opcoes": [
     {
@@ -2629,7 +2655,7 @@
    "degrau": 1,
    "familia": "diretorio",
    "titulo": "Disputa no diretório",
-   "texto": "Um grupo antigo do diretório municipal vê os novos filiados como ameaça.",
+   "texto": "O grupo que comanda o diretório municipal há anos vê os novos filiados como ameaça e começa a se articular para isolar você.",
    "tipo": "atrasado",
    "opcoes": [
     {
@@ -2679,7 +2705,7 @@
    "degrau": 1,
    "familia": "boato",
    "titulo": "Boato no bairro",
-   "texto": "Corre nos grupos de mensagem uma história sobre você que não é verdadeira.",
+   "texto": "Começa a circular nos grupos de mensagem uma história falsa sobre você. Algumas pessoas acreditam e repassam.",
    "tipo": "gatilho",
    "limiar": {
     "alvo": "indicadores.local.rejeicao",
@@ -2722,7 +2748,7 @@
    "degrau": 1,
    "familia": "manobra",
    "titulo": "A manobra veio à tona",
-   "texto": "A imprensa local mostra que você tentou abafar o assunto.",
+   "texto": "Um portal local mostra que você tentou desviar a atenção do caso. Agora a pergunta é outra: o que você queria esconder?",
    "tipo": "atrasado",
    "opcoes": [
     {
@@ -2757,7 +2783,7 @@
    "degrau": 2,
    "familia": "obra-municipal",
    "titulo": "A obra não sai",
-   "texto": "A obra prometida para o bairro parou e os moradores querem explicação.",
+   "texto": "A obra prometida para o bairro está parada há meses. Os moradores querem saber de quem é a culpa e o que você vai fazer.",
    "tipo": "atrasado",
    "opcoes": [
     {
@@ -2807,7 +2833,7 @@
    "degrau": 2,
    "familia": "grupo-de-interesse",
    "titulo": "Proposta de um grupo de interesse",
-   "texto": "Uma empresa interessada no projeto oferece apoio em troca de mudanças no texto.",
+   "texto": "O representante de uma empresa interessada no projeto procura você. Oferece apoio na próxima campanha se o texto mudar em alguns pontos.",
    "tipo": "atrasado",
    "condicao": [
     {
@@ -2854,7 +2880,7 @@
    "degrau": 2,
    "familia": "exposicao-municipal",
    "titulo": "Investigação do acordo",
-   "texto": "O Ministério Público abre apuração sobre as mudanças no projeto.",
+   "texto": "O Ministério Público abre uma apuração sobre as mudanças que você fez no projeto.",
    "tipo": "atrasado",
    "condicao": [
     {
@@ -2891,7 +2917,7 @@
    "degrau": 2,
    "familia": "crise-gestao-municipal",
    "titulo": "Fila no posto de saúde",
-   "texto": "Reportagem mostra filas longas nos postos da cidade e cobra a prefeitura.",
+   "texto": "Uma reportagem mostra filas de madrugada nos postos de saúde da cidade. Os moradores cobram a prefeitura e as câmeras esperam sua resposta.",
    "tipo": "gatilho",
    "condicao": [
     {
@@ -2962,7 +2988,7 @@
    "degrau": 2,
    "familia": "demanda-municipal",
    "titulo": "Cobrança dos bairros",
-   "texto": "Lideranças dos bairros dizem que você sumiu depois de eleito.",
+   "texto": "Lideranças dos bairros dizem que você sumiu depois de eleito. A conversa começa a circular entre quem fez campanha por você.",
    "tipo": "atrasado",
    "opcoes": [
     {
@@ -2997,7 +3023,7 @@
    "degrau": 3,
    "familia": "crise-legislativo-estadual",
    "titulo": "Impasse na Assembleia",
-   "texto": "A votação do orçamento trava e os líderes cobram uma posição sua.",
+   "texto": "A votação do orçamento estadual trava na Assembleia Legislativa. Os líderes querem saber de que lado você está.",
    "tipo": "atrasado",
    "opcoes": [
     {
@@ -3032,7 +3058,7 @@
    "degrau": 3,
    "familia": "prefeitos-aliados",
    "titulo": "Cobrança dos prefeitos aliados",
-   "texto": "Prefeitos da base dizem que o apoio na eleição depende de entregas no município.",
+   "texto": "Prefeitos que apoiaram você avisam que o apoio na próxima eleição depende do que chegar aos municípios.",
    "tipo": "atrasado",
    "opcoes": [
     {
@@ -3063,7 +3089,7 @@
    "degrau": 3,
    "familia": "crise-gestao-estadual",
    "titulo": "Onda de violência no estado",
-   "texto": "Uma sequência de crimes graves domina o noticiário e a oposição pede respostas.",
+   "texto": "Uma sequência de crimes graves domina o noticiário do estado. A oposição pede respostas e a população quer ver ação.",
    "tipo": "gatilho",
    "condicao": [
     {
@@ -3123,7 +3149,7 @@
    "degrau": 3,
    "familia": "exposicao-estadual",
    "titulo": "Operação sobre contratos estaduais",
-   "texto": "Uma operação apura contratos ligados ao seu grupo político.",
+   "texto": "A polícia cumpre mandados numa operação sobre contratos estaduais ligados ao seu grupo político.",
    "tipo": "atrasado",
    "condicao": [
     {
@@ -3160,7 +3186,7 @@
    "degrau": 4,
    "familia": "crise-estatal-federal",
    "titulo": "Crise no órgão federal",
-   "texto": "A imprensa revela atrasos e prejuízos no órgão que você dirige.",
+   "texto": "Uma reportagem revela atrasos e prejuízos no órgão que você dirige. O Congresso quer explicações.",
    "tipo": "atrasado",
    "condicao": [
     {
@@ -3213,7 +3239,7 @@
    "degrau": 4,
    "familia": "controle-federal",
    "titulo": "Auditoria do TCU",
-   "texto": "O Tribunal de Contas da União aponta falhas na aplicação de recursos ligados a você.",
+   "texto": "O Tribunal de Contas da União aponta falhas na aplicação de recursos que passaram pelas suas mãos.",
    "tipo": "atrasado",
    "opcoes": [
     {
@@ -3290,7 +3316,7 @@
    "degrau": 4,
    "familia": "embate-congresso",
    "titulo": "Embate no plenário",
-   "texto": "Uma votação apertada divide a sua bancada e os líderes cobram lealdade.",
+   "texto": "Uma votação apertada divide a sua bancada. Os líderes cobram lealdade e a imprensa conta os votos.",
    "tipo": "atrasado",
    "opcoes": [
     {
@@ -3325,7 +3351,7 @@
    "degrau": 4,
    "familia": "bastidor-federal",
    "titulo": "Pedido de bastidor",
-   "texto": "Um intermediário pede que você destrave um contrato em troca de apoio futuro.",
+   "texto": "Um intermediário pede que você destrave um contrato. Em troca, promete apoio quando você precisar.",
    "tipo": "atrasado",
    "condicao": [
     {
@@ -3368,7 +3394,7 @@
    "degrau": 4,
    "familia": "exposicao-federal",
    "titulo": "Operação da Polícia Federal",
-   "texto": "Uma operação apura o contrato destravado e chega ao seu gabinete.",
+   "texto": "A Polícia Federal cumpre mandados sobre o contrato destravado e chega ao seu gabinete.",
    "tipo": "atrasado",
    "condicao": [
     {
@@ -3405,7 +3431,7 @@
    "degrau": 5,
    "familia": "crise-governo-federal",
    "titulo": "Escândalo no ministério",
-   "texto": "Uma denúncia da imprensa atinge a cúpula de um ministério do governo.",
+   "texto": "Uma reportagem acusa a cúpula de um ministério do governo. A oposição pede demissões e a base espera um sinal seu.",
    "tipo": "atrasado",
    "opcoes": [
     {
@@ -3440,7 +3466,7 @@
    "degrau": 5,
    "familia": "base-congresso",
    "titulo": "Debandada na base",
-   "texto": "Deputados aliados anunciam voto contra o governo na próxima votação importante.",
+   "texto": "Deputados aliados anunciam voto contra o governo na próxima votação importante. Outros esperam para ver como você reage.",
    "tipo": "atrasado",
    "opcoes": [
     {
@@ -3475,7 +3501,7 @@
    "degrau": 5,
    "familia": "desgaste-nacional",
    "titulo": "Protestos pelo país",
-   "texto": "Manifestações em várias capitais pedem mudanças no governo.",
+   "texto": "Manifestações tomam várias capitais e pedem mudanças no governo. As imagens estão em todos os jornais.",
    "tipo": "gatilho",
    "condicao": [
     {
@@ -3535,7 +3561,7 @@
    "degrau": 5,
    "familia": "coalizao",
    "titulo": "Aliado ameaça deixar a coalizão",
-   "texto": "Um partido da base exige mais espaço no governo ou promete sair.",
+   "texto": "Um partido da base exige mais espaço no governo e ameaça deixar a coalizão.",
    "tipo": "atrasado",
    "opcoes": [
     {
@@ -3644,7 +3670,8 @@
    "id": "inelegibilidade-reconhecida",
    "familia": "juridico",
    "titulo": "Inelegibilidade reconhecida",
-   "texto": "A condenação se enquadra em hipótese de inelegibilidade (a confirmar).",
+   "texto": "A condenação se enquadra numa hipótese de inelegibilidade. Você fica impedido de disputar eleições pelo prazo da lei.",
+   "_nota": "Hipótese de inelegibilidade (a confirmar).",
    "tipo": "atrasado",
    "condicao": [
     {

@@ -174,3 +174,22 @@ test("sim.js --carreira --cartas: hash reproduzível e diferente do modo sem car
   assert.notEqual(a.hash, run().hash);
   assert.ok(a.ocorrencias.filter((o) => o.tipo === "carta").length === 20); // 4 anos: 6 + 4 + 6 + 4 janelas
 });
+
+test("D91: segura aceita defesa leve (rejeição ou relação até o teto) e recusa ganho maior ou em outro estoque", () => {
+  const com = (ef) => dadosCom((d) => { d.cartas[0].efeitos = ef; });
+  assert.doesNotThrow(() => Cartas.validarCatalogo(com([{ alvo: "indicadores.local.rejeicao", delta: -0.003 }])));
+  assert.doesNotThrow(() => Cartas.validarCatalogo(com([{ alvo: "relacoes.credibilidade", delta: 0.003 }])));
+  assert.throws(() => Cartas.validarCatalogo(com([{ alvo: "relacoes.bancada", delta: 0.01 }])), ERRO);
+  assert.throws(() => Cartas.validarCatalogo(com([{ alvo: "base.local.forca", delta: 0.002 }])), ERRO);
+});
+
+test("D91: pool.cargos comMandato exige cargo eletivo em exercício; nomeação ou cargo partidário não bastam", () => {
+  const cat = JSON.parse(fs.readFileSync(path.join(RAIZ, "data", "catalogo", "catalogo-jogo.json"), "utf8"));
+  assert.equal(cat.cartas.find((c) => c.id === "governar-pelos-videos").pool.cargos, "comMandato");
+  const d = dadosCom((x) => { x.cartas[2].pool = Object.assign({}, x.cartas[2].pool, { cargos: "comMandato" }); });
+  const id = d.cartas[2].id, e = novo();
+  const tem = (est) => { for (let i = 0; i < 40; i++) if (Cartas.montarMao(est, d, RNG.criar("v1-M" + i, "cartas")).resultado.acoes.includes(id)) return true; return false; };
+  assert.equal(tem(e), false);
+  const v = clone(e); v.cargos.mandatos = [{ disputaId: "D", cargo: "VEREADOR", inicio: "2025-01-01", fim: "2028-12-31", situacao: "exercicio" }];
+  assert.equal(tem(v), true);
+});
