@@ -38,16 +38,17 @@ test("criação com dados reais: estado, município com busca e partido do regis
   try {
     const { pg, erros } = await abrir(nav, `http://127.0.0.1:${srv.address().port}/index.html`);
     await pg.click("[data-acao=criar-tela]");
-    await pg.waitForSelector("#uf-novo");
     await pg.fill("#nome", "Personagem Real");
-    await pg.locator("[data-ambicao]").first().click();
+    await pg.click("[data-acao=passo-seguinte]"); await pg.click("[data-acao=passo-seguinte]");
+    await pg.locator("[data-ambicao]").first().click(); await pg.click("[data-acao=passo-seguinte]");
+    await pg.waitForSelector("#uf-novo");
     await pg.selectOption("#uf-novo", "RR");
     assert.equal(await pg.locator("#municipio-novo-lista option").count(), 15);          // 15 municípios em Roraima
     await pg.fill("#municipio-novo", "Boa Vista (RR)");
     await pg.selectOption("#partido-novo", "PT");
     if (CAPTURAS) await pg.screenshot({ path: path.join(CAPTURAS, "1b-criacao.png"), fullPage: true });
     await pg.click("#criacao button[type=submit]");
-    await pg.waitForFunction(() => document.querySelector("h1.dossier-title").textContent !== "Nova carreira");
+    await pg.waitForFunction(() => document.querySelector("h1.dossier-title").textContent !== "Território e partido");
     const salvo = JSON.parse(await pg.evaluate(() => localStorage.getItem("demogracinha.save")));
     assert.equal(salvo.personagem.municipioLocal, "1400100"); assert.equal(salvo.personagem.ufAtual, "RR"); assert.equal(salvo.personagem.partidoId, "PT");
     assert.deepEqual(erros, []);

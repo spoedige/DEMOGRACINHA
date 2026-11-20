@@ -6594,6 +6594,7 @@
     {
      "id": "sair-por-justa-causa",
      "texto": "Preparar a saída do partido sem perda do mandato",
+     "textoSemMandato": "Sair do partido e buscar nova legenda para a próxima eleição",
      "efeitos": [
       {
        "alvo": "relacoes.cupula",

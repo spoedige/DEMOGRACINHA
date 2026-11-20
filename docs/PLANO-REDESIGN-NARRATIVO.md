@@ -7,7 +7,7 @@ Documento de controle e continuidade (D91). Atualizar ao fim de cada etapa. Deci
 | Campo | Valor |
 |---|---|
 | Branch | `implementacao-motor` (sem commit nem push sem autorização) |
-| Etapa atual | 4 concluída, aguardando revisão do autor (etapa 3 em `89af67a`) |
+| Etapa atual | UX concluída, aguardando revisão do autor (etapa 4 em `80becff`) |
 | Próxima ação | Etapa 5: partidos, espectro, troca e repasse mínimo de campanha |
 
 ## Diagnóstico consolidado (etapa 0)
@@ -23,7 +23,7 @@ Documento de controle e continuidade (D91). Atualizar ao fim de cada etapa. Deci
 | Estilos (4) | Só bônus e 2 cartas cada | P2 | 4 (feito) |
 | Talento Nato | Não implementado | P2 | 4 (feito) |
 | Partidos (29) | Sem campo de espectro | P2 | 5 |
-| Nascimento | Data completa, sem seletor de mês e ano | P2 | 7 |
+| Nascimento | Data completa, sem seletor de mês e ano | P2 | UX (feito) |
 | Calibragem (adendo) | Ver seção própria | P0 | 5 e 6 |
 
 ## Etapas
@@ -34,10 +34,11 @@ Documento de controle e continuidade (D91). Atualizar ao fim de cada etapa. Deci
 | 1 | Tom, reescrita de cartas e eventos, segura, textos provisórios | Concluída (`5fd860c`) |
 | 2 | 5 personagens, relações internas, save 7, 6 arcos | Concluída (`be701a5`) |
 | 3 | 24 cartas adicionais (lista abaixo) | Concluída (`89af67a`) |
-| 4 | Família Política, estilos, sinergias, Talento Nato | Concluída |
+| 4 | Família Política, estilos, sinergias, Talento Nato | Concluída (`80becff`) |
+| UX | Interface em tela única: Jornada, criação em 4 passos, 3 abas, cláusula sem mandato | Concluída |
 | 5 | Partidos: espectro, ordem alfabética, troca; calibragem de recursos | Pendente |
 | 6 | Biografia, eleições, carimbo; calibragem de votos | Pendente |
-| 7 | Interface e nascimento por mês e ano | Pendente |
+| 7 | Interface restante (o que a etapa UX não cobriu) | Pendente |
 | 8 | Testes completos | Pendente |
 
 ## Padrão de texto (etapa 1)
@@ -92,6 +93,24 @@ Documento de controle e continuidade (D91). Atualizar ao fim de cada etapa. Deci
   - Família calibrada em três passes: a primeira versão dava 85,4 / 58,3. O que mais pesa é caixa e notoriedade estadual; os indicadores locais são reduzidos pelo porte do município.
   - Sem Família e sem talento, a mesma amostra dá 57,7%: o ganho vem das sinergias, do ajuste do Assessor e das cartas novas.
 
+## Etapa UX: entregue
+
+Motor, regras, determinismo e save 7 intactos. Única mudança no motor: a fila de eventos repassa `textoSemMandato` da opção (só exibição).
+
+| Item | Entrega |
+|---|---|
+| A. Cláusula | Opção "Preparar a saída do partido sem perda do mandato" ganhou `textoSemMandato`: sem mandato eletivo em exercício aparece "Sair do partido e buscar nova legenda para a próxima eleição". Efeitos iguais. Auditoria: os demais textos com "mandato" só disparam com cargo (posse, sucessão, vice, arco do mandato) |
+| B. Criação | 4 passos com barra de progresso e Voltar e Continuar fixos: identidade (nome, mês e ano; dia 01), origem (6 cartões com vantagem e contrapartida), estilo (4 cartões, selo de afinidade com a origem, ambição), território e partido (UF, município com busca, partidos em ordem alfabética). Ritmo em pílulas na tela inicial; ritmo e semente em "Opções avançadas" |
+| C. Jornada | 3 abas (Jornada, Carreira, Menu). Painel com "Mês de ano · momento", cargo, nome, sigla, município, 4 números (Reconhecimento, Apoio, Rejeição e o recurso ativo) e o eleitorado do escopo. Faixa dos 3 últimos marcos reais, que abre a Carreira. Um acontecimento por vez; "Contenção de danos"; botão "Confirmar decisão" fixo acima da navegação; cartas com título, uma linha de contexto, custo e risco. Dicas burocráticas removidas |
+| C. Urna | Carimbo ELEITO ou NÃO ELEITO com cargo, votos e colocação no resumo do período da eleição |
+| C. Convenção | O motor já oferece toda candidatura que passa no módulo 3; a ficha agora marca "Alto risco: fora do degrau" (degrau do cargo acima do atual + 1, tabela `DEGRAU_CARGO`, calibrar) e "Legalmente possível, politicamente arriscada" |
+| D. Carreira | Biografia montada com fatos da partida (inclui origem, afinidade e talento), Trajetória cronológica com resultados das urnas, Partido e filiações (painel de troca de partido, domicílio e estilo trazido da Jornada), Números da carreira (cidade, estado, país, recursos, relações) em seções recolhíveis |
+| E. Validação | Testes novos: cláusula com e sem mandato, save 7 com campos opcionais vazios, passos da criação, 3 abas, um evento por vez, carimbo da urna. Alvos de 44 px, 360 px sem rolagem horizontal, contraste com os tokens já validados |
+
+- Referência visual (Copero) usada só para estrutura: nenhum código, texto ou imagem copiado (CLAUDE.md, regra 5).
+- Cabeçalho do jogo passou de 166 px para 96 px; o teste do brilho da posse aceita a nova altura.
+- Testes: motor 243 / 0; UI 20 / 0; pipeline OK.
+
 ## Pendências registradas
 
 - Eventos de opção única restantes (jurídicos, operações e sucessão) continuam como notícia, por decisão de projeto.
@@ -100,6 +119,8 @@ Documento de controle e continuidade (D91). Atualizar ao fim de cada etapa. Deci
 - Liderança sindical caiu para 37,3% nesta amostra (48,3% na amostra de 5 origens). Reavaliar com a calibragem de votos da etapa 6.
 - Taxa geral de eleição subiu para 63%: conferir na etapa 6 se a primeira eleição de vereador não ficou fácil demais junto com o adendo.
 - "Mutirão de atendimento" e "Pôr em dia os pedidos" pressupõem equipe; avaliar restrição no degrau 2.
+- Etapa UX: `DEGRAU_CARGO` (calibrar) só sinaliza; avaliar na etapa 6 se a convenção deve oferecer mais cargos fora do degrau, já que a oferta depende dos modelos de disputa da unidade.
+- Etapa UX: textos de vantagem e contrapartida das origens e estilos ficam na UI; se os valores mudarem na etapa 5 ou 6, revisar `ORIGEM_TXT` e `ESTILO_TXT`.
 
 ## Adendo de calibragem (teste real 2026 a 2048)
 
