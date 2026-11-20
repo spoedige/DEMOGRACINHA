@@ -1156,6 +1156,421 @@
    }
   },
   {
+   "id": "abaixo-assinado-no-bairro",
+   "degrau": 1,
+   "titulo": "Abaixo-assinado por melhoria no bairro",
+   "texto": "Você sai de porta em porta recolhendo assinaturas para pedir uma creche no bairro. A cada casa, alguém conta um problema novo. Com centenas de nomes no papel, a associação vai querer saber o que você fará com eles.",
+   "segura": false,
+   "pool": {
+    "peso": 1
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.02
+   },
+   "aptidao": "mobilizacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "base.local.forca",
+     "delta": 0.02
+    },
+    {
+     "alvo": "indicadores.local.popularidade",
+     "delta": 0.008
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "base.local.forca",
+     "delta": 0.005
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "base.local.forca",
+      "delta": -0.01
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "cobranca-associacao",
+    "emJanelas": 3,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "transmissao-andando-pelas-ruas",
+   "degrau": 1,
+   "titulo": "Transmissão ao vivo andando pelas ruas",
+   "texto": "Celular na mão, você caminha pelo bairro ao vivo, mostrando buracos e conversando com quem aparece. A audiência cresce a cada esquina. Basta um morador irritado na hora errada para o vídeo virar outra coisa.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "tagsExigidas": [
+     "estilo:influencer"
+    ]
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.01
+   },
+   "aptidao": "comunicacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "indicadores.local.notoriedade",
+     "delta": 0.012
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "indicadores.local.notoriedade",
+     "delta": 0.003
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "indicadores.local.rejeicao",
+      "delta": 0.008
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "video-repercute",
+    "emJanelas": 2,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "artigo-de-opiniao",
+   "degrau": 1,
+   "titulo": "Artigo de opinião no jornal ou portal local",
+   "texto": "Você escreve um artigo com dados sobre o transporte da cidade e consegue espaço no portal local. Quem lê passa a citar seus números. Quem discorda também passa a procurar erro neles.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "tagsExigidas": [
+     "estilo:tecnico"
+    ]
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.01
+   },
+   "aptidao": "comunicacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "relacoes.credibilidade",
+     "delta": 0.02
+    },
+    {
+     "alvo": "indicadores.local.notoriedade",
+     "delta": 0.006
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "relacoes.credibilidade",
+     "delta": 0.005
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "relacoes.credibilidade",
+      "delta": -0.01
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "boato-no-bairro",
+    "emJanelas": 2,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "caminhada-no-comercio",
+   "degrau": 1,
+   "titulo": "Caminhada no comércio e pontos de ônibus",
+   "texto": "Você passa o dia entre lojas, bancas e pontos de ônibus, apertando mãos e ouvindo reclamações sobre a linha que atrasa. Termina com os pés doendo e uma lista de contatos maior.",
+   "segura": false,
+   "pool": {
+    "peso": 1
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.03
+   },
+   "aptidao": "mobilizacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "indicadores.local.popularidade",
+     "delta": 0.01
+    },
+    {
+     "alvo": "base.local.forca",
+     "delta": 0.01
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "indicadores.local.popularidade",
+     "delta": 0.003
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "base.local.forca",
+      "delta": -0.003
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "boato-no-bairro",
+    "emJanelas": 2,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "oficio-ao-ministerio-publico",
+   "degrau": 1,
+   "titulo": "Ofício ao Ministério Público ou à Defensoria",
+   "texto": "A demanda que você assumiu com o bairro não anda. Você reúne documentos e fotos e protocola um ofício no Ministério Público pedindo providências. Na prefeitura, o gesto é lido como afronta.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "tagsExigidas": [
+     "arco:promessa"
+    ]
+   },
+   "custo": {
+    "recurso": "executivo",
+    "quantidade": 0.02
+   },
+   "aptidao": "articulacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "relacoes.credibilidade",
+     "delta": 0.025
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "relacoes.credibilidade",
+     "delta": 0.005
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "relacoes.credibilidade",
+      "delta": -0.01
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "promessa-repercute",
+    "emJanelas": 2,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "apoiar-varzea-ou-cultura",
+   "degrau": 1,
+   "titulo": "Apoiar campeonato de várzea ou evento cultural",
+   "texto": "Você ajuda a pagar arbitragem, uniformes e o som de um evento de fim de semana no campo do bairro. A torcida lembra de quem ajudou. Quem ficou de fora da organização também.",
+   "segura": false,
+   "pool": {
+    "peso": 1
+   },
+   "custo": {
+    "recurso": "caixaPessoal",
+    "quantidade": 80000
+   },
+   "aptidao": "mobilizacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "indicadores.local.popularidade",
+     "delta": 0.01
+    },
+    {
+     "alvo": "base.local.forca",
+     "delta": 0.01
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "base.local.forca",
+     "delta": 0.003
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "indicadores.local.popularidade",
+      "delta": -0.004
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "boato-no-bairro",
+    "emJanelas": 2,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "reuniao-reservada-com-liderancas",
+   "degrau": 1,
+   "titulo": "Reunião reservada com lideranças de bairro",
+   "texto": "Você chama para um café as pessoas que de fato organizam o bairro: presidentes de associação, pastores, donos de comércio. Nada é anunciado. A direção do partido fica sabendo que você tem com quem contar.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "tagsExigidas": [
+     "estilo:articulador"
+    ]
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.01
+   },
+   "aptidao": "articulacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "base.local.forca",
+     "delta": 0.015
+    },
+    {
+     "alvo": "relacoes.cupula",
+     "delta": 0.015
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "base.local.forca",
+     "delta": 0.005
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "relacoes.cupula",
+      "delta": -0.01
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "disputa-no-diretorio",
+    "emJanelas": 3,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "debate-no-grupo-da-cidade",
+   "degrau": 1,
+   "titulo": "Debate acalorado no grupo de mensagens da cidade",
+   "texto": "Num grupo de mensagens com milhares de moradores, você entra numa discussão sobre a tarifa de ônibus e não recua. Muita gente passa a conhecer seu nome. Outra parte decide que não gosta dele.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "tagsExigidas": [
+     "estilo:combativo"
+    ]
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.01
+   },
+   "aptidao": "comunicacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "indicadores.local.notoriedade",
+     "delta": 0.015
+    },
+    {
+     "alvo": "indicadores.local.rejeicao",
+     "delta": 0.005
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "indicadores.local.notoriedade",
+     "delta": 0.004
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "indicadores.local.rejeicao",
+      "delta": 0.008
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "boato-no-bairro",
+    "emJanelas": 2,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
    "id": "expediente-de-gabinete",
    "degrau": 2,
    "titulo": "Pôr em dia os pedidos acumulados",
@@ -1628,6 +2043,342 @@
    }
   },
   {
+   "id": "fiscalizacao-surpresa",
+   "degrau": 2,
+   "titulo": "Fiscalização surpresa em obra ou hospital municipal",
+   "texto": "Sem avisar, você chega a uma obra parada e depois ao hospital municipal, com a câmera ligada. O que encontra vira notícia na cidade. Na prefeitura, ninguém gostou da visita.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "cargos": [
+     "VEREADOR"
+    ]
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.02
+   },
+   "aptidao": "comunicacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "indicadores.local.notoriedade",
+     "delta": 0.012
+    },
+    {
+     "alvo": "indicadores.local.popularidade",
+     "delta": 0.008
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "indicadores.local.notoriedade",
+     "delta": 0.003
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "relacoes.executivo",
+      "delta": -0.02
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "obra-nao-sai",
+    "emJanelas": 2,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "audiencia-publica",
+   "degrau": 2,
+   "titulo": "Audiência pública sobre transporte ou saúde",
+   "texto": "Você organiza uma audiência pública e põe frente a frente moradores, técnicos e representantes da prefeitura. A sala enche e as falas ficam registradas. Quem foi espera ver encaminhamento.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "cargos": [
+     "VEREADOR"
+    ],
+    "nomeacao": [
+     "secretario-municipal-assistencia",
+     "secretario-municipal-educacao"
+    ]
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.02
+   },
+   "aptidao": "articulacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "relacoes.credibilidade",
+     "delta": 0.02
+    },
+    {
+     "alvo": "base.local.forca",
+     "delta": 0.01
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "base.local.forca",
+     "delta": 0.003
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "base.local.forca",
+      "delta": -0.005
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "cobranca-da-base",
+    "emJanelas": 3,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "mutirao-de-regularizacao",
+   "degrau": 2,
+   "titulo": "Mutirão de regularização fundiária ou zeladoria",
+   "texto": "A prefeitura monta tendas no bairro para entregar títulos de terreno, trocar lâmpadas e tapar buracos numa semana só. As filas são longas, mas muita coisa se resolve. Quem não foi atendido vai cobrar a segunda etapa.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "cargos": [
+     "PREFEITO"
+    ],
+    "nomeacao": [
+     "secretario-municipal-assistencia",
+     "secretario-municipal-educacao"
+    ]
+   },
+   "custo": {
+    "recurso": "capitalEntrega",
+    "quantidade": 2
+   },
+   "aptidao": "gestao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "indicadores.local.popularidade",
+     "delta": 0.015
+    },
+    {
+     "alvo": "indicadores.local.rejeicao",
+     "delta": -0.008
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "indicadores.local.popularidade",
+     "delta": 0.004
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "indicadores.local.popularidade",
+      "delta": -0.006
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "obra-nao-sai",
+    "emJanelas": 3,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "negociar-emenda-com-deputado",
+   "degrau": 2,
+   "titulo": "Negociar emenda com deputado aliado",
+   "texto": "Você vai à Assembleia Legislativa pedir a um deputado do seu campo uma emenda para a cidade. Ele aceita e pede em troca apoio na próxima eleição. O recurso ajuda, e a dívida também fica.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "cargos": [
+     "VEREADOR",
+     "PREFEITO"
+    ]
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.02
+   },
+   "aptidao": "articulacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "bolsos.capitalEntrega",
+     "delta": 1
+    },
+    {
+     "alvo": "relacoes.bancada",
+     "delta": 0.02
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "relacoes.bancada",
+     "delta": 0.005
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "relacoes.bancada",
+      "delta": -0.01
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "promessa-trava",
+    "emJanelas": 3,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "pressionar-na-ldo",
+   "degrau": 2,
+   "titulo": "Pressionar líderes na votação da LDO",
+   "texto": "Na votação das diretrizes do orçamento na Câmara Municipal, você condiciona seu voto à inclusão de verba para o bairro. Os líderes cedem em parte. Alguns colegas não esquecem a pressão.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "cargos": [
+     "VEREADOR"
+    ],
+    "tiposAno": [
+     "calmo"
+    ],
+    "janelas": [
+     "C2",
+     "C3"
+    ]
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.01
+   },
+   "aptidao": "articulacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "base.local.forca",
+     "delta": 0.015
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "base.local.forca",
+     "delta": 0.004
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "relacoes.bancada",
+      "delta": -0.01
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "cobranca-da-base",
+    "emJanelas": 3,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "prestacao-de-contas-em-video",
+   "degrau": 2,
+   "titulo": "Prestação de contas semanal em vídeo curto",
+   "texto": "Toda sexta, você publica um vídeo curto contando o que fez na semana, com o que deu certo e o que travou. Os seguidores voltam para ver o próximo. Semana sem novidade também aparece.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "tagsExigidas": [
+     "estilo:influencer"
+    ]
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.01
+   },
+   "aptidao": "comunicacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "indicadores.local.notoriedade",
+     "delta": 0.01
+    },
+    {
+     "alvo": "indicadores.local.popularidade",
+     "delta": 0.008
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "indicadores.local.notoriedade",
+     "delta": 0.003
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "indicadores.local.popularidade",
+      "delta": -0.005
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "cobranca-da-base",
+    "emJanelas": 3,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
    "id": "despacho-com-a-equipe",
    "degrau": 3,
    "titulo": "Reorganizar a equipe e a agenda",
@@ -1905,6 +2656,275 @@
     "eventoId": "cobranca-de-prefeitos",
     "emJanelas": 4,
     "prob": 0.2,
+    "condicao": null
+   }
+  },
+  {
+   "id": "caravana-pelo-interior",
+   "degrau": 3,
+   "titulo": "Caravana regional pelo interior do estado",
+   "texto": "Você monta uma caravana com aliados e lideranças regionais e percorre uma região inteira do estado em ônibus fretado. Cada parada reúne prefeitos e vereadores. A conta é alta, e cada cidade quer ser lembrada.",
+   "segura": false,
+   "pool": {
+    "peso": 1
+   },
+   "custo": {
+    "recurso": "caixaPessoal",
+    "quantidade": 250000
+   },
+   "aptidao": "mobilizacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "indicadores.estadual.popularidade",
+     "delta": 0.01
+    },
+    {
+     "alvo": "grupo.influencia",
+     "delta": 0.015
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "grupo.influencia",
+     "delta": 0.004
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "grupo.influencia",
+      "delta": -0.01
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "cobranca-de-prefeitos",
+    "emJanelas": 3,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "audiencia-com-prefeitos",
+   "degrau": 3,
+   "titulo": "Audiência com prefeitos na Assembleia Legislativa",
+   "texto": "Você abre o plenarinho da Assembleia Legislativa para ouvir prefeitos de uma região sobre estradas e saúde. Eles saem com a sensação de terem sido recebidos. E com a expectativa de retorno.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "cargos": [
+     "DEPUTADO_ESTADUAL",
+     "DEPUTADO_DISTRITAL"
+    ]
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.02
+   },
+   "aptidao": "articulacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "grupo.influencia",
+     "delta": 0.02
+    },
+    {
+     "alvo": "indicadores.estadual.popularidade",
+     "delta": 0.006
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "grupo.influencia",
+     "delta": 0.005
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "grupo.influencia",
+      "delta": -0.01
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "cobranca-de-prefeitos",
+    "emJanelas": 3,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "entrevista-regional",
+   "degrau": 3,
+   "titulo": "Entrevista a rádio e TV regional no horário nobre",
+   "texto": "Uma emissora regional chama você para o programa de maior audiência da noite. É a chance de falar com o estado inteiro. Uma promessa feita ali vai ser lembrada pelos prefeitos que estavam ouvindo.",
+   "segura": false,
+   "pool": {
+    "peso": 1
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.01
+   },
+   "aptidao": "comunicacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "indicadores.estadual.notoriedade",
+     "delta": 0.012
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "indicadores.estadual.notoriedade",
+     "delta": 0.003
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "indicadores.estadual.rejeicao",
+      "delta": 0.006
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "cobranca-de-prefeitos",
+    "emJanelas": 3,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "mutirao-estadual",
+   "degrau": 3,
+   "titulo": "Mutirão estadual de cirurgias ou habitação",
+   "texto": "O governo do estado organiza um mutirão para zerar filas de cirurgia e entregar moradias. As imagens das famílias rodam o estado. Atrasos em qualquer região viram cobrança direta.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "cargos": [
+     "GOVERNADOR"
+    ],
+    "nomeacao": [
+     "secretario-estadual-desenvolvimento-regional",
+     "presidente-companhia-habitacao"
+    ]
+   },
+   "custo": {
+    "recurso": "capitalEntrega",
+    "quantidade": 3
+   },
+   "aptidao": "gestao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "indicadores.estadual.popularidade",
+     "delta": 0.015
+    },
+    {
+     "alvo": "indicadores.estadual.rejeicao",
+     "delta": -0.006
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "indicadores.estadual.popularidade",
+     "delta": 0.004
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "indicadores.estadual.popularidade",
+      "delta": -0.006
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "cobranca-de-prefeitos",
+    "emJanelas": 3,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "bloco-suprapartidario",
+   "degrau": 3,
+   "titulo": "Articular bloco suprapartidário na Assembleia",
+   "texto": "Você reúne deputados de partidos diferentes em torno de uma pauta comum na Assembleia Legislativa. O bloco ganha peso nas votações. Manter tanta gente junta exige concessões o tempo todo.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "cargos": [
+     "DEPUTADO_ESTADUAL",
+     "DEPUTADO_DISTRITAL"
+    ],
+    "tagsExigidas": [
+     "estilo:articulador"
+    ]
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.02
+   },
+   "aptidao": "articulacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "relacoes.bancada",
+     "delta": 0.03
+    },
+    {
+     "alvo": "grupo.influencia",
+     "delta": 0.01
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "relacoes.bancada",
+     "delta": 0.005
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "relacoes.bancada",
+      "delta": -0.015
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "crise-na-assembleia",
+    "emJanelas": 2,
+    "prob": 0.3,
     "condicao": null
    }
   },
@@ -2187,6 +3207,180 @@
    }
   },
   {
+   "id": "discurso-nacional-na-tribuna",
+   "degrau": 4,
+   "titulo": "Discurso de repercussão nacional na tribuna",
+   "texto": "Você sobe à tribuna do Congresso num dia de votação importante e faz um discurso duro. O vídeo circula pelo país em poucas horas. Nem todos gostaram do tom.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "cargos": [
+     "DEPUTADO_FEDERAL",
+     "SENADOR"
+    ]
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.01
+   },
+   "aptidao": "comunicacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "indicadores.nacional.notoriedade",
+     "delta": 0.012
+    },
+    {
+     "alvo": "indicadores.nacional.rejeicao",
+     "delta": 0.004
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "indicadores.nacional.notoriedade",
+     "delta": 0.003
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "indicadores.nacional.rejeicao",
+      "delta": 0.006
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "embate-no-congresso",
+    "emJanelas": 2,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "negociar-com-a-casa-civil",
+   "degrau": 4,
+   "titulo": "Negociar liberação de recursos com a Casa Civil",
+   "texto": "Você consegue uma reunião na Casa Civil para destravar recursos de obras do seu estado. Sai com um compromisso de liberação. A execução vai ser examinada pelos órgãos de controle.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "cargos": [
+     "DEPUTADO_FEDERAL",
+     "SENADOR",
+     "GOVERNADOR"
+    ]
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.02
+   },
+   "aptidao": "articulacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "bolsos.capitalEntrega",
+     "delta": 2
+    },
+    {
+     "alvo": "indicadores.estadual.popularidade",
+     "delta": 0.006
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "bolsos.capitalEntrega",
+     "delta": 1
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "indicadores.estadual.popularidade",
+      "delta": -0.004
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "auditoria-do-tcu",
+    "emJanelas": 3,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "sabatina-tecnica",
+   "degrau": 4,
+   "titulo": "Sabatina técnica em comissão da Câmara ou do Senado",
+   "texto": "Numa comissão do Congresso, você responde por horas a perguntas técnicas, com números e sem fugir de nenhuma. Os colegas saem impressionados. Qualquer dado errado vira munição.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "cargos": [
+     "DEPUTADO_FEDERAL",
+     "SENADOR"
+    ],
+    "nomeacao": [
+     "secretario-executivo-ministerio",
+     "presidente-da-embratur",
+     "presidente-do-bndes"
+    ],
+    "tagsExigidas": [
+     "estilo:tecnico"
+    ]
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.02
+   },
+   "aptidao": "gestao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "relacoes.credibilidade",
+     "delta": 0.02
+    },
+    {
+     "alvo": "indicadores.nacional.notoriedade",
+     "delta": 0.008
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "relacoes.credibilidade",
+     "delta": 0.005
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "relacoes.credibilidade",
+      "delta": -0.01
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "embate-no-congresso",
+    "emJanelas": 2,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
    "id": "reuniao-de-coordenacao",
    "degrau": 5,
    "titulo": "Reunir a coordenação política",
@@ -2464,6 +3658,122 @@
    "atraso": {
     "eventoId": "crise-ministerial",
     "emJanelas": 3,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "cupula-com-governadores",
+   "degrau": 5,
+   "titulo": "Cúpula com governadores e prefeitos de capitais",
+   "texto": "Você reúne em Brasília governadores e prefeitos de capitais para fechar um pacto sobre segurança e saúde. A foto oficial sai em todos os jornais. Os que ficaram de fora da mesa principal reclamam.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "cargos": [
+     "PRESIDENTE"
+    ],
+    "nomeacao": [
+     "ministro-das-cidades",
+     "ministro-do-turismo"
+    ]
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.02
+   },
+   "aptidao": "articulacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "indicadores.nacional.popularidade",
+     "delta": 0.012
+    },
+    {
+     "alvo": "relacoes.cupula",
+     "delta": 0.02
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "indicadores.nacional.popularidade",
+     "delta": 0.003
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "relacoes.cupula",
+      "delta": -0.01
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "crise-de-coalizao",
+    "emJanelas": 3,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "coletiva-no-palacio",
+   "degrau": 5,
+   "titulo": "Convocar coletiva de imprensa no Palácio ou no ministério",
+   "texto": "Você convoca uma entrevista coletiva no Palácio do Planalto, ou na sede do ministério, para responder às críticas da semana. Fala com calma e responde a todas as perguntas. Uma resposta mal recebida domina o noticiário seguinte.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "cargos": [
+     "PRESIDENTE"
+    ],
+    "nomeacao": [
+     "ministro-das-cidades",
+     "ministro-do-turismo"
+    ]
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.02
+   },
+   "aptidao": "comunicacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "indicadores.nacional.notoriedade",
+     "delta": 0.01
+    },
+    {
+     "alvo": "indicadores.nacional.rejeicao",
+     "delta": -0.006
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "indicadores.nacional.notoriedade",
+     "delta": 0.003
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "indicadores.nacional.rejeicao",
+      "delta": 0.008
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "crise-ministerial",
+    "emJanelas": 2,
     "prob": 0.3,
     "condicao": null
    }

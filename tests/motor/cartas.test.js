@@ -193,3 +193,35 @@ test("D91: pool.cargos comMandato exige cargo eletivo em exercício; nomeação 
   const v = clone(e); v.cargos.mandatos = [{ disputaId: "D", cargo: "VEREADOR", inicio: "2025-01-01", fim: "2028-12-31", situacao: "exercicio" }];
   assert.equal(tem(v), true);
 });
+
+test("D91 etapa 3: 24 cartas novas, referências de pool válidas e etiquetas exigidas alcançáveis", () => {
+  const cat = JSON.parse(fs.readFileSync(path.join(RAIZ, "data", "catalogo", "catalogo-jogo.json"), "utf8"));
+  const est = JSON.parse(fs.readFileSync(path.join(RAIZ, "data", "catalogo", "estilos.json"), "utf8"));
+  assert.equal(cat.cartas.length, 77);
+  const posicoes = new Set(cat.posicoes.map((p) => p.id));
+  const tags = new Set(est.estilos.map((x) => "estilo:" + x.id));
+  cat.eventos.forEach((e) => e.opcoes.forEach((o) => { if (o.adicionarTag) tags.add(o.adicionarTag); }));
+  for (const c of cat.cartas) {
+    const p = c.pool || {};
+    (Array.isArray(p.nomeacao) ? p.nomeacao : []).forEach((x) => assert.ok(posicoes.has(x), c.id + ": posição " + x));
+    (p.tagsExigidas || []).forEach((x) => assert.ok(tags.has(x), c.id + ": etiqueta inalcançável " + x));
+    assert.ok(!/[–—]/.test(c.titulo + c.texto), c.id + ": travessão");
+  }
+  const porDegrau = [1, 2, 3, 4, 5].map((n) => cat.cartas.filter((c) => c.degrau === n).length);
+  assert.deepEqual(porDegrau, [31, 16, 11, 9, 8]);
+});
+
+test("D91 etapa 3: cargos e nomeação no mesmo pool valem como alternativa", () => {
+  const cat = JSON.parse(fs.readFileSync(path.join(RAIZ, "data", "catalogo", "catalogo-jogo.json"), "utf8"));
+  const c = clone(cat.cartas.find((x) => x.id === "audiencia-publica")); delete c.degrau;
+  const d = dadosCom((x) => { x.cartas.push(c); });
+  const tem = (est) => { for (let i = 0; i < 60; i++) if (Cartas.montarMao(est, d, RNG.criar("v1-O" + i, "cartas")).resultado.acoes.includes(c.id)) return true; return false; };
+  const e = novo();
+  assert.equal(tem(e), false);
+  const v = clone(e); v.cargos.mandatos = [{ disputaId: "D", cargo: "VEREADOR", inicio: "2025-01-01", fim: "2028-12-31", situacao: "exercicio" }];
+  assert.equal(tem(v), true);
+  const s = clone(e); s.cargos.nomeacoes = [{ id: "N1", posicaoId: "secretario-municipal-educacao", tipo: "governamental", escopo: "municipal", situacao: "exercicio" }];
+  assert.equal(tem(s), true);
+  const o = clone(e); o.cargos.nomeacoes = [{ id: "N2", posicaoId: "conselheiro-saude-municipal", tipo: "governamental", escopo: "municipal", situacao: "exercicio" }];
+  assert.equal(tem(o), false);
+});

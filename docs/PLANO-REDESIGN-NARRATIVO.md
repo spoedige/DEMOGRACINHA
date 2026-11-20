@@ -7,8 +7,8 @@ Documento de controle e continuidade (D91). Atualizar ao fim de cada etapa. Deci
 | Campo | Valor |
 |---|---|
 | Branch | `implementacao-motor` (sem commit nem push sem autorização) |
-| Etapa atual | 2 concluída, aguardando revisão do autor (etapa 1 em `5fd860c`) |
-| Próxima ação | Etapa 3: 24 cartas adicionais, com as adaptações aprovadas |
+| Etapa atual | 3 concluída, aguardando revisão do autor (etapa 2 em `be701a5`) |
+| Próxima ação | Etapa 4: Família Política, estilos, sinergias e Talento Nato |
 
 ## Diagnóstico consolidado (etapa 0)
 
@@ -32,8 +32,8 @@ Documento de controle e continuidade (D91). Atualizar ao fim de cada etapa. Deci
 |---|---|---|
 | 0 | Auditoria | Aprovada |
 | 1 | Tom, reescrita de cartas e eventos, segura, textos provisórios | Concluída (`5fd860c`) |
-| 2 | 5 personagens, relações internas, save 7, 6 arcos | Concluída |
-| 3 | 24 cartas adicionais (lista abaixo) | Pendente |
+| 2 | 5 personagens, relações internas, save 7, 6 arcos | Concluída (`be701a5`) |
+| 3 | 24 cartas adicionais (lista abaixo) | Concluída |
 | 4 | Família Política, estilos, sinergias, Talento Nato | Pendente |
 | 5 | Partidos: espectro, ordem alfabética, troca; calibragem de recursos | Pendente |
 | 6 | Biografia, eleições, carimbo; calibragem de votos | Pendente |
@@ -71,6 +71,15 @@ Documento de controle e continuidade (D91). Atualizar ao fim de cada etapa. Deci
 - Testes: novo `tests/motor/arcos.test.js` (6); ajustes de versão do save e de roteiro em `tests/ui` (posse agora abre "O peso do mandato"). Motor 238 / 0; UI 17 / 0; pipeline OK.
 - Lote de 300: eleito alguma vez 48,7% para 51,0%; deputado ou senador 16,7% para 17,7%; inelegível 0% para 0,7% (sorteios do fluxo de eventos deslocados pelos dois gatilhos novos e jogador automático que escolhe a opção de maior ganho).
 
+## Etapa 3: entregue
+
+- 24 cartas nos lotes (degraus 1 a 5: 8, 6, 5, 3, 2); catálogo com 77 cartas (31, 16, 11, 9, 8 por degrau). Consolidado e JSON embutido regenerados.
+- Motor: `cargos` e `nomeacao` no mesmo pool valem como alternativa (vereador ou secretário municipal, governador ou secretário estadual, presidente ou ministro).
+- Adaptações: ofício ao MP com custo em relação com o Executivo e exigência de demanda assumida; mutirões com Capital de Entrega (2 e 3); caravana só com caixa (R$ 2.500) e grupo político no lugar de base estadual; audiência com prefeitos e Casa Civil com grupo político ou popularidade estadual; bloco suprapartidário com bancada e grupo político; LDO em C2 e C3 do ano calmo; risco leve em todas.
+- Distinção de funções: caravana (grupo político) difere do roteiro pelo interior (notoriedade); prestação de contas em vídeo não fala em mandato e serve a quem não tem cargo.
+- Testes: 2 novos em `tests/motor/cartas.test.js`. Motor 240 / 0; UI 17 / 0.
+- Lote de 300: eleito alguma vez 51,0% para 52,7%; deputado ou senador 17,7% para 16,7%; inelegível 0,7% para 0%. Assessor 23,3% para 26,7%, ainda a origem mais fraca.
+
 ## Pendências registradas
 
 - Eventos de opção única restantes (jurídicos, operações e sucessão) continuam como notícia, por decisão de projeto.
@@ -83,7 +92,7 @@ Documento de controle e continuidade (D91). Atualizar ao fim de cada etapa. Deci
 1. Notoriedade alta com rejeição baixa presa em popularidade baixa (55,1% / 4% / 10,1%, 10 derrotas). Converter parte do ganho de notoriedade com baixa rejeição em popularidade e usar `notoriedade - rejeição` na fórmula de votos. Etapa 6.
 2. 23.122 votos para deputado estadual em 2038 e 231 para vereador em 2040. Piso de força no reduto a partir do desempenho estadual. Etapa 6.
 3. Primeira eleição travada (Caixa R$ 430, Fundo R$ 0). Repasse mínimo do partido em janela eleitoral para notoriedade local acima de 30% e calibrar a primeira disputa de vereador para que 4 a 8 anos de construção consistente elejam. Etapa 5.
-4. Cartas que falam em mandato exigem cargo eletivo. Feito na etapa 1 para a única carta encontrada; revisar as 24 novas na etapa 3.
+4. Cartas que falam em mandato exigem cargo eletivo. Feito na etapa 1; nas 24 novas, nenhum texto fala em mandato sem exigir cargo.
 
 ## 24 cartas adicionais (etapa 3)
 
