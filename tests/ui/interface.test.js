@@ -125,12 +125,11 @@ test("fluxo completo a 360 px: criação, janelas, eventos, candidatura, eleiç�
         const ids = await pg.locator("[data-grupo=carta]").evaluateAll((els) => els.map((x) => x.dataset.valor));
         const alvo = ["acordo-lideranca", "favor-emenda", "discurso-mesa", "mutirao"].find((x) => ids.includes(x)) || ids[0];
         const card = pg.locator(`[data-grupo=carta][data-valor="${alvo}"]`);
-        const antes = await card.elementHandle();
-        await card.click();
-        assert.equal(await antes.evaluate((el) => el.isConnected && el.classList.contains("is-selected") && el.getAttribute("aria-checked")), "true"); // seleção no lugar
         await capturar("03-acoes");
-        assert.equal(await confirmar.isDisabled(), false);
-        await confirmar.click();
+        await card.click();                                                            // carta compacta: o toque abre o detalhe
+        assert.match(await pg.textContent("#detalhe"), /Confirmar ação/);
+        await capturar("03b-detalhe-acao");
+        await pg.click("[data-acao=detalhe-escolher]");                                 // confirma a decisão do período
         await pg.waitForFunction(() => document.querySelector("h1.dossier-title").textContent !== "Ações disponíveis");
       } else assert.fail("tela inesperada: " + h);
     }
@@ -185,7 +184,11 @@ test("teclado e movimento reduzido: setas no grupo de ações, sem animação de
     assert.equal(await titulo(pg), "Ações disponíveis");
     assert.equal(await pg.locator(".phase-enter").count(), 0);
     const primeiro = pg.locator("[data-grupo=carta]").first();
-    await primeiro.focus(); await pg.keyboard.press("Space");
+    await primeiro.focus(); await pg.keyboard.press("Space");                          // abre o detalhe; Esc fecha e devolve o foco
+    assert.equal(await pg.locator("#detalhe:not([hidden])").count(), 1);
+    await pg.keyboard.press("Escape");
+    assert.equal(await pg.evaluate(() => document.activeElement.dataset.grupo), "carta");
+    await pg.keyboard.press("ArrowDown"); await pg.keyboard.press("ArrowUp");
     assert.equal(await primeiro.getAttribute("aria-checked"), "true");
     await pg.keyboard.press("ArrowDown");
     assert.equal(await primeiro.getAttribute("aria-checked"), "false");

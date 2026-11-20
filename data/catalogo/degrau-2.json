@@ -3,7 +3,7 @@
   "_parametros": "Pesos, custos, chances, magnitudes, prazos e parâmetros de degrau (calibrar). Existência de autarquia de água e esgoto varia por município (a confirmar na 1B).",
   "parametrosDegrau": { "fatorSalto": 0.1, "notoriedadeEstadual": 0.3, "notoriedadeNacional": 0.3 },
   "cartas": [
-    { "id": "expediente-de-gabinete", "degrau": 2, "titulo": "Expediente no gabinete", "texto": "Atende quem marcou horário e despacha a rotina. Sem ganho visível.",
+    { "id": "expediente-de-gabinete", "degrau": 2, "titulo": "Atender pedidos no gabinete", "texto": "Atende quem marcou horário e despacha a rotina. Sem ganho visível.",
       "segura": true, "ambicoes": ["legislativo", "executivo", "bastidor"], "efeitos": [] },
     { "id": "indicacao-de-obra", "degrau": 2, "titulo": "Indicação de obra ao Executivo", "texto": "Base e popularidade locais tendem a subir se a obra sair. Gasta capacidade de entrega.",
       "segura": false, "pool": { "peso": 1, "cargos": ["VEREADOR"] }, "custo": { "recurso": "capitalEntrega", "quantidade": 1 }, "aptidao": "articulacao", "sucesso": { "base": 0.55, "pesoCapacidade": 0.3 },

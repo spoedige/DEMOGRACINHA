@@ -33,7 +33,7 @@ const palco = (pg, a) => pg.getAttribute("#sky-stage", a);
 // chega à fase de ações recusando convites de nomeação, se houver
 async function jogarAcao(pg) {
   if ((await pg.textContent("h1.dossier-title")) === "Convites de nomeação") { await pg.click("[data-grupo=nom][data-valor=recusar]"); await pg.click("[data-acao=confirmar]"); }
-  await pg.locator("[data-grupo=carta]").first().click(); await pg.click("[data-acao=confirmar]");
+  await pg.locator("[data-grupo=carta]").first().click(); await pg.click("[data-acao=detalhe-escolher]");
   await pg.waitForFunction(() => document.querySelector("h1.dossier-title").textContent === "O que aconteceu");
 }
 const indicadores = (pop, rej, noto) => (x) => { x.indicadores.local = { notoriedade: noto, popularidade: pop, rejeicao: rej }; };

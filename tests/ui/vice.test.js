@@ -51,7 +51,7 @@ test("convite de vice: ficha própria, confirmação e registro da candidatura d
     await pg.locator(VICE).scrollIntoViewIfNeeded(); await capturar(pg, "vice-convite");
     await pg.click(VICE); await pg.click("[data-acao=detalhe-escolher]"); await pg.click("[data-acao=confirmar]");
     assert.equal(await titulo(pg), "Ações disponíveis");
-    await pg.locator("[data-grupo=carta]").first().click(); await pg.click("[data-acao=confirmar]");
+    await pg.locator("[data-grupo=carta]").first().click(); await pg.click("[data-acao=detalhe-escolher]");
     await pg.waitForFunction(() => document.querySelector("h1.dossier-title").textContent === "O que aconteceu");
     assert.match(await pg.textContent("main"), /A chapa confirmou o seu nome para vice/);
     const salvo = JSON.parse(await pg.evaluate(() => localStorage.getItem("demogracinha.save")));
@@ -85,7 +85,7 @@ test("sucessão por evento: o vice assume o cargo do titular e o HUD mostra o no
     const { pg, erros } = await abrir(nav, Motor.Save.serializar(e));
     assert.match(await pg.textContent("body"), /Vice-prefeito/);
     // evento de opção única: resolve na abertura; segue para as ações
-    await pg.locator("[data-grupo=carta]").first().click(); await pg.click("[data-acao=confirmar]");
+    await pg.locator("[data-grupo=carta]").first().click(); await pg.click("[data-acao=detalhe-escolher]");
     await pg.waitForFunction(() => document.querySelector("h1.dossier-title").textContent === "O que aconteceu");
     const main = await pg.textContent("main");
     assert.match(main, /Vaga no cargo do titular/); assert.match(main, /Você assumiu o cargo de Prefeito até o fim do mandato/);

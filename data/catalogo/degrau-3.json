@@ -3,7 +3,7 @@
   "_parametros": "Pesos, custos, chances, magnitudes, prazos e parâmetros de degrau (calibrar). Nome da companhia estadual de habitação varia por estado (a confirmar na 1B).",
   "parametrosDegrau": { "fatorSalto": 0.1, "notoriedadeEstadual": 0.3, "notoriedadeNacional": 0.3 },
   "cartas": [
-    { "id": "despacho-com-a-equipe", "degrau": 3, "titulo": "Despacho com a equipe", "texto": "Revisa a agenda e os pedidos acumulados. Sem ganho visível.",
+    { "id": "despacho-com-a-equipe", "degrau": 3, "titulo": "Organizar a agenda interna do gabinete", "texto": "Revisa a agenda e os pedidos acumulados. Sem ganho visível.",
       "segura": true, "ambicoes": ["legislativo", "executivo", "bastidor"], "efeitos": [] },
     { "id": "emenda-para-prefeito-aliado", "degrau": 3, "titulo": "Emenda para prefeito aliado", "texto": "O grupo político no interior tende a crescer. Outros prefeitos vão pedir o mesmo.",
       "segura": false, "pool": { "peso": 1, "cargos": ["DEPUTADO_ESTADUAL", "DEPUTADO_DISTRITAL"] }, "custo": { "recurso": "capitalEntrega", "quantidade": 2 }, "aptidao": "articulacao", "sucesso": { "base": 0.6, "pesoCapacidade": 0.3 },

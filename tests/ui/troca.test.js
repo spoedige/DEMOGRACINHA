@@ -34,9 +34,10 @@ test("J1 do ano eleitoral: troca de partido e de domicílio junto com a ação; 
     const { pg, erros } = await abrir(nav, save(2028, "J1"));
     assert.equal(await pg.textContent("h1.dossier-title"), "Ações disponíveis");
     assert.match(await pg.textContent("main"), /Filiação e domicílio/);
+    await pg.click(".painel-mudancas > summary");                                    // painel recolhido por padrão
     await pg.selectOption("#troca-partido", "P2"); await pg.selectOption("#troca-domicilio", "EY001");
     await shot(pg, "troca-painel");
-    await pg.locator("[data-grupo=carta]").first().click(); await pg.click("[data-acao=confirmar]");
+    await pg.locator("[data-grupo=carta]").first().click(); await pg.click("[data-acao=detalhe-escolher]");
     await pg.waitForFunction(() => document.querySelector("h1.dossier-title").textContent === "O que aconteceu");
     const txt = await pg.textContent("main");
     assert.match(txt, /Nova filiação partidária: P2\./); assert.match(txt, /transferido para EY001, em outro estado/);

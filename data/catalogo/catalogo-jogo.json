@@ -18,7 +18,7 @@
   {
    "id": "ouvir-a-base",
    "degrau": 1,
-   "titulo": "Ouvir a base",
+   "titulo": "Visitar apoiadores sem fazer promessas",
    "texto": "Rodada de conversas sem promessa nova. Mantém o vínculo, sem ganho visível.",
    "segura": true,
    "ambicoes": [
@@ -436,7 +436,7 @@
   {
    "id": "assembleia-da-categoria",
    "degrau": 1,
-   "titulo": "Assembleia da categoria",
+   "titulo": "Convocar assembleia do sindicato ou da associação",
    "texto": "Grupo organizado e base local tendem a crescer. A categoria cobra resultados.",
    "segura": false,
    "pool": {
@@ -490,7 +490,7 @@
   {
    "id": "ponte-com-gabinetes",
    "degrau": 1,
-   "titulo": "Abrir ponte com gabinetes",
+   "titulo": "Abrir conversa com gabinetes de parlamentares",
    "texto": "Relação com a cúpula tende a crescer. Bastidor rende pouca exposição.",
    "segura": false,
    "pool": {
@@ -540,7 +540,7 @@
   {
    "id": "governar-pelos-videos",
    "degrau": 1,
-   "titulo": "Governar pelos vídeos curtos",
+   "titulo": "Divulgar o mandato em vídeos curtos",
    "texto": "Notoriedade local tende a subir rápido. Cada vídeo vira cobrança de entrega.",
    "segura": false,
    "pool": {
@@ -744,7 +744,7 @@
   {
    "id": "criar-polemica",
    "degrau": 1,
-   "titulo": "Criar polêmica",
+   "titulo": "Criar polêmica nas redes sobre um tema local",
    "texto": "Notoriedade local tende a disparar. Rejeição sobe junto.",
    "segura": false,
    "pool": {
@@ -802,7 +802,7 @@
   {
    "id": "cortina-de-fumaca",
    "degrau": 1,
-   "titulo": "Cortina de fumaça",
+   "titulo": "Puxar outro assunto para abafar a crise",
    "texto": "Muda o assunto e a rejeição cai agora. Se descobrirem a manobra, volta pior.",
    "segura": false,
    "pool": {
@@ -852,7 +852,7 @@
   {
    "id": "desconversar",
    "degrau": 1,
-   "titulo": "Desconversar",
+   "titulo": "Desconversar sobre cobranças da imprensa",
    "texto": "A pergunta incômoda perde força e a rejeição cai um pouco. A imprensa pode insistir.",
    "segura": false,
    "pool": {
@@ -902,7 +902,7 @@
   {
    "id": "fingir-que-nao-viu",
    "degrau": 1,
-   "titulo": "Fingir que não viu",
+   "titulo": "Fingir que não viu a denúncia no bairro",
    "texto": "Evita se comprometer e a rejeição cai agora. Se o caso estourar, cobram a omissão.",
    "segura": false,
    "pool": {
@@ -952,7 +952,7 @@
   {
    "id": "expediente-de-gabinete",
    "degrau": 2,
-   "titulo": "Expediente no gabinete",
+   "titulo": "Atender pedidos no gabinete",
    "texto": "Atende quem marcou horário e despacha a rotina. Sem ganho visível.",
    "segura": true,
    "ambicoes": [
@@ -1224,7 +1224,7 @@
   {
    "id": "despacho-com-a-equipe",
    "degrau": 3,
-   "titulo": "Despacho com a equipe",
+   "titulo": "Organizar a agenda interna do gabinete",
    "texto": "Revisa a agenda e os pedidos acumulados. Sem ganho visível.",
    "segura": true,
    "ambicoes": [
@@ -1500,7 +1500,7 @@
   {
    "id": "agenda-em-brasilia",
    "degrau": 4,
-   "titulo": "Agenda de gabinete em Brasília",
+   "titulo": "Cumprir a agenda de rotina em Brasília",
    "texto": "Reuniões de rotina e despachos. Sem ganho visível.",
    "segura": true,
    "ambicoes": [
@@ -1619,7 +1619,7 @@
   {
    "id": "circular-pelos-ministerios",
    "degrau": 4,
-   "titulo": "Circular pelos ministérios",
+   "titulo": "Circular pelos ministérios em busca de verbas",
    "texto": "A relação com o governo federal tende a melhorar. Favores pedidos viram favores devidos.",
    "segura": false,
    "pool": {
@@ -1773,7 +1773,7 @@
   {
    "id": "reuniao-de-coordenacao",
    "degrau": 5,
-   "titulo": "Reunião de coordenação política",
+   "titulo": "Reunir a coordenação política da semana",
    "texto": "Alinha a agenda da semana com os aliados. Sem ganho visível.",
    "segura": true,
    "ambicoes": [
@@ -2049,7 +2049,7 @@
   },
   {
    "id": "agenda-do-vice",
-   "titulo": "Representar o titular",
+   "titulo": "Representar o titular em agendas oficiais",
    "texto": "Notoriedade local e relação com o Executivo tendem a subir. Custa saúde.",
    "segura": false,
    "pool": {
@@ -2104,7 +2104,7 @@
   },
   {
    "id": "bastidor-do-vice",
-   "titulo": "Costurar apoio no Legislativo",
+   "titulo": "Costurar apoio ao governo no Legislativo",
    "texto": "Bancada e grupo tendem a crescer. Custa caixa.",
    "segura": false,
    "pool": {

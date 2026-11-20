@@ -3,7 +3,7 @@
   "_parametros": "Pesos, custos, chances, magnitudes, prazos e parâmetros de degrau (calibrar). Estrutura de ministérios muda por governo (a confirmar na 1B).",
   "parametrosDegrau": { "fatorSalto": 0.1, "notoriedadeEstadual": 0.3, "notoriedadeNacional": 0.3 },
   "cartas": [
-    { "id": "agenda-em-brasilia", "degrau": 4, "titulo": "Agenda de gabinete em Brasília", "texto": "Reuniões de rotina e despachos. Sem ganho visível.",
+    { "id": "agenda-em-brasilia", "degrau": 4, "titulo": "Cumprir a agenda de rotina em Brasília", "texto": "Reuniões de rotina e despachos. Sem ganho visível.",
       "segura": true, "ambicoes": ["legislativo", "executivo", "bastidor"], "efeitos": [] },
     { "id": "relatar-projeto-federal", "degrau": 4, "titulo": "Relatar projeto no Congresso", "texto": "Notoriedade nacional tende a subir. Colegas contrariados podem reagir.",
       "segura": false, "pool": { "peso": 1, "cargos": ["DEPUTADO_FEDERAL", "SENADOR"] }, "custo": { "recurso": "saude", "quantidade": 0.03 }, "aptidao": "estrategia", "sucesso": { "base": 0.55, "pesoCapacidade": 0.35 },
@@ -15,7 +15,7 @@
       "efeitos": [{ "alvo": "grupo.influencia", "delta": 0.03 }, { "alvo": "relacoes.bancada", "delta": 0.02 }], "efeitosFalha": [{ "alvo": "grupo.influencia", "delta": 0.01 }],
       "risco": { "probBase": 0.15, "pesoCapacidade": 0.1, "efeitos": [{ "alvo": "grupo.influencia", "delta": -0.01 }] },
       "atraso": { "eventoId": "auditoria-do-tcu", "emJanelas": 6, "prob": 0.15, "condicao": null } },
-    { "id": "circular-pelos-ministerios", "degrau": 4, "titulo": "Circular pelos ministérios", "texto": "A relação com o governo federal tende a melhorar. Favores pedidos viram favores devidos.",
+    { "id": "circular-pelos-ministerios", "degrau": 4, "titulo": "Circular pelos ministérios em busca de verbas", "texto": "A relação com o governo federal tende a melhorar. Favores pedidos viram favores devidos.",
       "segura": false, "pool": { "peso": 1 }, "custo": { "recurso": "caixaPessoal", "quantidade": 20000 }, "aptidao": "articulacao", "sucesso": { "base": 0.55, "pesoCapacidade": 0.3 },
       "efeitos": [{ "alvo": "relacoes.executivo", "delta": 0.03 }], "efeitosFalha": [{ "alvo": "relacoes.executivo", "delta": 0.01 }],
       "risco": { "probBase": 0.2, "pesoCapacidade": 0.1, "efeitos": [{ "alvo": "relacoes.executivo", "delta": -0.01 }] },
