@@ -570,3 +570,9 @@ Aprovada pelo autor antes da implementação.
 3. Opção de evento com `exigeTag`: só aparece e só pode ser escolhida com a etiqueta; a contenção nunca exige etiqueta. Uma opção própria por estilo em crises e cobranças existentes: o vídeo repercute (influencer), disputa no diretório (articulador), fila no posto de saúde (técnico) e a obra não sai (combativo).
 4. Troca de estilo só em C1 do ano calmo, no painel de filiação e domicílio, com perda de credibilidade (calibrar).
 5. Lote de 300 carreiras dentro das faixas aprovadas, sem novo ajuste (`docs/roadmap.md`).
+
+## D90. Ajustes do teste no celular, 22/11/2026
+
+Aprovada pelo autor; entregue em etapas.
+1. Etapa A: calendário calculado para qualquer ano par sem entrada no catálogo (1º domingo de outubro, filiação e desincompatibilização 6 meses antes, registro em 15/08; a confirmar). Mão com 3 ações; a ação jogada na janela anterior não volta na mão seguinte. Oito cartas pagas com saúde nos degraus 1 e 2. Nenhuma carta do jogo tirava notoriedade (a perda existia só no catálogo de teste). Reduto conferido sem novo ajuste de rivais.
+2. Etapa B: talento nato. Etapa C: textos do deputado estadual, cores por espectro (tabela para aprovação), linha do ciclo, troca de partido na aba Partido, linguagem natural, ordem alfabética, mês e ano de nascimento, origem Família Política e eventos de imprensa e redes.
