@@ -56,6 +56,7 @@ function carreira(ctx, origemId, municipio, ambicao, semente, anos, estiloId) {
   cen.inicio = M.Origens.inicio(ctx.car.inicio, org, municipio.id, municipio.uf, partidoLocal(ctx, municipio, semente), municipio.eleitorado, ctx.orig.escalaPorte);
   cen.inicio.personagem.ambicao = [ambicao];
   if (estiloId) M.Origens.aplicarEstilo(cen.inicio, ctx.est.estilos.find((x) => x.id === estiloId));
+  M.Origens.aplicarTalento(cen.inicio, semente, estiloId, ctx.est.talentoNato);                          // D91
   let e = M.Carreira.criar({}, cen, null).resultado;
   const fim = e.tempo.ano + anos, opcoes = { opcoesEleicao: (c) => M.Distribuicoes.opcoesDoCenario(c) }, cache = {};
   const prep = () => {
@@ -85,7 +86,8 @@ function carreira(ctx, origemId, municipio, ambicao, semente, anos, estiloId) {
   }
   const cargos = e.cargos.mandatos.map((m) => m.cargo);
   return { origem: origemId, cargos, nivel: Math.max(0, ...cargos.map((c) => NIVEL[c] || 0)),
-    inelegivel: e.personagem.statusJuridico === "inelegibilidadeReconhecida", nomeado: e.cargos.nomeacoes.length > 0 };
+    inelegivel: e.personagem.statusJuridico === "inelegibilidadeReconhecida", nomeado: e.cargos.nomeacoes.length > 0,
+    talento: e.personagem.tags.includes("talento:nato") };
 }
 
 function lote(Motor, n, anos, sementeBase) {
@@ -101,7 +103,8 @@ function lote(Motor, n, anos, sementeBase) {
   }
   const pct = (xs, f) => (xs.length ? Math.round(1000 * xs.filter(f).length / xs.length) / 10 : 0);
   const resumo = (xs) => ({ n: xs.length, eleitoAlgumaVez: pct(xs, (x) => x.nivel >= 1), deputadoOuSenador: pct(xs, (x) => x.nivel >= 2),
-    governadorOuPresidente: pct(xs, (x) => x.nivel >= 3), semCargo: pct(xs, (x) => x.nivel === 0 && !x.nomeado), inelegivel: pct(xs, (x) => x.inelegivel) });
+    governadorOuPresidente: pct(xs, (x) => x.nivel >= 3), semCargo: pct(xs, (x) => x.nivel === 0 && !x.nomeado), inelegivel: pct(xs, (x) => x.inelegivel),
+    talento: pct(xs, (x) => x.talento), nomeado: pct(xs, (x) => x.nomeado) });
   const por = (k) => Object.fromEntries([...new Set(linhas.map((x) => x[k]))].sort().map((v) => [v, resumo(linhas.filter((x) => x[k] === v))]));
   return { n, anos, sementeBase, geral: resumo(linhas), porOrigem: por("origem"), porPorte: por("porte"), porEstilo: por("estilo") };
 }

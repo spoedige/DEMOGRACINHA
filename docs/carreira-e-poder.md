@@ -21,6 +21,14 @@ Cada origem define principalmente **caminhos**: rede inicial, cartas próprias n
 | Gestor Público | ex-gestor de órgão ou programa, fora do cargo | direta | cartas de gestão e entrega; oportunidades de nomeação futura | Bancada inicial baixa |
 | Professor/Educador | vínculo profissional com escola, universidade e comunidade escolar, sem acesso institucional nem rede organizada com peso político na partida | nenhuma | cartas de educação, serviços públicos e articulação comunitária | recurso financeiro inicial baixo |
 
+**Implementadas no jogo (D91):** Líder Comunitário, Servidor, Empresário, Liderança Sindical ou Associativa, Assessor e Rede Familiar Política (`familiaPolitica`, nome na tela "Família política"). Valores em `data/catalogo/origens.json` (calibrar). As demais linhas da tabela (Influenciador/Coach, Pastor, Gestor Público, Professor/Educador) ficam para expansão futura.
+
+Família política no jogo: caixa e acesso à direção do partido acima da média, nome já conhecido no município e um pouco no estado, rejeição inicial mais alta e credibilidade mais baixa. Cartas próprias (assumir a agenda da família, marcar posição própria) e o evento "Só o sobrenome?" cobram autonomia.
+
+**Sinergia entre origem e estilo (D91):** reforço leve no início quando estilo e origem se completam (Líder Comunitário e Influencer, Servidor e Técnico, Liderança Sindical e Combativo, Assessor, Família Política e Empresário com Articulador). Fica como etiqueta `sinergia:<origem>-<estilo>` e aparece na Carreira como afinidade, sem número. Não é classe: o jogador pode trocar de estilo e o caminho continua aberto.
+
+**Talento nato (D91):** traço raro decidido pela semente em fluxo derivado próprio (1 em 8; 1 em 5 com estilo Influencer). Soma 0,03 de notoriedade local e 0,04 em cada aptidão (calibrar). Identificado na Carreira. Facilidade inicial, não garantia.
+
 `redePoliticaPrevia` (propriedade fixa da origem, valores propostos para revisão):
 - **nenhuma:** sem acesso prévio a políticos, partidos ou governos e sem rede organizada com peso político.
 - **indireta:** rede organizada não partidária com peso político (igreja, associação, sindicato, entidade empresarial), sem acesso direto à política institucional.

@@ -7,8 +7,8 @@ Documento de controle e continuidade (D91). Atualizar ao fim de cada etapa. Deci
 | Campo | Valor |
 |---|---|
 | Branch | `implementacao-motor` (sem commit nem push sem autorização) |
-| Etapa atual | 3 concluída, aguardando revisão do autor (etapa 2 em `be701a5`) |
-| Próxima ação | Etapa 4: Família Política, estilos, sinergias e Talento Nato |
+| Etapa atual | 4 concluída, aguardando revisão do autor (etapa 3 em `89af67a`) |
+| Próxima ação | Etapa 5: partidos, espectro, troca e repasse mínimo de campanha |
 
 ## Diagnóstico consolidado (etapa 0)
 
@@ -19,9 +19,9 @@ Documento de controle e continuidade (D91). Atualizar ao fim de cada etapa. Deci
 | Elegibilidade | "Divulgar o mandato em vídeos curtos" aparecia sem mandato | P0 | 1 (feito) |
 | Eventos (31) | 11 com uma só opção; sem personagens nem memória | P1 | 2 (feito) |
 | Personagens e arcos | Inexistentes; motor já tem `familia`, `atrasado`, `gatilho`, `exigeTag`, `eventosRecentes` | P1 | 2 (feito) |
-| Origens | 5 no código, 10 no doc; Família Política ausente | P1 | 4 |
-| Estilos (4) | Só bônus e 2 cartas cada | P2 | 4 |
-| Talento Nato | Não implementado | P2 | 4 |
+| Origens | 5 no código, 10 no doc; Família Política ausente | P1 | 4 (feito) |
+| Estilos (4) | Só bônus e 2 cartas cada | P2 | 4 (feito) |
+| Talento Nato | Não implementado | P2 | 4 (feito) |
 | Partidos (29) | Sem campo de espectro | P2 | 5 |
 | Nascimento | Data completa, sem seletor de mês e ano | P2 | 7 |
 | Calibragem (adendo) | Ver seção própria | P0 | 5 e 6 |
@@ -33,8 +33,8 @@ Documento de controle e continuidade (D91). Atualizar ao fim de cada etapa. Deci
 | 0 | Auditoria | Aprovada |
 | 1 | Tom, reescrita de cartas e eventos, segura, textos provisórios | Concluída (`5fd860c`) |
 | 2 | 5 personagens, relações internas, save 7, 6 arcos | Concluída (`be701a5`) |
-| 3 | 24 cartas adicionais (lista abaixo) | Concluída |
-| 4 | Família Política, estilos, sinergias, Talento Nato | Pendente |
+| 3 | 24 cartas adicionais (lista abaixo) | Concluída (`89af67a`) |
+| 4 | Família Política, estilos, sinergias, Talento Nato | Concluída |
 | 5 | Partidos: espectro, ordem alfabética, troca; calibragem de recursos | Pendente |
 | 6 | Biografia, eleições, carimbo; calibragem de votos | Pendente |
 | 7 | Interface e nascimento por mês e ano | Pendente |
@@ -80,11 +80,25 @@ Documento de controle e continuidade (D91). Atualizar ao fim de cada etapa. Deci
 - Testes: 2 novos em `tests/motor/cartas.test.js`. Motor 240 / 0; UI 17 / 0.
 - Lote de 300: eleito alguma vez 51,0% para 52,7%; deputado ou senador 17,7% para 16,7%; inelegível 0,7% para 0%. Assessor 23,3% para 26,7%, ainda a origem mais fraca.
 
+## Etapa 4: entregue
+
+- Origem Família política em `origens.json` (campo novo `estadual` para notoriedade estadual de partida), 2 cartas próprias e o evento "Só o sobrenome?" no degrau 1.
+- Assessor: caixa R$ 4.000 para R$ 5.000, relação com o Executivo 0,25 para 0,32 e carta "Abrir caminho na prefeitura".
+- Sinergias em `estilos.json` (6 pares) e Talento nato (`talentoNato` em `estilos.json`; `Origens.temTalento` e `Origens.aplicarTalento`). UI e lote aplicam no início. Carreira mostra origem, afinidade e talento (`[data-tracos]`).
+- Estilos: com as etapas 3 e 4, cada estilo tem de 4 a 5 cartas próprias, opção própria em eventos e sinergia com ao menos uma origem.
+- Testes: 3 novos em `tests/motor/estilos.test.js`, 1 em `tests/ui/troca.test.js`. Motor 243 / 0; UI 18 / 0; pipeline OK.
+- Lote de 300 (6 origens, amostra diferente da etapa 3): eleito alguma vez 63,0%, deputado ou senador 19,0%, inelegível 0,3%, talento nato 11,3%.
+  - Por origem (eleito / deputado ou senador): Assessor 56,3 / 10,4; Empresário 82,4 / 17,6; Família 72,9 / 31,3; Líder comunitário 70,6 / 15,7; Liderança sindical 37,3 / 9,8; Servidor 58,8 / 29,4.
+  - Família calibrada em três passes: a primeira versão dava 85,4 / 58,3. O que mais pesa é caixa e notoriedade estadual; os indicadores locais são reduzidos pelo porte do município.
+  - Sem Família e sem talento, a mesma amostra dá 57,7%: o ganho vem das sinergias, do ajuste do Assessor e das cartas novas.
+
 ## Pendências registradas
 
 - Eventos de opção única restantes (jurídicos, operações e sucessão) continuam como notícia, por decisão de projeto.
 - Arcos ainda não citam o cargo: textos do degrau 1 servem a qualquer escopo. Revisar versões por cargo na etapa 6.
 - Origens futuras: Influenciador, Pastor, Gestor Público, Professor.
+- Liderança sindical caiu para 37,3% nesta amostra (48,3% na amostra de 5 origens). Reavaliar com a calibragem de votos da etapa 6.
+- Taxa geral de eleição subiu para 63%: conferir na etapa 6 se a primeira eleição de vereador não ficou fácil demais junto com o adendo.
 - "Mutirão de atendimento" e "Pôr em dia os pedidos" pressupõem equipe; avaliar restrição no degrau 2.
 
 ## Adendo de calibragem (teste real 2026 a 2048)

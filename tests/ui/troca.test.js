@@ -66,3 +66,21 @@ test("vereador no ano calmo: troca de partido bloqueada com o aviso da janela", 
     assert.deepEqual(erros, []);
   } finally { await nav.close(); }
 });
+
+test("Carreira mostra origem, afinidade entre origem e estilo e talento nato, sem números (D91)", { timeout: 60000 }, async () => {
+  const nav = await chromium.launch();
+  try {
+    const s = save(2026, "J1", (e) => { e.personagem.origem = "servidor"; e.personagem.tags = ["estilo:tecnico", "sinergia:servidor-tecnico", "talento:nato"]; });
+    const { pg, erros } = await abrir(nav, s);
+    await pg.click("[data-aba=carreira]");
+    const t = await pg.textContent("[data-tracos]");
+    assert.match(t, /Origem: Servidor público\./);
+    assert.match(t, /Afinidade entre origem e estilo: conhecimento da máquina pública\./);
+    assert.match(t, /Talento nato/);
+    assert.doesNotMatch(t, /\d/);
+    const sem = await abrir(nav, save(2026, "J1", (e) => { e.personagem.origem = "servidor"; e.personagem.tags = ["estilo:tecnico"]; }));
+    await sem.pg.click("[data-aba=carreira]");
+    assert.doesNotMatch(await sem.pg.textContent("[data-tracos]"), /Talento nato|Afinidade/);
+    assert.deepEqual(erros, []);
+  } finally { await nav.close(); }
+});

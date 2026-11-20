@@ -197,7 +197,7 @@ test("D91: pool.cargos comMandato exige cargo eletivo em exercício; nomeação 
 test("D91 etapa 3: 24 cartas novas, referências de pool válidas e etiquetas exigidas alcançáveis", () => {
   const cat = JSON.parse(fs.readFileSync(path.join(RAIZ, "data", "catalogo", "catalogo-jogo.json"), "utf8"));
   const est = JSON.parse(fs.readFileSync(path.join(RAIZ, "data", "catalogo", "estilos.json"), "utf8"));
-  assert.equal(cat.cartas.length, 77);
+  assert.equal(cat.cartas.length, 80);
   const posicoes = new Set(cat.posicoes.map((p) => p.id));
   const tags = new Set(est.estilos.map((x) => "estilo:" + x.id));
   cat.eventos.forEach((e) => e.opcoes.forEach((o) => { if (o.adicionarTag) tags.add(o.adicionarTag); }));
@@ -208,7 +208,7 @@ test("D91 etapa 3: 24 cartas novas, referências de pool válidas e etiquetas ex
     assert.ok(!/[–—]/.test(c.titulo + c.texto), c.id + ": travessão");
   }
   const porDegrau = [1, 2, 3, 4, 5].map((n) => cat.cartas.filter((c) => c.degrau === n).length);
-  assert.deepEqual(porDegrau, [31, 16, 11, 9, 8]);
+  assert.deepEqual(porDegrau, [34, 16, 11, 9, 8]);
 });
 
 test("D91 etapa 3: cargos e nomeação no mesmo pool valem como alternativa", () => {

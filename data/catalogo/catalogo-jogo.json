@@ -1571,6 +1571,164 @@
    }
   },
   {
+   "id": "herdar-a-agenda-da-familia",
+   "degrau": 1,
+   "titulo": "Assumir a agenda de visitas da família",
+   "texto": "Você passa a frequentar as mesmas casas, igrejas e associações que seu pai visitou por décadas. As portas se abrem com facilidade. Em cada uma, alguém comenta que você é a cara dele.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "origens": [
+     "familiaPolitica"
+    ]
+   },
+   "custo": {
+    "recurso": "caixaPessoal",
+    "quantidade": 6000
+   },
+   "aptidao": "articulacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "base.local.forca",
+     "delta": 0.02
+    },
+    {
+     "alvo": "relacoes.cupula",
+     "delta": 0.02
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "base.local.forca",
+     "delta": 0.005
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "base.local.forca",
+      "delta": -0.01
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "cobranca-por-autonomia",
+    "emJanelas": 3,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "marcar-distancia-da-familia",
+   "degrau": 1,
+   "titulo": "Marcar posição própria em público",
+   "texto": "Numa entrevista, você discorda de uma posição antiga da sua família e explica por quê. Parte do eleitorado passa a ver você com outros olhos. Em casa e no diretório, o clima esfria.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "origens": [
+     "familiaPolitica"
+    ]
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.02
+   },
+   "aptidao": "comunicacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "relacoes.credibilidade",
+     "delta": 0.03
+    },
+    {
+     "alvo": "indicadores.local.rejeicao",
+     "delta": -0.008
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "relacoes.credibilidade",
+     "delta": 0.005
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "indicadores.local.rejeicao",
+      "delta": 0.005
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "cobranca-por-autonomia",
+    "emJanelas": 2,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
+   "id": "abrir-caminho-na-prefeitura",
+   "degrau": 1,
+   "titulo": "Abrir caminho na prefeitura",
+   "texto": "Você usa os contatos dos tempos de gabinete para conversar com secretários e assessores da prefeitura. Ninguém promete nada, mas seu nome passa a circular quando surge uma vaga na equipe.",
+   "segura": false,
+   "pool": {
+    "peso": 1,
+    "origens": [
+     "assessor"
+    ]
+   },
+   "custo": {
+    "recurso": "saude",
+    "quantidade": 0.01
+   },
+   "aptidao": "articulacao",
+   "sucesso": {
+    "base": 0.6,
+    "pesoCapacidade": 0.3
+   },
+   "efeitos": [
+    {
+     "alvo": "relacoes.executivo",
+     "delta": 0.03
+    }
+   ],
+   "efeitosFalha": [
+    {
+     "alvo": "relacoes.executivo",
+     "delta": 0.005
+    }
+   ],
+   "risco": {
+    "probBase": 0.15,
+    "pesoCapacidade": 0.1,
+    "efeitos": [
+     {
+      "alvo": "relacoes.executivo",
+      "delta": -0.01
+     }
+    ]
+   },
+   "atraso": {
+    "eventoId": "disputa-no-diretorio",
+    "emJanelas": 3,
+    "prob": 0.3,
+    "condicao": null
+   }
+  },
+  {
    "id": "expediente-de-gabinete",
    "degrau": 2,
    "titulo": "Pôr em dia os pedidos acumulados",
@@ -5124,6 +5282,59 @@
       {
        "pessoa": "padrinho",
        "delta": 1
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cobranca-por-autonomia",
+   "degrau": 1,
+   "familia": "familia-politica",
+   "titulo": "Só o sobrenome?",
+   "texto": "Um portal da cidade publica que sua carreira é só a continuação do sobrenome. Seu tio, que manda no diretório, quer que você responda defendendo a família.",
+   "tipo": "atrasado",
+   "opcoes": [
+    {
+     "id": "defender-a-familia",
+     "texto": "Defender a família em público",
+     "efeitos": [
+      {
+       "alvo": "relacoes.cupula",
+       "delta": 0.02
+      },
+      {
+       "alvo": "indicadores.local.rejeicao",
+       "delta": 0.01
+      }
+     ]
+    },
+    {
+     "id": "mostrar-trajetoria",
+     "texto": "Responder com o que você mesmo já fez",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "relacoes.credibilidade",
+       "delta": 0.01
+      }
+     ]
+    },
+    {
+     "id": "assumir-independencia",
+     "texto": "Dizer que não fala pela família",
+     "efeitos": [
+      {
+       "alvo": "relacoes.cupula",
+       "delta": -0.03
+      },
+      {
+       "alvo": "relacoes.credibilidade",
+       "delta": 0.02
+      },
+      {
+       "alvo": "indicadores.local.rejeicao",
+       "delta": -0.01
       }
      ]
     }
