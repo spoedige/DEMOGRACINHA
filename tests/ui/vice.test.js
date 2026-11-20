@@ -81,6 +81,7 @@ test("sucessão por evento: o vice assume o cargo do titular e o HUD mostra o no
     const e = estado("v1-SUCESSAO", 2029, "C1");
     e.cargos.mandatos = [{ disputaId: "2028|PREFEITO|EX001|1", cargo: "VICE_PREFEITO", unidadeId: "EX001", inicio: "2029-01-01", fim: "2032-12-31",
       situacao: "exercicio", papel: "vice", chapaId: "CH1", titularId: "X1" }];
+    e.eventosRecentes["peso-do-mandato"] = { ano: 2029, janela: "C1" };                // arco da posse já vivido (D91)
     e.filaEventos = [{ id: "V", janelaAlvo: { ano: 2029, janela: "C1" }, dados: { eventoId: "vaga-do-titular", origemCartaId: "x", prob: 1, condicao: null, nivelCorrupcao: null } }];
     const { pg, erros } = await abrir(nav, Motor.Save.serializar(e));
     assert.match(await pg.textContent("body"), /Vice-prefeito/);

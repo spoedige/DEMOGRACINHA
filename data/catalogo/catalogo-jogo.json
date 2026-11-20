@@ -274,7 +274,7 @@
     ]
    },
    "atraso": {
-    "eventoId": "disputa-no-diretorio",
+    "eventoId": "convite-do-padrinho",
     "emJanelas": 3,
     "prob": 0.15,
     "condicao": null
@@ -2585,20 +2585,69 @@
    "degrau": 1,
    "familia": "demanda-local",
    "titulo": "Cobrança da associação",
-   "texto": "A presidente da associação de moradores liga para saber o que aconteceu com os pedidos daquela reunião. Os vizinhos estão perguntando.",
+   "texto": "Cida Ramos, presidente da associação de moradores, liga para saber o que aconteceu com os pedidos daquela reunião. Os vizinhos estão perguntando.",
    "tipo": "atrasado",
    "opcoes": [
     {
-     "id": "registrar",
-     "texto": "Ouvir a cobrança e prometer retorno",
+     "id": "prometer-prazo",
+     "texto": "Prometer uma solução até o fim do ano",
      "efeitos": [
       {
        "alvo": "base.local.forca",
-       "delta": -0.01
+       "delta": 0.01
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "lideranca",
+       "delta": 1
+      }
+     ],
+     "adicionarTag": "arco:promessa",
+     "agendar": {
+      "eventoId": "promessa-cobrada",
+      "emJanelas": 4,
+      "prob": 0.8
+     }
+    },
+    {
+     "id": "ser-franco",
+     "texto": "Explicar com franqueza o que está ao seu alcance",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "base.local.forca",
+       "delta": -0.005
       }
      ]
+    },
+    {
+     "id": "levar-a-prefeitura",
+     "texto": "Levar a demanda à prefeitura junto com os moradores",
+     "efeitos": [
+      {
+       "alvo": "relacoes.executivo",
+       "delta": -0.01
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "lideranca",
+       "delta": 1
+      }
+     ],
+     "agendar": {
+      "eventoId": "promessa-repercute",
+      "emJanelas": 2,
+      "prob": 0.6
+     }
     }
-   ]
+   ],
+   "pessoa": "lideranca",
+   "arco": {
+    "id": "promessa-no-bairro",
+    "passo": 1
+   }
   },
   {
    "id": "video-repercute",
@@ -2617,6 +2666,12 @@
        "alvo": "indicadores.local.notoriedade",
        "delta": 0.005
       }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "jornalista",
+       "delta": 1
+      }
      ]
     },
     {
@@ -2631,7 +2686,13 @@
        "alvo": "indicadores.local.rejeicao",
        "delta": 0.01
       }
-     ]
+     ],
+     "adicionarTag": "arco:fala-dura",
+     "agendar": {
+      "eventoId": "adversarios-exploram",
+      "emJanelas": 2,
+      "prob": 0.6
+     }
     },
     {
      "id": "live-explicando",
@@ -2648,7 +2709,12 @@
       }
      ]
     }
-   ]
+   ],
+   "pessoa": "jornalista",
+   "arco": {
+    "id": "exposicao-publica",
+    "passo": 1
+   }
   },
   {
    "id": "disputa-no-diretorio",
@@ -2685,7 +2751,18 @@
        "alvo": "grupo.influencia",
        "delta": 0.02
       }
-     ]
+     ],
+     "relacoes": [
+      {
+       "pessoa": "rival",
+       "delta": -1
+      }
+     ],
+     "agendar": {
+      "eventoId": "rival-limita",
+      "emJanelas": 2,
+      "prob": 0.6
+     }
     },
     {
      "id": "costurar-em-silencio",
@@ -2696,9 +2773,20 @@
        "alvo": "relacoes.cupula",
        "delta": 0.02
       }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "articulador",
+       "delta": 1
+      }
      ]
     }
-   ]
+   ],
+   "pessoa": "rival",
+   "arco": {
+    "id": "disputa-interna",
+    "passo": 1
+   }
   },
   {
    "id": "boato-no-bairro",
@@ -2773,6 +2861,959 @@
       {
        "alvo": "relacoes.credibilidade",
        "delta": -0.02
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "convite-do-padrinho",
+   "degrau": 1,
+   "familia": "padrinho",
+   "pessoa": "padrinho",
+   "arco": {
+    "id": "primeira-oportunidade",
+    "passo": 1
+   },
+   "titulo": "O convite de Osvaldo",
+   "texto": "Osvaldo Teixeira, vereador há três mandatos, chama você para a reunião do diretório. Diz que vê futuro em você e quer saber se pode contar com seu apoio na chapa dele.",
+   "tipo": "atrasado",
+   "opcoes": [
+    {
+     "id": "entrar-na-chapa",
+     "texto": "Entrar na chapa de Osvaldo",
+     "efeitos": [
+      {
+       "alvo": "relacoes.cupula",
+       "delta": 0.02
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "padrinho",
+       "delta": 1
+      },
+      {
+       "pessoa": "rival",
+       "delta": -1
+      }
+     ],
+     "adicionarTag": "arco:afilhado",
+     "agendar": [
+      {
+       "eventoId": "rival-questiona",
+       "emJanelas": 2,
+       "prob": 0.6
+      },
+      {
+       "eventoId": "padrinho-cobra",
+       "emJanelas": 4,
+       "prob": 0.7
+      }
+     ]
+    },
+    {
+     "id": "ir-sem-lado",
+     "texto": "Ir à reunião sem assumir lado",
+     "contencao": true
+    },
+    {
+     "id": "seguir-sozinho",
+     "texto": "Agradecer e seguir por conta própria",
+     "efeitos": [
+      {
+       "alvo": "relacoes.cupula",
+       "delta": -0.01
+      },
+      {
+       "alvo": "relacoes.credibilidade",
+       "delta": 0.01
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "padrinho",
+       "delta": -1
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "rival-questiona",
+   "degrau": 1,
+   "familia": "rival",
+   "pessoa": "rival",
+   "arco": {
+    "id": "primeira-oportunidade",
+    "passo": 2
+   },
+   "titulo": "Renato provoca",
+   "texto": "Na reunião seguinte, Renato Faria insinua que você só chegou ali pela mão de Osvaldo. Parte do diretório ri.",
+   "tipo": "atrasado",
+   "opcoes": [
+    {
+     "id": "mostrar-trabalho",
+     "texto": "Responder com o que já fez no bairro",
+     "contencao": true,
+     "relacoes": [
+      {
+       "pessoa": "rival",
+       "delta": 1
+      }
+     ]
+    },
+    {
+     "id": "rebater",
+     "texto": "Rebater na frente de todos",
+     "efeitos": [
+      {
+       "alvo": "relacoes.cupula",
+       "delta": -0.01
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "rival",
+       "delta": -1
+      },
+      {
+       "pessoa": "padrinho",
+       "delta": 1
+      }
+     ]
+    },
+    {
+     "id": "conversa-reservada",
+     "texto": "Chamar Renato para uma conversa reservada",
+     "efeitos": [
+      {
+       "alvo": "relacoes.credibilidade",
+       "delta": 0.01
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "rival",
+       "delta": 1
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "padrinho-cobra",
+   "degrau": 1,
+   "familia": "padrinho",
+   "pessoa": "padrinho",
+   "arco": {
+    "id": "primeira-oportunidade",
+    "passo": 3
+   },
+   "titulo": "Osvaldo cobra a conta",
+   "texto": "Osvaldo pede que você leve um sobrinho dele para a sua equipe e apoie o candidato dele à presidência do diretório. \"Quem anda comigo sabe como funciona.\"",
+   "tipo": "atrasado",
+   "condicao": [
+    {
+     "alvo": "personagem.tags",
+     "op": "contem",
+     "valor": "arco:afilhado"
+    }
+   ],
+   "opcoes": [
+    {
+     "id": "atender",
+     "texto": "Atender os dois pedidos",
+     "efeitos": [
+      {
+       "alvo": "relacoes.cupula",
+       "delta": 0.02
+      },
+      {
+       "alvo": "relacoes.credibilidade",
+       "delta": -0.02
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "padrinho",
+       "delta": 1
+      }
+     ]
+    },
+    {
+     "id": "meio-termo",
+     "texto": "Apoiar o candidato, mas recusar a indicação",
+     "contencao": true
+    },
+    {
+     "id": "recusar-a-troca",
+     "texto": "Dizer que não aceita esse tipo de troca",
+     "efeitos": [
+      {
+       "alvo": "relacoes.credibilidade",
+       "delta": 0.02
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "padrinho",
+       "delta": -2
+      }
+     ],
+     "agendar": {
+      "eventoId": "padrinho-vira-adversario",
+      "emJanelas": 2,
+      "prob": 0.8
+     }
+    }
+   ]
+  },
+  {
+   "id": "padrinho-vira-adversario",
+   "degrau": 1,
+   "familia": "padrinho",
+   "pessoa": "padrinho",
+   "arco": {
+    "id": "primeira-oportunidade",
+    "passo": 4
+   },
+   "titulo": "Osvaldo vira adversário",
+   "texto": "Osvaldo passa a dizer pelos corredores que você é ingrato e trabalha para tirar seu nome da chapa.",
+   "tipo": "atrasado",
+   "condicao": [
+    {
+     "alvo": "pessoa.padrinho.confianca",
+     "op": "<=",
+     "valor": -1
+    }
+   ],
+   "opcoes": [
+    {
+     "id": "buscar-outros-grupos",
+     "texto": "Procurar apoio em outros grupos do partido",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "relacoes.cupula",
+       "delta": -0.01
+      }
+     ]
+    },
+    {
+     "id": "contar-em-publico",
+     "texto": "Contar em público o que ele pediu",
+     "efeitos": [
+      {
+       "alvo": "relacoes.cupula",
+       "delta": -0.03
+      },
+      {
+       "alvo": "relacoes.credibilidade",
+       "delta": 0.01
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "jornalista",
+       "delta": 1
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "promessa-repercute",
+   "degrau": 1,
+   "familia": "promessa-imprensa",
+   "pessoa": "jornalista",
+   "arco": {
+    "id": "promessa-no-bairro",
+    "passo": 2
+   },
+   "titulo": "A demanda vira reportagem",
+   "texto": "Lúcia Prado, do portal da cidade, publica uma reportagem sobre a demanda do bairro e cita seu nome. Ela quer ouvir você.",
+   "tipo": "atrasado",
+   "opcoes": [
+    {
+     "id": "dar-entrevista",
+     "texto": "Dar entrevista e explicar o andamento",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "indicadores.local.notoriedade",
+       "delta": 0.01
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "jornalista",
+       "delta": 1
+      }
+     ]
+    },
+    {
+     "id": "cobrar-a-prefeitura",
+     "texto": "Usar a reportagem para cobrar a prefeitura",
+     "efeitos": [
+      {
+       "alvo": "indicadores.local.notoriedade",
+       "delta": 0.015
+      },
+      {
+       "alvo": "relacoes.executivo",
+       "delta": -0.02
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "lideranca",
+       "delta": 1
+      }
+     ]
+    },
+    {
+     "id": "nao-responder",
+     "texto": "Não responder",
+     "relacoes": [
+      {
+       "pessoa": "jornalista",
+       "delta": -1
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "promessa-cobrada",
+   "degrau": 1,
+   "familia": "promessa",
+   "pessoa": "lideranca",
+   "arco": {
+    "id": "promessa-no-bairro",
+    "passo": 3
+   },
+   "titulo": "O prazo chegou",
+   "texto": "O prazo prometido chegou. Cida Ramos reúne os moradores e pergunta, na frente de todos, o que foi feito.",
+   "tipo": "atrasado",
+   "condicao": [
+    {
+     "alvo": "personagem.tags",
+     "op": "contem",
+     "valor": "arco:promessa"
+    }
+   ],
+   "opcoes": [
+    {
+     "id": "prestar-contas",
+     "texto": "Mostrar o que andou e o que travou",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "base.local.forca",
+       "delta": 0.005
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "lideranca",
+       "delta": 1
+      }
+     ],
+     "agendar": [
+      {
+       "eventoId": "lideranca-reconhece",
+       "emJanelas": 2,
+       "prob": 0.8
+      },
+      {
+       "eventoId": "lideranca-rompe",
+       "emJanelas": 2,
+       "prob": 0.8
+      }
+     ]
+    },
+    {
+     "id": "pedir-mais-prazo",
+     "texto": "Pedir mais tempo",
+     "efeitos": [
+      {
+       "alvo": "base.local.forca",
+       "delta": -0.01
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "lideranca",
+       "delta": -1
+      }
+     ],
+     "agendar": [
+      {
+       "eventoId": "lideranca-rompe",
+       "emJanelas": 2,
+       "prob": 0.8
+      }
+     ]
+    },
+    {
+     "id": "culpar-a-prefeitura",
+     "texto": "Dizer que a prefeitura travou tudo",
+     "efeitos": [
+      {
+       "alvo": "relacoes.executivo",
+       "delta": -0.02
+      },
+      {
+       "alvo": "indicadores.local.popularidade",
+       "delta": 0.005
+      }
+     ],
+     "agendar": [
+      {
+       "eventoId": "lideranca-reconhece",
+       "emJanelas": 2,
+       "prob": 0.8
+      },
+      {
+       "eventoId": "lideranca-rompe",
+       "emJanelas": 2,
+       "prob": 0.8
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "lideranca-reconhece",
+   "degrau": 1,
+   "familia": "promessa",
+   "pessoa": "lideranca",
+   "arco": {
+    "id": "promessa-no-bairro",
+    "passo": 4
+   },
+   "titulo": "Cida reconhece",
+   "texto": "Numa reunião da associação, Cida Ramos diz que você foi o único que voltou para prestar contas. A fala corre o bairro.",
+   "tipo": "atrasado",
+   "condicao": [
+    {
+     "alvo": "pessoa.lideranca.confianca",
+     "op": ">=",
+     "valor": 2
+    }
+   ],
+   "opcoes": [
+    {
+     "id": "agradecer",
+     "texto": "Agradecer o reconhecimento",
+     "efeitos": [
+      {
+       "alvo": "base.local.forca",
+       "delta": 0.02
+      },
+      {
+       "alvo": "indicadores.local.popularidade",
+       "delta": 0.01
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "lideranca-rompe",
+   "degrau": 1,
+   "familia": "promessa",
+   "pessoa": "lideranca",
+   "arco": {
+    "id": "promessa-no-bairro",
+    "passo": 4
+   },
+   "titulo": "Cida rompe",
+   "texto": "Cida Ramos avisa que a associação não vai mais receber você. Diz que cansou de promessa.",
+   "tipo": "atrasado",
+   "condicao": [
+    {
+     "alvo": "pessoa.lideranca.confianca",
+     "op": "<=",
+     "valor": -1
+    }
+   ],
+   "opcoes": [
+    {
+     "id": "ultima-conversa",
+     "texto": "Pedir uma última conversa",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "base.local.forca",
+       "delta": -0.01
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "lideranca",
+       "delta": 1
+      }
+     ]
+    },
+    {
+     "id": "aceitar-rompimento",
+     "texto": "Aceitar o rompimento",
+     "efeitos": [
+      {
+       "alvo": "base.local.forca",
+       "delta": -0.03
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "rival-limita",
+   "degrau": 1,
+   "familia": "rival",
+   "pessoa": "rival",
+   "arco": {
+    "id": "disputa-interna",
+    "passo": 2
+   },
+   "titulo": "Renato fecha o caminho",
+   "texto": "Renato Faria se junta ao grupo antigo e articula para deixar você fora da executiva municipal.",
+   "tipo": "atrasado",
+   "opcoes": [
+    {
+     "id": "posto-menor",
+     "texto": "Aceitar um posto menor por enquanto",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "relacoes.cupula",
+       "delta": -0.01
+      }
+     ]
+    },
+    {
+     "id": "disputar-filiados",
+     "texto": "Disputar o voto de cada filiado",
+     "efeitos": [
+      {
+       "alvo": "relacoes.cupula",
+       "delta": 0.02
+      },
+      {
+       "alvo": "personagem.saude",
+       "delta": -0.02
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "rival",
+       "delta": -1
+      }
+     ],
+     "agendar": {
+      "eventoId": "composicao-oferecida",
+      "emJanelas": 1,
+      "prob": 0.7
+     }
+    },
+    {
+     "id": "chapa-conjunta",
+     "texto": "Propor a Renato uma chapa conjunta",
+     "efeitos": [
+      {
+       "alvo": "relacoes.cupula",
+       "delta": 0.01
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "rival",
+       "delta": 1
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "composicao-oferecida",
+   "degrau": 1,
+   "familia": "articulador",
+   "pessoa": "articulador",
+   "arco": {
+    "id": "disputa-interna",
+    "passo": 3
+   },
+   "titulo": "Jairo oferece um acordo",
+   "texto": "Jairo Mendes, que conhece todos os caminhos do partido, oferece costurar uma composição: você e Renato dividem a executiva. Avisa que um dia vai pedir algo em troca.",
+   "tipo": "atrasado",
+   "opcoes": [
+    {
+     "id": "aceitar-composicao",
+     "texto": "Aceitar a composição",
+     "efeitos": [
+      {
+       "alvo": "relacoes.cupula",
+       "delta": 0.02
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "articulador",
+       "delta": 1
+      },
+      {
+       "pessoa": "rival",
+       "delta": 1
+      }
+     ],
+     "adicionarTag": "arco:divida-jairo",
+     "agendar": {
+      "eventoId": "jairo-cobra",
+      "emJanelas": 6,
+      "prob": 0.7
+     }
+    },
+    {
+     "id": "seguir-sem-acordo",
+     "texto": "Agradecer e seguir sem acordo",
+     "contencao": true
+    },
+    {
+     "id": "ir-para-o-voto",
+     "texto": "Ir para o voto contra Renato",
+     "efeitos": [
+      {
+       "alvo": "relacoes.cupula",
+       "delta": -0.01
+      },
+      {
+       "alvo": "grupo.influencia",
+       "delta": 0.02
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "rival",
+       "delta": -1
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "jairo-cobra",
+   "degrau": 1,
+   "familia": "articulador",
+   "pessoa": "articulador",
+   "arco": {
+    "id": "disputa-interna",
+    "passo": 4
+   },
+   "titulo": "Jairo pede a contrapartida",
+   "texto": "Jairo Mendes liga. Precisa que você apoie um nome dele para a chapa de vereadores da próxima eleição.",
+   "tipo": "atrasado",
+   "condicao": [
+    {
+     "alvo": "personagem.tags",
+     "op": "contem",
+     "valor": "arco:divida-jairo"
+    }
+   ],
+   "opcoes": [
+    {
+     "id": "apoiar-o-nome",
+     "texto": "Apoiar o nome indicado",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "relacoes.cupula",
+       "delta": 0.01
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "articulador",
+       "delta": 1
+      }
+     ]
+    },
+    {
+     "id": "dizer-nao",
+     "texto": "Dizer que não pode",
+     "efeitos": [
+      {
+       "alvo": "relacoes.cupula",
+       "delta": -0.02
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "articulador",
+       "delta": -2
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "adversarios-exploram",
+   "degrau": 1,
+   "familia": "exposicao-local",
+   "pessoa": "rival",
+   "arco": {
+    "id": "exposicao-publica",
+    "passo": 2
+   },
+   "titulo": "O recorte do vídeo",
+   "texto": "Adversários recortam o trecho mais duro do seu vídeo e espalham nos grupos como se fosse um ataque aos moradores.",
+   "tipo": "atrasado",
+   "opcoes": [
+    {
+     "id": "publicar-completo",
+     "texto": "Publicar o vídeo completo e esclarecer",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "indicadores.local.rejeicao",
+       "delta": -0.005
+      }
+     ]
+    },
+    {
+     "id": "sustentar",
+     "texto": "Sustentar cada palavra",
+     "efeitos": [
+      {
+       "alvo": "indicadores.local.notoriedade",
+       "delta": 0.01
+      },
+      {
+       "alvo": "indicadores.local.rejeicao",
+       "delta": 0.01
+      }
+     ],
+     "agendar": {
+      "eventoId": "jornalista-recupera",
+      "emJanelas": 6,
+      "prob": 0.5
+     }
+    },
+    {
+     "id": "pedir-desculpas",
+     "texto": "Pedir desculpas pelo tom",
+     "efeitos": [
+      {
+       "alvo": "indicadores.local.rejeicao",
+       "delta": -0.01
+      },
+      {
+       "alvo": "relacoes.credibilidade",
+       "delta": -0.01
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "jornalista-recupera",
+   "degrau": 1,
+   "familia": "imprensa",
+   "pessoa": "jornalista",
+   "arco": {
+    "id": "exposicao-publica",
+    "passo": 3
+   },
+   "titulo": "Lúcia recupera a declaração",
+   "texto": "Lúcia Prado publica uma matéria que compara o que você disse naquele vídeo com o que fez desde então.",
+   "tipo": "atrasado",
+   "condicao": [
+    {
+     "alvo": "personagem.tags",
+     "op": "contem",
+     "valor": "arco:fala-dura"
+    }
+   ],
+   "opcoes": [
+    {
+     "id": "responder-item-a-item",
+     "texto": "Responder com o que foi feito, item por item",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "relacoes.credibilidade",
+       "delta": 0.01
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "jornalista",
+       "delta": 1
+      }
+     ]
+    },
+    {
+     "id": "acusar-perseguicao",
+     "texto": "Acusar o portal de perseguição",
+     "efeitos": [
+      {
+       "alvo": "indicadores.local.notoriedade",
+       "delta": 0.01
+      },
+      {
+       "alvo": "indicadores.local.rejeicao",
+       "delta": 0.01
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "jornalista",
+       "delta": -1
+      }
+     ]
+    },
+    {
+     "id": "nao-comentar",
+     "texto": "Não comentar",
+     "efeitos": [
+      {
+       "alvo": "indicadores.local.rejeicao",
+       "delta": 0.005
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "primeira-derrota",
+   "degrau": 1,
+   "familia": "primeira-derrota",
+   "pessoa": "lideranca",
+   "arco": {
+    "id": "primeira-derrota",
+    "passo": 1
+   },
+   "titulo": "A primeira derrota",
+   "texto": "As urnas fecham e seu nome não está entre os eleitos. A equipe se reúne em silêncio e os apoiadores esperam uma palavra sua.",
+   "tipo": "gatilho",
+   "limiar": {
+    "alvo": "carreira.derrotas",
+    "op": ">",
+    "valor": 0.5,
+    "escala": 0.5
+   },
+   "probBase": 1,
+   "bloqueioJanelas": 9999,
+   "opcoes": [
+    {
+     "id": "anunciar-que-continua",
+     "texto": "Agradecer os votos e anunciar que continua",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "base.local.forca",
+       "delta": 0.01
+      }
+     ],
+     "agendar": {
+      "eventoId": "reconstrucao",
+      "emJanelas": 3,
+      "prob": 0.7
+     }
+    },
+    {
+     "id": "avaliar-erros",
+     "texto": "Reunir a equipe para entender o que faltou",
+     "efeitos": [
+      {
+       "alvo": "relacoes.credibilidade",
+       "delta": 0.01
+      }
+     ],
+     "agendar": {
+      "eventoId": "reconstrucao",
+      "emJanelas": 3,
+      "prob": 0.7
+     }
+    },
+    {
+     "id": "culpar-o-partido",
+     "texto": "Culpar a falta de apoio do partido",
+     "efeitos": [
+      {
+       "alvo": "relacoes.cupula",
+       "delta": -0.03
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "padrinho",
+       "delta": -1
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "reconstrucao",
+   "degrau": 1,
+   "familia": "reconstrucao",
+   "pessoa": "lideranca",
+   "arco": {
+    "id": "primeira-derrota",
+    "passo": 2
+   },
+   "titulo": "Recomeçar a base",
+   "texto": "Meses depois da derrota, Cida Ramos procura você. Parte dos apoiadores quer saber se ainda vale a pena caminhar junto.",
+   "tipo": "atrasado",
+   "opcoes": [
+    {
+     "id": "voltar-ao-bairro",
+     "texto": "Voltar ao bairro com agenda fixa",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "base.local.forca",
+       "delta": 0.01
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "lideranca",
+       "delta": 1
+      }
+     ]
+    },
+    {
+     "id": "nova-estrategia",
+     "texto": "Apostar numa estratégia nova, com mais presença nas redes",
+     "efeitos": [
+      {
+       "alvo": "indicadores.local.notoriedade",
+       "delta": 0.01
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "lideranca",
+       "delta": -1
+      }
+     ]
+    },
+    {
+     "id": "procurar-osvaldo",
+     "texto": "Procurar Osvaldo Teixeira para a próxima disputa",
+     "efeitos": [
+      {
+       "alvo": "relacoes.cupula",
+       "delta": 0.02
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "padrinho",
+       "delta": 1
       }
      ]
     }
@@ -3013,6 +4054,202 @@
       {
        "alvo": "relacoes.credibilidade",
        "delta": -0.02
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "peso-do-mandato",
+   "degrau": 2,
+   "familia": "peso-do-mandato",
+   "pessoa": "lideranca",
+   "arco": {
+    "id": "peso-do-mandato",
+    "passo": 1
+   },
+   "titulo": "O peso do mandato",
+   "texto": "Primeira semana no cargo. Cida Ramos chega com a lista de pedidos do bairro e lembra o que foi dito na campanha.",
+   "tipo": "gatilho",
+   "opcoes": [
+    {
+     "id": "priorizar-o-bairro",
+     "texto": "Pôr os pedidos do bairro no topo da agenda",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "base.local.forca",
+       "delta": 0.01
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "lideranca",
+       "delta": 1
+      }
+     ],
+     "agendar": {
+      "eventoId": "promessa-trava",
+      "emJanelas": 4,
+      "prob": 0.7
+     }
+    },
+    {
+     "id": "explicar-limites",
+     "texto": "Explicar o que o cargo permite e o que não permite",
+     "efeitos": [
+      {
+       "alvo": "relacoes.credibilidade",
+       "delta": 0.01
+      }
+     ]
+    },
+    {
+     "id": "agenda-propria",
+     "texto": "Dizer que o mandato terá agenda própria",
+     "efeitos": [
+      {
+       "alvo": "base.local.forca",
+       "delta": -0.01
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "lideranca",
+       "delta": -1
+      }
+     ]
+    }
+   ],
+   "limiar": {
+    "alvo": "carreira.mandatosEletivos",
+    "op": ">",
+    "valor": 0.5,
+    "escala": 0.5
+   },
+   "probBase": 1,
+   "bloqueioJanelas": 9999
+  },
+  {
+   "id": "promessa-trava",
+   "degrau": 2,
+   "familia": "peso-do-mandato",
+   "pessoa": "articulador",
+   "arco": {
+    "id": "peso-do-mandato",
+    "passo": 2
+   },
+   "titulo": "A promessa trava",
+   "texto": "O pedido principal do bairro esbarra no orçamento e na burocracia. Jairo Mendes diz que sabe quem destrava, mas o caminho tem preço.",
+   "tipo": "atrasado",
+   "opcoes": [
+    {
+     "id": "assumir-desgaste",
+     "texto": "Explicar aos moradores que vai demorar",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "indicadores.local.popularidade",
+       "delta": -0.005
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "lideranca",
+       "delta": 1
+      }
+     ]
+    },
+    {
+     "id": "aceitar-ajuda-de-jairo",
+     "texto": "Aceitar a ajuda de Jairo",
+     "efeitos": [
+      {
+       "alvo": "base.local.forca",
+       "delta": 0.02
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "articulador",
+       "delta": 1
+      }
+     ],
+     "adicionarTag": "arco:divida-mandato",
+     "agendar": {
+      "eventoId": "jairo-cobra-mandato",
+      "emJanelas": 4,
+      "prob": 0.7
+     }
+    },
+    {
+     "id": "mudar-prioridade",
+     "texto": "Trocar a prioridade por algo que dá para entregar agora",
+     "efeitos": [
+      {
+       "alvo": "relacoes.credibilidade",
+       "delta": 0.01
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "lideranca",
+       "delta": -1
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "jairo-cobra-mandato",
+   "degrau": 2,
+   "familia": "articulador",
+   "pessoa": "articulador",
+   "arco": {
+    "id": "peso-do-mandato",
+    "passo": 3
+   },
+   "titulo": "Jairo quer um voto",
+   "texto": "Jairo Mendes volta. Quer seu voto num projeto que interessa a um grupo próximo dele.",
+   "tipo": "atrasado",
+   "condicao": [
+    {
+     "alvo": "personagem.tags",
+     "op": "contem",
+     "valor": "arco:divida-mandato"
+    }
+   ],
+   "opcoes": [
+    {
+     "id": "votar-como-pediu",
+     "texto": "Votar como ele pediu",
+     "contencao": true,
+     "efeitos": [
+      {
+       "alvo": "relacoes.credibilidade",
+       "delta": -0.01
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "articulador",
+       "delta": 1
+      }
+     ]
+    },
+    {
+     "id": "votar-contra",
+     "texto": "Votar contra",
+     "efeitos": [
+      {
+       "alvo": "relacoes.credibilidade",
+       "delta": 0.01
+      }
+     ],
+     "relacoes": [
+      {
+       "pessoa": "articulador",
+       "delta": -2
       }
      ]
     }
@@ -4172,6 +5409,38 @@
    "experienciaPorJanela": 0.6,
    "notoriedadePorJanela": 0.01,
    "risco": "Fundo partidário, alianças nacionais e disputas por legenda passam pela sua mesa."
+  }
+ ],
+ "personagens": [
+  {
+   "id": "padrinho",
+   "nome": "Osvaldo Teixeira",
+   "papel": "Padrinho político",
+   "descricao": "Vereador há três mandatos e dono de boa parte do diretório. Abre portas e lembra de quem passou por elas."
+  },
+  {
+   "id": "lideranca",
+   "nome": "Cida Ramos",
+   "papel": "Liderança comunitária",
+   "descricao": "Preside a associação de moradores há quinze anos. Apoia quem volta ao bairro e cobra quem some."
+  },
+  {
+   "id": "rival",
+   "nome": "Renato Faria",
+   "papel": "Rival partidário",
+   "descricao": "Filiado da sua geração, bom de palanque e de conta. Disputa o mesmo espaço e sabe negociar quando convém."
+  },
+  {
+   "id": "jornalista",
+   "nome": "Lúcia Prado",
+   "papel": "Jornalista",
+   "descricao": "Repórter de política do portal da cidade. Guarda declarações antigas e reconhece entrega quando vê."
+  },
+  {
+   "id": "articulador",
+   "nome": "Jairo Mendes",
+   "papel": "Articulador de bastidores",
+   "descricao": "Foi chefe de gabinete na Câmara e na Assembleia. Conhece os caminhos e cobra cada favor."
   }
  ]
 }

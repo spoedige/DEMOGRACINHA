@@ -1,0 +1,10 @@
+{
+  "_cenario": "Personagens recorrentes fictícios (D91). Nenhum reproduz pessoa real. A relação de cada um com o jogador fica oculta no save (relacoesPessoais, de -2 a 2).",
+  "personagens": [
+    { "id": "padrinho", "nome": "Osvaldo Teixeira", "papel": "Padrinho político", "descricao": "Vereador há três mandatos e dono de boa parte do diretório. Abre portas e lembra de quem passou por elas." },
+    { "id": "lideranca", "nome": "Cida Ramos", "papel": "Liderança comunitária", "descricao": "Preside a associação de moradores há quinze anos. Apoia quem volta ao bairro e cobra quem some." },
+    { "id": "rival", "nome": "Renato Faria", "papel": "Rival partidário", "descricao": "Filiado da sua geração, bom de palanque e de conta. Disputa o mesmo espaço e sabe negociar quando convém." },
+    { "id": "jornalista", "nome": "Lúcia Prado", "papel": "Jornalista", "descricao": "Repórter de política do portal da cidade. Guarda declarações antigas e reconhece entrega quando vê." },
+    { "id": "articulador", "nome": "Jairo Mendes", "papel": "Articulador de bastidores", "descricao": "Foi chefe de gabinete na Câmara e na Assembleia. Conhece os caminhos e cobra cada favor." }
+  ]
+}

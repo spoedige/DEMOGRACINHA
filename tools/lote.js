@@ -20,7 +20,7 @@ function contexto(Motor) {
   const est = J("data/catalogo/estilos.json"), mun = J("public/data/municipios.json").municipios, br = J("public/data/eleicoes/BR.json"), bases = {};
   const base = (uf) => bases[uf] || (bases[uf] = J("public/data/eleicoes/" + uf + ".json"));
   const dados = { cartas: cat.cartas, ambicoes: cat.ambicoes, parametrosCartas: cat.parametrosCartas, parametrosDegrau: cat.parametrosDegrau,
-    eventos: cat.eventos, posicoes: cat.posicoes, regrasIndicacao: cand.regrasIndicacao, faixasFicha: cand.faixasFicha, ambicoesCargos: cand.ambicoesCargos,
+    eventos: cat.eventos, personagens: cat.personagens, posicoes: cat.posicoes, regrasIndicacao: cand.regrasIndicacao, faixasFicha: cand.faixasFicha, ambicoesCargos: cand.ambicoesCargos,
     regrasCargo: cfg.regrasCargo, governos: {}, estilos: est, clausula: Object.assign({ base: br.deputadoFederal2022, registro: reg }, cfg.clausula) };
   return { Motor, reg, cfg, cat, car, orig, est, mun, br, base, dados, porId: new Map(cat.cartas.map((c) => [c.id, c])) };
 }

@@ -149,7 +149,7 @@ test("fluxo completo a 360 px: criação, janelas, eventos, candidatura, eleiç�
     assert.match(await pg.textContent("main"), /Limpar os dados do navegador apaga a partida/);
     await pg.selectOption("#ritmo", "intenso");
     const salvo = JSON.parse(await pg.evaluate(() => localStorage.getItem("demogracinha.save")));
-    assert.equal(salvo.ritmo, "intenso"); assert.equal(salvo.saveVersion, 6); assert.equal(salvo.personagem.nome, "Personagem de Teste");
+    assert.equal(salvo.ritmo, "intenso"); assert.equal(salvo.saveVersion, 7); assert.equal(salvo.personagem.nome, "Personagem de Teste");
     assert.doesNotThrow(() => carregarMotor().Motor.Save.ler(JSON.stringify(salvo)));
     await pg.click("[data-acao=exportar]");
     await pg.waitForSelector("#codigo-export");

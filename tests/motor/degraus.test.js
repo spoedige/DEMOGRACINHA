@@ -15,7 +15,8 @@ const clone = (x) => JSON.parse(JSON.stringify(x));
 const lotes = fs.readdirSync(CAT).filter((f) => /^degrau-\d\.json$/.test(f)).sort();
 const ler = (f) => JSON.parse(fs.readFileSync(path.join(CAT, f), "utf8"));
 const COMUNS = ler("eventos-comuns.json").eventos, CARTAS_COMUNS = ler("eventos-comuns.json").cartas;                                // escada jurídica comum a todos os degraus
-const dadosDe = (l) => ({ cartas: l.cartas.concat(CARTAS_COMUNS), eventos: l.eventos.concat(COMUNS), posicoes: l.posicoes, ambicoes: ["legislativo", "executivo", "bastidor"],
+const PESSOAS = ler("personagens.json").personagens;
+const dadosDe = (l) => ({ cartas: l.cartas.concat(CARTAS_COMUNS), eventos: l.eventos.concat(COMUNS), personagens: PESSOAS, posicoes: l.posicoes, ambicoes: ["legislativo", "executivo", "bastidor"],
   parametrosCartas: { acoesPorMao: 2 }, parametrosDegrau: l.parametrosDegrau, governos: {} });
 const novo = () => { const c = clone(CEN); delete c.eleicoes; return Carreira.criar({}, c, null).resultado; };
 const TRAVESSAO = /[–—]/;

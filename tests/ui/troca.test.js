@@ -55,7 +55,8 @@ test("J1 do ano eleitoral: troca de partido e de domicílio junto com a ação; 
 test("vereador no ano calmo: troca de partido bloqueada com o aviso da janela", { timeout: 60000 }, async () => {
   const nav = await chromium.launch();
   try {
-    const s = save(2027, "C1", (e) => { e.cargos.mandatos = [{ disputaId: "D", cargo: "VEREADOR", unidadeId: "EX001", inicio: "2025-01-01", fim: "2028-12-31", situacao: "exercicio" }]; });
+    const s = save(2027, "C1", (e) => { e.cargos.mandatos = [{ disputaId: "D", cargo: "VEREADOR", unidadeId: "EX001", inicio: "2025-01-01", fim: "2028-12-31", situacao: "exercicio" }];
+      e.eventosRecentes["peso-do-mandato"] = { ano: 2026, janela: "J1" }; });             // mandato em curso: arco da posse já vivido (D91)
     const { pg, erros } = await abrir(nav, s);
     if ((await pg.textContent("h1.dossier-title")) === "Convites de nomeação") { await pg.click("[data-grupo=nom][data-valor=recusar]"); await pg.click("[data-acao=confirmar]"); }
     assert.equal(await pg.isDisabled("#troca-partido"), true);

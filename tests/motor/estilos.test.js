@@ -14,7 +14,7 @@ const ERRO = { name: "TypeError" };
 const clone = (x) => JSON.parse(JSON.stringify(x));
 const est = (id) => EST.estilos.find((x) => x.id === id);
 const novo = (id) => { const c = clone(CEN); delete c.eleicoes; if (id) Origens.aplicarEstilo(c.inicio, est(id)); return Carreira.criar({}, c, null).resultado; };
-const dados = () => ({ eventos: clone(CAT.eventos), cartas: clone(CAT.cartas), ambicoes: CAT.ambicoes, parametrosCartas: CAT.parametrosCartas,
+const dados = () => ({ eventos: clone(CAT.eventos), personagens: CAT.personagens, cartas: clone(CAT.cartas), ambicoes: CAT.ambicoes, parametrosCartas: CAT.parametrosCartas,
   parametrosDegrau: CAT.parametrosDegrau, estilos: EST });
 
 test("estilo no início: etiqueta única e ajustes leves dentro das escalas", () => {

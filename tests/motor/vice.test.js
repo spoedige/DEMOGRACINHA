@@ -166,11 +166,11 @@ test("renúncia do prefeito titular: o vice sintético da chapa assume (módulo 
 
 test("save versão 6: migração de 5 marca todo mandato como titular; vice sem correspondência recusado", () => {
   const e = viceEmExercicio(2029, "C1");
-  assert.equal(e.saveVersion, 6);
+  assert.equal(e.saveVersion, 7);
   const v5 = clone(e); v5.saveVersion = 5;
   v5.cargos.mandatos = [{ disputaId: "D1", cargo: "VEREADOR", unidadeId: "EX001", inicio: "2025-01-01", fim: "2028-12-31", situacao: "encerrado" }];
   const m = Save.ler(JSON.stringify(v5));
-  assert.equal(m.saveVersion, 6); assert.equal(m.cargos.mandatos[0].papel, "titular");
+  assert.equal(m.saveVersion, 7); assert.equal(m.cargos.mandatos[0].papel, "titular");
   const ruim = clone(v5); ruim.cargos.mandatos[0].cargo = "VICE_PREFEITO";
   assert.throws(() => Save.ler(JSON.stringify(ruim)), /sem correspondência/);
   const inval = clone(e); inval.cargos.mandatos[0].papel = "suplente";

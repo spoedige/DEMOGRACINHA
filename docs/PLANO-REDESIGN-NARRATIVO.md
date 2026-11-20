@@ -7,8 +7,8 @@ Documento de controle e continuidade (D91). Atualizar ao fim de cada etapa. Deci
 | Campo | Valor |
 |---|---|
 | Branch | `implementacao-motor` (sem commit nem push sem autorização) |
-| Etapa atual | 1 concluída, aguardando revisão do autor |
-| Próxima ação | Etapa 2: personagens recorrentes, save 7 e arcos |
+| Etapa atual | 2 concluída, aguardando revisão do autor (etapa 1 em `5fd860c`) |
+| Próxima ação | Etapa 3: 24 cartas adicionais, com as adaptações aprovadas |
 
 ## Diagnóstico consolidado (etapa 0)
 
@@ -17,8 +17,8 @@ Documento de controle e continuidade (D91). Atualizar ao fim de cada etapa. Deci
 | Cartas (53) | Textos no padrão "X tende a subir"; explicavam indicador em vez de situação | P0 | 1 (feito) |
 | Ação segura (5) | "Sem ganho visível", sem efeito | P0 | 1 (feito) |
 | Elegibilidade | "Divulgar o mandato em vídeos curtos" aparecia sem mandato | P0 | 1 (feito) |
-| Eventos (31) | 11 com uma só opção; sem personagens nem memória | P1 | 2 |
-| Personagens e arcos | Inexistentes; motor já tem `familia`, `atrasado`, `gatilho`, `exigeTag`, `eventosRecentes` | P1 | 2 |
+| Eventos (31) | 11 com uma só opção; sem personagens nem memória | P1 | 2 (feito) |
+| Personagens e arcos | Inexistentes; motor já tem `familia`, `atrasado`, `gatilho`, `exigeTag`, `eventosRecentes` | P1 | 2 (feito) |
 | Origens | 5 no código, 10 no doc; Família Política ausente | P1 | 4 |
 | Estilos (4) | Só bônus e 2 cartas cada | P2 | 4 |
 | Talento Nato | Não implementado | P2 | 4 |
@@ -31,8 +31,8 @@ Documento de controle e continuidade (D91). Atualizar ao fim de cada etapa. Deci
 | Etapa | Escopo | Situação |
 |---|---|---|
 | 0 | Auditoria | Aprovada |
-| 1 | Tom, reescrita de cartas e eventos, segura, textos provisórios | Concluída |
-| 2 | 5 personagens, relações internas, save 7, 6 arcos | Pendente |
+| 1 | Tom, reescrita de cartas e eventos, segura, textos provisórios | Concluída (`5fd860c`) |
+| 2 | 5 personagens, relações internas, save 7, 6 arcos | Concluída |
 | 3 | 24 cartas adicionais (lista abaixo) | Pendente |
 | 4 | Família Política, estilos, sinergias, Talento Nato | Pendente |
 | 5 | Partidos: espectro, ordem alfabética, troca; calibragem de recursos | Pendente |
@@ -56,9 +56,25 @@ Documento de controle e continuidade (D91). Atualizar ao fim de cada etapa. Deci
 - Testes: motor 232 pass / 0 fail; UI 17 / 0.
 - Lote de 300 carreiras (12 anos): eleito alguma vez 50,0% para 48,7%; deputado ou senador 17,0% para 16,7%. Queda maior em empresário (65,0% para 58,3%) e liderança sindical (52,0% para 46,7%). O jogador automático passa a escolher a segura em parte das janelas. Monitorar na etapa 5.
 
+## Etapa 2: entregue
+
+- `data/catalogo/personagens.json`: Osvaldo Teixeira (padrinho), Cida Ramos (liderança), Renato Faria (rival), Lúcia Prado (jornalista), Jairo Mendes (articulador). Consolidados em `catalogo-jogo.json` por `tools/catalogo.js`.
+- Motor: opção `relacoes` (-2 a 2), `agendar` em lista, evento com `pessoa` e `arco`, alvos `pessoa.<id>.confianca`, `carreira.derrotas`, `carreira.mandatosEletivos`. Save 7 com `migrar[6]`.
+- 18 eventos novos e 3 de entrada ajustados. Arcos (entrada entre parênteses):
+  - Primeira oportunidade (carta "Café com um vereador"): convite, provocação do rival, cobrança do padrinho, padrinho adversário.
+  - Promessa no bairro (cobrança da associação, agora com 3 opções): reportagem, prazo cobrado, reconhecimento ou rompimento pela confiança.
+  - Disputa interna (disputa no diretório): rival fecha o caminho, composição de Jairo, cobrança da contrapartida.
+  - Exposição pública (o vídeo repercute): recorte dos adversários, jornalista recupera a declaração.
+  - Primeira derrota (gatilho após eleição perdida, uma vez): reação e reconstrução da base.
+  - Peso do mandato (gatilho no primeiro cargo eletivo, degrau 2): promessa trava, Jairo cobra um voto.
+- Tela: o cartão do acontecimento mostra nome e papel de quem fala no lugar de "Ocorrência pendente".
+- Testes: novo `tests/motor/arcos.test.js` (6); ajustes de versão do save e de roteiro em `tests/ui` (posse agora abre "O peso do mandato"). Motor 238 / 0; UI 17 / 0; pipeline OK.
+- Lote de 300: eleito alguma vez 48,7% para 51,0%; deputado ou senador 16,7% para 17,7%; inelegível 0% para 0,7% (sorteios do fluxo de eventos deslocados pelos dois gatilhos novos e jogador automático que escolhe a opção de maior ganho).
+
 ## Pendências registradas
 
-- 11 eventos de opção única: decidir na etapa 2 quais ganham escolha (cobrança da associação e dos bairros primeiro). Jurídicos e sucessão continuam como notícia.
+- Eventos de opção única restantes (jurídicos, operações e sucessão) continuam como notícia, por decisão de projeto.
+- Arcos ainda não citam o cargo: textos do degrau 1 servem a qualquer escopo. Revisar versões por cargo na etapa 6.
 - Origens futuras: Influenciador, Pastor, Gestor Público, Professor.
 - "Mutirão de atendimento" e "Pôr em dia os pedidos" pressupõem equipe; avaliar restrição no degrau 2.
 

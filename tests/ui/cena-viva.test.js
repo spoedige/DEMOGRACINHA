@@ -32,7 +32,14 @@ async function abrir(navegador, save, opcoes) {
 const palco = (pg, a) => pg.getAttribute("#sky-stage", a);
 // chega à fase de ações recusando convites de nomeação, se houver
 async function jogarAcao(pg) {
-  if ((await pg.textContent("h1.dossier-title")) === "Convites de nomeação") { await pg.click("[data-grupo=nom][data-valor=recusar]"); await pg.click("[data-acao=confirmar]"); }
+  for (let i = 0; i < 4; i++) {                                                           // telas antes das ações
+    const h = await pg.textContent("h1.dossier-title");
+    if (h === "Convites de nomeação") { await pg.click("[data-grupo=nom][data-valor=recusar]"); await pg.click("[data-acao=confirmar]"); }
+    else if (h === "Acontecimentos") {                                                    // arcos (D91): responde com a primeira opção
+      for (const g of await pg.locator("[data-radiogroup]").evaluateAll((els) => els.map((x) => x.dataset.radiogroup))) await pg.locator(`[data-grupo="${g}"]`).first().click();
+      await pg.click("[data-acao=confirmar]");
+    } else break;
+  }
   await pg.locator("[data-grupo=carta]").first().click(); await pg.click("[data-acao=detalhe-escolher]");
   await pg.waitForFunction(() => document.querySelector("h1.dossier-title").textContent === "O que aconteceu");
 }

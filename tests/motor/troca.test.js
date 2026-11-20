@@ -85,7 +85,7 @@ test("save versão 5: migração de 4 recria as filiações e a UF atual; filia�
   const e = novo();
   const v4 = JSON.parse(Save.serializar(e)); v4.saveVersion = 4; delete v4.personagem.filiacoes; delete v4.personagem.ufAtual;
   const m = Save.ler(JSON.stringify(v4));
-  assert.equal(m.saveVersion, 6); assert.deepEqual(plano(m), plano(e));
+  assert.equal(m.saveVersion, 7); assert.deepEqual(plano(m), plano(e));
   const x = clone(e); x.personagem.partidoId = "P2";
   assert.throws(() => Carreira.validar(x), /filiações/);
 });
