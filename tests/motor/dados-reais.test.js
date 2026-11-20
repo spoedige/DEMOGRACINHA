@@ -98,3 +98,13 @@ test("cláusula na carreira: projeção determinística, partido abaixo perde ex
   v.personagem.tags.push("justaCausaClausula");
   assert.equal(M.Mudancas.opcoes(v, troca).bloqueioPartido, null);
 });
+
+test("calendário calculado para qualquer ano par sem entrada no catálogo (D90): carreira não trava em 2040 ou depois", () => {
+  assert.deepEqual(plano(M.Modelos.calendarioPadrao(2040)), { dataRegistro: "2040-08-15", prazoFiliacao: "2040-04-07", prazoDesincompatibilizacao: "2040-04-07", _nota: "calendário calculado (a confirmar)" });
+  assert.equal(M.Modelos.calendarioPadrao(2026).prazoFiliacao, "2026-04-04");                       // confere com o calendário de 2026
+  for (const ano of [2040, 2042, 2044, 2060]) {
+    const ms = M.Modelos.doAno(ano, SP, BR, REG, CFG, "3550308", "SP");
+    assert.ok(ms.length >= 2, "modelos em " + ano);
+  }
+  assert.throws(() => M.Modelos.calendarioPadrao(2041), ERRO);
+});

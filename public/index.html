@@ -3497,6 +3497,17 @@ var Modelos = (function () {
         anuladosSubJudice: taxa(c[8], c[10]), anuladosApuracaoSeparada: taxa(c[9], c[10]) } };
   }
   function data(ano, mmdd) { return ano + "-" + mmdd; }
+  // ano par sem calendário no catálogo (D90): eleição no 1º domingo de outubro (CF/88, art. 28 e 77), filiação e
+  // desincompatibilização 6 meses antes (Lei 9.504/1997, art. 9º) e registro em 15/08 (art. 11). Tudo (a confirmar).
+  function calendarioPadrao(ano) {
+    if (ano % 2 !== 0 || ano < 2026) erro("calendário: só ano par a partir de 2026");
+    // dia da semana de 1º de outubro (Sakamoto; 0 = domingo), sem relógio
+    var y = ano, t = [0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4];
+    var dow = (y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) + t[9] + 1) % 7;
+    var dia = 1 + (7 - dow) % 7;                                               // 1º domingo de outubro
+    var prazo = ano + "-04-" + String(dia).padStart(2, "0");                    // 6 meses antes da eleição
+    return { dataRegistro: ano + "-08-15", prazoFiliacao: prazo, prazoDesincompatibilizacao: prazo, _nota: "calendário calculado (a confirmar)" };
+  }
   function posse(cfg, cargo, ano) {
     var r = cfg.posse[cargo] || cfg.posse[tipoAno(ano) === "municipal" ? "municipal" : "legislativo"];
     var pa = ano + 1, fa = pa + r.anos - (r.fim > r.posse ? 1 : 0);
@@ -3512,7 +3523,7 @@ var Modelos = (function () {
   // ctx: { ano, cargo, unidadeId, eleitorado (aptos), contagens, votos {partido: votos}, vagas, registro, cfg, eleitoradoMunicipios, municipioLocal }
   function montar(ctx) {
     var cfg = ctx.cfg, ano = ctx.ano, cargo = ctx.cargo, reg = ctx.registro;
-    var cal = cfg.calendario[String(ano)] || erro("calendário ausente para " + ano + " (a confirmar)");
+    var cal = cfg.calendario[String(ano)] || calendarioPadrao(ano);
     var todos = reg.partidos.map(function (p) { return p.id; });
     var tot = Object.keys(ctx.votos).reduce(function (a, k) { return a + ctx.votos[k]; }, 0);
     if (!(tot > 0)) erro("modelo sem votos na base: " + cargo + " " + ctx.unidadeId);
@@ -3603,7 +3614,7 @@ var Modelos = (function () {
     });
     return out;
   }
-  return Object.freeze({ montar: montar, doAno: doAno, pesosSegundoTurno: pesosSegundoTurno, tipoAno: tipoAno });
+  return Object.freeze({ montar: montar, doAno: doAno, pesosSegundoTurno: pesosSegundoTurno, tipoAno: tipoAno, calendarioPadrao: calendarioPadrao });
 })();
 
 /* == ORIGENS == */
