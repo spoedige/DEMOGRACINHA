@@ -1,5 +1,5 @@
 {
- "_cenario": "Origens do MVP (D36, D87). Nenhuma concede mandato, nomeação ou Capital de Entrega; diferenças pequenas servem ao caminho.",
+ "_cenario": "Origens jogáveis (D36, D87, D91). Nenhuma concede mandato, nomeação ou Capital de Entrega; diferenças pequenas servem ao caminho. Família Política traz acesso e recursos com expectativa e resistência à herança.",
  "_parametros": "Todos os valores iniciais (calibrar). Caixa em centavos.",
  "origens": [
   {
@@ -167,15 +167,53 @@
     "popularidade": 0.09,
     "rejeicao": 0.015
    },
-   "caixaPessoal": 400000,
+   "caixaPessoal": 500000,
    "relacoes": {
     "cupula": 0.4,
     "bancada": 0.3,
-    "executivo": 0.25,
+    "executivo": 0.32,
     "credibilidade": 0.5
    },
    "grupo": 0.03,
    "baseForca": 0.1
+  },
+  {
+   "id": "familiaPolitica",
+   "nome": "Família política",
+   "redePoliticaPrevia": "direta",
+   "aptidoes": {
+    "articulacao": 0.55,
+    "comunicacao": 0.5,
+    "mobilizacao": 0.4,
+    "gestao": 0.45,
+    "estrategia": 0.5,
+    "resiliencia": 0.45
+   },
+   "capacidade": {
+    "articulacao": 0.35,
+    "comunicacao": 0.3,
+    "mobilizacao": 0.2,
+    "gestao": 0.25,
+    "estrategia": 0.3,
+    "resiliencia": 0.25
+   },
+   "local": {
+    "notoriedade": 0.18,
+    "popularidade": 0.07,
+    "rejeicao": 0.09
+   },
+   "estadual": {
+    "notoriedade": 0.005
+   },
+   "caixaPessoal": 800000,
+   "relacoes": {
+    "cupula": 0.35,
+    "bancada": 0.25,
+    "executivo": 0.25,
+    "credibilidade": 0.35
+   },
+   "grupo": 0.02,
+   "baseForca": 0.12
   }
  ],
  "escalaPorte": {

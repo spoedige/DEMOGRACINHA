@@ -80,7 +80,7 @@ test("cláusula na carreira: projeção determinística, partido abaixo perde ex
   const ms = M.Modelos.doAno(2026, SP, BR, REG, CFG, "3550308", "SP");
   const cat = J("data/catalogo/catalogo-jogo.json");
   const cl = Object.assign({ base: BR.deputadoFederal2022, registro: REG }, CFG.clausula);
-  const d = dadosAno(2026, ms, { clausula: cl, eventos: cat.eventos, parametrosDegrau: cat.parametrosDegrau });
+  const d = dadosAno(2026, ms, { clausula: cl, eventos: cat.eventos, personagens: cat.personagens, parametrosDegrau: cat.parametrosDegrau });
   let e = pessoa("3550308", "SP", "NOVO"); e.tempo = { ano: 2026, janela: "J5" }; e.ritmo = "intenso";
   const r = M.Carreira.avancar(e, d, { decisoes: {}, opcoes: { opcoesEleicao: (c) => sim.opcoesDoCenario(M, c) } }).resultado;
   const c = r.estado.conjuntura.clausula;

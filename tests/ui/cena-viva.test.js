@@ -29,12 +29,20 @@ async function abrir(navegador, save, opcoes) {
   await pg.reload(); await pg.click("[data-acao=continuar-salvo]");
   return { pg, erros };
 }
+const tela = (pg) => pg.getAttribute(".fase", "data-tela");
 const palco = (pg, a) => pg.getAttribute("#sky-stage", a);
 // chega à fase de ações recusando convites de nomeação, se houver
 async function jogarAcao(pg) {
-  if ((await pg.textContent("h1.dossier-title")) === "Convites de nomeação") { await pg.click("[data-grupo=nom][data-valor=recusar]"); await pg.click("[data-acao=confirmar]"); }
-  await pg.locator("[data-grupo=carta]").first().click(); await pg.click("[data-acao=detalhe-escolher]");
-  await pg.waitForFunction(() => document.querySelector("h1.dossier-title").textContent === "O que aconteceu");
+  for (let i = 0; i < 4; i++) {                                                           // telas antes das ações
+    const h = await tela(pg);
+    if (h === "jornada:nomeacoes") { await pg.click("[data-grupo=nom][data-valor=recusar]"); await pg.click("[data-acao=confirmar]"); }
+    else if (h === "jornada:eventos") {                                                    // arcos (D91): responde com a primeira opção
+      for (const g of await pg.locator("[data-radiogroup]").evaluateAll((els) => els.map((x) => x.dataset.radiogroup))) await pg.locator(`[data-grupo="${g}"]`).first().click();
+      await pg.click("[data-acao=confirmar]");
+    } else break;
+  }
+  await pg.locator("[data-grupo=carta]").first().click(); await pg.click("[data-acao=confirmar]");
+  await pg.waitForFunction(() => document.querySelector(".fase").dataset.tela === "jornada:resumo");
 }
 const indicadores = (pop, rej, noto) => (x) => { x.indicadores.local = { notoriedade: noto, popularidade: pop, rejeicao: rej }; };
 
@@ -103,7 +111,7 @@ test("movimento reduzido: sem fogos, brilho dourado parado no céu na posse e ne
     assert.equal(await ativas(), 0);
     assert.equal(await pg.evaluate(() => getComputedStyle(document.querySelector(".brilho-ceu")).opacity), "1");
     const caixa = await pg.evaluate(() => { const b = document.querySelector(".brilho-ceu").getBoundingClientRect(), h = document.getElementById("hud").getBoundingClientRect(); return { topo: b.top, hud: h.top }; });
-    assert.ok(caixa.topo < caixa.hud - 60, "brilho visível acima do painel");
+    assert.ok(caixa.topo < caixa.hud - 20, "brilho visível acima do painel (cabeçalho compacto da etapa UX): " + JSON.stringify(caixa));
     if (CAPTURAS) await pg.screenshot({ path: path.join(CAPTURAS, "cena-posse-reduzido.png"), clip: { x: 0, y: 0, width: 360, height: 400 } });
     await pg.click("[data-acao=continuar]");
     assert.equal(await palco(pg, "data-brilho"), "0");

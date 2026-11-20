@@ -50,8 +50,8 @@ test("convite de vice: ficha própria, confirmação e registro da candidatura d
     assert.match(card, /Chance de confirmação/); assert.match(card, /Competitividade do titular/); assert.match(card, /Vice na chapa de P1/);
     await pg.locator(VICE).scrollIntoViewIfNeeded(); await capturar(pg, "vice-convite");
     await pg.click(VICE); await pg.click("[data-acao=detalhe-escolher]"); await pg.click("[data-acao=confirmar]");
-    assert.equal(await titulo(pg), "Ações disponíveis");
-    await pg.locator("[data-grupo=carta]").first().click(); await pg.click("[data-acao=detalhe-escolher]");
+    assert.equal(await titulo(pg), "Qual é o seu próximo passo?");
+    await pg.locator("[data-grupo=carta]").first().click(); await pg.click("[data-acao=confirmar]");
     await pg.waitForFunction(() => document.querySelector("h1.dossier-title").textContent === "O que aconteceu");
     assert.match(await pg.textContent("main"), /A chapa confirmou o seu nome para vice/);
     const salvo = JSON.parse(await pg.evaluate(() => localStorage.getItem("demogracinha.save")));
@@ -81,11 +81,12 @@ test("sucessão por evento: o vice assume o cargo do titular e o HUD mostra o no
     const e = estado("v1-SUCESSAO", 2029, "C1");
     e.cargos.mandatos = [{ disputaId: "2028|PREFEITO|EX001|1", cargo: "VICE_PREFEITO", unidadeId: "EX001", inicio: "2029-01-01", fim: "2032-12-31",
       situacao: "exercicio", papel: "vice", chapaId: "CH1", titularId: "X1" }];
+    e.eventosRecentes["peso-do-mandato"] = { ano: 2029, janela: "C1" };                // arco da posse já vivido (D91)
     e.filaEventos = [{ id: "V", janelaAlvo: { ano: 2029, janela: "C1" }, dados: { eventoId: "vaga-do-titular", origemCartaId: "x", prob: 1, condicao: null, nivelCorrupcao: null } }];
     const { pg, erros } = await abrir(nav, Motor.Save.serializar(e));
     assert.match(await pg.textContent("body"), /Vice-prefeito/);
     // evento de opção única: resolve na abertura; segue para as ações
-    await pg.locator("[data-grupo=carta]").first().click(); await pg.click("[data-acao=detalhe-escolher]");
+    await pg.locator("[data-grupo=carta]").first().click(); await pg.click("[data-acao=confirmar]");
     await pg.waitForFunction(() => document.querySelector("h1.dossier-title").textContent === "O que aconteceu");
     const main = await pg.textContent("main");
     assert.match(main, /Vaga no cargo do titular/); assert.match(main, /Você assumiu o cargo de Prefeito até o fim do mandato/);

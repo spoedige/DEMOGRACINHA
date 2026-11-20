@@ -16,6 +16,8 @@ const CAPTURAS = process.env.CAPTURAS_DIR;
 const FONTE = fs.readFileSync(HTML, "utf8");
 const ler = (n) => JSON.parse(fs.readFileSync(path.join(RAIZ, "tools", "cenarios", n), "utf8"));
 const titulo = (pg) => pg.textContent("h1.dossier-title");
+const tela = (pg) => pg.getAttribute(".fase", "data-tela");
+const seguir = (pg) => pg.click("[data-acao=passo-seguinte]");
 
 test("dados embutidos: catálogo do jogo consolidado (D85) e modelos de tools/cenarios; partidos só fictícios e sem logo", () => {
   const d = JSON.parse(FONTE.match(/<script type="application\/json" id="dados-exemplo">([\s\S]*?)<\/script>/)[1]);
@@ -72,15 +74,30 @@ test("fluxo completo a 360 px: criação, janelas, eventos, candidatura, eleiç�
     await pg.goto(URL_);
     assert.match(await pg.textContent("main"), /Partidos e lugares são reais\. Pessoas e eventos são fictícios\./);
     await layout(); await capturar("01-inicio");
+    await pg.click("[data-ritmo-ini=express]");                                       // ritmo na tela inicial (pílula)
+    assert.equal(await pg.getAttribute("[data-ritmo-ini=express]", "aria-checked"), "true");
     await pg.click("[data-acao=criar-tela]");
-    await pg.fill("#nome", "Personagem de Teste"); await pg.fill("#nascimento", "2010-01-02"); await pg.fill("#semente", "v1-UITESTE-01");
-    await pg.selectOption("#ritmo-novo", "express"); await pg.click("[data-ambicao=legislativo]");
-    await pg.click("button[type=submit]");
+    assert.equal(await titulo(pg), "Identidade");
+    await pg.fill("#nome", "Personagem de Teste"); await pg.selectOption("#nasc-mes", "6"); await pg.selectOption("#nasc-ano", "2008");
+    await seguir(pg);
     assert.match(await pg.textContent(".erro"), /entre 18 e 60 anos/);
     assert.equal(await pg.inputValue("#nome"), "Personagem de Teste");                 // o formulário sobrevive ao erro
-    assert.equal(await pg.getAttribute("[data-ambicao=legislativo]", "aria-checked"), "true");
-    await pg.fill("#nascimento", "1990-05-10");
+    await pg.selectOption("#nasc-mes", "5"); await pg.selectOption("#nasc-ano", "1990");
     await layout(); await capturar("02-criacao");
+    await seguir(pg); assert.equal(await titulo(pg), "Origem");
+    assert.equal(await pg.locator("[data-grupo='f:origem']").count(), 6);              // seis origens com vantagem e contrapartida
+    await pg.click("[data-grupo='f:origem'][data-valor=servidor]"); await layout(); await capturar("02b-origem");
+    await seguir(pg); assert.equal(await titulo(pg), "Estilo de atuação");
+    assert.equal(await pg.locator("[data-afinidade]").count(), 1);                     // técnico tem afinidade com servidor
+    await pg.click("[data-grupo='f:estilo'][data-valor=tecnico]"); await pg.click("[data-ambicao=legislativo]");
+    await pg.click("[data-acao=passo-anterior]"); await seguir(pg);                     // voltar não perde a escolha
+    assert.equal(await pg.getAttribute("[data-grupo='f:estilo'][data-valor=tecnico]", "aria-checked"), "true");
+    assert.equal(await pg.getAttribute("[data-ambicao=legislativo]", "aria-checked"), "true");
+    await seguir(pg); assert.equal(await titulo(pg), "Território e partido");
+    await pg.click(".avancadas > summary");
+    assert.equal(await pg.inputValue("#ritmo-novo"), "express");
+    await pg.fill("#semente", "v1-UITESTE-01");
+    await layout();
     await pg.click("button[type=submit]");
     assert.equal(await titulo(pg), "Guia rápido");                                 // guia na primeira carreira (acabamento)
     await layout(); await capturar("02b-guia");
@@ -88,25 +105,26 @@ test("fluxo completo a 360 px: criação, janelas, eventos, candidatura, eleiç�
 
     const vistos = new Set(); let viuEleicao = false;
     for (let i = 0; i < 90 && !viuEleicao; i++) {
-      const h = await titulo(pg);
+      const h = await tela(pg);
       await layout();
-      const hud = await pg.locator(".metric-cell").count();
-      if (await pg.isVisible("#hud")) assert.ok(hud >= 4 && hud <= 6, "números no painel: " + hud);
-      if (h === "O que aconteceu") {
-        if (/Eleição:/.test(await pg.textContent("main"))) { viuEleicao = true; await capturar("07-resultado"); }
+      assert.equal(await pg.locator(".metric-cell").count(), 4, "quatro números no painel");
+      assert.ok((await pg.locator(".marco").count()) >= 1, "faixa de marcos");
+      if (h === "jornada:resumo") {
+        if (/Eleição:/.test(await pg.textContent("main"))) { viuEleicao = true; assert.equal(await pg.locator("[data-urna]").count(), 1); await capturar("07-resultado"); }
         await pg.click("[data-acao=continuar]");
-      } else if (h === "Janela automática") await pg.click("[data-acao=avancar]");
-      else if (h === "Convites de nomeação" || h === "Desincompatibilização") {
-        vistos.add(h); await capturar(h === "Convites de nomeação" ? "05b-nomeacao" : "05c-desincompatibilizacao");
+      } else if (h === "jornada:automatica") await pg.click("[data-acao=avancar]");
+      else if (h === "jornada:nomeacoes" || h === "jornada:desincompatibilizacao") {
+        vistos.add(h); await capturar(h === "jornada:nomeacoes" ? "05b-nomeacao" : "05c-desincompatibilizacao");
         await pg.locator("[data-grupo]").last().click();                                 // recusar ou permanecer (opção segura)
         await pg.click("[data-acao=confirmar]");
-      } else if (h === "Compromissos que vencem" || h === "Acontecimentos") {
-        vistos.add(h); await capturar(h === "Acontecimentos" ? "04-evento" : "05-compromisso");
+      } else if (h === "jornada:compromissos" || h === "jornada:eventos") {
+        vistos.add(h); await capturar(h === "jornada:eventos" ? "04-evento" : "05-compromisso");
+        if (h === "jornada:eventos") assert.equal(await pg.locator("[data-radiogroup]").count(), 1);   // um acontecimento por vez
         for (const g of await pg.locator("[data-radiogroup]").evaluateAll((els) => els.map((x) => x.dataset.radiogroup))) {
           await pg.locator(`[data-grupo="${g}"]:not([aria-disabled=true])`).first().click();
         }
         await pg.click("[data-acao=confirmar]");
-      } else if (h === "Oferta de candidatura") {
+      } else if (h === "jornada:candidatura") {
         vistos.add(h);
         const listas = pg.locator('[data-grupo=cand][data-valor^="lista:"]');            // vaga garantida na lista (D82)
         const oferta = (await listas.count()) ? listas.first() : pg.locator("[data-grupo=cand][data-valor=naoConcorrer]");
@@ -118,7 +136,7 @@ test("fluxo completo a 360 px: criação, janelas, eventos, candidatura, eleiç�
         }
         await capturar("06-candidatura");
         await pg.click("[data-acao=confirmar]");
-      } else if (h === "Ações disponíveis") {
+      } else if (h === "jornada:mao") {
         vistos.add(h);
         const confirmar = pg.locator("[data-acao=confirmar]");
         assert.equal(await confirmar.isDisabled(), true);                               // nada escolhido ainda
@@ -126,30 +144,33 @@ test("fluxo completo a 360 px: criação, janelas, eventos, candidatura, eleiç�
         const alvo = ["acordo-lideranca", "favor-emenda", "discurso-mesa", "mutirao"].find((x) => ids.includes(x)) || ids[0];
         const card = pg.locator(`[data-grupo=carta][data-valor="${alvo}"]`);
         await capturar("03-acoes");
-        await card.click();                                                            // carta compacta: o toque abre o detalhe
-        assert.match(await pg.textContent("#detalhe"), /Confirmar ação/);
+        await card.locator("[data-info]").click();                                    // ⓘ abre o detalhe; o toque no cartão seleciona
+        assert.match(await pg.textContent("#detalhe"), /Selecionar esta ação/);
         await capturar("03b-detalhe-acao");
-        await pg.click("[data-acao=detalhe-escolher]");                                 // confirma a decisão do período
-        await pg.waitForFunction(() => document.querySelector("h1.dossier-title").textContent !== "Ações disponíveis");
+        await pg.click("[data-acao=detalhe-escolher]");
+        assert.equal(await card.getAttribute("aria-checked"), "true");
+        await pg.click("[data-acao=confirmar]");
+        await pg.waitForFunction(() => document.querySelector(".fase").dataset.tela !== "jornada:mao");
       } else assert.fail("tela inesperada: " + h);
     }
-    assert.ok(vistos.has("Oferta de candidatura"), "a oferta de candidatura de 2028 apareceu");
+    assert.ok(vistos.has("jornada:candidatura"), "a oferta de candidatura de 2028 apareceu");
     assert.ok(viuEleicao, "o resultado da eleição apareceu");
 
-    for (const aba of ["carreira", "partido", "indicadores", "menu"]) { await pg.click(`[data-aba=${aba}]`); await layout(); await capturar("08-" + aba); }
+    assert.equal(await pg.locator("[data-aba]").count(), 3);                             // Jornada, Carreira, Menu
+    for (const aba of ["carreira", "menu"]) { await pg.click(`[data-aba=${aba}]`); await layout(); await capturar("08-" + aba); }
     await pg.click("[data-aba=carreira]");
     const texto = await pg.textContent("main");
-    assert.ok(texto.indexOf("Trajetória partidária") < texto.indexOf("Registro biográfico"));
-    assert.match(texto, /Filiação/); assert.match(texto, /P1/);
+    assert.match(await pg.textContent("[data-biografia]"), /Personagem de Teste, \d+ anos\. .*Disputou 1 eleição/);
+    assert.match(texto, /Filiação ao P1/); assert.match(texto, /Origem: Servidor público\./);
     assert.match(texto, /2028 - Vereador(Eleito|Não eleito), [\d.]+ votos/);
-    await pg.click("[data-aba=indicadores]");
-    assert.match(await pg.textContent("main"), /Capacidade de entrega/);
+    assert.match(texto, /Capacidade de entrega/);                                       // números na seção recolhida
+    for (const s of ["partido", "numeros"]) { await pg.click(`[data-secao=${s}] > summary`); await layout(); }
 
     await pg.click("[data-aba=menu]");
     assert.match(await pg.textContent("main"), /Limpar os dados do navegador apaga a partida/);
     await pg.selectOption("#ritmo", "intenso");
     const salvo = JSON.parse(await pg.evaluate(() => localStorage.getItem("demogracinha.save")));
-    assert.equal(salvo.ritmo, "intenso"); assert.equal(salvo.saveVersion, 6); assert.equal(salvo.personagem.nome, "Personagem de Teste");
+    assert.equal(salvo.ritmo, "intenso"); assert.equal(salvo.saveVersion, 7); assert.equal(salvo.personagem.nome, "Personagem de Teste");
     assert.doesNotThrow(() => carregarMotor().Motor.Save.ler(JSON.stringify(salvo)));
     await pg.click("[data-acao=exportar]");
     await pg.waitForSelector("#codigo-export");
@@ -167,7 +188,7 @@ test("fluxo completo a 360 px: criação, janelas, eventos, candidatura, eleiç�
     assert.equal(await pg.isHidden("#gaveta-import"), true);
     assert.deepEqual(JSON.parse(await pg.evaluate(() => localStorage.getItem("demogracinha.save"))), salvo);
     await pg.reload(); await pg.click("[data-acao=continuar-salvo]");
-    assert.match(await pg.textContent(".hud-turn"), new RegExp(salvo.tempo.ano + ", janela " + salvo.tempo.janela));
+    assert.match(await pg.textContent(".hud-turn"), new RegExp("de " + salvo.tempo.ano + " · "));
 
     assert.deepEqual(erros, []);
   } finally { await navegador.close(); }
@@ -178,23 +199,28 @@ test("teclado e movimento reduzido: setas no grupo de ações, sem animação de
   try {
     const pg = await (await navegador.newContext({ viewport: { width: 360, height: 800 }, reducedMotion: "reduce" })).newPage();
     await pg.goto(URL_);
-    await pg.click("[data-acao=criar-tela]"); await pg.fill("#nome", "Teclado"); await pg.fill("#semente", "v1-TECLADO-01");
+    await pg.click("[data-acao=criar-tela]"); await pg.fill("#nome", "Teclado");
+    await pg.keyboard.press("Enter");                                                    // Enter no campo do nome avança o passo
+    assert.equal(await titulo(pg), "Origem");
+    await seguir(pg); await seguir(pg);
+    assert.equal(await titulo(pg), "Território e partido");
+    await pg.click(".avancadas > summary"); await pg.fill("#semente", "v1-TECLADO-01");
     await pg.click("button[type=submit]");
     await pg.keyboard.press("Tab"); await pg.keyboard.press("Enter");                // o foco vai ao título; Tab chega ao "Entendi"
-    assert.equal(await titulo(pg), "Ações disponíveis");
+    assert.equal(await tela(pg), "jornada:mao");
     assert.equal(await pg.locator(".phase-enter").count(), 0);
     const primeiro = pg.locator("[data-grupo=carta]").first();
-    await primeiro.focus(); await pg.keyboard.press("Space");                          // abre o detalhe; Esc fecha e devolve o foco
+    await primeiro.locator("[data-info]").click();                                     // ⓘ abre o detalhe; Esc fecha
     assert.equal(await pg.locator("#detalhe:not([hidden])").count(), 1);
     await pg.keyboard.press("Escape");
-    assert.equal(await pg.evaluate(() => document.activeElement.dataset.grupo), "carta");
+    await primeiro.focus(); await pg.keyboard.press("Space");                          // Espaço seleciona no lugar
     await pg.keyboard.press("ArrowDown"); await pg.keyboard.press("ArrowUp");
     assert.equal(await primeiro.getAttribute("aria-checked"), "true");
     await pg.keyboard.press("ArrowDown");
     assert.equal(await primeiro.getAttribute("aria-checked"), "false");
     assert.equal(await pg.evaluate(() => document.activeElement.getAttribute("aria-checked")), "true");
     await pg.click("[data-acao=confirmar]");
-    assert.equal(await titulo(pg), "O que aconteceu");                                   // sem espera do carimbo
+    assert.equal(await tela(pg), "jornada:resumo");                                      // sem espera do carimbo
     assert.equal(await pg.evaluate(() => document.getElementById("carimbo").classList.contains("is-visible")), false);
   } finally { await navegador.close(); }
 });

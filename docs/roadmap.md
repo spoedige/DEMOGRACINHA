@@ -229,7 +229,7 @@ Lote: `node tools/sim.js --lote --n 300 --anos 12` (sementes v1-LOTE-0 a 299; 10
 
 | Ajuste | Antes | Depois | Motivo |
 |---|---|---|---|
-| `origens.escalaPorte` (novo) | sem escala | referência 5.000, expoente 0,6, piso 0,05 | a mesma rede alcança fração menor de um eleitorado maior; o porte estava invertido |
+| `origens.escalaPorte` (novo) | sem escala | referência 2.000, expoente 0,6, piso 0,05 (corrigido na D90: o registro dizia 5.000, mas o valor usado e gravado é 2.000) | a mesma rede alcança fração menor de um eleitorado maior; o porte estava invertido |
 | `parametros-modelos.sintetico.municipal` | fator 2, quadros e capilaridade 0,45 | fator 3, 0,6 | 85% se elegiam em 12 anos |
 | `parametros-modelos.sintetico.geral` | fator 2, 0,45 | mantido | com 3 e 0,6, só 1,3% chegavam a deputado |
 | Assessor: indicadores locais e base | 0,08 / 0,05 / 0,01; base 0,05 | 0,15 / 0,09 / 0,015; base 0,1 | 16,7% eleitos contra 50% a 70% das demais |
@@ -243,3 +243,7 @@ Pendências de calibração: assessor segue abaixo (o caminho dele é a nomeaç�
 ### Validação da D89 (estilos), 22/11/2026
 
 Mesmo lote (300 carreiras, 12 anos, sementes v1-LOTE), com estilo em rotação. Sem novo ajuste de parâmetro. Eleito ao menos uma vez 53%; deputado ou senador 18,3%; governador ou presidente 0%; inelegível 0%. Por estilo, eleitos: articulador 52%, combativo 49,3%, influencer 56%, tecnico 54,7%. Por porte: pequeno 71%, médio 43%, grande 45%.
+
+### D90, etapa A (mão e reduto), 22/11/2026
+
+Mão de 4 cartas (segura e 3 ações), a ação da janela anterior fora da mão seguinte e 8 cartas pagas com saúde nos degraus 1 e 2. Reduto: a força dos rivais municipais não é a causa principal; com 7% de popularidade em Passa e Fica (RN), o personagem faz cerca de 200 votos contra 209 da última vaga, com rivais de 0,6 ou 0,57. Rivais mantidos (fator 3, quadros e capilaridade 0,6). Lote: eleito ao menos uma vez 50%; deputado ou senador 17%; governador ou presidente 0%; inelegível 0%. Por porte: pequeno 66%, médio 39%, grande 45%. Assessor segue abaixo (23,3%).

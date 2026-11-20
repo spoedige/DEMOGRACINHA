@@ -570,3 +570,21 @@ Aprovada pelo autor antes da implementação.
 3. Opção de evento com `exigeTag`: só aparece e só pode ser escolhida com a etiqueta; a contenção nunca exige etiqueta. Uma opção própria por estilo em crises e cobranças existentes: o vídeo repercute (influencer), disputa no diretório (articulador), fila no posto de saúde (técnico) e a obra não sai (combativo).
 4. Troca de estilo só em C1 do ano calmo, no painel de filiação e domicílio, com perda de credibilidade (calibrar).
 5. Lote de 300 carreiras dentro das faixas aprovadas, sem novo ajuste (`docs/roadmap.md`).
+
+## D90. Ajustes do teste no celular, 22/11/2026
+
+Aprovada pelo autor; entregue em etapas.
+1. Etapa A: calendário calculado para qualquer ano par sem entrada no catálogo (1º domingo de outubro, filiação e desincompatibilização 6 meses antes, registro em 15/08; a confirmar). Mão com 3 ações; a ação jogada na janela anterior não volta na mão seguinte. Oito cartas pagas com saúde nos degraus 1 e 2. Nenhuma carta do jogo tirava notoriedade (a perda existia só no catálogo de teste). Reduto conferido sem novo ajuste de rivais.
+2. Etapa B: talento nato. Etapa C: textos do deputado estadual, cores por espectro (tabela para aprovação), linha do ciclo, troca de partido na aba Partido, linguagem natural, ordem alfabética, mês e ano de nascimento, origem Família Política e eventos de imprensa e redes.
+
+## D91. Redesign narrativo, 20/11/2026
+
+Aprovada pelo autor após a auditoria da etapa 0. Plano e continuidade em `docs/PLANO-REDESIGN-NARRATIVO.md`.
+1. Trabalho na branch `implementacao-motor`. Mão de 4 cartas (1 segura e 3 ações sem repetir a da janela anterior), como no código.
+2. Ação segura com efeito defensivo leve: reduzir rejeição ou subir uma relação até 0,003 por jogada (calibrar). Textos sem "sem ganho visível".
+3. `pool.cargos: "comMandato"` exige cargo eletivo em exercício; nomeação e cargo partidário não bastam. Aplicado a "Divulgar o mandato em vídeos curtos".
+4. Origens: as 5 atuais mais Família Política. Influenciador, Pastor, Gestor Público e Professor ficam documentados como pendência.
+5. Lista das 24 cartas adicionais registrada no plano para a etapa 3. Adendo de calibragem (notoriedade em popularidade e votos, piso no reduto, repasse mínimo de campanha) nas etapas 5 e 6.
+6. Etapa 2: cinco personagens fictícios em `data/catalogo/personagens.json` (Osvaldo Teixeira, Cida Ramos, Renato Faria, Lúcia Prado, Jairo Mendes). Relação interna de -2 a 2 em `relacoesPessoais`, sem barra na tela; o cartão do evento mostra só nome e papel de quem fala. Save 7 com `migrar[6]` (relações neutras). Seis arcos: primeira oportunidade, promessa no bairro, disputa interna, exposição pública, primeira derrota e peso do mandato. Marcas de arco como etiqueta `arco:<id>`.
+7. Etapa 3: 24 cartas novas (8, 6, 5, 3 e 2 nos degraus 1 a 5). Pool com `cargos` e `nomeacao` passa a ser alternativa. Adaptações: ofício ao Ministério Público custa relação com o Executivo e exige a demanda assumida (`arco:promessa`); mutirões municipal e estadual custam Capital de Entrega; caravana custa só caixa e soma grupo político; "base estadual" virou popularidade estadual ou grupo político; bloco suprapartidário troca credibilidade por grupo político (uma relação por carta); LDO só em C2 e C3 do ano calmo.
+8. Etapa 4: sexta origem Família política (`familiaPolitica`, calibrada no lote até ficar perto do Servidor). Assessor com caixa de R$ 5.000 e relação com o Executivo de 0,32, mais a carta "Abrir caminho na prefeitura", para alcançar nomeações municipais. Sinergias como dados em `estilos.json`. Talento nato pela semente em `RNG.criar(semente, "mundo", "talentoNato")`, sem deslocar outros sorteios. Carreira mostra origem, afinidade e talento, sem números.

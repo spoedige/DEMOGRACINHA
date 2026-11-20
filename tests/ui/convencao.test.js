@@ -69,8 +69,8 @@ test("indicação negada: carimbo, segunda escolha só com lista ou não concorr
     assert.deepEqual(opcoes, ["lista:2028|VEREADOR|EX001|1", "naoConcorrer"]);
     await capturar(pg, "convencao-negada");
     await pg.click('[data-grupo=alt][data-valor^="lista:"]'); await pg.click("[data-acao=detalhe-escolher]"); await pg.click("[data-acao=confirmar]");
-    assert.equal(await titulo(pg), "Ações disponíveis");
-    await pg.locator("[data-grupo=carta]").first().click(); await pg.click("[data-acao=detalhe-escolher]");
+    assert.equal(await titulo(pg), "Qual é o seu próximo passo?");
+    await pg.locator("[data-grupo=carta]").first().click(); await pg.click("[data-acao=confirmar]");
     await pg.waitForFunction(() => document.querySelector("h1.dossier-title").textContent === "O que aconteceu");
     assert.match(await pg.textContent("main"), /O partido negou a indicação/);
     const salvo = JSON.parse(await pg.evaluate(() => localStorage.getItem("demogracinha.save")));
@@ -85,8 +85,8 @@ test("indicação concedida: segue para as ações e registra a cabeça de chapa
   try {
     const { pg, erros } = await abrir(nav, sementePara(true));
     await pg.click(PEDIDO); await pg.click("[data-acao=detalhe-escolher]"); await pg.click("[data-acao=confirmar]");
-    assert.equal(await titulo(pg), "Ações disponíveis");
-    await pg.locator("[data-grupo=carta]").first().click(); await pg.click("[data-acao=detalhe-escolher]");
+    assert.equal(await titulo(pg), "Qual é o seu próximo passo?");
+    await pg.locator("[data-grupo=carta]").first().click(); await pg.click("[data-acao=confirmar]");
     await pg.waitForFunction(() => document.querySelector("h1.dossier-title").textContent === "O que aconteceu");
     assert.match(await pg.textContent("main"), /O partido confirmou a sua indicação/);
     await capturar(pg, "convencao-concedida");

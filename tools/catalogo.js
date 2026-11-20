@@ -16,13 +16,14 @@ function consolidar() {
     _cenario: "Catálogo do jogo consolidado por tools/catalogo.js a partir de data/catalogo/degrau-N.json e eventos-comuns.json. Não editar à mão.",
     _parametros: "Todos os valores (calibrar). Itens marcados (a confirmar) dependem da 1B.",
     ambicoes: ["legislativo", "executivo", "bastidor"],
-    parametrosCartas: { acoesPorMao: 2 },
+    parametrosCartas: { acoesPorMao: 3 },
     parametrosDegrau: lotes[0].parametrosDegrau,
     cartas: [].concat(...lotes.map((l) => l.cartas), comuns.cartas || []),
     eventos: [].concat(...lotes.map((l) => l.eventos), comuns.eventos),
-    posicoes: [].concat(...lotes.map((l) => l.posicoes))
+    posicoes: [].concat(...lotes.map((l) => l.posicoes)),
+    personagens: ler("personagens.json").personagens
   };
-  for (const k of ["cartas", "eventos", "posicoes"]) {
+  for (const k of ["cartas", "eventos", "posicoes", "personagens"]) {
     const ids = new Set();
     for (const x of out[k]) { if (ids.has(x.id)) throw new Error(k + ": id repetido " + x.id); ids.add(x.id); }
   }
